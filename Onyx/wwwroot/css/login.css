@@ -1,14 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Raleway, sans-serif;
-}
-
 body {
-    background: linear-gradient(90deg, #C7C5F4, #776BCC);
+    overflow: hidden;
 }
 
 .container {
@@ -87,17 +78,17 @@ body {
 .login {
     width: 320px;
     padding: 30px;
-    padding-top: 156px;
+    padding-top: 150px;
 }
 
 .login__field {
-    padding: 20px 0px;
+    padding: 20px 0 0 0;
     position: relative;
 }
 
 .login__icon {
     position: absolute;
-    top: 30px;
+    top: 35px;
     color: #7875B5;
 }
 
@@ -107,17 +98,29 @@ body {
     background: none;
     padding: 10px;
     padding-left: 24px;
-    font-weight: 700;
     width: 75%;
     transition: .2s;
 }
 
-    .login__input:active,
-    .login__input:focus,
-    .login__input:hover {
-        outline: none;
-        border-bottom-color: #6A679E;
-    }
+.custom-control-input-primary:checked ~ .custom-control-label::before {
+    border-color: #6A679E;
+    background-color: #6A679E
+}
+
+.custom-control-input-primary.custom-control-input-outline:checked[type=radio] ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='%236A679E'/%3E%3C/svg%3E") !important
+}
+
+.custom-control-input-primary:focus ~ .custom-control-label::before {
+    box-shadow: none;
+}
+
+.login__input:active,
+.login__input:focus,
+.login__input:hover {
+    outline: none;
+    border-bottom-color: #6A679E;
+}
 
 .login__submit {
     background: #fff;
@@ -150,29 +153,9 @@ body {
     color: #7875B5;
 }
 
-.social-login {
-    position: absolute;
-    height: 140px;
-    width: 160px;
-    text-align: center;
-    bottom: 0px;
-    right: 0px;
-    color: #fff;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #fff inset !important;
 }
-
-.social-icons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.social-login__icon {
-    padding: 20px 10px;
-    color: #fff;
-    text-decoration: none;
-    text-shadow: 0px 0px 8px #7875B5;
-}
-
-    .social-login__icon:hover {
-        transform: scale(1.5);
-    }

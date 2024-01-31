@@ -1,9 +1,18 @@
 .sidebar-white-primary {
     background: #fff;
 }
-.nav-pills .nav-link:not(.active):hover {
-    color: #003eb9;
+
+.brand-link {
+    border-bottom: 1px solid #dee2e6;
 }
+
+.nav-pills .nav-link:not(.active):hover,
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background: #003eb9;
+}
+
 .input-validation-error,
 .input-validation-error + .input-group-append .input-group-text {
     border-color: #dc3545 !important;
