@@ -1,4 +1,9 @@
-
+.sidebar-white-primary {
+    background: #fff;
+}
+.nav-pills .nav-link:not(.active):hover {
+    color: #003eb9;
+}
 .input-validation-error,
 .input-validation-error + .input-group-append .input-group-text {
     border-color: #dc3545 !important;

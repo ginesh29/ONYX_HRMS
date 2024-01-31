@@ -36,7 +36,7 @@
         </nav>
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <aside class="main-sidebar sidebar-white-primary elevation-4">
             <!-- Brand Logo -->
             <a href="/" class="brand-link">
                 <img src="~/images/logo.png" alt="Logo" class="brand-image">
@@ -45,15 +45,7 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="~/images/company-icon.png" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    @* <div class="info">
-                        <a href="javascript:void(0)" class="d-block">Welcome, @username</a>
-                    </div> *@
-                </div>
-                @* @await Component.InvokeAsync("LeftNav") *@
+                @await Component.InvokeAsync("LeftNav")
             </div>
             <!-- /.sidebar -->
         </aside>
@@ -90,15 +82,9 @@
         </div>
         <!-- /.content-wrapper -->
         <footer class="main-footer">
-            Copyright &copy; @DateTime.UtcNow.Year Customer Loyalty Designed & Developed By  <strong><a href="javascript:void(0)">Luminosoft Technologies</a>.</strong>
+            Copyright &copy; @DateTime.UtcNow.Year Onyx Designed & Developed By  <strong><a href="javascript:void(0)">Luminosoft Technologies</a>.</strong>
             All rights reserved.
         </footer>
-
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
     <partial name="_Notification" />

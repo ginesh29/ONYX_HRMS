@@ -2,6 +2,8 @@
 @{
     Layout = null;
     ViewData["Title"] = "Login";
+    var userTypeList = Html.GetEnumSelectList<UserTypeEnum>().Select(m => { m.Selected = m.Value == ((int)UserTypeEnum.User).ToString(); return m; });
+    IEnumerable<SelectListItem> companyItems = ViewBag.CompanyItems;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +23,7 @@
                 <p class="login-box-msg">Sign in to start your session</p>
                 <form action="" method="post" id="login-frm">
                     <div class="mb-3">
-                        <div class="input-group ">
+                        <div class="input-group">
                             <input asp-for="Username" class="form-control" placeholder="Username">
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -41,6 +43,25 @@
                             </div>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <div>
+                            @foreach (var item in userTypeList)
+                            {
+                                <label class="radio-inline mb-0">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" asp-for="UserType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="usertype_@item.Value" value="@item.Value" checked="@item.Selected">
+                                        <label for="usertype_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-3 @(companyItems.Count() <= 1 ? "d-none" : "")">
+                        <select asp-for="CoAbbr" class="form-control" asp-items="@ViewBag.CompanyItems">
+                            <option value="">@CommonSetting.DEFAULTSELECT</option>
+                        </select>
+                        <span asp-validation-for="CoAbbr" class="text-danger"></span>
                     </div>
                     <div class="row">
                         <div class="col-7">
