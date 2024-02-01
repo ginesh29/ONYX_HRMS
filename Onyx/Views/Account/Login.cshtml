@@ -11,9 +11,10 @@
     <partial name="_HeadImports" />
     <link href="~/css/login.css" rel="stylesheet" />
 </head>
-<body class="">
+<body>
     <div class="container">
         <div class="screen">
+            <img src="~/images/logo.png" class="login__logo" />
             <div class="screen__content">
                 <form class="login" method="post" id="login-frm">
                     <div class="login__field">
@@ -32,7 +33,7 @@
                             {
                                 <label class="radio-inline mb-0">
                                     <div class="custom-control custom-radio">
-                                        <input type="radio" asp-for="UserType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="usertype_@item.Value" value="@item.Value" checked="@item.Selected">
+                                        <input type="radio" asp-for="UserType" class="custom-control-input custom-control-input-secondary custom-control-input-outline" id="usertype_@item.Value" value="@item.Value" checked="@item.Selected">
                                         <label for="usertype_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
                                     </div>
                                 </label>
@@ -45,6 +46,12 @@
                             <option value="">@CommonSetting.DEFAULTSELECT</option>
                         </select>
                         <span asp-validation-for="CoAbbr" class="text-danger"></span>
+                    </div>
+                    <div class="login__field">
+                        <div class="custom-control custom-checkbox">
+                            <input asp-for="RememberMe" class="custom-control-input custom-control-input-secondary custom-control-input-outline" type="checkbox" id="rememberme">
+                            <label for="rememberme" class="custom-control-label font-weight-normal">Remember Me</label>
+                        </div>
                     </div>
                     <button class="button login__submit" onclick="loginUser(this)">
                         <span class="button__text">Sign In</span>

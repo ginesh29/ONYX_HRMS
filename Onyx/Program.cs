@@ -7,11 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<AppDbContext>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<CommonService>();
 builder.Services.AddSingleton<AuthService>();
-//builder.Services.AddSingleton<RemoteService>();
-//builder.Services.AddSingleton<CommonService>();
-//builder.Services.AddSingleton<CustomerService>();
-//builder.Services.AddSingleton<ReportService>();
+builder.Services.AddSingleton<CompanyService>();
+builder.Services.AddSingleton<UserEmployeeService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

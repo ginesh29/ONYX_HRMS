@@ -25,14 +25,7 @@
                     <a href="/" class="nav-link">Home</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
-                <li class="nav-item">
-                    <a href="javascript:void(0)" class="btn btn-primary" onclick="logOut(this)">
-                        Log Out
-                    </a>
-                </li>
-            </ul>
+            @await Component.InvokeAsync("UserMenu")
         </nav>
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->

@@ -2,6 +2,14 @@ body {
     overflow: hidden;
 }
 
+.login__logo {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    height: 80px;
+    left: 0;
+}
+
 .container {
     display: flex;
     align-items: center;
@@ -102,16 +110,20 @@ body {
     transition: .2s;
 }
 
-.custom-control-input-primary:checked ~ .custom-control-label::before {
+.custom-control-input-secondary:checked ~ .custom-control-label::before {
     border-color: #6A679E;
     background-color: #6A679E
 }
 
-.custom-control-input-primary.custom-control-input-outline:checked[type=radio] ~ .custom-control-label::after {
+.custom-control-input-secondary.custom-control-input-outline:checked[type=radio] ~ .custom-control-label::after {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3E%3Ccircle r='3' fill='%236A679E'/%3E%3C/svg%3E") !important
 }
 
-.custom-control-input-primary:focus ~ .custom-control-label::before {
+.custom-control-input-secondary.custom-control-input-outline:checked[type=checkbox] ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%236A679E' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E") !important
+}
+
+.custom-control-input-secondary:focus ~ .custom-control-label::before {
     box-shadow: none;
 }
 

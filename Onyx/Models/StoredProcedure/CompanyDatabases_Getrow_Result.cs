@@ -1,4 +1,4 @@
-﻿namespace Onyx.Models.Stored_Procedure
+﻿namespace Onyx.Models.StoredProcedure
 {
     public class CompanyDatabases_Getrow_Result
     {
