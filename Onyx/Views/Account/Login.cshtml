@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <partial name="_HeadImports" />
-    <link href="~/css/login.css" rel="stylesheet" />
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
     <div class="container">
@@ -17,11 +17,12 @@
             <img src="~/images/logo.png" class="login__logo" />
             <div class="screen__content">
                 <form class="login" method="post" id="login-frm">
+                    <input type="hidden" asp-for="Browser" />
                     <div class="login__field">
                         <i class="login__icon fas fa-user"></i>
-                        <input asp-for="Username" class="login__input" placeholder="Username">
+                        <input asp-for="LoginId" class="login__input" placeholder="Username">
                     </div>
-                    <span asp-validation-for="Username" class="text-danger"></span>
+                    <span asp-validation-for="LoginId" class="text-danger"></span>
                     <div class="login__field">
                         <i class="login__icon fas fa-lock"></i>
                         <input type="password" asp-for="Password" class="login__input" placeholder="Password">
@@ -40,13 +41,15 @@
                             }
                         </div>
                     </div>
-                    <div class="login__field @(companyItems.Count() <= 1 ? "d-none" : "")">
-                        <i class="login__icon fas fa-building"></i>
-                        <select asp-for="CoAbbr" class="login__input" asp-items="@ViewBag.CompanyItems">
-                            <option value="">@CommonSetting.DEFAULTSELECT</option>
-                        </select>
-                        <span asp-validation-for="CoAbbr" class="text-danger"></span>
+                    @* <div class="login__field">
+                    <div class="@(companyItems.Count() <= 1 ? "d-none" : "")">
+                    <i class="login__icon fas fa-building"></i>
+                    <select asp-for="CoAbbr" class="login__input" asp-items="@ViewBag.CompanyItems">
+                    <option value="">@CommonSetting.DEFAULTSELECT</option>
+                    </select>
                     </div>
+                    <span asp-validation-for="CoAbbr" class="text-danger"></span>
+                    </div> *@
                     <div class="login__field">
                         <div class="custom-control custom-checkbox">
                             <input asp-for="RememberMe" class="custom-control-input custom-control-input-secondary custom-control-input-outline" type="checkbox" id="rememberme">

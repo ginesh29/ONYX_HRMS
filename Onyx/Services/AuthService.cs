@@ -12,11 +12,13 @@ namespace Onyx.Services
         {
             var claims = new List<Claim>()
             {
-                new("loginUsername", model.Username),
-                new("loginUserCd",model.UserCd),
-                new("loginUserType",model.UserType.ToString()),
-                new("loginCompanyCd", model.CompanyCd),
-                new("loginCompanyAbbr", model.CompanyAbbr)
+                new("Username", model.Username),
+                new("LoginId", model.LoginId),
+                new("UserCd",model.UserCd),
+                new("UserType",model.UserType.ToString()),
+                new("CompanyCd", model.CompanyCd),
+                new("CompanyAbbr", model.CompanyAbbr),
+                new("Browser", model.Browser)
             };
             if (model.EmployeeCd != null)
                 claims.Add(new("loginEmployeeCd", model.EmployeeCd));
@@ -40,14 +42,26 @@ namespace Onyx.Services
             var claims = _httpContextAccessor.HttpContext.User.Claims;
             if (claims.Any())
             {
-                user.UserCd = claims.FirstOrDefault(m => m.Type == "loginUserCd")?.Value;
-                user.Username = claims.FirstOrDefault(m => m.Type == "loginUsername")?.Value;
-                user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "loginUserType")?.Value);
-                user.CompanyCd = claims.FirstOrDefault(m => m.Type == "loginCompanyCd")?.Value;
-                user.CompanyAbbr = claims.FirstOrDefault(m => m.Type == "loginCompanyAbbr")?.Value;
-                user.EmployeeCd = claims.FirstOrDefault(m => m.Type == "loginEmployeeCd")?.Value;
+                user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
+                user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
+                user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
+                user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);
+                user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+                user.CompanyAbbr = claims.FirstOrDefault(m => m.Type == "CompanyAbbr")?.Value;
+                user.EmployeeCd = claims.FirstOrDefault(m => m.Type == "EmployeeCd")?.Value;
+                user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
             }
             return user;
+        }
+        public async Task UpdateClaim(string key, string value)
+        {
+            ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
+            ClaimsIdentity identity = (ClaimsIdentity)user.Identity;
+            Claim oldClaim = identity.FindFirst(key);
+            identity.RemoveClaim(oldClaim);
+            Claim newClaim = new(key, value);
+            identity.AddClaim(newClaim);
+            await _httpContextAccessor.HttpContext.SignInAsync(user);
         }
     }
 }

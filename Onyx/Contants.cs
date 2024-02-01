@@ -24,6 +24,7 @@
         public const string REMOTECONPROBLEM = "Could not connect to Remote Server in order to fetch Item and Group details";
         public const string INVALIDENTRY = "Invalid Data Entry";
         public const string CANNOTUPDATEADMINPASSWORD = "You can not update Admin Password";
+        public const string CONFIRMPASSWORDNOTMATCHED = "Confirm Password not match with New Password";
     }
     public class ValidationMessage
     {

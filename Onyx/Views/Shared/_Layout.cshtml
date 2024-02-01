@@ -64,14 +64,12 @@
                     </div>
                     <!-- /.row -->
                 </div>
-
-                <!-- /.container-fluid -->
             </div>
-            <div class="content">
+            <section class="content">
                 <div class="container-fluid">
                     @RenderBody()
                 </div>
-            </div>
+            </section>
         </div>
         <!-- /.content-wrapper -->
         <footer class="main-footer">
@@ -85,6 +83,6 @@
     <!-- overlayScrollbars -->
     <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

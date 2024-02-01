@@ -4,6 +4,5 @@
     {
         public string Cd { get; set; }
         public string UName { get; set; }
-        public string Abbr { get; set; }
     }
 }

@@ -10,6 +10,23 @@
     width: 300px !important;
 }
 
+.dropdown-menu.show {
+    overflow: visible !important;
+}
+.bootstrap-select .btn:focus {
+    outline: none !important;
+}
+.bootstrap-select .dropdown-menu ul.dropdown-menu {
+    border: 1px solid #a7aaad;
+}
+.bootstrap-select .dropdown-toggle,
+.bootstrap-select .dropdown-toggle:active,
+.bootstrap-select .dropdown-toggle:focus {
+    background: #fff;
+    border: 1px solid #6c757d;
+    outline: none;
+}
+
 .brand-link {
     border-bottom: 1px solid #dee2e6;
 }

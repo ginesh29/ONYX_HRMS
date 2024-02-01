@@ -4,17 +4,27 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Onyx.Services
 {
-    public class CommonService(AppDbContext context)
+    public class CommonService
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly AuthService _authService;
+        private readonly LoggedInUserModel _loggedInUser;
+        public CommonService(AppDbContext context, AuthService authService)
+        {
+            _context = context;
+            _authService = authService;
+            _loggedInUser = _authService.GetLoggedInUser();
+        }
         public string GetConnectionString(string CoAbbr)
         {
             var procedureName = "CompanyDatabases_Getrow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CoAbbr", CoAbbr);
+            parameters.Add("v_CoAbbr", !string.IsNullOrEmpty(CoAbbr) ? CoAbbr : _loggedInUser.CompanyAbbr);
             using var connection = _context.CreateConnection();
             var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -34,21 +44,23 @@ namespace Onyx.Services
             var menu3 = multipleResult.Read<UserGroupMenu_GetRow_Result>();
             return menu1.Concat(menu2).Concat(menu3);
         }
-        public int SetActivityLogHead(string CoAbbr, ActivityLogModel activity)
+        public int SetActivityLogHead(ActivityLogModel model)
         {
-            var connectionString = GetConnectionString(CoAbbr);
+            var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
+            var os = Environment.OSVersion.Platform.ToString();
+            var connectionString = GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CoCd", activity.CoCd);
-            parameters.Add("v_ActivityId", activity.ActivityId);
-            parameters.Add("v_SessionId", activity.SessionId);
-            parameters.Add("v_UserCd", activity.UserCd);
-            parameters.Add("v_IP", activity.IP);
-            parameters.Add("v_OS", activity.OS);
-            parameters.Add("v_Browser", activity.Browser);
-            parameters.Add("v_StartTime", activity.StartTime);
-            parameters.Add("v_EndTime", activity.EndTime);
-            parameters.Add("v_typ", activity.Type);
+            parameters.Add("v_CoCd", model.CoCd);
+            parameters.Add("v_ActivityId", "");
+            parameters.Add("v_SessionId", "");
+            parameters.Add("v_UserCd", model.UserCd);
+            parameters.Add("v_IP", ip);
+            parameters.Add("v_OS", os);
+            parameters.Add("v_Browser", model.Browser);
+            parameters.Add("v_StartTime", DateTime.Now);
+            parameters.Add("v_EndTime", DateTime.Now);
+            parameters.Add("v_typ", "I");
             var connection = new SqlConnection(connectionString);
             int result = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

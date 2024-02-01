@@ -1,4 +1,6 @@
 ﻿setActiveMenu();
+setBrowserInfo();
+$("select.form-control,#company-dropdown").selectpicker()
 const decimalMaskOptions = {
     alias: 'numeric',
     radixPoint: '.',
@@ -135,3 +137,40 @@ function exportExcel(table, filePrefix) {
     var filename = `${filePrefix}.xlsx`;
     XLSX.writeFile(wb, filename);
 }
+function setBrowserInfo() {
+    const userAgent = navigator.userAgent;
+    let browserName = "Unknown";
+    let browserVersion = "Unknown";
+
+    if (userAgent.includes("Chrome")) {
+        browserName = "Chrome";
+        const match = userAgent.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/);
+        if (match) {
+            browserVersion = match[1];
+        }
+    } else if (userAgent.includes("Firefox")) {
+        browserName = "Firefox";
+        const match = userAgent.match(/Firefox\/(\d+\.\d+\.\d+)/);
+        if (match) {
+            browserVersion = match[1];
+        }
+    } else if (userAgent.includes("Edge")) {
+        browserName = "Edge";
+        const match = userAgent.match(/Edg\/(\d+\.\d+\.\d+\.\d+)/);
+        if (match) {
+            browserVersion = match[1];
+        }
+    } else if (userAgent.includes("Safari")) {
+        browserName = "Safari";
+        const match = userAgent.match(/Version\/(\d+\.\d+\.\d+)/);
+        if (match) {
+            browserVersion = match[1];
+        }
+    }
+    $("#Browser").val(`${browserName} ${browserVersion}`);
+}
+$("#company-dropdown").change(function (e) {
+    postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
+        showSuccessToastr(response.message);
+    });
+})

@@ -2889,7 +2889,7 @@ var buf2string = function (buf) {
             c_len--;
         }
 
-        // terminated by end of string
+        // terminated by end of string?
         if (c_len > 1) { utf16buf[out++] = 0xfffd; continue; }
 
         if (c < 0x10000) {
@@ -5639,7 +5639,7 @@ exports.buf2string = function (buf, max) {
       c_len--;
     }
 
-    // terminated by end of string
+    // terminated by end of string?
     if (c_len > 1) { utf16buf[out++] = 0xfffd; continue; }
 
     if (c < 0x10000) {
