@@ -2,10 +2,6 @@
     --bs-primary: #003eb9;
 }
 
-.sidebar-white-primary {
-    background: #fff;
-}
-
 .dropdown-menu-lg {
     width: 300px !important;
 }
@@ -35,27 +31,31 @@
 }
 
 .nav-pills .nav-link:not(.active):hover {
-    color: #fff;
-    background: #7A76A9;
+    color: #fff !important;
+    background: #7A76A9 !important;
 }
 
-.nav-pills .nav-link.active,
-.nav-pills .show > .nav-link {
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
     color: #fff;
     background: #003eb9;
 }
 
-    .nav-pills .nav-link.active + .nav-treeview .nav-link.active,
+.nav-pills .nav-link.active + .nav-treeview .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background: #B12FA8;
+}
+
+    .nav-pills .nav-link.active + .nav-treeview .nav-link.active + .nav-treeview .nav-link.active,
     .nav-pills .show > .nav-link {
         color: #fff;
-        background: #B12FA8;
+        background: #F74084;
     }
 
-        .nav-pills .nav-link.active + .nav-treeview .nav-link.active + .nav-treeview .nav-link.active,
-        .nav-pills .show > .nav-link {
-            color: #fff;
-            background: #F74084;
-        }
+.os-theme-light > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle {
+    background: #777 !important;
+}
 
 .input-validation-error,
 .input-validation-error + .input-group-append .input-group-text {
