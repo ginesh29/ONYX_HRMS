@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
-using System.Reflection;
 
 namespace Onyx.Controllers
 {
@@ -11,15 +9,17 @@ namespace Onyx.Controllers
         private readonly AuthService _authService;
         private readonly CompanyService _companyService;
         private readonly UserEmployeeService _userEmployeeService;
+        private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public AccountController(AuthService authService, CompanyService companyService, UserEmployeeService userEmployeeService, CommonService commonService)
+        public AccountController(AuthService authService, CompanyService companyService, UserEmployeeService userEmployeeService, CommonService commonService, SettingService settingService)
         {
             _authService = authService;
             _companyService = companyService;
             _userEmployeeService = userEmployeeService;
             _commonService = commonService;
             _loggedInUser = _authService.GetLoggedInUser();
+            _settingService = settingService;
         }
         public IActionResult Login()
         {
@@ -115,7 +115,7 @@ namespace Onyx.Controllers
                 {
                     var userFromDb = _userEmployeeService.GetUser(_loggedInUser.UserCd);
                     userFromDb.UPwd = model.ConfirmPassword.Encrypt();
-                    _userEmployeeService.SaveUsers(userFromDb);
+                    _settingService.SaveUser(userFromDb);
                     TempData["success"] = "Password changed Successfully";
                 }
                 else

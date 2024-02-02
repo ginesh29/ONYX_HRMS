@@ -1,0 +1,86 @@
+﻿@model UserModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Code) ? "Edit" : "Add") User</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="user-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
+                            <label asp-for="Code"></label>
+                            <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LoginId"></label>
+                            <input asp-for="LoginId" class="form-control" />
+                            <span asp-validation-for="LoginId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UPwd"></label>
+                            <input type="password" asp-for="UPwd" class="form-control" value="@Model.UPwd" />
+                            <span asp-validation-for="UPwd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CUPwd"></label>
+                            <input type="password" asp-for="CUPwd" class="form-control" value="@Model.UPwd" />
+                            <span asp-validation-for="CUPwd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Abbr"></label>
+                            <input asp-for="Abbr" class="form-control" />
+                            <span asp-validation-for="Abbr" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserGroupCd"></label>
+                            <select asp-for="UserGroupCd" class="form-control" asp-items="@ViewBag.UserGroupItems">
+                                <option value="">@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="UserGroupCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ExpiryDt"></label>
+                            <input asp-for="ExpiryDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#ExpiryDate">
+                            <span asp-validation-for="ExpiryDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveUser(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Users_GetRow_Result>
+<link href="~/plugins/jstree/jstree.bundle.css" rel="stylesheet" />
+<div class="mb-3">
+    <button class="btn btn-info" onclick="showUserModal('')">New User</button>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm" id="UsersDataTable">
+        <thead class="thead-dark">
+            <tr>
+                <th width="5px">No.</th>
+                <th width="50px">Code</th>
+                <th width="70px">Login Id</th>
+                <th width="70px">Abbreviation</th>
+                <th>User Group</th>
+                <th>Username</th>
+                <th width="100px">Expiry Date</th>
+                <th width="90px"></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Select((value, i) => new { i, value }))
+        {
+            <tr>
+                <td class="text-right">@(item.i + 1).</td>
+                <td>@item.value.Code</td>
+                <td>@item.value.LoginId</td>
+                <td>@item.value.Abbr</td>
+                <td>@item.value.UserGrp</td>
+                <td>@item.value.Username</td>
+                <td>@item.value.ExpiryDt.ToString(CommonSetting.DateFormat)</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="showUserModal('@item.value.Code')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteUser('@item.value.Code')"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+        @if (Model.Count() == 0)
+        {
+            <tfoot>
+                <tr>
+                    <td colspan="14">No record found</td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+</div>
+<div id="UserModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<script>
+    function showUserModal(cd) {
+        var url = `/Settings/GetUser?cd=${cd}`;
+        $('#UserModal').load(url, function () {
+            parseDynamicForm();
+            $('.date-input').attr("placeholder", "mm/dd/yyyy");
+            $('.date-input').datetimepicker({
+                format: 'L'
+            });
+            $("#UserModal").modal("show");
+        });
+    }
+    function deleteUser(cd) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to Delete?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteAjax(`/settings/DeleteUser?cd=${cd}`, function (response) {
+                    showSuccessToastr(response.message);
+                    reloadPageAfterSometime();
+                });
+            }
+        });
+    }
+    function saveUser(btn) {
+        var frm = $("#user-frm");
+        if (frm.valid()) {
+            loadingButton(btn);
+            postAjax("/settings/SaveUser", frm.serialize(), function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $("#UserModal").modal("hide");
+                    reloadPageAfterSometime();
+                }
+                else {
+                    showErrorToastr(response.message);
+                    $("#UserModal").modal("hide");
+                }
+                unloadingButton(btn);
+            });
+        }
+    }
+</script>

@@ -13,12 +13,15 @@
 .dropdown-menu.show {
     overflow: visible !important;
 }
+
 .bootstrap-select .btn:focus {
     outline: none !important;
 }
+
 .bootstrap-select .dropdown-menu ul.dropdown-menu {
     border: 1px solid #a7aaad;
 }
+
 .bootstrap-select .dropdown-toggle,
 .bootstrap-select .dropdown-toggle:active,
 .bootstrap-select .dropdown-toggle:focus {
@@ -32,10 +35,26 @@
 }
 
 .nav-pills .nav-link:not(.active):hover,
+.nav-pills .nav-link:not(.active2):hover,
+.nav-pills .nav-link:not(.active3):hover {
+    color: #fff;
+    background: #7A76A9;
+}
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
     color: #fff;
     background: #003eb9;
+}
+.nav-pills .nav-link.active2,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background: #F74084;
+}
+
+.nav-pills .nav-link.active3,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background: #B12FA8;
 }
 
 .input-validation-error,
@@ -62,8 +81,13 @@
     border: 1px solid #000;
 }
 
-.disabled-container {
+.form-control.disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
     pointer-events: none;
+}
+
+.disabled-container {
     opacity: 0.7;
     cursor: not-allowed
 }

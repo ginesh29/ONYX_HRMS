@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -17,7 +18,7 @@ namespace Onyx.Controllers
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
         }
-        #region UserGroup
+        #region User Group
         public IActionResult UserGroups()
         {
             ViewBag.UserGroupsList = _settingService.GetUserGroups();
@@ -53,6 +54,55 @@ namespace Onyx.Controllers
         public IActionResult DeleteUserGroup(string cd)
         {
             _settingService.DeleteUserGroup(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region User
+        public IActionResult Users()
+        {
+            ViewBag.UsersList = _settingService.GetUsers();
+            return View();
+        }
+        public IActionResult GetUser(string cd)
+        {
+            var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
+            var model = new UserModel();
+            if (user != null)
+                model = new UserModel
+                {
+                    Code = user.Code,
+                    LoginId = user.LoginId,
+                    UPwd = user.UPwd.Decrypt(),
+                    Abbr = user.Abbr,
+                    UserGroupCd = user.UserGroupCd,
+                    Username = user.Username,
+                    ExpiryDt = user.ExpiryDt,
+                };
+            ViewBag.UserGroupItems = _settingService.GetUserGroups().Select(m => new SelectListItem { Value = m.Cd, Text = m.Des });
+            return PartialView("_UserModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveUser(UserModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            _settingService.SaveUser(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteUser(string cd)
+        {
+            _settingService.DeleteUser(cd);
             var result = new CommonResponse
             {
                 Success = true,

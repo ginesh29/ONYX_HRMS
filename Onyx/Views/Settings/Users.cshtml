@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Users";
+}
+<div class="row">
+    <div class="col-md-9">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_UsersList" model="ViewBag.UsersList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#UsersDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}

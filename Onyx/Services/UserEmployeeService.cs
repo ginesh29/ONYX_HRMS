@@ -33,34 +33,17 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public Users_GetRow_Result GetUser(string UserCd)
+        public UserModel GetUser(string UserCd)
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Users_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);
             var connection = new SqlConnection(connectionString);
-            var user = connection.QueryFirstOrDefault<Users_GetRow_Result>
+            var user = connection.QueryFirstOrDefault<UserModel>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
-        }
-        public void SaveUsers(Users_GetRow_Result model)
-        {
-            var connectionString = _commonService.GetConnectionString();
-            var procedureName = "Users_Update";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", model.Code);
-            parameters.Add("v_LoginId", model.LoginId);
-            parameters.Add("v_Abbr", model.Abbr);
-            parameters.Add("v_Grp", model.UserGrpCd);
-            parameters.Add("v_UPWD", model.UPwd);
-            parameters.Add("v_UName", model.Username);
-            parameters.Add("v_ExpiryDt", model.ExpiryDt.ToString("d"));
-            parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_Mode", null);
-            var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }
+        }        
         public Employee_Find_Result GetEmployee(string Cd)
         {
             var connectionString = _commonService.GetConnectionString();
