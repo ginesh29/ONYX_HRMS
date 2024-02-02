@@ -11,6 +11,7 @@ builder.Services.AddSingleton<CommonService>();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton<CompanyService>();
 builder.Services.AddSingleton<UserEmployeeService>();
+builder.Services.AddSingleton<SettingService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

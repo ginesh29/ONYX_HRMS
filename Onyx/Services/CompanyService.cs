@@ -1,18 +1,13 @@
 ﻿using Dapper;
-using Onyx.Data;
 using Onyx.Models.StoredProcedure;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class CompanyService
+    public class CompanyService(CommonService commonService)
     {
-        private readonly CommonService _commonService;
-        public CompanyService(CommonService commonService)
-        {
-            _commonService = commonService;
-        }
+        private readonly CommonService _commonService = commonService;
 
         public IEnumerable<Branch_UserCo_GetRow> GetCompanies(string UserCd)
         {
