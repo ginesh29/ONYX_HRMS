@@ -1,6 +1,6 @@
 ﻿setActiveMenu();
 setBrowserInfo();
-$("select.form-control,#company-dropdown").selectpicker()
+$(".select-picker").selectpicker()
 const decimalMaskOptions = {
     alias: 'numeric',
     radixPoint: '.',

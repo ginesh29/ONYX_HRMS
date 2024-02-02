@@ -12,27 +12,23 @@ namespace Onyx.Services
     public class CommonService
     {
         private readonly AppDbContext _context;
-        private readonly AuthService _authService;
-        private readonly LoggedInUserModel _loggedInUser;
-        public CommonService(AppDbContext context, AuthService authService)
+        public CommonService(AppDbContext context)
         {
             _context = context;
-            _authService = authService;
-            _loggedInUser = _authService.GetLoggedInUser();
         }
-        public string GetConnectionString(string CoAbbr)
+        public string GetConnectionString()
         {
             var procedureName = "CompanyDatabases_Getrow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CoAbbr", !string.IsNullOrEmpty(CoAbbr) ? CoAbbr : _loggedInUser.CompanyAbbr);
+            parameters.Add("v_CoAbbr", CommonSetting.MAINCOMPANY);
             using var connection = _context.CreateConnection();
             var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return $"Server={company.Server};Initial catalog={company.DbName};uid={company.DbUser}; pwd={company.DbPwd};TrustServerCertificate=True;Connection Timeout=120;";
         }
-        public IEnumerable<UserGroupMenu_GetRow_Result> GetMenuItems(string CoAbbr, string UserCd)
+        public IEnumerable<UserGroupMenu_GetRow_Result> GetMenuItems(string UserCd)
         {
-            var connectionString = GetConnectionString(CoAbbr);
+            var connectionString = GetConnectionString();
             var procedureName = "UserGroupMenu_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Abbr", UserCd);
@@ -48,7 +44,7 @@ namespace Onyx.Services
         {
             var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
             var os = Environment.OSVersion.Platform.ToString();
-            var connectionString = GetConnectionString(model.CoAbbr);
+            var connectionString = GetConnectionString();
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CoCd);
@@ -66,9 +62,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public Parameters_GetRow_Result GetJobCardStartAndEndTime(string CoAbbr, string CoCd, string Cd)
+        public Parameters_GetRow_Result GetJobCardStartAndEndTime(string CoCd, string Cd)
         {
-            var connectionString = GetConnectionString(CoAbbr);
+            var connectionString = GetConnectionString();
             var procedureName = "Parameters_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
@@ -79,9 +75,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public DateTime GetCuurentLoggedInDetails(string CoAbbr, string CoCd)
+        public DateTime GetCuurentLoggedInDetails(string CoCd)
         {
-            var connectionString = GetConnectionString(CoAbbr);
+            var connectionString = GetConnectionString();
             var procedureName = "ActvityLogHead_MaxActivityId_Getrow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);

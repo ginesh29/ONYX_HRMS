@@ -10,7 +10,7 @@ namespace Onyx.Models.ViewModels
         public string Password { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Company")]
-        public string CoAbbr { get; set; }
+        public string CoCd { get; set; }
         public UserTypeEnum UserType { get; set; }
         public bool RememberMe { get; set; }
         public string Browser { get; set; }

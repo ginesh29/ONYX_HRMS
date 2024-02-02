@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System.Reflection;
 
 namespace Onyx.Controllers
 {
@@ -22,82 +23,73 @@ namespace Onyx.Controllers
         }
         public IActionResult Login()
         {
-            //var companies = _companyService.GetCompanies(_loggedInUser.CompanyAbbr, _loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.Abbr, Text = m.CoName });
-            //if (companies.Count() == 1)
-            //    companies = companies.Select(m => { m.Selected = true; return m; });
-            //ViewBag.CompanyItems = companies;
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model, string returnUrl)
         {
-            model.CoAbbr = "telal";
-            var company = _companyService.GetCompanyDetail(model.CoAbbr);
-            if (model.UserType == UserTypeEnum.User)
+            if (!string.IsNullOrEmpty(model.CoCd) && model.CoCd != "0")
             {
-                var user = _userEmployeeService.ValidateUser(model);
-                if (user != null)
+                await _authService.UpdateClaim("CompanyCd", model.CoCd);
+                _commonService.SetActivityLogHead(new ActivityLogModel
                 {
-                    var u = new LoggedInUserModel
-                    {
-                        CompanyCd = company.CoCd,
-                        CompanyAbbr = model.CoAbbr,
-                        UserCd = user.Cd,
-                        Username = user.UName,
-                        LoginId = model.LoginId,
-                        UserType = (int)model.UserType,
-                        Browser = model.Browser
-                    };
-                    await _authService.SignInUserAsync(u, model.RememberMe);
-                    _commonService.SetActivityLogHead(new ActivityLogModel
-                    {
-                        UserCd = user.Cd,
-                        Browser = model.Browser,
-                        CoCd = company.CoCd,
-                        CoAbbr = model.CoAbbr,
-                    });
-                    TempData["success"] = "Login Successfully";
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                        return Redirect(returnUrl);
-                    else
-                        return RedirectToAction("Index", "Home");
-                }
-                TempData["error"] = CommonMessage.INVALIDUSER;
-                return RedirectToAction("Login", "Account");
+                    Browser = _loggedInUser.Browser,
+                    CoCd = model.CoCd,
+                    UserCd = _loggedInUser.UserCd
+                });
+                var result = new CommonResponse
+                {
+                    Success = true,
+                    Message = "Login Successfully",
+                    RedirectUrl = "/"
+                };
+                return Json(result);
             }
             else
             {
-                var employee = _userEmployeeService.ValidateEmployee(model);
-                if (employee != null)
+                var result = new CommonResponse { Success = false };
+                if (model.UserType == UserTypeEnum.User)
                 {
-                    var emp = _userEmployeeService.GetEmployee(model.CoAbbr, employee.UserCd);
-                    var u = new LoggedInUserModel
+                    var user = _userEmployeeService.ValidateUser(model);
+                    if (user != null)
                     {
-                        CompanyCd = company.CoCd,
-                        CompanyAbbr = model.CoAbbr,
-                        UserCd = employee.UserCd,
-                        Username = "",
-                        UserType = (int)model.UserType,
-                        LoginId = model.LoginId,
-                        EmployeeCd = model.LoginId,
-                        Browser = model.Browser
-                    };
-                    await _authService.SignInUserAsync(u, model.RememberMe);
-                    _commonService.SetActivityLogHead(new ActivityLogModel
-                    {
-                        UserCd = employee.UserCd,
-                        Browser = model.Browser,
-                        CoCd = company.CoCd,
-                        CoAbbr = model.CoAbbr,
-                    });
-                    TempData["success"] = "Login Successfully";
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                        return Redirect(returnUrl);
+                        var u = new LoggedInUserModel
+                        {
+                            CompanyCd = model.CoCd,
+                            UserCd = user.Cd,
+                            Username = user.UName,
+                            LoginId = model.LoginId,
+                            UserType = (int)model.UserType,
+                            Browser = model.Browser
+                        };
+                        await _authService.SignInUserAsync(u, model.RememberMe);
+                        result.Success = true;
+                    }
                     else
-                        return RedirectToAction("Index", "Home");
+                        result.Message = CommonMessage.INVALIDUSER;
                 }
-                TempData["error"] = CommonMessage.INVALIDUSER;
-                return RedirectToAction("Login", "Account");
+                else
+                {
+                    var employee = _userEmployeeService.ValidateEmployee(model);
+                    if (employee != null)
+                    {
+                        var user = _userEmployeeService.GetUser(employee.UserCd);
+                        var u = new LoggedInUserModel
+                        {
+                            CompanyCd = model.CoCd,
+                            UserCd = employee.UserCd,
+                            Username = user.Username,
+                            UserType = (int)model.UserType,
+                            LoginId = model.LoginId,
+                            Browser = model.Browser
+                        };
+                        await _authService.SignInUserAsync(u, model.RememberMe);
+                        result.Success = true;
+                    }
+                    else
+                        result.Message = CommonMessage.INVALIDUSER;
+                }
+                return Json(result);
             }
         }
         public async Task<IActionResult> LogOut()
@@ -116,15 +108,14 @@ namespace Onyx.Controllers
             {
                 var user = _userEmployeeService.ValidateUser(new LoginModel
                 {
-                    CoAbbr = _loggedInUser.CompanyAbbr,
                     LoginId = _loggedInUser.LoginId,
                     Password = model.OldPassword
                 });
                 if (user != null)
                 {
-                    var userFromDb = _userEmployeeService.GetUser(_loggedInUser.CompanyAbbr, _loggedInUser.UserCd);
+                    var userFromDb = _userEmployeeService.GetUser(_loggedInUser.UserCd);
                     userFromDb.UPwd = model.ConfirmPassword.Encrypt();
-                    _userEmployeeService.SaveUsers(_loggedInUser.CompanyAbbr, userFromDb);
+                    _userEmployeeService.SaveUsers(userFromDb);
                     TempData["success"] = "Password changed Successfully";
                 }
                 else
@@ -134,13 +125,12 @@ namespace Onyx.Controllers
             {
                 var employee = _userEmployeeService.ValidateEmployee(new LoginModel
                 {
-                    CoAbbr = _loggedInUser.CompanyAbbr,
                     LoginId = _loggedInUser.LoginId,
                     Password = model.OldPassword
                 });
                 if (employee != null)
                 {
-                    var a = _userEmployeeService.UpdateEmployeePassword(_loggedInUser.CompanyAbbr, _loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
+                    var a = _userEmployeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
                     TempData["success"] = "Password changed Successfully";
                 }
                 else

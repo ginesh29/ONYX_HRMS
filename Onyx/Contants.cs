@@ -2,6 +2,7 @@
 {
     public class CommonSetting
     {
+        public const string MAINCOMPANY = "TELAL";
         public const string DEFAULTSELECT = "-- Select --";
         public const string ALLSELECT = "-- All --";
         public const string DateFormat = "MM/dd/yyyy";

@@ -41,22 +41,22 @@
                             }
                         </div>
                     </div>
-                    @* <div class="login__field">
-                    <div class="@(companyItems.Count() <= 1 ? "d-none" : "")">
-                    <i class="login__icon fas fa-building"></i>
-                    <select asp-for="CoAbbr" class="login__input" asp-items="@ViewBag.CompanyItems">
-                    <option value="">@CommonSetting.DEFAULTSELECT</option>
-                    </select>
+                    <div class="login__field d-none">
+                        <div>
+                            <i class="login__icon fas fa-building"></i>
+                            <select asp-for="CoCd" class="login__input" id="login-company-dropdown" onchange="changeCompany(this)">
+                                <option value="0">@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="CoCd" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="CoAbbr" class="text-danger"></span>
-                    </div> *@
                     <div class="login__field">
                         <div class="custom-control custom-checkbox">
                             <input asp-for="RememberMe" class="custom-control-input custom-control-input-secondary custom-control-input-outline" type="checkbox" id="rememberme">
                             <label for="rememberme" class="custom-control-label font-weight-normal">Remember Me</label>
                         </div>
                     </div>
-                    <button class="button login__submit" onclick="loginUser(this)">
+                    <button class="button login__submit" onclick="loginUser(this)" type="button" id="btn-login">
                         <span class="button__text">Sign In</span>
                         <i class="button__icon fas fa-chevron-right"></i>
                     </button>
@@ -82,8 +82,38 @@
         if (frm.valid()) {
             loadingButton(btn);
             setTimeout(function () {
-                frm.submit();
-            }, 1000);
+                postAjax("/account/login?returnUrl=", frm.serialize(), function (response) {
+                    if (response.success) {
+                        bindCompanyDropdown();
+                        if (response.redirectUrl)
+                            window.location.href = response.redirectUrl;
+                    }
+                    else
+                        showErrorToastr(response.message)
+                });
+                unloadingButton(btn);
+            }, 0);
         }
+    }
+    function bindCompanyDropdown() {
+        getAjax("/home/FetchCompanies", function (response) {
+            var drpHtml = "";
+            if (response.data.length > 1) {
+                drpHtml += "<option value=''>@CommonSetting.DEFAULTSELECT</option>";
+                $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
+            }
+            else
+                setTimeout(function () {
+                    loginUser(null);
+                }, 2000);
+            $.each(response.data, function (i, company) {
+                drpHtml += `<option value="${company.value}">${company.text}</option>`;
+            });
+            $("#login-company-dropdown").html(drpHtml);
+            $("#login-frm input").prop("disabled", true);
+        });
+    }
+    function changeCompany() {
+        $("#btn-login").click();
     }
 </script>

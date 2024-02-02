@@ -17,7 +17,7 @@ namespace Onyx.ViewComponents
         }
         public IViewComponentResult Invoke()
         {
-            var menuItems = _commonService.GetMenuItems(_loggedInUser.CompanyAbbr, _loggedInUser.UserCd);
+            var menuItems = _commonService.GetMenuItems(_loggedInUser.UserCd);
             return View(menuItems);
         }
     }

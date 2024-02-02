@@ -11,7 +11,7 @@ namespace Onyx.Services
         private readonly CommonService _commonService = commonService;
         public Validate_User_Result ValidateUser(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Validate_User";
             var parameters = new DynamicParameters();
             parameters.Add("v_UserID", model.LoginId);
@@ -23,7 +23,7 @@ namespace Onyx.Services
         }
         public Validate_Employee_Result ValidateEmployee(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Validate_Employee";
             var parameters = new DynamicParameters();
             parameters.Add("v_EMPID", model.LoginId);
@@ -33,9 +33,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public Users_GetRow_Result GetUser(string CoAbbr, string UserCd)
+        public Users_GetRow_Result GetUser(string UserCd)
         {
-            var connectionString = _commonService.GetConnectionString(CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Users_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);
@@ -44,9 +44,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }
-        public void SaveUsers(string CoAbbr, Users_GetRow_Result model)
+        public void SaveUsers(Users_GetRow_Result model)
         {
-            var connectionString = _commonService.GetConnectionString(CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Users_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
@@ -61,9 +61,9 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public Employee_Find_Result GetEmployee(string CoAbbr, string Cd)
+        public Employee_Find_Result GetEmployee(string Cd)
         {
-            var connectionString = _commonService.GetConnectionString(CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_Find";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", Cd);
@@ -74,9 +74,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public string UpdateEmployeePassword(string CoAbbr, string CoCd, string Cd, string Password)
+        public string UpdateEmployeePassword(string CoCd, string Cd, string Password)
         {
-            var connectionString = _commonService.GetConnectionString(CoAbbr);
+            var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_PasswordUpdate";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);

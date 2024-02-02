@@ -23,12 +23,11 @@ namespace Onyx.ViewComponents
         }
         public IViewComponentResult Invoke()
         {
-            var user = _userEmployeeService.GetUser(_loggedInUser.CompanyAbbr, _loggedInUser.UserCd);
-            var employee = _userEmployeeService.GetEmployee(_loggedInUser.CompanyAbbr, _loggedInUser.EmployeeCd);
-            var month = Convert.ToInt32(_commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyAbbr, _loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
-            var year = _commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyAbbr, _loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
+            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _userEmployeeService.GetEmployee(_loggedInUser.LoginId) : null;
+            var month = Convert.ToInt32(_commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
+            var year = _commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp_photo/{_loggedInUser.CompanyCd}", employee.Imagefile));
-            var companies = _companyService.GetCompanies(_loggedInUser.CompanyAbbr, _loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
+            var companies = _companyService.GetCompanies(_loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
             if (companies.Count() == 1)
                 companies = companies.Select(m => { m.Selected = true; return m; });
             else
@@ -37,10 +36,10 @@ namespace Onyx.ViewComponents
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,
-                Username = user.Username,
+                Username = _loggedInUser.Username,
                 UserCd = _loggedInUser.UserCd,
                 CurrentPeriod = month > 0 && !string.IsNullOrEmpty(year) ? $"{DateTimeFormatInfo.CurrentInfo.GetMonthName(month)} {year}" : null,
-                CurrentLogged = _commonService.GetCuurentLoggedInDetails(_loggedInUser.CompanyAbbr, _loggedInUser.CompanyCd),
+                CurrentLogged = _commonService.GetCuurentLoggedInDetails(_loggedInUser.CompanyCd),
                 ProfilePic = employee != null && imageExist ? employee.Imagefile : null
             };
             return View(userMenu);

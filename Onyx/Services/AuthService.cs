@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Http;
 using Onyx.Models.ViewModels;
 using System.Security.Claims;
 
@@ -16,12 +18,12 @@ namespace Onyx.Services
                 new("LoginId", model.LoginId),
                 new("UserCd",model.UserCd),
                 new("UserType",model.UserType.ToString()),
-                new("CompanyCd", model.CompanyCd),
-                new("CompanyAbbr", model.CompanyAbbr),
                 new("Browser", model.Browser)
             };
-            if (model.EmployeeCd != null)
-                claims.Add(new("loginEmployeeCd", model.EmployeeCd));
+            if (!string.IsNullOrEmpty(model.CompanyCd))
+            {
+                claims.Add(new("CompanyCd", model.CompanyCd));
+            }
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var prop = new AuthenticationProperties();
@@ -39,17 +41,20 @@ namespace Onyx.Services
         public LoggedInUserModel GetLoggedInUser()
         {
             var user = new LoggedInUserModel();
-            var claims = _httpContextAccessor.HttpContext.User.Claims;
-            if (claims.Any())
+            var auth = _httpContextAccessor.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result;
+            string result = string.Empty;
+            if (auth.Succeeded)
             {
-                user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
-                user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
-                user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
-                user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);
-                user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
-                user.CompanyAbbr = claims.FirstOrDefault(m => m.Type == "CompanyAbbr")?.Value;
-                user.EmployeeCd = claims.FirstOrDefault(m => m.Type == "EmployeeCd")?.Value;
-                user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
+                var claims = auth.Principal.Claims;
+                if (claims.Any())
+                {
+                    user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
+                    user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
+                    user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
+                    user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);
+                    user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+                    user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
+                }
             }
             return user;
         }
