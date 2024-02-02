@@ -107,10 +107,10 @@ function setActiveMenu() {
     el.addClass('active');
 
     var el2 = el.parent('li').parent('ul').parent();
-    el2.find(".nav-link").eq(0).addClass('active2');
+    el2.find(".nav-link").eq(0).addClass('active');
     el2.addClass('menu-open');
 
-    el2.find(".nav-link").eq(0).parent('li').parent('ul').parent().find(".nav-link").eq(0).addClass('active3');
+    el2.find(".nav-link").eq(0).parent('li').parent('ul').parent().find(".nav-link").eq(0).addClass('active');
     el.parent('li').parent('ul').parent('li').parent('ul').parent().addClass('menu-open');
 }
 function formatDate(date) {

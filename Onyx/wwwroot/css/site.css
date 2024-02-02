@@ -34,28 +34,28 @@
     border-bottom: 1px solid #dee2e6;
 }
 
-.nav-pills .nav-link:not(.active):hover,
-.nav-pills .nav-link:not(.active2):hover,
-.nav-pills .nav-link:not(.active3):hover {
+.nav-pills .nav-link:not(.active):hover {
     color: #fff;
     background: #7A76A9;
 }
+
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
     color: #fff;
     background: #003eb9;
 }
-.nav-pills .nav-link.active2,
-.nav-pills .show > .nav-link {
-    color: #fff;
-    background: #F74084;
-}
 
-.nav-pills .nav-link.active3,
-.nav-pills .show > .nav-link {
-    color: #fff;
-    background: #B12FA8;
-}
+    .nav-pills .nav-link.active + .nav-treeview .nav-link.active,
+    .nav-pills .show > .nav-link {
+        color: #fff;
+        background: #B12FA8;
+    }
+
+        .nav-pills .nav-link.active + .nav-treeview .nav-link.active + .nav-treeview .nav-link.active,
+        .nav-pills .show > .nav-link {
+            color: #fff;
+            background: #F74084;
+        }
 
 .input-validation-error,
 .input-validation-error + .input-group-append .input-group-text {
