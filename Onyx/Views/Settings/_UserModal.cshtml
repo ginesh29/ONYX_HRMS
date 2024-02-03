@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="UserGroupCd"></label>
-                            <select asp-for="UserGroupCd" class="form-control" asp-items="@ViewBag.UserGroupItems">
+                            <select asp-for="UserGroupCd" class="select-picker" asp-items="@ViewBag.UserGroupItems" data-live-search="true">
                                 <option value="">@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="UserGroupCd" class="text-danger"></span>
@@ -74,6 +74,14 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserBranchCd"></label>
+                            <select asp-for="UserBranchCd" class="select-picker" asp-items="@ViewBag.UserBranchItems" multiple data-selected-text-format="count > 1" data-live-search="true" data-actions-box="true">
+                            </select>
+                            <span asp-validation-for="UserBranchCd" class="text-danger"></span>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ExpiryDt"></label>

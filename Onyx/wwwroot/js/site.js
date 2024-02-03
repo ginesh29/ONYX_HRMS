@@ -1,6 +1,6 @@
 ﻿setActiveMenu();
 setBrowserInfo();
-$(".select-picker").selectpicker()
+$(".select-picker").selectpicker();
 const decimalMaskOptions = {
     alias: 'numeric',
     radixPoint: '.',

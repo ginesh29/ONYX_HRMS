@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Users_GetRow_Result>
 <link href="~/plugins/jstree/jstree.bundle.css" rel="stylesheet" />
 <div class="mb-3">
-    <button class="btn btn-info" onclick="showUserModal('')">New User</button>
+    <button class="btn btn-info" onclick="showUserModal('')">New User</button>    
 </div>
 <div class="table-responsive">
     <table class="table table-sm" id="UsersDataTable">
@@ -53,6 +53,7 @@
             $('.date-input').datetimepicker({
                 format: 'L'
             });
+            $(".select-picker").selectpicker();
             $("#UserModal").modal("show");
             $('#tree-view').jstree({
                 "checkbox": {

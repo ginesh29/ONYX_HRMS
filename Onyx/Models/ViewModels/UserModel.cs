@@ -13,7 +13,7 @@ namespace Onyx.Models.ViewModels
         public string Abbr { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Login Id")]
-        public string LoginId { get; set; }        
+        public string LoginId { get; set; }
         public string UserGrp { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Password")]
@@ -36,6 +36,9 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "User Group")]
         public string UserGroupCd { get; set; }
+        [Display(Name = "User Branch")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        public string[] UserBranchCd { get; set; }
         public string Mode
         {
             get

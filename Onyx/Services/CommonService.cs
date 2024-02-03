@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace Onyx.Services
 {
@@ -38,6 +37,17 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<GetUserBranches_Result> GetUserBranches(string UserCd)
+        {
+            var connectionString = GetConnectionString();
+            var procedureName = "GetUserBranches";
+            var parameters = new DynamicParameters();
+            parameters.Add("UserCd", UserCd);
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetUserBranches_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public void SaveUserMenuPermission(string UserCd, string ActiveMenuIds)
         {
             var connectionString = GetConnectionString();
@@ -49,6 +59,20 @@ namespace Onyx.Services
                 insertQuery = insertQuery.Trim([',']);
             }
             string query = $"delete from UserMenu where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
+        }
+        public void SaveUserBranch(string UserCd, string[] UserBranchIds)
+        {
+            var connectionString = GetConnectionString();
+            string insertQuery = UserBranchIds != null ? "INSERT INTO UserBranch(UserCd,Div,Des) VALUES" : null;
+            if (UserBranchIds != null)
+            {
+                foreach (var item in UserBranchIds)
+                    insertQuery += $"('{UserCd}','{item}','Y'),";
+                insertQuery = insertQuery.Trim([',']);
+            }
+            string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
         }

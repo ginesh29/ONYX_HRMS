@@ -22,8 +22,50 @@
 .bootstrap-select .dropdown-toggle:active,
 .bootstrap-select .dropdown-toggle:focus {
     background: #fff;
-    border: 1px solid #6c757d;
+    border: 1px solid #ced4da;
     outline: none;
+}
+
+    .bootstrap-select .dropdown-toggle, .bootstrap-select .dropdown-toggle:active, .bootstrap-select .dropdown-toggle:focus {
+        background: #fff !important;
+    }
+
+.select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li {
+    margin-bottom: 3px !important;
+}
+
+    .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected {
+        background: #E1F0FF !important;
+    }
+
+    .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected .text {
+        color: #007bff !important;
+    }
+        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
+            color: #fff !important;
+        }
+.bs-ok-default.check-mark {
+    border: 1px solid #007bff;
+    width: 1rem;
+    height: 1rem;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    top: 50% 50% !important;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23007bff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z' /%3E%3C/svg%3E") !important;
+}
+
+.select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .bs-ok-default.check-mark {
+    border: 1px solid #fff;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23ffffff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E") !important;
+}
+
+.bs-ok-default.check-mark:after {
+    content: none !important;
+}
+
+.dropdown-item:focus, .dropdown-item:hover {
+    background: #007bff !important;
+    color: #fff !important;
 }
 
 .brand-link {

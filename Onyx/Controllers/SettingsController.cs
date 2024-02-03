@@ -82,12 +82,13 @@ namespace Onyx.Controllers
                     LoginId = user.LoginId,
                     UPwd = user.UPwd.Decrypt(),
                     Abbr = user.Abbr,
-                    UserGroupCd = user.UserGroupCd,
+                    UserGroupCd = user.UserGroupCd.Trim(),
                     Username = user.Username,
                     ExpiryDt = user.ExpiryDt,
                 };
             model.Menus = _commonService.GetMenuWithPermissions(cd);
-            ViewBag.UserGroupItems = _settingService.GetUserGroups().Select(m => new SelectListItem { Value = m.Cd, Text = m.Des });
+            ViewBag.UserGroupItems = _settingService.GetUserGroups().Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Des });
+            ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Branch, Selected = m.UserDes != null });
             return PartialView("_UserModal", model);
         }
         [HttpPost]
@@ -95,6 +96,7 @@ namespace Onyx.Controllers
         {
             model.EntryBy = _loggedInUser.Username;
             _settingService.SaveUser(model);
+            _commonService.SaveUserBranch(model.Code, model.UserBranchCd);
             _commonService.SaveUserMenuPermission(model.Code, model.MenuIds);
             var result = new CommonResponse
             {
