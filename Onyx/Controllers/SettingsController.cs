@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -71,6 +72,27 @@ namespace Onyx.Controllers
             ViewBag.UsersList = _settingService.GetUsers();
             return View();
         }
+        public IEnumerable<GetMenuWithPermissions_Result> ConvertToTree(IEnumerable<GetMenuWithPermissions_Result> flatList)
+        {
+            var itemDictionary = flatList.ToDictionary(item => item.MenuId);
+            var tree = new List<GetMenuWithPermissions_Result>();
+
+            foreach (var item in flatList)
+            {
+                if (item.Prnt == 0)
+                {
+                    tree.Add(item);
+                }
+                else if (itemDictionary.ContainsKey(item.Prnt))
+                {
+                    var parent = itemDictionary[item.Prnt];
+                    parent.Children ??= new List<GetMenuWithPermissions_Result>();
+                    parent.Children.Add(item);
+                }
+            }
+
+            return tree;
+        }
         public IActionResult GetUser(string cd)
         {
             var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
@@ -86,7 +108,7 @@ namespace Onyx.Controllers
                     Username = user.Username,
                     ExpiryDt = user.ExpiryDt,
                 };
-            model.Menus = _commonService.GetMenuWithPermissions(cd);
+            model.Menus = ConvertToTree(_commonService.GetMenuWithPermissions(cd));
             ViewBag.UserGroupItems = _settingService.GetUserGroups().Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Des });
             ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Branch, Selected = m.UserDes != null });
             return PartialView("_UserModal", model);

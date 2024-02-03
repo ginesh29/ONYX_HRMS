@@ -4,7 +4,7 @@
     var menus = Model.Menus.Where(m => m.Visible == "Y").Select(m => m.MenuId).ToArray();
     string menuArray = JsonSerializer.Serialize(menus);
 }
-<div class="modal-dialog modal-md">
+<div class="modal-dialog modal-lg">
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="UserGroupCd"></label>
-                            <select asp-for="UserGroupCd" class="select-picker" asp-items="@ViewBag.UserGroupItems" data-live-search="true">
+                            <select asp-for="UserGroupCd" class="select-picker" asp-items="@ViewBag.UserGroupItems" data-live-search="true" data-width="100%">
                                 <option value="">@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="UserGroupCd" class="text-danger"></span>
@@ -77,7 +77,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="UserBranchCd"></label>
-                            <select asp-for="UserBranchCd" class="select-picker" asp-items="@ViewBag.UserBranchItems" multiple data-selected-text-format="count > 1" data-live-search="true" data-actions-box="true">
+                            <select asp-for="UserBranchCd" class="select-picker" asp-items="@ViewBag.UserBranchItems" multiple data-selected-text-format="count > 1" data-live-search="true" data-actions-box="true" data-width="100%">
                             </select>
                             <span asp-validation-for="UserBranchCd" class="text-danger"></span>
                         </div>
@@ -94,31 +94,18 @@
                 {
                     <label>Menu & Permission</label>
                     <div id="tree-view">
-                        <ul style="padding-left: 25px;">
-                            @foreach (var item in Model.Menus.Where(m => m.Prnt == 0))
+                        <ul>
+                            @foreach (var item in Model.Menus)
                             {
-                                var children = Model.Menus.Where(m => m.Prnt == item.MenuId);
                                 <li id="@item.MenuId">
-                                    @item.Caption
-                                    <ul style="list-style-type:none;padding-left: 10px;">
-                                        @foreach (var child in children)
-                                        {
-                                            var subchildren = Model.Menus.Where(m => m.Prnt == child.MenuId);
-                                            <li id="@child.MenuId">
-                                                @child.Caption
-                                                <ul style="list-style-type:none;padding-left: 10px;">
-                                                    @foreach (var subchild in subchildren)
-                                                    {
-                                                        <li id="@subchild.MenuId">
-                                                            @subchild.Caption
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            </li>
-                                        }
-                                    </ul>
+                                    <span class="menu-title">
+                                        @item.Caption
+                                    </span>
+                                    @if (item.Children != null && item.Children.Any())
+                                    {
+                                        @await Component.InvokeAsync("UserPermissionMenuChild", new { items = item.Children })
+                                    }
                                 </li>
-
                             }
                         </ul>
                     </div>

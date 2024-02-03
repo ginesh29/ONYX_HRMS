@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GetMenuWithPermissions_Result>
+<ul>
+    @foreach (var item in Model)
+    {
+        <li id="@item.MenuId">
+            <span class="menu-title">
+                @item.Caption
+            </span>
+            @if (item.Children != null && item.Children.Any())
+            {
+                @await Component.InvokeAsync("UserPermissionMenuChild", new { items = item.Children })
+            }
+        </li>
+    }
+</ul>
