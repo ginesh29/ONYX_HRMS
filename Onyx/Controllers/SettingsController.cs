@@ -11,12 +11,14 @@ namespace Onyx.Controllers
     {
         private readonly AuthService _authService;
         private readonly SettingService _settingService;
+        private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public SettingsController(AuthService authService, SettingService settingService)
+        public SettingsController(AuthService authService, SettingService settingService, CommonService commonService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
+            _commonService = commonService;
         }
         #region User Group
         public IActionResult UserGroups()
@@ -84,6 +86,7 @@ namespace Onyx.Controllers
                     Username = user.Username,
                     ExpiryDt = user.ExpiryDt,
                 };
+            model.Menus = _commonService.GetMenuWithPermissions(cd);
             ViewBag.UserGroupItems = _settingService.GetUserGroups().Select(m => new SelectListItem { Value = m.Cd, Text = m.Des });
             return PartialView("_UserModal", model);
         }
@@ -92,6 +95,7 @@ namespace Onyx.Controllers
         {
             model.EntryBy = _loggedInUser.Username;
             _settingService.SaveUser(model);
+            _commonService.SaveUserMenuPermission(model.Code, model.MenuIds);
             var result = new CommonResponse
             {
                 Success = true,

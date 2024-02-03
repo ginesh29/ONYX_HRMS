@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Onyx.Models.StoredProcedure;
+using System.ComponentModel.DataAnnotations;
 
 namespace Onyx.Models.ViewModels
 {
@@ -42,5 +43,7 @@ namespace Onyx.Models.ViewModels
                 return !string.IsNullOrEmpty(Code) ? "U" : "I";
             }
         }
+        public IEnumerable<GetMenuWithPermissions_Result> Menus { get; set; }
+        public string MenuIds { get; set; }
     }
 }

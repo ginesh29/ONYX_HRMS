@@ -1,4 +1,9 @@
-﻿@model UserModel
+﻿@using System.Text.Json
+@model UserModel
+@{
+    var menus = Model.Menus.Where(m => m.Visible == "Y").Select(m => m.MenuId).ToArray();
+    string menuArray = JsonSerializer.Serialize(menus);
+}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -8,6 +13,7 @@
         </div>
         <div class="modal-body">
             <form id="user-frm">
+                <input type="hidden" asp-for="MenuIds" />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
@@ -76,6 +82,39 @@
                         </div>
                     </div>
                 </div>
+                @if (Model.Username != "Administrator")
+                {
+                    <label>Menu & Permission</label>
+                    <div id="tree-view">
+                        <ul style="padding-left: 25px;">
+                            @foreach (var item in Model.Menus.Where(m => m.Prnt == 0))
+                            {
+                                var children = Model.Menus.Where(m => m.Prnt == item.MenuId);
+                                <li id="@item.MenuId">
+                                    @item.Caption
+                                    <ul style="list-style-type:none;padding-left: 10px;">
+                                        @foreach (var child in children)
+                                        {
+                                            var subchildren = Model.Menus.Where(m => m.Prnt == child.MenuId);
+                                            <li id="@child.MenuId">
+                                                @child.Caption
+                                                <ul style="list-style-type:none;padding-left: 10px;">
+                                                    @foreach (var subchild in subchildren)
+                                                    {
+                                                        <li id="@subchild.MenuId">
+                                                            @subchild.Caption
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+
+                            }
+                        </ul>
+                    </div>
+                }
             </form>
         </div>
         <div class="modal-footer">
@@ -84,3 +123,11 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function () {
+        var selectedNodes = JSON.parse('@menuArray');
+        $.each(selectedNodes, function (i, item) {
+            $('#tree-view').jstree('check_node', '#' + item);
+        });
+    }, 0)
+</script>

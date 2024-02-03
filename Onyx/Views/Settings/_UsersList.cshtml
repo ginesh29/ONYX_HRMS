@@ -54,6 +54,15 @@
                 format: 'L'
             });
             $("#UserModal").modal("show");
+            $('#tree-view').jstree({
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["checkbox"]
+            }).on('changed.jstree', function (e, data) {
+                var menuIds = data.selected.join(",");
+                $("#MenuIds").val(menuIds);
+            });
         });
     }
     function deleteUser(cd) {

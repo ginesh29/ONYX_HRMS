@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 
 namespace Onyx.Services
 {
@@ -26,19 +27,30 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return $"Server={company.Server};Initial catalog={company.DbName};uid={company.DbUser}; pwd={company.DbPwd};TrustServerCertificate=True;Connection Timeout=120;";
         }
-        public IEnumerable<UserGroupMenu_GetRow_Result> GetMenuItems(string UserCd)
+        public IEnumerable<GetMenuWithPermissions_Result> GetMenuWithPermissions(string UserCd)
         {
             var connectionString = GetConnectionString();
-            var procedureName = "UserGroupMenu_GetRow";
+            var procedureName = "GetMenuWithPermissions";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Abbr", UserCd);
+            parameters.Add("UserCd", UserCd);
             var connection = new SqlConnection(connectionString);
-            var multipleResult = connection.QueryMultiple
+            var data = connection.Query<GetMenuWithPermissions_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            var menu1 = multipleResult.Read<UserGroupMenu_GetRow_Result>();
-            var menu2 = multipleResult.Read<UserGroupMenu_GetRow_Result>();
-            var menu3 = multipleResult.Read<UserGroupMenu_GetRow_Result>();
-            return menu1.Concat(menu2).Concat(menu3);
+            return data;
+        }
+        public void SaveUserMenuPermission(string UserCd, string ActiveMenuIds)
+        {
+            var connectionString = GetConnectionString();
+            string insertQuery = !string.IsNullOrEmpty(ActiveMenuIds) ? "INSERT INTO UserMenu(UserCd,MenuId,Visible) VALUES" : null;
+            if (!string.IsNullOrEmpty(ActiveMenuIds))
+            {
+                foreach (var item in ActiveMenuIds.Split(","))
+                    insertQuery += $"('{UserCd}',{item},'Y'),";
+                insertQuery = insertQuery.Trim([',']);
+            }
+            string query = $"delete from UserMenu where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
         }
         public int SetActivityLogHead(ActivityLogModel model)
         {

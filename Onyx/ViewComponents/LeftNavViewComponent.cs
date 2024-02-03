@@ -8,16 +8,25 @@ namespace Onyx.ViewComponents
     {
         private readonly AuthService _authService;
         private readonly CommonService _commonService;
+        private readonly UserEmployeeService _userEmployeeService;
         private readonly LoggedInUserModel _loggedInUser;
-        public LeftNavViewComponent(AuthService authService, CommonService commonService)
+        public LeftNavViewComponent(AuthService authService, CommonService commonService, UserEmployeeService userEmployeeService)
         {
             _authService = authService;
             _commonService = commonService;
             _loggedInUser = _authService.GetLoggedInUser();
+            _userEmployeeService = userEmployeeService;
         }
         public IViewComponentResult Invoke()
         {
-            var menuItems = _commonService.GetMenuItems(_loggedInUser.UserCd);
+            var menuItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserCd);
+            if (_loggedInUser.Username != "Administrator")
+            {
+                var visibleMenuItems = menuItems.Where(m => m.Visible == "Y");
+                var parentIds = visibleMenuItems.Select(m => m.Prnt).Distinct();
+                var menuIds = visibleMenuItems.Select(m => m.MenuId).Distinct();
+                menuItems = menuItems.Where(m => menuIds.Contains(m.MenuId) || parentIds.Contains(m.MenuId));
+            }
             return View(menuItems);
         }
     }

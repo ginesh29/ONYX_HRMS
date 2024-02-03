@@ -84,5 +84,43 @@ namespace Onyx.Services
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
+
+        #region User Group
+        public IEnumerable<UserBranchModel> GetUserBranches()
+        {
+            var procedureName = "Branch_GetRow_Result";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", string.Empty);
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<UserBranchModel>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        //public void SaveUserBranch(UserBranchModel model)
+        //{
+        //    var procedureName = "UserBranch_Update";
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("v_UserCd", model.Cd);
+        //    parameters.Add("v_Div", model.Div);
+        //    parameters.Add("v_Des", model.Des);
+        //    parameters.Add("v_EntryBy", model.EntryBy);
+        //    parameters.Add("v_Mode", model.Mode);
+        //    var connectionString = _commonService.GetConnectionString();
+        //    var connection = new SqlConnection(connectionString);
+        //    connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        //}
+        public void DeleteUserBranch(string Cd)
+        {
+            var procedureName = "UserBranch_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Div", Cd);
+            parameters.Add("v_UserCd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
     }
 }
