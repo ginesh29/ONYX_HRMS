@@ -119,7 +119,8 @@ namespace Onyx.Controllers
             model.EntryBy = _loggedInUser.Username;
             _settingService.SaveUser(model);
             _commonService.SaveUserBranch(model.Code, model.UserBranchCd);
-            _commonService.SaveUserMenuPermission(model.Code, model.MenuIds);
+            _commonService.SaveUserMenu(model.Code, model.MenuIds);
+            _commonService.SaveUserPermission(model.Code, model.Permissions);
             var result = new CommonResponse
             {
                 Success = true,

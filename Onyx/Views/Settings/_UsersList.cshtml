@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Users_GetRow_Result>
 <link href="~/plugins/jstree/jstree.bundle.css" rel="stylesheet" />
 <div class="mb-3">
-    <button class="btn btn-info" onclick="showUserModal('')">New User</button>    
+    <button class="btn btn-info" onclick="showUserModal('')">New User</button>
 </div>
 <div class="table-responsive">
     <table class="table table-sm" id="UsersDataTable">
@@ -57,7 +57,9 @@
             $("#UserModal").modal("show");
             $('#tree-view').jstree({
                 "checkbox": {
-                    "keep_selected_style": false
+                    "keep_selected_style": false,
+                    "whole_node": false,
+                    "tie_selection": false
                 },
                 "plugins": ["checkbox"]
             }).on('changed.jstree', function (e, data) {
@@ -102,4 +104,34 @@
             });
         }
     }
+
+    function changePemission(e) {
+        var id = $(e).attr("data-id");
+        var checked = $(`#permission_${id}`).is(":checked");
+        $(`#permission_${id}`).prop("checked", !checked);
+        // var menuIds = [];
+        // $('.permission_checkbox:checked').each(function () {
+        //     var sp = this.value.split("_");
+        //     var isAdd = sp[1] == "Add" ? "Y" : null;
+        //     var isEdit = sp[1] == "Edit" ? "Y" : null;
+        //     var isDelete = sp[1] == "Delete" ? "Y" : null;
+        //     var isView = sp[1] == "View" ? "Y" : null;
+        //     var isPrint = sp[1] == "Print" ? "Y" : null;
+        //     menuIds.push({ id: sp[0], isAdd, isEdit, isDelete, isView, isPrint })
+        // });
+        // var permissions = GetPermissions(menuIds);
+        // console.log(permissions);
+    }
+    // function GetPermissions(menuIds) {
+    //     var permissions = Object.values(menuIds.reduce((acc, curr) => {
+    //         const { id, ...rest } = curr;
+    //         if (!acc[id]) {
+    //             acc[id] = { id, ...rest };
+    //         } else {
+    //             Object.assign(acc[id], rest);
+    //         }
+    //         return acc;
+    //     }, {}));
+    //     return (permissions)
+    // }
 </script>

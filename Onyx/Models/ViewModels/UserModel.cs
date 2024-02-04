@@ -48,5 +48,6 @@ namespace Onyx.Models.ViewModels
         }
         public IEnumerable<GetMenuWithPermissions_Result> Menus { get; set; }
         public string MenuIds { get; set; }
+        public IEnumerable<string> Permissions { get; set; }
     }
 }

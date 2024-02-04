@@ -1,11 +1,14 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Onyx.Data;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
+using System.Security;
 
 namespace Onyx.Services
 {
@@ -48,7 +51,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveUserMenuPermission(string UserCd, string ActiveMenuIds)
+        public void SaveUserMenu(string UserCd, string ActiveMenuIds)
         {
             var connectionString = GetConnectionString();
             string insertQuery = !string.IsNullOrEmpty(ActiveMenuIds) ? "INSERT INTO UserMenu(UserCd,MenuId,Visible) VALUES" : null;
@@ -56,11 +59,53 @@ namespace Onyx.Services
             {
                 foreach (var item in ActiveMenuIds.Split(","))
                     insertQuery += $"('{UserCd}',{item},'Y'),";
-                insertQuery = insertQuery.Trim([',']);
             }
+            insertQuery = insertQuery.Trim([',']);
             string query = $"delete from UserMenu where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
+        }
+        public void SaveUserPermission(string UserCd, IEnumerable<string> PermissionIdsWithActions)
+        {
+            var connectionString = GetConnectionString();
+            string insertQuery = PermissionIdsWithActions != null ? "INSERT INTO UserPermission(UserCd,MenuId,uAdd,uEdit,uDelete,uView,uPrint) VALUES" : null;
+
+            string MenuId = string.Empty;
+            if (PermissionIdsWithActions != null)
+            {
+                var permissions = GetPermissionModels(PermissionIdsWithActions);
+                foreach (var item in permissions)
+                    insertQuery += $"('{UserCd}','{item.Id}',{item.Add},{item.Edit},{item.Delete},{item.View},{item.Print}),";
+            }
+            insertQuery = insertQuery.Trim([',']);
+            string query = $"delete from UserPermission where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
+        }
+        public IEnumerable<PermissionModel> GetPermissionModels(IEnumerable<string> PermissionIdsWithActions)
+        {
+            List<PermissionModel> Permissions = new List<PermissionModel>();
+            foreach (var item in PermissionIdsWithActions)
+            {
+                var sp = item.Split('_');
+                string IsAdd = item.Contains("Add") ? "Y" : null;
+                string IsEdit = item.Contains("Edit") ? "Y" : null;
+                string IsDelete = item.Contains("Delete") ? "Y" : null;
+                string IsView = item.Contains("View") ? "Y" : null;
+                string IsPrint = item.Contains("Print") ? "Y" : null;
+                Permissions.Add(new PermissionModel { Id = sp[0], Add = IsAdd, Edit = IsEdit, Delete = IsDelete, View = IsView, Print = IsPrint });
+            }
+            return Permissions
+            .GroupBy(p => p.Id)
+            .Select(g => new PermissionModel
+            {
+                Id = g.Key,
+                Add = g.Any(p => p.Add == "Y") ? "\'Y\'" : "null",
+                Edit = g.Any(p => p.Edit == "Y") ? "\'Y\'" : "null",
+                Delete = g.Any(p => p.Delete == "Y") ? "\'Y\'" : "null",
+                View = g.Any(p => p.View == "Y") ? "\'Y\'" : "null",
+                Print = g.Any(p => p.Print == "Y") ? "\'Y\'" : "null",
+            }).ToList();
         }
         public void SaveUserBranch(string UserCd, string[] UserBranchIds)
         {
@@ -70,8 +115,8 @@ namespace Onyx.Services
             {
                 foreach (var item in UserBranchIds)
                     insertQuery += $"('{UserCd}','{item}','Y'),";
-                insertQuery = insertQuery.Trim([',']);
             }
+            insertQuery = insertQuery.Trim([',']);
             string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);

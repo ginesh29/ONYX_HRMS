@@ -103,7 +103,9 @@
 .input-validation-error + .input-group-append .input-group-text {
     border-color: #dc3545 !important;
 }
-
+.jstree-default .jstree-anchor{
+    width:500px !important;
+}
 .border-right {
     border-right: solid 1px #ced4da;
 }
