@@ -29,8 +29,8 @@
                         {
                             var subchildren = Model.Where(m => m.Prnt == child.MenuId);
                             <li class="nav-item">
-                                <a href="@child.Frm" class="nav-link" style="padding-left:25px">
-                                    <i class="nav-icon fa fa-minus"></i>
+                                <a href="@child.Frm" class="nav-link" style="padding-left: 1.5rem;">
+                                    <i class="nav-icon fa fa-minus" style="font-size: 0.5rem;"></i>
                                     <p>@child.Caption</p>
                                     @if (subchildren.Count() > 0)
                                     {
@@ -41,8 +41,8 @@
                                     @foreach (var subchild in subchildren)
                                     {
                                         <li class="nav-item">
-                                            <a href="@subchild.Frm" class="nav-link" style="padding-left:35px">
-                                                <i class="nav-icon far fa-circle"></i>
+                                            <a href="@subchild.Frm" class="nav-link" style="padding-left: 2rem;">
+                                                <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
                                                 <p>@subchild.Caption</p>
                                             </a>
                                         </li>

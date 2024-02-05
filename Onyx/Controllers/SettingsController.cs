@@ -21,7 +21,7 @@ namespace Onyx.Controllers
             _settingService = settingService;
             _commonService = commonService;
         }
-        #region User Group
+        #region Branch
         public IActionResult Branches()
         {
             ViewBag.BranchesList = _settingService.GetBranches(_loggedInUser.CompanyCd);
