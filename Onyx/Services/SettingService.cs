@@ -10,12 +10,12 @@ namespace Onyx.Services
     {
         private readonly CommonService _commonService = commonService;
         #region Branch
-        public IEnumerable<Branch_GetRow_Result> GetBranches()
+        public IEnumerable<Branch_GetRow_Result> GetBranches(string CoCd)
         {
             var procedureName = "Branch_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            parameters.Add("v_Cd", string.Empty);
+            parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Branch_GetRow_Result>
@@ -24,21 +24,25 @@ namespace Onyx.Services
         }
         public void SaveBranch(BranchModel model)
         {
-            var procedureName = "Branches_Update";
+            var procedureName = "Branch_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Des", model.Des);
+            parameters.Add("v_CoCd", model.CoCd);
+            parameters.Add("v_BU_Cd", "");
+            parameters.Add("v_SDes", model.SDes);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteBranch(string Cd)
+        public void DeleteBranch(string Cd,string CoCd)
         {
-            var procedureName = "Branches_Delete";
+            var procedureName = "Branch_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
+            parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);

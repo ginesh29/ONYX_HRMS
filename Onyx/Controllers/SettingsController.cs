@@ -22,48 +22,48 @@ namespace Onyx.Controllers
             _commonService = commonService;
         }
         #region User Group
-        //public IActionResult UserGroups()
-        //{
-        //    ViewBag.UserGroupsList = _settingService.GetUserGroups();
-        //    return View();
-        //}
-        //public IActionResult GetUserGroup(string cd)
-        //{
-        //    var userGroup = _settingService.GetUserGroups().FirstOrDefault(m => m.Cd.Trim() == cd);
-        //    var model = new BranchModel();
-        //    if (userGroup != null)
-        //        model = new BranchModel
-        //        {
-        //            Cd = userGroup.Cd,
-        //            Des = userGroup.Des,
-        //            ViewAllEmp = userGroup.ViewAllEmp,
-        //        };
-        //    return PartialView("_UserGroupModal", model);
-        //}
-        //[HttpPost]
-        //public IActionResult SaveUserGroup(BranchModel model)
-        //{
-        //    model.EntryBy = _loggedInUser.Username;
-        //    model.ViewAllEmp = model.IsViewAllEmp ? "Y" : "N";
-        //    _settingService.SaveUserGroup(model);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-        //    };
-        //    return Json(result);
-        //}
-        //[HttpDelete]
-        //public IActionResult DeleteUserGroup(string cd)
-        //{
-        //    _settingService.DeleteUserGroup(cd);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = CommonMessage.DELETED
-        //    };
-        //    return Json(result);
-        //}
+        public IActionResult Branches()
+        {
+            ViewBag.BranchesList = _settingService.GetBranches(_loggedInUser.CompanyCd);
+            return View();
+        }
+        public IActionResult GetBranch(string cd)
+        {
+            var userGroup = _settingService.GetBranches(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
+            var model = new BranchModel();
+            if (userGroup != null)
+                model = new BranchModel
+                {
+                    Cd = userGroup.Cd,
+                    Des = userGroup.Des,
+                    SDes = userGroup.SDes,
+                };
+            return PartialView("_BranchModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveBranch(BranchModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            model.CoCd = _loggedInUser.CompanyCd;
+            _settingService.SaveBranch(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteBranch(string cd)
+        {
+            _settingService.DeleteBranch(cd,_loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region User

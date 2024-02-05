@@ -1,16 +1,16 @@
-﻿@* @model IEnumerable<UserGroups_GetRow>
+﻿@model IEnumerable<Branch_GetRow_Result>
 <link href="~/plugins/jstree/jstree.bundle.css" rel="stylesheet" />
 <div class="mb-3">
-    <button class="btn btn-info" onclick="showUserGroupModal('')">New User Group</button>
+    <button class="btn btn-info" onclick="showBranchModal('')">New Branch</button>
 </div>
 <div class="table-responsive">
-    <table class="table table-sm" id="UserGroupsDataTable">
+    <table class="table table-sm" id="BranchesDataTable">
         <thead class="thead-dark">
             <tr>
                 <th width="5px">No.</th>
                 <th width="50px">Code</th>
-                <th>Description</th>
-                <th width="150px">View All Employees</th>
+                <th>Name</th>
+                <th width="150px">Description</th>
                 <th width="80px"></th>
             </tr>
         </thead>
@@ -20,10 +20,10 @@
                 <td class="text-right">@(item.i + 1).</td>
                 <td>@item.value.Cd</td>
                 <td>@item.value.Des</td>
-                <td>@item.value.ViewAllEmp</td>
+                <td>@item.value.SDes</td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="showUserGroupModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteUserGroup('@item.value.Cd')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-sm btn-info" onclick="showBranchModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('@item.value.Cd')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         }
@@ -37,16 +37,16 @@
         }
     </table>
 </div>
-<div id="UserGroupModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="BranchModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
-    function showUserGroupModal(cd) {
-        var url = `/Settings/GetUserGroup?cd=${cd}`;
-        $('#UserGroupModal').load(url, function () {
+    function showBranchModal(cd) {
+        var url = `/Settings/GetBranch?cd=${cd}`;
+        $('#BranchModal').load(url, function () {
             parseDynamicForm();           
-            $("#UserGroupModal").modal("show");
+            $("#BranchModal").modal("show");
         });
     }
-    function deleteUserGroup(cd) {
+    function deleteBranch(cd) {
         Swal.fire({
             title: "Are you sure?",
             text: "You want to Delete?",
@@ -57,29 +57,29 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteUserGroup?cd=${cd}`, function (response) {
+                deleteAjax(`/settings/DeleteBranch?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
             }
         });
     }
-    function saveUserGroup(btn) {
+    function saveBranch(btn) {
         var frm = $("#user-group-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveUserGroup", frm.serialize(), function (response) {
+            postAjax("/settings/SaveBranch", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
-                    $("#UserGroupModal").modal("hide");
+                    $("#BranchModal").modal("hide");
                     reloadPageAfterSometime();
                 }
                 else {
                     showErrorToastr(response.message);
-                    $("#UserGroupModal").modal("hide");
+                    $("#BranchModal").modal("hide");
                 }
                 unloadingButton(btn);
             });
         }
     }
-</script> *@
+</script>

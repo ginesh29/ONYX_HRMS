@@ -1,17 +1,17 @@
 ﻿@{
-    ViewData["Title"] = "User Groups";
+    ViewData["Title"] = "Branches";
 }
 <div class="row">
     <div class="col-md-6">
         <div class="card card-primary">
             <div class="card-body">
-                <partial name="_UserGroupsList" model="ViewBag.UserGroupsList" />
+                <partial name="_BranchesList" model="ViewBag.BranchesList" />
             </div>
         </div>
     </div>
 </div>
 @section scripts {
     <script>
-        $('#UserGroupsDataTable').DataTable(dataTableDefaultOptions);
+        $('#BranchesDataTable').DataTable(dataTableDefaultOptions);
     </script>
 }
