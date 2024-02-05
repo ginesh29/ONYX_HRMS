@@ -5,7 +5,6 @@
         public string Code { get; set; }
         public string Abbr { get; set; }
         public string LoginId { get; set; }
-        public string UserGrp { get; set; }
         public string UPwd { get; set; }
         public string Username { get; set; }
         public DateTime ExpiryDt { get; set; }

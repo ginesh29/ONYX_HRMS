@@ -59,8 +59,8 @@ namespace Onyx.Services
             {
                 foreach (var item in ActiveMenuIds.Split(","))
                     insertQuery += $"('{UserCd}',{item},'Y'),";
+                insertQuery = insertQuery.Trim([',']);
             }
-            insertQuery = insertQuery.Trim([',']);
             string query = $"delete from UserMenu where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
@@ -76,8 +76,8 @@ namespace Onyx.Services
                 var permissions = GetPermissionModels(PermissionIdsWithActions);
                 foreach (var item in permissions)
                     insertQuery += $"('{UserCd}','{item.Id}',{item.Add},{item.Edit},{item.Delete},{item.View},{item.Print}),";
+                insertQuery = insertQuery.Trim([',']);
             }
-            insertQuery = insertQuery.Trim([',']);
             string query = $"delete from UserPermission where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
@@ -115,8 +115,8 @@ namespace Onyx.Services
             {
                 foreach (var item in UserBranchIds)
                     insertQuery += $"('{UserCd}','{item}','Y'),";
+                insertQuery = insertQuery.Trim([',']);
             }
-            insertQuery = insertQuery.Trim([',']);
             string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);

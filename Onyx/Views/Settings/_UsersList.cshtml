@@ -11,7 +11,6 @@
                 <th width="50px">Code</th>
                 <th width="70px">Login Id</th>
                 <th width="70px">Abbreviation</th>
-                <th>User Group</th>
                 <th>Username</th>
                 <th width="100px">Expiry Date</th>
                 <th width="90px"></th>
@@ -24,7 +23,6 @@
                 <td>@item.value.Code</td>
                 <td>@item.value.LoginId</td>
                 <td>@item.value.Abbr</td>
-                <td>@item.value.UserGrp</td>
                 <td>@item.value.Username</td>
                 <td>@item.value.ExpiryDt.ToString(CommonSetting.DateFormat)</td>
                 <td>
@@ -59,7 +57,7 @@
                 "checkbox": {
                     "keep_selected_style": false,
                     "whole_node": false,
-                    "tie_selection": false
+                    // "tie_selection": false
                 },
                 "plugins": ["checkbox"]
             }).on('changed.jstree', function (e, data) {
@@ -105,33 +103,9 @@
         }
     }
 
-    function changePemission(e) {
+    function changePermission(e) {
         var id = $(e).attr("data-id");
         var checked = $(`#permission_${id}`).is(":checked");
         $(`#permission_${id}`).prop("checked", !checked);
-        // var menuIds = [];
-        // $('.permission_checkbox:checked').each(function () {
-        //     var sp = this.value.split("_");
-        //     var isAdd = sp[1] == "Add" ? "Y" : null;
-        //     var isEdit = sp[1] == "Edit" ? "Y" : null;
-        //     var isDelete = sp[1] == "Delete" ? "Y" : null;
-        //     var isView = sp[1] == "View" ? "Y" : null;
-        //     var isPrint = sp[1] == "Print" ? "Y" : null;
-        //     menuIds.push({ id: sp[0], isAdd, isEdit, isDelete, isView, isPrint })
-        // });
-        // var permissions = GetPermissions(menuIds);
-        // console.log(permissions);
     }
-    // function GetPermissions(menuIds) {
-    //     var permissions = Object.values(menuIds.reduce((acc, curr) => {
-    //         const { id, ...rest } = curr;
-    //         if (!acc[id]) {
-    //             acc[id] = { id, ...rest };
-    //         } else {
-    //             Object.assign(acc[id], rest);
-    //         }
-    //         return acc;
-    //     }, {}));
-    //     return (permissions)
-    // }
 </script>

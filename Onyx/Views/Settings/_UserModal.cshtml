@@ -66,23 +66,14 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="UserGroupCd"></label>
-                            <select asp-for="UserGroupCd" class="select-picker" asp-items="@ViewBag.UserGroupItems" data-live-search="true" data-width="100%">
-                                <option value="">@CommonSetting.DEFAULTSELECT</option>
-                            </select>
-                            <span asp-validation-for="UserGroupCd" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label asp-for="UserBranchCd"></label>
                             <select asp-for="UserBranchCd" class="select-picker" asp-items="@ViewBag.UserBranchItems" multiple data-selected-text-format="count > 1" data-live-search="true" data-actions-box="true" data-width="100%">
                             </select>
                             <span asp-validation-for="UserBranchCd" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ExpiryDt"></label>
@@ -106,7 +97,7 @@
                                         @foreach (var action in actionTypes)
                                         {
                                             var a = action == "Add" ? item.uAdd : action == "Edit" ? item.uEdit : action == "Delete" ? item.uDelete : action == "View" ? item.uView : item.uPrint;
-                                            <div class="custom-control custom-checkbox ml-2" onclick="changePemission(this)" data-id="checkbox_@(action)_@item.MenuId">
+                                            <div class="custom-control custom-checkbox ml-2" onclick="changePermission(this)" data-id="checkbox_@(action)_@item.MenuId">
                                                 <input class="custom-control-input custom-control-input-secondary custom-control-input-outline permission_checkbox" type="checkbox" id="permission_checkbox_@(action)_@item.MenuId" checked="@(a=="Y")" value="@(item.MenuId)_@(action)" name="Permissions">
                                                 <label for="permission_checkbox_@(action)_@item.MenuId" class="custom-control-label">@action</label>
                                             </div>

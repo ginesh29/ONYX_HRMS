@@ -33,9 +33,6 @@ namespace Onyx.Models.ViewModels
         public DateTime? EditDt { get; set; }
         public string UserGrpCd { get; set; }
         public string ViewAllEmp { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
-        [Display(Name = "User Group")]
-        public string UserGroupCd { get; set; }
         [Display(Name = "User Branch")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string[] UserBranchCd { get; set; }

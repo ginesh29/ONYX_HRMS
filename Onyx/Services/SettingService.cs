@@ -9,24 +9,24 @@ namespace Onyx.Services
     public class SettingService(CommonService commonService)
     {
         private readonly CommonService _commonService = commonService;
-        #region User Group
-        public IEnumerable<UserGroups_GetRow> GetUserGroups()
+        #region Branch
+        public IEnumerable<Branch_GetRow_Result> GetBranches()
         {
-            var procedureName = "UserGroups_GetRow";
+            var procedureName = "Branch_GetRow";
             var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_Cd", string.Empty);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            var data = connection.Query<UserGroups_GetRow>
+            var data = connection.Query<Branch_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveUserGroup(UserGroupModel model)
+        public void SaveBranch(BranchModel model)
         {
-            var procedureName = "UserGroups_Update";
+            var procedureName = "Branches_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
-            parameters.Add("v_ViewAllEmp", model.ViewAllEmp);
             parameters.Add("v_Des", model.Des);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
@@ -34,9 +34,9 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteUserGroup(string Cd)
+        public void DeleteBranch(string Cd)
         {
-            var procedureName = "UserGroups_Delete";
+            var procedureName = "Branches_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
@@ -65,7 +65,7 @@ namespace Onyx.Services
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_LoginId", model.LoginId);
             parameters.Add("v_Abbr", model.Abbr);
-            parameters.Add("v_Grp", model.UserGroupCd);
+            //parameters.Add("v_Grp", model.BranchCd);
             parameters.Add("v_UPWD", model.UPwd.Encrypt());
             parameters.Add("v_UName", model.Username);
             parameters.Add("v_ExpiryDt", Convert.ToDateTime(model.ExpiryDt).ToString("d"));
