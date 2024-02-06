@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Currencies";
+}
+<div class="row">
+    <div class="col-md-9">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_CurrenciesList" model="ViewBag.CurrenciesList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#CurrenciesDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}

@@ -171,10 +171,10 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_SDes", model.ShortDesc);
-            parameters.Add("v_Des", model.Description);            
-            parameters.Add("@v_Nat", model.Nationality);
-            parameters.Add("@v_Region", model.Region);
-            parameters.Add("@v_Provisions", model.Provisions);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_Nat", model.Nationality);
+            parameters.Add("v_Region", model.Region);
+            parameters.Add("v_Provisions", model.Provisions);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
@@ -184,6 +184,49 @@ namespace Onyx.Services
         public void DeleteCountry(string Cd)
         {
             var procedureName = "Country_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+
+        #region Currency
+        public IEnumerable<Currency_GetRow_Result> GetCurrencies(string CoCd)
+        {
+            var procedureName = "Currency_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Currency_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveCurrency(CurrencyModel model,string CoCd)
+        {
+            var procedureName = "Currency_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_MainCurr", model.MainCurr);
+            parameters.Add("v_SubCurr", model.SubCurr);
+            parameters.Add("v_NoDecs", model.NoDecs);
+            parameters.Add("v_Rate", model.Rate);
+            parameters.Add("v_Symbol", model.Symbol);
+            parameters.Add("v_Abbr", model.Abbriviation);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void DeleteCurrency(string Cd)
+        {
+            var procedureName = "Currency_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();

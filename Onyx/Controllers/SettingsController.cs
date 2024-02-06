@@ -83,10 +83,10 @@ namespace Onyx.Controllers
                 {
                     tree.Add(item);
                 }
-                else if (itemDictionary.ContainsKey(item.Prnt))
+                else if (itemDictionary.TryGetValue(item.Prnt, out GetMenuWithPermissions_Result value))
                 {
-                    var parent = itemDictionary[item.Prnt];
-                    parent.Children ??= new List<GetMenuWithPermissions_Result>();
+                    var parent = value;
+                    parent.Children ??= [];
                     parent.Children.Add(item);
                 }
             }
@@ -200,7 +200,7 @@ namespace Onyx.Controllers
                 model = new CountryModel
                 {
                     Code = country.Code,
-                    Nationality=country.Nationality,
+                    Nationality = country.Nationality,
                     Provisions = country.Provisions,
                     ShortDesc = country.ShortDesc,
                     Region = country.Region,
@@ -224,6 +224,55 @@ namespace Onyx.Controllers
         public IActionResult DeleteCountry(string cd)
         {
             _settingService.DeleteCountry(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Currency
+        public IActionResult Currencies()
+        {
+            ViewBag.CurrenciesList = _settingService.GetCurrencies(_loggedInUser.CompanyCd);
+            return View();
+        }
+        public IActionResult GetCurrency(string cd)
+        {
+            var currency = _settingService.GetCurrencies(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Code.Trim() == cd);
+            var model = new CurrencyModel();
+            if (currency != null)
+                model = new CurrencyModel
+                {
+                    Code = currency.Code,
+                    Abbriviation = currency.Abbr,
+                    NoDecs = currency.NoDecs,
+                    MainCurr = currency.MainCurr,
+                    Rate = currency.Rate,
+                    SubCurr = currency.SubCurr,
+                    Symbol = currency.Symbol,
+                    Description = currency.Des,
+                };
+            return PartialView("_CurrencyModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveCurrency(CurrencyModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            _settingService.SaveCurrency(model, _loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteCurrency(string cd)
+        {
+            _settingService.DeleteCurrency(cd);
             var result = new CommonResponse
             {
                 Success = true,
