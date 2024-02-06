@@ -110,7 +110,7 @@ function setActiveMenu() {
     el2.find(".nav-link").eq(0).addClass('active');
     el2.addClass('menu-open');
 
-    el2.find(".nav-link").eq(0).parent('li').parent('ul').parent().find(".nav-link").eq(0).addClass('active');
+    el2.find(".nav-link").eq(0).parent('li').parent('ul').parent().find(".nav-link:not(.home-link)").eq(0).addClass('active');
     el.parent('li').parent('ul').parent('li').parent('ul').parent().addClass('menu-open');
 }
 function formatDate(date) {
@@ -177,5 +177,6 @@ function setBrowserInfo() {
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
+        window.location.reload();
     });
 })

@@ -17,6 +17,7 @@
             <img src="~/images/logo.png" class="login__logo" />
             <div class="screen__content">
                 <form class="login" method="post" id="login-frm">
+                    <input type="hidden" id="returnUrl" value="@Context.Request.Query["returnUrl"]" />
                     <input type="hidden" asp-for="Browser" />
                     <div class="login__field">
                         <i class="login__icon fas fa-user"></i>
@@ -82,7 +83,8 @@
         if (frm.valid()) {
             loadingButton(btn);
             setTimeout(function () {
-                postAjax("/account/login?returnUrl=", frm.serialize(), function (response) {
+                var returnUrl = $("#returnUrl").val();
+                postAjax(`/account/login?returnUrl=${returnUrl}`, frm.serialize(), function (response) {
                     if (response.success) {
                         bindCompanyDropdown();
                         if (response.redirectUrl)

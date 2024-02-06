@@ -41,7 +41,7 @@ namespace Onyx.Controllers
                 {
                     Success = true,
                     Message = "Login Successfully",
-                    RedirectUrl = "/"
+                    RedirectUrl = returnUrl
                 };
                 return Json(result);
             }
