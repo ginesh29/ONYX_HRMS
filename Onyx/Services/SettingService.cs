@@ -149,5 +149,47 @@ namespace Onyx.Services
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
+
+        #region Code
+        #endregion
+
+        #region Country
+        public IEnumerable<Country_GetRow_Result> GetCountries()
+        {
+            var procedureName = "Country_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Country_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveCountry(CountryModel model)
+        {
+            var procedureName = "Country_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_SDes", model.ShortDesc);
+            parameters.Add("v_Des", model.Description);            
+            parameters.Add("@v_Nat", model.Nationality);
+            parameters.Add("@v_Region", model.Region);
+            parameters.Add("@v_Provisions", model.Provisions);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void DeleteCountry(string Cd)
+        {
+            var procedureName = "Country_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
     }
 }

@@ -138,6 +138,7 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
         #region Department
         public IActionResult Departments()
         {
@@ -173,6 +174,56 @@ namespace Onyx.Controllers
         public IActionResult DeleteDepartment(string cd)
         {
             _settingService.DeleteDepartment(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Code
+        #endregion
+
+        #region Country
+        public IActionResult Countries()
+        {
+            ViewBag.CountriesList = _settingService.GetCountries();
+            return View();
+        }
+        public IActionResult GetCountry(string cd)
+        {
+            var country = _settingService.GetCountries().FirstOrDefault(m => m.Code.Trim() == cd);
+            var model = new CountryModel();
+            if (country != null)
+                model = new CountryModel
+                {
+                    Code = country.Code,
+                    Nationality=country.Nationality,
+                    Provisions = country.Provisions,
+                    ShortDesc = country.ShortDesc,
+                    Region = country.Region,
+                    Description = country.Description,
+                };
+            return PartialView("_CountryModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveCountry(CountryModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            _settingService.SaveCountry(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteCountry(string cd)
+        {
+            _settingService.DeleteCountry(cd);
             var result = new CommonResponse
             {
                 Success = true,

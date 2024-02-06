@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Countries";
+}
+<div class="row">
+    <div class="col-md-9">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_CountriesList" model="ViewBag.CountriesList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#CountriesDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}
