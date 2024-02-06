@@ -26,18 +26,18 @@ namespace Onyx.Services
         {
             var procedureName = "Branch_Update";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", model.Cd);
-            parameters.Add("v_Des", model.Des);
+            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_Des", model.Name);
             parameters.Add("v_CoCd", model.CoCd);
             parameters.Add("v_BU_Cd", "");
-            parameters.Add("v_SDes", model.SDes);
+            parameters.Add("v_SDes", model.Description);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteBranch(string Cd,string CoCd)
+        public void DeleteBranch(string Cd, string CoCd)
         {
             var procedureName = "Branch_Delete";
             var parameters = new DynamicParameters();
@@ -89,7 +89,7 @@ namespace Onyx.Services
         }
         #endregion
 
-        #region User Group
+        #region User Branch
         public IEnumerable<UserBranchModel> GetUserBranches()
         {
             var procedureName = "Branch_GetRow_Result";
@@ -102,25 +102,48 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        //public void SaveUserBranch(UserBranchModel model)
-        //{
-        //    var procedureName = "UserBranch_Update";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_UserCd", model.Cd);
-        //    parameters.Add("v_Div", model.Div);
-        //    parameters.Add("v_Des", model.Des);
-        //    parameters.Add("v_EntryBy", model.EntryBy);
-        //    parameters.Add("v_Mode", model.Mode);
-        //    var connectionString = _commonService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //}
         public void DeleteUserBranch(string Cd)
         {
             var procedureName = "UserBranch_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Div", Cd);
             parameters.Add("v_UserCd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+
+        #region Department
+        public IEnumerable<Dept_GetRow_Result> GetDepartments()
+        {
+            var procedureName = "Dept_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Dept_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveDepartment(DepartmentModel model)
+        {
+            var procedureName = "Dept_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_SDes", model.Name);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void DeleteDepartment(string Cd)
+        {
+            var procedureName = "Dept_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);

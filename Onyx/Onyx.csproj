@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Models\ViewModels\DepartmentModel.cs~RF241b1e4.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.28" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<UpToDateCheckBuilt Include="wwwroot/css/site.css" Set="Css" />

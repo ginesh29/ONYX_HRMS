@@ -37,17 +37,20 @@
                                         <i class="right fas fa-angle-left"></i>
                                     }
                                 </a>
-                                <ul class="nav nav-treeview">
-                                    @foreach (var subchild in subchildren)
-                                    {
-                                        <li class="nav-item">
-                                            <a href="@subchild.Frm" class="nav-link" style="padding-left: 2rem;">
-                                                <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
-                                                <p>@subchild.Caption</p>
-                                            </a>
-                                        </li>
-                                    }
-                                </ul>
+                                @if (subchildren.Count() > 0)
+                                {
+                                    <ul class="nav nav-treeview">
+                                        @foreach (var subchild in subchildren)
+                                        {
+                                            <li class="nav-item">
+                                                <a href="@subchild.Frm" class="nav-link" style="padding-left: 2rem;">
+                                                    <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
+                                                    <p>@subchild.Caption</p>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
                             </li>
                         }
                     </ul>

@@ -34,9 +34,9 @@ namespace Onyx.Controllers
             if (userGroup != null)
                 model = new BranchModel
                 {
-                    Cd = userGroup.Cd,
-                    Des = userGroup.Des,
-                    SDes = userGroup.SDes,
+                    Code = userGroup.Cd,
+                    Name = userGroup.Des,
+                    Description = userGroup.SDes,
                 };
             return PartialView("_BranchModal", model);
         }
@@ -56,7 +56,7 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteBranch(string cd)
         {
-            _settingService.DeleteBranch(cd,_loggedInUser.CompanyCd);
+            _settingService.DeleteBranch(cd, _loggedInUser.CompanyCd);
             var result = new CommonResponse
             {
                 Success = true,
@@ -130,6 +130,49 @@ namespace Onyx.Controllers
         public IActionResult DeleteUser(string cd)
         {
             _settingService.DeleteUser(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+        #region Department
+        public IActionResult Departments()
+        {
+            ViewBag.DepartmentsList = _settingService.GetDepartments();
+            return View();
+        }
+        public IActionResult GetDepartment(string cd)
+        {
+            var department = _settingService.GetDepartments().FirstOrDefault(m => m.Code.Trim() == cd);
+            var model = new DepartmentModel();
+            if (department != null)
+                model = new DepartmentModel
+                {
+                    Code = department.Code,
+                    Name = department.Department,
+                    Description = department.Description,
+                };
+            return PartialView("_DepartmentModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveDepartment(DepartmentModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            _settingService.SaveDepartment(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDepartment(string cd)
+        {
+            _settingService.DeleteDepartment(cd);
             var result = new CommonResponse
             {
                 Success = true,

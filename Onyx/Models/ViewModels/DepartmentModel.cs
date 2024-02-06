@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.ViewModels
+namespace Onyx.Models.StoredProcedure
 {
-    public class BranchModel
+    public class DepartmentModel
     {
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Code { get; set; }
@@ -14,9 +14,6 @@ namespace Onyx.Models.ViewModels
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDt { get; set; }
-        public string BU_Cd { get; set; }
-        public string BU_SDes { get; set; }
-        public string CoCd { get; set; }
         public string Mode
         {
             get

@@ -1,15 +1,15 @@
-﻿@model IEnumerable<Branch_GetRow_Result>
+﻿@model IEnumerable<Dept_GetRow_Result>
 <div class="mb-3">
-    <button class="btn btn-info" onclick="showBranchModal('')">New Branch</button>
+    <button class="btn btn-info" onclick="showDepartmentModal('')">New Department</button>
 </div>
 <div class="table-responsive">
-    <table class="table table-sm" id="BranchesDataTable">
+    <table class="table table-sm" id="DepartmentsDataTable">
         <thead class="thead-dark">
             <tr>
                 <th width="5px">No.</th>
                 <th width="50px">Code</th>
                 <th>Name</th>
-                <th width="150px">Description</th>
+                <th>Description</th>
                 <th width="90px"></th>
             </tr>
         </thead>
@@ -17,12 +17,12 @@
         {
             <tr>
                 <td class="text-right">@(item.i + 1).</td>
-                <td>@item.value.Cd</td>
-                <td>@item.value.Des</td>
-                <td>@item.value.SDes</td>
+                <td>@item.value.Code</td>
+                <td>@item.value.Department</td>
+                <td>@item.value.Description</td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="showBranchModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('@item.value.Cd')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-sm btn-info" onclick="showDepartmentModal('@item.value.Code')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteDepartment('@item.value.Code')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         }
@@ -36,16 +36,16 @@
         }
     </table>
 </div>
-<div id="BranchModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="DepartmentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
-    function showBranchModal(cd) {
-        var url = `/Settings/GetBranch?cd=${cd}`;
-        $('#BranchModal').load(url, function () {
+    function showDepartmentModal(cd) {
+        var url = `/Settings/GetDepartment?cd=${cd}`;
+        $('#DepartmentModal').load(url, function () {
             parseDynamicForm();           
-            $("#BranchModal").modal("show");
+            $("#DepartmentModal").modal("show");
         });
     }
-    function deleteBranch(cd) {
+    function deleteDepartment(cd) {
         Swal.fire({
             title: "Are you sure?",
             text: "You want to Delete?",
@@ -56,26 +56,26 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteBranch?cd=${cd}`, function (response) {
+                deleteAjax(`/settings/DeleteDepartment?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
             }
         });
     }
-    function saveBranch(btn) {
-        var frm = $("#user-group-frm");
+    function saveDepartment(btn) {
+        var frm = $("#dept-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveBranch", frm.serialize(), function (response) {
+            postAjax("/settings/SaveDepartment", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
-                    $("#BranchModal").modal("hide");
+                    $("#DepartmentModal").modal("hide");
                     reloadPageAfterSometime();
                 }
                 else {
                     showErrorToastr(response.message);
-                    $("#BranchModal").modal("hide");
+                    $("#DepartmentModal").modal("hide");
                 }
                 unloadingButton(btn);
             });
