@@ -1,0 +1,61 @@
+﻿@model CodeModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Code) ? "Edit" : "Add") <span id="type-modal-title"></span></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="code-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
+                            <label asp-for="Code"></label>
+                            <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group disabled-container">
+                            <label asp-for="Type"></label>
+                            <select asp-for="Type" class="form-control disabled" asp-items="@ViewBag.CodeGroupsItems">
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ShortDes"></label>
+                            <input asp-for="ShortDes" class="form-control" />
+                            <span asp-validation-for="ShortDes" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Description"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Abbriviation"></label>
+                            <input asp-for="Abbriviation" class="form-control" />
+                            <span asp-validation-for="Abbriviation" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveCode(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

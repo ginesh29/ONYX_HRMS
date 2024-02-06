@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Codes_GetRow_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="CodesDataTable">
+        <thead class="thead-dark">
+            <tr>
+                <th width="5px">No.</th>
+                <th width="50px">Code</th>
+                <th width="50px">Type</th>
+                <th width="50px">Abbriviation</th>
+                <th width="200px">Short Des.</th>
+                <th>Description</th>
+                <th width="90px"></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Select((value, i) => new { i, value }))
+        {
+            <tr>
+                <td class="text-right">@(item.i + 1).</td>
+                <td>@item.value.Cd</td>
+                <td>@item.value.Typ</td>
+                <td>@item.value.Abbr</td>
+                <td>@item.value.SDes</td>
+                <td>@item.value.Des</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="showCodeModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteCode('@item.value.Cd')"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div id="CodeModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<script>
+    function showCodeModal(cd) {
+        var url = `/Settings/GetCode?cd=${cd}`;
+        $('#CodeModal').html("");
+        $('#CodeModal').load(url, function () {
+            parseDynamicForm();
+            var typeVal = $("#code-type option:selected").val();
+            var typeText = $("#code-type option:selected").text();
+            $("#Type").val(typeVal);
+            $("#type-modal-title").text(typeText);
+            $("#CodeModal").modal("show");
+        });
+    }
+    function deleteCode(cd) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to Delete?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteAjax(`/settings/DeleteCode?cd=${cd}`, function (response) {
+                    showSuccessToastr(response.message);
+                    reloadPageAfterSometime();
+                });
+            }
+        });
+    }
+    function saveCode(btn) {
+        var frm = $("#code-frm");
+        if (frm.valid()) {
+            loadingButton(btn);
+            postAjax("/settings/SaveCode", frm.serialize(), function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $("#CodeModal").modal("hide");
+                    reloadPageAfterSometime();
+                }
+                else {
+                    showErrorToastr(response.message);
+                    $("#CodeModal").modal("hide");
+                }
+                unloadingButton(btn);
+            });
+        }
+    }
+</script>

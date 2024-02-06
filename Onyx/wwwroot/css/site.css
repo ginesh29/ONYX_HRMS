@@ -9,9 +9,13 @@
 .sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before {
     margin-left: -265px;
 }
-
 body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
     margin-left: 265px;
+}
+@media (max-width: 991.98px) {
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
+        margin-left: 0;
+    }
 }
 
 .sidebar-collapse .os-host-overflow-x .nav.nav-treeview,
@@ -26,14 +30,16 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 .brand-link {
     padding: 0;
 }
+
 .sidebar-collapse .brand-link {
     padding: 11px 0;
 }
-    .brand-link .brand-image {
-        margin-left: 0 !important;
-        max-height: 59px;
-        float: none;
-    }
+
+.brand-link .brand-image {
+    margin-left: 0 !important;
+    max-height: 59px;
+    float: none;
+}
 
 .sidebar-collapse .brand-link .brand-image {
     height: 37px;

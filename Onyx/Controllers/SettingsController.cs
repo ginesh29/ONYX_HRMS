@@ -184,6 +184,55 @@ namespace Onyx.Controllers
         #endregion
 
         #region Code
+        public IActionResult Codes()
+        {
+            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
+            return View();
+        }
+        public IActionResult FetchCodesByType(string type)
+        {
+            var codes = _settingService.GetCodes().Where(m => m.Typ.Trim() == type);
+            return PartialView("_CodesList", codes);
+        }
+        public IActionResult GetCode(string cd)
+        {
+            var code = _settingService.GetCodes().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var model = new CodeModel();
+            if (code != null)
+                model = new CodeModel
+                {
+                    Code = code.Cd,
+                    Abbriviation = code.Abbr,
+                    Description = code.Des,
+                    ShortDes = code.SDes,
+                    Type = code.Typ,
+                };
+            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
+            return PartialView("_CodeModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveCode(CodeModel model)
+        {
+            model.EntryBy = _loggedInUser.Username;
+            _settingService.SaveCode(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteCode(string cd)
+        {
+            _settingService.DeleteCode(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region Country

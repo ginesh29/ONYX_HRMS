@@ -151,6 +151,52 @@ namespace Onyx.Services
         #endregion
 
         #region Code
+        public IEnumerable<CodeGroups_GetRow_Result> GetCodeGroups(string CoCd)
+        {
+            var procedureName = "CodeGroups_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CodeGroups_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<Codes_GetRow_Result> GetCodes()
+        {
+            var procedureName = "Codes_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Codes_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveCode(CodeModel model)
+        {
+            var procedureName = "Codes_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Code);
+            parameters.Add("@v_Typ", model.Type);
+            parameters.Add("@v_Abbr", model.Abbriviation);
+            parameters.Add("@v_SDes", model.ShortDes);
+            parameters.Add("@v_Des", model.Description);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void DeleteCode(string Cd)
+        {
+            var procedureName = "Codes_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Country
@@ -205,7 +251,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveCurrency(CurrencyModel model,string CoCd)
+        public void SaveCurrency(CurrencyModel model, string CoCd)
         {
             var procedureName = "Currency_Update";
             var parameters = new DynamicParameters();

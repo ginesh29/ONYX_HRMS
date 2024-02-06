@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Codes";
+}
+<div class="row">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <div style="float:right">
+                    <label>Type</label>
+                    <select class="select-picker" asp-items="@ViewBag.CodeGroupsItems" data-live-search="true" id="code-type" onchange="setType()">
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <button class="btn btn-info" onclick="showCodeModal('')">New <span id="code-type-text"></span></button>
+                </div>
+                <div id="CodesList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function setType() {
+            $('#CodeModal').html("");
+            var typeText = $("#code-type option:selected").text();
+            var typeVal = $("#code-type option:selected").val();
+            $("#code-type-text").text(typeText);
+            $('#CodesList').load(`/settings/FetchCodesByType?type=${typeVal}`, function () {
+                $('#CodesDataTable').DataTable(dataTableDefaultOptions);
+            });
+        }
+        setType();
+    </script>
+}
