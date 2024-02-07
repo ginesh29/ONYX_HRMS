@@ -87,30 +87,26 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        #endregion
+        public IEnumerable<GetMenuWithPermissions_Result> ConvertPermissionToTree(IEnumerable<GetMenuWithPermissions_Result> flatList)
+        {
+            var itemDictionary = flatList.ToDictionary(item => item.MenuId);
+            var tree = new List<GetMenuWithPermissions_Result>();
 
-        #region User Branch
-        public IEnumerable<UserBranchModel> GetUserBranches()
-        {
-            var procedureName = "Branch_GetRow_Result";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_CoCd", string.Empty);
-            parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<UserBranchModel>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-        public void DeleteUserBranch(string Cd)
-        {
-            var procedureName = "UserBranch_Delete";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Div", Cd);
-            parameters.Add("v_UserCd", Cd);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            foreach (var item in flatList)
+            {
+                if (item.Prnt == 0)
+                {
+                    tree.Add(item);
+                }
+                else if (itemDictionary.TryGetValue(item.Prnt, out GetMenuWithPermissions_Result value))
+                {
+                    var parent = value;
+                    parent.Children ??= [];
+                    parent.Children.Add(item);
+                }
+            }
+
+            return tree;
         }
         #endregion
 

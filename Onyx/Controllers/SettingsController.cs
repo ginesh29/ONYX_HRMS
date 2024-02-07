@@ -71,28 +71,7 @@ namespace Onyx.Controllers
         {
             ViewBag.UsersList = _settingService.GetUsers();
             return View();
-        }
-        public IEnumerable<GetMenuWithPermissions_Result> ConvertToTree(IEnumerable<GetMenuWithPermissions_Result> flatList)
-        {
-            var itemDictionary = flatList.ToDictionary(item => item.MenuId);
-            var tree = new List<GetMenuWithPermissions_Result>();
-
-            foreach (var item in flatList)
-            {
-                if (item.Prnt == 0)
-                {
-                    tree.Add(item);
-                }
-                else if (itemDictionary.TryGetValue(item.Prnt, out GetMenuWithPermissions_Result value))
-                {
-                    var parent = value;
-                    parent.Children ??= [];
-                    parent.Children.Add(item);
-                }
-            }
-
-            return tree;
-        }
+        }        
         public IActionResult GetUser(string cd)
         {
             var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
@@ -107,7 +86,7 @@ namespace Onyx.Controllers
                     Username = user.Username,
                     ExpiryDt = user.ExpiryDt,
                 };
-            model.Menus = ConvertToTree(_commonService.GetMenuWithPermissions(cd));
+            model.Menus = _settingService.ConvertPermissionToTree(_commonService.GetMenuWithPermissions(cd));
             ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Branch, Selected = m.UserDes != null });
             return PartialView("_UserModal", model);
         }

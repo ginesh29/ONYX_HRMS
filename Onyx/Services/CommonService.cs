@@ -12,13 +12,10 @@ using System.Security;
 
 namespace Onyx.Services
 {
-    public class CommonService
+    public class CommonService(AppDbContext context)
     {
-        private readonly AppDbContext _context;
-        public CommonService(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
+
         public string GetConnectionString()
         {
             var procedureName = "CompanyDatabases_Getrow";
