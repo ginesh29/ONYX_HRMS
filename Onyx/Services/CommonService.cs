@@ -167,11 +167,23 @@ namespace Onyx.Services
         }
         public IEnumerable<GetSysCodes_Result> GetSysCodes(string type)
         {
-            var query = $"Select Cd, Sdes from Syscodes Where Typ = '{type}'";
+            var procedureName = "SysCodes1_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", type);
+            parameters.Add("v_ExceptCd", string.Empty);
             var connectionString = GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<GetSysCodes_Result>
-                (query);
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<GetSysCodes_Result> GetPayElements()
+        {
+            var procedureName = "CompanyEarnDed_OT_GetRow";
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetSysCodes_Result>
+                (procedureName, commandType: CommandType.StoredProcedure);
             return data;
         }
         public IEnumerable<SelectListItem> GetComponentTypes()

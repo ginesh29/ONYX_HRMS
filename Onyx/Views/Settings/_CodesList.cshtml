@@ -9,6 +9,7 @@
                 <th width="50px">Abbriviation</th>
                 <th width="200px">Short Des.</th>
                 <th>Description</th>
+                <th>Active</th>
                 <th width="90px"></th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
                 <td>@item.value.Abbr</td>
                 <td>@item.value.SDes</td>
                 <td>@item.value.Des</td>
+                <td>@(item.value.Active ? "Yes" : "No")</td>
                 <td>
                     <button class="btn btn-sm btn-info" onclick="showCodeModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
                     <button class="btn btn-sm btn-danger ml-2" onclick="deleteCode('@item.value.Cd')"><i class="fa fa-trash"></i></button>

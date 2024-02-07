@@ -14,5 +14,6 @@
         public string Editby { get; set; }
         public DateTime? EditDt { get; set; }
         public string Cd { get; set; }
+        public bool Active { get;set; }
     }
 }

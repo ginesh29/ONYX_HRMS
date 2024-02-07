@@ -9,7 +9,7 @@ namespace Onyx.Services
     public class OrganisationService(CommonService commonService)
     {
         private readonly CommonService _commonService = commonService;
-        #region EarnDeduction
+        #region Component
         public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents()
         {
             var procedureName = "CompanyEarnDed_GetRow";
@@ -80,7 +80,7 @@ namespace Onyx.Services
             parameters.Add("v_Sdes", model.SDes);
             parameters.Add("v_Des", model.Description);
             parameters.Add("v_Abbr", model.Abbriviation);
-            parameters.Add("v_Percval",model.IntPerc);
+            parameters.Add("v_Percval", model.IntPerc);
             parameters.Add("v_ChgTyp", model.ChgsTypCd);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
@@ -112,27 +112,28 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveWorkingHour(BranchModel model)
+        public void SaveWorkingHour(WorkingHourModel model, string CoCd)
         {
-            var procedureName = "CompanyEarnDed_Update";
+            var procedureName = "CompanyWHrs_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
-            parameters.Add("v_Des", model.Name);
-            parameters.Add("v_CoCd", model.CoCd);
-            parameters.Add("v_BU_Cd", "");
-            parameters.Add("v_SDes", model.Description);
+            parameters.Add("v_Narr", model.Description);
+            parameters.Add("v_FromDt", model.FromDt);
+            parameters.Add("v_ToDt", model.ToDt);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_DutyHrs", model.DutyHrs);
+            parameters.Add("v_RelgTyp", model.RelgTypCd);
+            parameters.Add("v_HolTyp", model.HolTypCd);
             parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteWorkingHour(string Cd, string CoCd)
+        public void DeleteWorkingHour(string Cd)
         {
-            var procedureName = "CompanyEarnDed_Delete";
+            var procedureName = "CompanyWHrs_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -152,30 +153,46 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveOvertimeRate(BranchModel model)
+        public void SaveOvertimeRate(OvertimeRateModel model, string CoCd)
         {
-            var procedureName = "CompanyEarnDed_Update";
+            var procedureName = "CompanyOvertimeRates_Update";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", model.Code);
-            parameters.Add("v_Des", model.Name);
-            parameters.Add("v_CoCd", model.CoCd);
-            parameters.Add("v_BU_Cd", "");
-            parameters.Add("v_SDes", model.Description);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Typ", model.TypCd);
+            parameters.Add("v_HolTyp", model.HolTypCd);
+            parameters.Add("v_PayCd", model.PayCode);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_Rate", model.Rate);
+            parameters.Add("v_HrsApply", model.HrsApply);
+            parameters.Add("v_Sdes", model.Sdes);
+            parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteOvertimeRate(string Cd, string CoCd)
+        public void DeleteOvertimeRate(string Cd, string type, string CoCd)
         {
-            var procedureName = "CompanyEarnDed_Delete";
+            var procedureName = "CompanyOvertimeRates_Delete";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", Cd);
+            parameters.Add("v_SrNo", Cd);
+            parameters.Add("v_Typ", type);
             parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public int GetOvertimeRate_SrNo(string CoCd, string type)
+        {
+            var procedureName = "CompanyOTRatesSrNo1_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Typ", type);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
         #endregion
     }

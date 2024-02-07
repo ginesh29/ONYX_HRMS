@@ -174,10 +174,11 @@ namespace Onyx.Services
             var procedureName = "Codes_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
-            parameters.Add("@v_Typ", model.Type);
-            parameters.Add("@v_Abbr", model.Abbriviation);
-            parameters.Add("@v_SDes", model.ShortDes);
-            parameters.Add("@v_Des", model.Description);
+            parameters.Add("v_Typ", model.Type);
+            parameters.Add("v_Abbr", model.Abbriviation);
+            parameters.Add("v_SDes", model.ShortDes);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();

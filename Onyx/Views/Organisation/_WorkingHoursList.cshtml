@@ -37,9 +37,18 @@
 <div id="WorkingHourModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
     function showWorkingHourModal(cd) {
-        var url = `/Settings/GetWorkingHour?cd=${cd}`;
+        var url = `/Organisation/GetWorkingHour?cd=${cd}`;
         $('#WorkingHourModal').load(url, function () {
             parseDynamicForm();
+            $('.decimal-input').attr("placeholder", "0.00");
+            $('.decimal-input').inputmask(decimalMaskOptions);
+            $(".select-picker").selectpicker();
+            $('#DateRange').daterangepicker().change(function () {
+                var startDate = $('#DateRange').data('daterangepicker').startDate.format('MM/DD/YYYY');
+                var endDate = $('#DateRange').data('daterangepicker').endDate.format('MM/DD/YYYY');
+                $("#FromDt").val(startDate);
+                $("#ToDt").val(endDate);
+            });
             $("#WorkingHourModal").modal("show");
         });
     }
@@ -54,7 +63,7 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteWorkingHour?cd=${cd}`, function (response) {
+                deleteAjax(`/Organisation/DeleteWorkingHour?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
@@ -62,10 +71,10 @@
         });
     }
     function saveWorkingHour(btn) {
-        var frm = $("#user-group-frm");
+        var frm = $("#workig-hour-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveWorkingHour", frm.serialize(), function (response) {
+            postAjax("/Organisation/SaveWorkingHour", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#WorkingHourModal").modal("hide");

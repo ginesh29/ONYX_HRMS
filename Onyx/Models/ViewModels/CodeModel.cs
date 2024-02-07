@@ -28,5 +28,6 @@ namespace Onyx.Models.StoredProcedure
                 return !string.IsNullOrEmpty(Code) ? "U" : "I";
             }
         }
+        public bool Active { get; set; }
     }
 }

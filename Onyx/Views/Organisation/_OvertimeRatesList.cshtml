@@ -8,7 +8,7 @@
             <tr>
                 <th width="5px">No.</th>
                 <th>Type</th>
-                <th>Duty Hours Upto</th>
+                <th>Duty Hrs Upto</th>
                 <th>Rate</th>
                 <th>Short Desc.</th>
                 <th>Description</th>
@@ -29,8 +29,8 @@
                 <td>@item.value.HolTyp</td>
                 <td>@item.value.PayCd</td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('@item.value.Type')"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteOvertimeRate('@item.value.Type')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('@item.value.SrNo','@item.value.TypCd')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteOvertimeRate('@item.value.SrNo','@item.value.TypCd')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         }
@@ -38,14 +38,17 @@
 </div>
 <div id="OvertimeRateModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
-    function showOvertimeRateModal(cd) {
-        var url = `/Settings/GetOvertimeRate?cd=${cd}`;
+    function showOvertimeRateModal(cd, type) {
+        var url = `/Organisation/GetOvertimeRate?cd=${cd}&type=${type}`;
         $('#OvertimeRateModal').load(url, function () {
             parseDynamicForm();
+            $('.decimal-input').attr("placeholder", "0.00");
+            $('.decimal-input').inputmask(decimalMaskOptions);
+            $(".select-picker").selectpicker();
             $("#OvertimeRateModal").modal("show");
         });
     }
-    function deleteOvertimeRate(cd) {
+    function deleteOvertimeRate(cd, type) {
         Swal.fire({
             title: "Are you sure?",
             text: "You want to Delete?",
@@ -56,7 +59,7 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteOvertimeRate?cd=${cd}`, function (response) {
+                deleteAjax(`/Organisation/DeleteOvertimeRate?cd=${cd}&type=${type}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
@@ -64,10 +67,10 @@
         });
     }
     function saveOvertimeRate(btn) {
-        var frm = $("#user-group-frm");
+        var frm = $("#overtime-rate-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveOvertimeRate", frm.serialize(), function (response) {
+            postAjax("/Organisation/SaveOvertimeRate", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#OvertimeRateModal").modal("hide");

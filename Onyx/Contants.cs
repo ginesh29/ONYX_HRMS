@@ -7,6 +7,13 @@
         public const string ALLSELECT = "-- All --";
         public const string DateFormat = "MM/dd/yyyy";
     }
+    public class SysCode
+    {
+        public const string ComponentClass = "HEDT";
+        public const string DayType = "HOTC2";
+        public const string Religion = "HOTC1";
+        public const string OtTpe = "HCOTT";
+    }
     public class CommonMessage
     {
         public const string INSERTED = "Inserted Successfully.";

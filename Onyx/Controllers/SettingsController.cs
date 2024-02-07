@@ -71,7 +71,7 @@ namespace Onyx.Controllers
         {
             ViewBag.UsersList = _settingService.GetUsers();
             return View();
-        }        
+        }
         public IActionResult GetUser(string cd)
         {
             var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
@@ -185,6 +185,7 @@ namespace Onyx.Controllers
                     Description = code.Des,
                     ShortDes = code.SDes,
                     Type = code.Typ,
+                    Active = code.Active,
                 };
             ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
             return PartialView("_CodeModal", model);
