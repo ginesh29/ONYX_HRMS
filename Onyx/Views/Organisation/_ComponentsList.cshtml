@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<CompanyEarnDed_GetRow_Result>
 <div class="mb-3">
-    <button class="btn btn-info" onclick="showEarnDeductionModal('')">New Earn Deduction</button>
+    <button class="btn btn-info" onclick="showComponentModal('')">New Component</button>
 </div>
 <div class="table-responsive">
-    <table class="table table-sm" id="EarnDeductionsDataTable">
+    <table class="table table-sm" id="ComponentsDataTable">
         <thead class="thead-dark">
             <tr>
                 <th width="5px">No.</th>
-                <th width="50">Comp. Class</th>
+                <th width="50">Code</th>
                 <th>Type</th>
                 <th>Amt/%</th>
                 <th>Amt Value/%</th>
@@ -35,23 +35,23 @@
                 <td>@item.value.LoanTyp</td>
                 <td>@item.value.OT</td>
                 <td>
-                    <button class="btn btn-sm btn-info" onclick="showEarnDeductionModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteEarnDeduction('@item.value.Cd')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-sm btn-info" onclick="showComponentModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('@item.value.Cd')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         }
     </table>
 </div>
-<div id="EarnDeductionModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="ComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
-    function showEarnDeductionModal(cd) {
-        var url = `/Settings/GetEarnDeduction?cd=${cd}`;
-        $('#EarnDeductionModal').load(url, function () {
+    function showComponentModal(cd) {
+        var url = `/Settings/GetComponent?cd=${cd}`;
+        $('#ComponentModal').load(url, function () {
             parseDynamicForm();
-            $("#EarnDeductionModal").modal("show");
+            $("#ComponentModal").modal("show");
         });
     }
-    function deleteEarnDeduction(cd) {
+    function deleteComponent(cd) {
         Swal.fire({
             title: "Are you sure?",
             text: "You want to Delete?",
@@ -62,26 +62,26 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteEarnDeduction?cd=${cd}`, function (response) {
+                deleteAjax(`/settings/DeleteComponent?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
             }
         });
     }
-    function saveEarnDeduction(btn) {
+    function saveComponent(btn) {
         var frm = $("#user-group-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveEarnDeduction", frm.serialize(), function (response) {
+            postAjax("/settings/SaveComponent", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
-                    $("#EarnDeductionModal").modal("hide");
+                    $("#ComponentModal").modal("hide");
                     reloadPageAfterSometime();
                 }
                 else {
                     showErrorToastr(response.message);
-                    $("#EarnDeductionModal").modal("hide");
+                    $("#ComponentModal").modal("hide");
                 }
                 unloadingButton(btn);
             });

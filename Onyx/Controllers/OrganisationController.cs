@@ -19,9 +19,9 @@ namespace Onyx.Controllers
             _organisationService = organisationService;
             _commonService = commonService;
         }
-        public IActionResult EarnAndDeductions()
+        public IActionResult Components()
         {
-            ViewBag.EarnDeductionsList = _organisationService.GetEarnDeductions();
+            ViewBag.ComponentsList = _organisationService.GetComponents();
             return View();
         }
         public IActionResult LoanTypes()

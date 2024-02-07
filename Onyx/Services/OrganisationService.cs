@@ -10,7 +10,7 @@ namespace Onyx.Services
     {
         private readonly CommonService _commonService = commonService;
         #region EarnDeduction
-        public IEnumerable<CompanyEarnDed_GetRow_Result> GetEarnDeductions()
+        public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents()
         {
             var procedureName = "CompanyEarnDed_GetRow";
             var parameters = new DynamicParameters();
@@ -22,7 +22,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveEarnDeduction(BranchModel model)
+        public void SaveGetComponent(BranchModel model)
         {
             var procedureName = "CompanyEarnDed_Update";
             var parameters = new DynamicParameters();
@@ -37,7 +37,7 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteEarnDeduction(string Cd, string CoCd)
+        public void DeleteGetComponent(string Cd, string CoCd)
         {
             var procedureName = "CompanyEarnDed_Delete";
             var parameters = new DynamicParameters();
