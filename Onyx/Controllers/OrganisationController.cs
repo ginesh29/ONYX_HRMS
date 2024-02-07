@@ -247,5 +247,12 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Calendar
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+        #endregion
     }
 }

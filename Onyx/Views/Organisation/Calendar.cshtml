@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Calendar";
+}
+<link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
+<div class="card">
+    <div class="card-body">
+        <div id="calendar"></div>
+    </div>
+</div>
+@section scripts {
+    <script src="~/plugins/fullcalendar/main.js"></script>
+    <script>
+        $(function () {
+            var date = new Date()
+            var d = date.getDate(),
+                m = date.getMonth(),
+                y = date.getFullYear()
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new Calendar(calendarEl, {
+                headerToolbar: {
+                    left: 'today',
+                    center: 'title',
+                    right: 'prev,next'
+                },
+                themeSystem: 'bootstrap',
+            });
+            calendar.render();
+        })
+    </script>
+}
