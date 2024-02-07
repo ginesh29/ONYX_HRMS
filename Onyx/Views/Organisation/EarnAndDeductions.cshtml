@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Earn And Deductions";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_EarnDeductionsList" model="ViewBag.EarnDeductionsList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#EarnDeductionsDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}

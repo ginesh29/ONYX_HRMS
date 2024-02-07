@@ -44,14 +44,14 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }        
-        public Employee_Find_Result GetEmployee(string Cd)
+        public Employee_Find_Result GetEmployee(string Cd,string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_Find";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", Cd);
             parameters.Add("v_Typ", "2");
-            parameters.Add("v_CoCd", "");
+            parameters.Add("v_CoCd", CoCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.QueryFirstOrDefault<Employee_Find_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

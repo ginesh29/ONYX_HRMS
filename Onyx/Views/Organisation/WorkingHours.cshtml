@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Working Hours";
+}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_WorkingHoursList" model="ViewBag.WorkingHoursList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#WorkingHoursDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}

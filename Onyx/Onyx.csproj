@@ -7,6 +7,7 @@
 
 	<ItemGroup>
 	  <None Remove="Models\ViewModels\DepartmentModel.cs~RF241b1e4.TMP" />
+	  <None Remove="Services\EarnDeductionService.cs~RF71939b7.TMP" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -14,10 +15,5 @@
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<UpToDateCheckBuilt Include="wwwroot/css/site.css" Set="Css" />
 		<UpToDateCheckBuilt Include="tailwind.config.js" Set="Css" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="wwwroot\plugins\popper\esm\" />
-		<Folder Include="wwwroot\plugins\popper\umd\" />
 	</ItemGroup>
 </Project>

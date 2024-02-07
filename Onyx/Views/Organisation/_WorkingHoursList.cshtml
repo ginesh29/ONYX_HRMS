@@ -1,0 +1,82 @@
+﻿@model IEnumerable<CompanyWHrs_GetRow_Result>
+<div class="mb-3">
+    <button class="btn btn-info" onclick="showWorkingHourModal('')">New Working Hour</button>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm" id="WorkingHoursDataTable">
+        <thead class="thead-dark">
+            <tr>
+                <th width="5px">No.</th>
+                <th width="50">Code</th>
+                <th>Description</th>
+                <th>Duration</th>
+                <th>Duty Hours</th>
+                <th>Religion</th>
+                <th>Day Type</th>
+                <th width="90px"></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Select((value, i) => new { i, value }))
+        {
+            <tr>
+                <td class="text-right">@(item.i + 1).</td>
+                <td>@item.value.Code</td>
+                <td>@item.value.Narr</td>
+                <td>@item.value.FromDt.ToString(CommonSetting.DateFormat) - @item.value.ToDt.ToString(CommonSetting.DateFormat)</td>
+                <td>@item.value.DutyHrs</td>
+                <td>@item.value.Religion</td>
+                <td>@item.value.HolTypDesc</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="showWorkingHourModal('@item.value.Code')"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteWorkingHour('@item.value.Code')"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div id="WorkingHourModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<script>
+    function showWorkingHourModal(cd) {
+        var url = `/Settings/GetWorkingHour?cd=${cd}`;
+        $('#WorkingHourModal').load(url, function () {
+            parseDynamicForm();
+            $("#WorkingHourModal").modal("show");
+        });
+    }
+    function deleteWorkingHour(cd) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You want to Delete?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteAjax(`/settings/DeleteWorkingHour?cd=${cd}`, function (response) {
+                    showSuccessToastr(response.message);
+                    reloadPageAfterSometime();
+                });
+            }
+        });
+    }
+    function saveWorkingHour(btn) {
+        var frm = $("#user-group-frm");
+        if (frm.valid()) {
+            loadingButton(btn);
+            postAjax("/settings/SaveWorkingHour", frm.serialize(), function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $("#WorkingHourModal").modal("hide");
+                    reloadPageAfterSometime();
+                }
+                else {
+                    showErrorToastr(response.message);
+                    $("#WorkingHourModal").modal("hide");
+                }
+                unloadingButton(btn);
+            });
+        }
+    }
+</script>

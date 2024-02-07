@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Loan Types";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary">
+            <div class="card-body">
+                <partial name="_LoanTypesList" model="ViewBag.LoanTypesList" />
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#LoanTypesDataTable').DataTable(dataTableDefaultOptions);
+    </script>
+}
