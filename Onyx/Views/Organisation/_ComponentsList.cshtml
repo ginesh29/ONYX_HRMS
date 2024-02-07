@@ -15,8 +15,6 @@
                 <th>Abbr.</th>
                 <th>Short Desc.</th>
                 <th>Description</th>
-                <th>Loan Type</th>
-                <th>OT</th>
                 <th width="90px"></th>
             </tr>
         </thead>
@@ -32,11 +30,9 @@
                 <td>@item.value.Abbr</td>
                 <td>@item.value.SDes</td>
                 <td>@item.value.Des</td>
-                <td>@item.value.LoanTyp</td>
-                <td>@item.value.OT</td>
                 <td>
                     <button class="btn btn-sm btn-info" onclick="showComponentModal('@item.value.Cd')"><i class="fas fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('@item.value.Cd')"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('@item.value.Cd','@item.value.TypeCd')"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         }
@@ -45,13 +41,16 @@
 <div id="ComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
     function showComponentModal(cd) {
-        var url = `/Settings/GetComponent?cd=${cd}`;
+        var url = `/Organisation/GetComponent?cd=${cd}`;
         $('#ComponentModal').load(url, function () {
             parseDynamicForm();
+            $(".select-picker").selectpicker();
+            $('.percentage-input').attr("placeholder", "0 %");
+            $('.percentage-input').inputmask(percentageMaskOptions);
             $("#ComponentModal").modal("show");
         });
     }
-    function deleteComponent(cd) {
+    function deleteComponent(cd, type) {
         Swal.fire({
             title: "Are you sure?",
             text: "You want to Delete?",
@@ -62,7 +61,7 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteComponent?cd=${cd}`, function (response) {
+                deleteAjax(`/Organisation/DeleteComponent?cd=${cd}&type=${type}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
@@ -70,10 +69,10 @@
         });
     }
     function saveComponent(btn) {
-        var frm = $("#user-group-frm");
+        var frm = $("#component-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveComponent", frm.serialize(), function (response) {
+            postAjax("/Organisation/SaveComponent", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#ComponentModal").modal("hide");

@@ -10,11 +10,11 @@
         public string Typ { get; set; }
         public string Frm { get; set; }
         public string Visible { get; set; }
-        public string uAdd { get; set; }
-        public string uEdit { get; set; }
-        public string uDelete { get; set; }
-        public string uView { get; set; }
-        public string uPrint { get; set; }
-        public List<GetMenuWithPermissions_Result> Children { get; set; } = new List<GetMenuWithPermissions_Result>();
+        public string UAdd { get; set; }
+        public string UEdit { get; set; }
+        public string UDelete { get; set; }
+        public string UView { get; set; }
+        public string UPrint { get; set; }
+        public List<GetMenuWithPermissions_Result> Children { get; set; } = [];
     }
 }

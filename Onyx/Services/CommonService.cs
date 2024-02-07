@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Onyx.Data;
 using Onyx.Models.StoredProcedure;
@@ -81,7 +82,7 @@ namespace Onyx.Services
         }
         public IEnumerable<PermissionModel> GetPermissionModels(IEnumerable<string> PermissionIdsWithActions)
         {
-            List<PermissionModel> Permissions = new List<PermissionModel>();
+            List<PermissionModel> Permissions = [];
             foreach (var item in PermissionIdsWithActions)
             {
                 var sp = item.Split('_');
@@ -163,6 +164,56 @@ namespace Onyx.Services
             DateTime? result = connection.QueryFirstOrDefault<DateTime>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result != null ? Convert.ToDateTime(result) : DateTime.Now;
+        }
+        public IEnumerable<GetSysCodes_Result> GetSysCodes(string type)
+        {
+            var query = $"Select Cd, Sdes from Syscodes Where Typ = '{type}'";
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetSysCodes_Result>
+                (query);
+            return data;
+        }
+        public IEnumerable<SelectListItem> GetComponentTypes()
+        {
+            var componentTypes = new List<SelectListItem>()
+            {
+                new() {Text="Fixed", Value="F"},
+                new() { Text="Variable", Value="V"},
+                new() { Text="Per-day", Value="D"},
+                new() { Text="Hourly", Value="H"},
+                new() { Text="Pro-rata", Value="P"}
+            };
+            return componentTypes;
+        }
+        public IEnumerable<SelectListItem> GetPercentageAmtTypes()
+        {
+            var percentageAmtTypes = new List<SelectListItem>()
+            {
+                new() {Text="AMOUNT", Value="A"},
+                new() { Text="PERCENTAGE", Value="P"},
+            };
+            return percentageAmtTypes;
+        }
+        public IEnumerable<GetSysCodes_Result> GetEarnDedTypes(string type)
+        {
+            var procedureName = "CompanyEarnDed_Loan_GetRow";
+            var connectionString = GetConnectionString();
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", type);
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetSysCodes_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<SelectListItem> GetChargesTypes()
+        {
+            var percentageAmtTypes = new List<SelectListItem>()
+            {
+                new() {Text="Fixed Rate", Value="F"},
+                new() { Text="Reducing Balance", Value="R"},
+            };
+            return percentageAmtTypes;
         }
     }
 }

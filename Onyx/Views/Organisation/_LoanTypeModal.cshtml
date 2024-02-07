@@ -1,0 +1,86 @@
+﻿@model LoanTypeModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Code) ? "Edit" : "Add") Loan Type</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="loan-type-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
+                            <label asp-for="Code"></label>
+                            <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PayCd"></label>
+                            <select asp-for="PayCd" class="form-control select-picker" asp-items="ViewBag.PayComponentItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="PayCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DedCd"></label>
+                            <select asp-for="DedCd" class="form-control select-picker" asp-items="ViewBag.DeductionComponentItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="DedCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ChgsTypCd"></label>
+                            <select asp-for="ChgsTypCd" class="form-control select-picker" asp-items="ViewBag.ChargesTypesItems">
+                                <option value=''>None</option>
+                            </select>
+                            <span asp-validation-for="ChgsTypCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="IntPerc"></label>
+                            <input asp-for="IntPerc" class="form-control percentage-input" />
+                            <span asp-validation-for="IntPerc" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Abbriviation"></label>
+                            <input asp-for="Abbriviation" class="form-control" />
+                            <span asp-validation-for="Abbriviation" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SDes"></label>
+                            <input asp-for="SDes" class="form-control" />
+                            <span asp-validation-for="SDes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLoanType(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

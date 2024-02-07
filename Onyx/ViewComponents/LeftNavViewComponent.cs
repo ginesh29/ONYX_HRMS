@@ -8,14 +8,12 @@ namespace Onyx.ViewComponents
     {
         private readonly AuthService _authService;
         private readonly CommonService _commonService;
-        private readonly UserEmployeeService _userEmployeeService;
         private readonly LoggedInUserModel _loggedInUser;
-        public LeftNavViewComponent(AuthService authService, CommonService commonService, UserEmployeeService userEmployeeService)
+        public LeftNavViewComponent(AuthService authService, CommonService commonService)
         {
             _authService = authService;
             _commonService = commonService;
             _loggedInUser = _authService.GetLoggedInUser();
-            _userEmployeeService = userEmployeeService;
         }
         public IViewComponentResult Invoke()
         {

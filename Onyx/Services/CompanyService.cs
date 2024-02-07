@@ -9,7 +9,7 @@ namespace Onyx.Services
     {
         private readonly CommonService _commonService = commonService;
 
-        public IEnumerable<Branch_UserCo_GetRow> GetCompanies(string UserCd)
+        public IEnumerable<Branch_UserCo_GetRow> GetUserCompanies(string UserCd)
         {
             var procedureName = "Branch_UserCo_GetRow";
             var parameters = new DynamicParameters();
@@ -20,15 +20,5 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return companies;
         }
-        //public CompanyDatabases_Getrow_Result GetCompanyDetail(string CoAbbr)
-        //{
-        //    var procedureName = "CompanyDatabases_Getrow";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_CoAbbr", CoAbbr);
-        //    using var connection = _context.CreateConnection();
-        //    var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
-        //        (procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //    return company;
-        //}
     }
 }

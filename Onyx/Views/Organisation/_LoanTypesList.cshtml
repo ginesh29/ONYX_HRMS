@@ -45,9 +45,11 @@
 <div id="LoanTypeModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <script>
     function showLoanTypeModal(cd) {
-        var url = `/Settings/GetLoanType?cd=${cd}`;
+        var url = `/Organisation/GetLoanType?cd=${cd}`;
         $('#LoanTypeModal').load(url, function () {
             parseDynamicForm();
+            $('.percentage-input').attr("placeholder", "0 %");
+            $('.percentage-input').inputmask(percentageMaskOptions);
             $("#LoanTypeModal").modal("show");
         });
     }
@@ -62,7 +64,7 @@
             confirmButtonText: "Yes!"
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteAjax(`/settings/DeleteLoanType?cd=${cd}`, function (response) {
+                deleteAjax(`/Organisation/DeleteLoanType?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
                     reloadPageAfterSometime();
                 });
@@ -70,10 +72,10 @@
         });
     }
     function saveLoanType(btn) {
-        var frm = $("#user-group-frm");
+        var frm = $("#loan-type-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveLoanType", frm.serialize(), function (response) {
+            postAjax("/Organisation/SaveLoanType", frm.serialize(), function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#LoanTypeModal").modal("hide");

@@ -34,7 +34,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCompanies()
         {
-            var companies = _companyService.GetCompanies(_loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd.Trim(), Text = m.CoName });
+            var companies = _companyService.GetUserCompanies(_loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd.Trim(), Text = m.CoName });
             var result = new CommonResponse
             {
                 Success = true,
