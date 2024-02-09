@@ -88,8 +88,12 @@
             postAjax(`/account/login?returnUrl=${returnUrl}`, frm.serialize(), function (response) {
                 if (response.success) {
                     bindCompanyDropdown();
-                    if (response.redirectUrl)
-                        window.location.href = response.redirectUrl;
+                    if (response.redirectUrl) {
+                        showSuccessToastr(response.message)
+                        setTimeout(function () {
+                            window.location.href = response.redirectUrl;
+                        }, 1000)
+                    }
                 }
                 else
                     showErrorToastr(response.message)

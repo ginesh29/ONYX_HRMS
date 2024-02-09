@@ -41,7 +41,7 @@ namespace Onyx.Controllers
                 {
                     Success = true,
                     Message = "Login Successfully",
-                    RedirectUrl = returnUrl
+                    RedirectUrl = returnUrl ?? "/"
                 };
                 return Json(result);
             }
@@ -99,11 +99,12 @@ namespace Onyx.Controllers
         }
         public IActionResult ChangePassword()
         {
-            return View();
+            return PartialView("_ChangePassword");
         }
         [HttpPost]
         public IActionResult ChangePassword(ChangePassword model)
         {
+            var result = new CommonResponse { Success = false };
             if (_loggedInUser.UserType == (int)UserTypeEnum.User)
             {
                 var user = _userEmployeeService.ValidateUser(new LoginModel
@@ -116,10 +117,11 @@ namespace Onyx.Controllers
                     var userFromDb = _userEmployeeService.GetUser(_loggedInUser.UserCd);
                     userFromDb.UPwd = model.ConfirmPassword.Encrypt();
                     _settingService.SaveUser(userFromDb);
-                    TempData["success"] = "Password changed Successfully";
+                    result.Success = true;
+                    result.Message = "Password changed Successfully";
                 }
                 else
-                    TempData["error"] = "Old Password is not valid";
+                    result.Message = "Old Password is not valid";
             }
             else
             {
@@ -131,12 +133,13 @@ namespace Onyx.Controllers
                 if (employee != null)
                 {
                     var a = _userEmployeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
-                    TempData["success"] = "Password changed Successfully";
+                    result.Success = true;
+                    result.Message = "Password changed Successfully";
                 }
                 else
-                    TempData["error"] = "Old Password is not valid";
+                    result.Message = "Old Password is not valid";
             }
-            return View();
+            return Json(result);
         }
     }
 }

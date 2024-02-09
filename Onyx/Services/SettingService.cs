@@ -70,8 +70,7 @@ namespace Onyx.Services
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_LoginId", model.LoginId);
             parameters.Add("v_Abbr", model.Abbr);
-            //parameters.Add("v_Grp", model.BranchCd);
-            parameters.Add("v_UPWD", model.UPwd.Encrypt());
+            parameters.Add("v_UPWD", model.UPwd);
             parameters.Add("v_UName", model.Username);
             parameters.Add("v_ExpiryDt", Convert.ToDateTime(model.ExpiryDt).ToString("d"));
             parameters.Add("v_EntryBy", model.EntryBy);

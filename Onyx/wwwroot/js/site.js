@@ -119,9 +119,15 @@ function formatDate(date) {
         date.getFullYear();
 }
 function reloadPageAfterSometime() {
-    setTimeout(function () {
-        window.location.reload();
-    }, 2000)
+    window["datatable"].redraw();
+}
+function reloadDatatable(id, data) {
+    window["datatable"].destroy();
+    $(`#${id}`).DataTable({
+        "pagingType": "simple",
+        "ordering": false,
+        data: data
+    });
 }
 function parseDynamicForm() {
     $("form").removeData("validator");
@@ -173,6 +179,28 @@ function setBrowserInfo() {
         }
     }
     $("#Browser").val(`${browserName} ${browserVersion}`);
+}
+
+function showChangePasswordModal() {
+    var url = `/Account/ChangePassword`;
+    $('#ChangePasswordModal').load(url, function () {
+        parseDynamicForm();
+        $("#ChangePasswordModal").modal("show");
+    });
+}
+function changePassword(btn) {
+    var frm = $("#change-password-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax(`/account/changepassword`, frm.serialize(), function (response) {
+            if (response.success)
+                showSuccessToastr(response.message)
+            else
+                showErrorToastr(response.message)
+        });
+        $("#ChangePasswordModal").modal("hide");
+        unloadingButton(btn);
+    }
 }
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
