@@ -101,4 +101,8 @@
 		<UpToDateCheckBuilt Include="wwwroot/css/site.css" Set="Css" />
 		<UpToDateCheckBuilt Include="tailwind.config.js" Set="Css" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\uploads\branch\" />
+	</ItemGroup>
 </Project>

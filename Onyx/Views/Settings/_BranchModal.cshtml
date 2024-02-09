@@ -7,7 +7,7 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-            <form id="user-group-frm">
+            <form id="branch-frm">
                 <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
                     <label asp-for="Code"></label>
                     <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
@@ -22,6 +22,26 @@
                     <label asp-for="Description"></label>
                     <input asp-for="Description" class="form-control" />
                     <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ImageFile">Image</label>
+                            <div class="custom-file">
+                                <input asp-for="ImageFile" class="custom-file-input" onchange="previewImage(event)">
+                                <label class="custom-file-label" id="image-file-label" asp-for="ImageFile">@(!string.IsNullOrEmpty(Model.Image) ? Model.Image : "Choose file")</label>
+                            </div>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <div>
+                                <img id="Image-Preview" style="height:35px" src="~/uploads/branch/@Model.Image" class="rounded border rounded-circle @(string.IsNullOrEmpty(Model.Image) ? "d-none" :"")" asp-append-version="true">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

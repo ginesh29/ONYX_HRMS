@@ -90,7 +90,7 @@
             if (result.isConfirmed) {
                 deleteAjax(`/settings/DeleteUser?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
@@ -103,7 +103,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#UserModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

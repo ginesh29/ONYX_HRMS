@@ -10,22 +10,35 @@
 @section scripts {
     <script src="~/plugins/fullcalendar/main.js"></script>
     <script>
-        $(function () {
-            var date = new Date()
-            var d = date.getDate(),
-                m = date.getMonth(),
-                y = date.getFullYear()
-            var Calendar = FullCalendar.Calendar;
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new Calendar(calendarEl, {
-                headerToolbar: {
-                    left: 'today',
-                    center: 'title',
-                    right: 'prev,next'
-                },
-                themeSystem: 'bootstrap',
-            });
-            calendar.render();
-        })
+        var Calendar = FullCalendar.Calendar;
+        var calendarEl = document.getElementById('calendar');
+        var date = new Date()
+        var d = date.getDate(),
+            m = date.getMonth(),
+            y = date.getFullYear()
+        var calendar = new Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'today',
+                center: 'title',
+                right: 'prev,next'
+            },
+            themeSystem: 'bootstrap',
+            events: '/Organisation/FetchCalendarEvents',
+            eventDidMount: function (info) {
+                var eventElement = info.el;
+                var event = info.event;
+                var extendedProps = event.extendedProps;
+                var color = event.allDay ? "white" : "dark";
+                $(eventElement).find(".fc-event-title").append(`<span class='fc-event-icons float-right'><button class='btn btn-icon btn-sm p-0 mr-1 edit-event'><i class='fas fa-pencil-alt text-${color}'></i></button><button class='btn btn-icon btn-sm p-0 delete-event mr-2'><i class='fa fa-trash text-${color}'></i></button></span>`);
+                $(eventElement).find(".edit-event").click(function () {
+                    alert("Edit event: " + event.title);
+                });
+
+                $(eventElement).find(".delete-event").click(function () {
+                    alert("Delete event: " + event.title);
+                });
+            }
+        });
+        calendar.render();
     </script>
 }

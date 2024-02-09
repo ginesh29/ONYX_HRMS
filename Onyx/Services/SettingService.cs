@@ -31,6 +31,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", model.CoCd);
             parameters.Add("v_BU_Cd", "");
             parameters.Add("v_SDes", model.Description);
+            parameters.Add("v_Image", model.Image);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
@@ -147,6 +148,18 @@ namespace Onyx.Services
         #endregion
 
         #region Code
+
+        public string GetNextCode(string type)
+        {
+            var procedureName = "Codes_Auto_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", type);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<string>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public IEnumerable<CodeGroups_GetRow_Result> GetCodeGroups(string CoCd)
         {
             var procedureName = "CodeGroups_GetRow";
@@ -224,14 +237,15 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void DeleteCountry(string Cd)
+        public int DeleteCountry(string Cd)
         {
             var procedureName = "Country_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            int result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         #endregion
 

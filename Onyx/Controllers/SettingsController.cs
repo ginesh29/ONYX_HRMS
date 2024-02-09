@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
@@ -7,7 +8,6 @@ using Onyx.Services;
 
 namespace Onyx.Controllers
 {
-    [Authorize]
     public class SettingsController : Controller
     {
         private readonly AuthService _authService;
@@ -29,22 +29,34 @@ namespace Onyx.Controllers
         }
         public IActionResult GetBranch(string cd)
         {
-            var userGroup = _settingService.GetBranches(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
+            var branch = _settingService.GetBranches(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
             var model = new BranchModel();
-            if (userGroup != null)
+            if (branch != null)
                 model = new BranchModel
                 {
-                    Code = userGroup.Cd,
-                    Name = userGroup.Des,
-                    Description = userGroup.SDes,
+                    Code = branch.Cd,
+                    Name = branch.Des,
+                    Description = branch.SDes,
+                    Image = branch.Image,
                 };
             return PartialView("_BranchModal", model);
         }
         [HttpPost]
-        public IActionResult SaveBranch(BranchModel model)
+        public async Task<IActionResult> SaveBranch(BranchModel model)
         {
             model.EntryBy = _loggedInUser.Username;
             model.CoCd = _loggedInUser.CompanyCd;
+            if (model.ImageFile != null)
+            {
+                var ext = Path.GetExtension(model.ImageFile.FileName);
+                var filename = $"branch-{model.CoCd}{ext}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/branch", filename);
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await model.ImageFile.CopyToAsync(stream);
+                model.Image = filename;
+            }
             _settingService.SaveBranch(model);
             var result = new CommonResponse
             {
@@ -87,7 +99,7 @@ namespace Onyx.Controllers
                     ExpiryDt = user.ExpiryDt,
                 };
             model.Menus = _settingService.ConvertPermissionToTree(_commonService.GetMenuWithPermissions(cd));
-            ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.Branch, Selected = m.UserDes != null });
+            ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code);
             return PartialView("_UserModal", model);
         }
         [HttpPost]
@@ -173,7 +185,7 @@ namespace Onyx.Controllers
             var codes = _settingService.GetCodes().Where(m => m.Typ.Trim() == type);
             return PartialView("_CodesList", codes);
         }
-        public IActionResult GetCode(string cd)
+        public IActionResult GetCode(string cd, string type)
         {
             var code = _settingService.GetCodes().FirstOrDefault(m => m.Cd.Trim() == cd);
             var model = new CodeModel();
@@ -181,12 +193,18 @@ namespace Onyx.Controllers
                 model = new CodeModel
                 {
                     Code = code.Cd,
+                    Cd = code.Cd,
                     Abbriviation = code.Abbr,
                     Description = code.Des,
                     ShortDes = code.SDes,
                     Type = code.Typ,
                     Active = code.Active,
                 };
+            else
+            {
+                var nextCode = _settingService.GetNextCode(type);
+                model.Code = $"{type}{nextCode}";
+            }
             ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
             return PartialView("_CodeModal", model);
         }
@@ -252,11 +270,11 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteCountry(string cd)
         {
-            _settingService.DeleteCountry(cd);
+            int deleteSuccess = _settingService.DeleteCountry(cd);
             var result = new CommonResponse
             {
-                Success = true,
-                Message = CommonMessage.DELETED
+                Success = deleteSuccess > 0,
+                Message = deleteSuccess > 0 ? CommonMessage.DELETED : "You can not delete this country. Already Employee exist in country"
             };
             return Json(result);
         }

@@ -12,6 +12,6 @@
 </div>
 @section scripts {
     <script>
-        $('#LoanTypesDataTable').DataTable(dataTableDefaultOptions);
+        window["datatable"] = $('#LoanTypesDataTable').DataTable(dataTableDefaultOptions);
     </script>
 }

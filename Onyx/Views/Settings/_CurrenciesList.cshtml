@@ -64,7 +64,7 @@
             if (result.isConfirmed) {
                 deleteAjax(`/settings/DeleteCurrency?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
@@ -77,7 +77,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#CurrencyModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

@@ -65,7 +65,7 @@
             if (result.isConfirmed) {
                 deleteAjax(`/Organisation/DeleteWorkingHour?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
@@ -78,7 +78,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#WorkingHourModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

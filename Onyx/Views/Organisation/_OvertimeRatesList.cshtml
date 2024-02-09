@@ -61,7 +61,7 @@
             if (result.isConfirmed) {
                 deleteAjax(`/Organisation/DeleteOvertimeRate?cd=${cd}&type=${type}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
@@ -74,7 +74,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#OvertimeRateModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

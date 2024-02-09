@@ -8,6 +8,7 @@
             <tr>
                 <th width="5px">No.</th>
                 <th width="50px">Code</th>
+                <th>Image</th>
                 <th>Name</th>
                 <th width="150px">Description</th>
                 <th width="90px"></th>
@@ -18,6 +19,9 @@
             <tr>
                 <td class="text-right">@(item.i + 1).</td>
                 <td>@item.value.Cd</td>
+                <td>
+                    <img src="~/uploads/branch/@item.value.Image" class="branch-img border @(string.IsNullOrEmpty(item.value.Image) ? "d-none" :"")" asp-append-version="true">
+                </td>
                 <td>@item.value.Des</td>
                 <td>@item.value.SDes</td>
                 <td>
@@ -33,7 +37,7 @@
     function showBranchModal(cd) {
         var url = `/Settings/GetBranch?cd=${cd}`;
         $('#BranchModal').load(url, function () {
-            parseDynamicForm();           
+            parseDynamicForm();
             $("#BranchModal").modal("show");
         });
     }
@@ -50,20 +54,20 @@
             if (result.isConfirmed) {
                 deleteAjax(`/settings/DeleteBranch?cd=${cd}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
     }
     function saveBranch(btn) {
-        var frm = $("#user-group-frm");
+        var frm = $("#branch-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            postAjax("/settings/SaveBranch", frm.serialize(), function (response) {
+            filePostAjax("/settings/SaveBranch", frm[0], function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#BranchModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable('BranchesDataTable', []);
                 }
                 else {
                     showErrorToastr(response.message);
@@ -73,4 +77,14 @@
             });
         }
     }
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('Image-Preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        var filename = $("#ImageFile").val().split("\\").pop();
+        $("#image-file-label").text(filename);
+    };
 </script>

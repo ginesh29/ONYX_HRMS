@@ -1,15 +1,12 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Onyx.Data;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Net;
 using System.Net.Sockets;
-using System.Security;
 
 namespace Onyx.Services
 {

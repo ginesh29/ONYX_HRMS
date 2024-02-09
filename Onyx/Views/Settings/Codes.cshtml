@@ -2,7 +2,7 @@
     ViewData["Title"] = "Codes";
 }
 <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
                 <div style="float:right">
@@ -28,7 +28,7 @@
             var typeVal = $("#code-type option:selected").val();
             $("#code-type-text").text(typeText);
             $('#CodesList').load(`/settings/FetchCodesByType?type=${typeVal}`, function () {
-                $('#CodesDataTable').DataTable(dataTableDefaultOptions);
+                window["datatable"] = $('#CodesDataTable').DataTable(dataTableDefaultOptions);
             });
         }
         setType();

@@ -253,6 +253,31 @@ namespace Onyx.Controllers
         {
             return View();
         }
+        public IActionResult FetchCalendarEvents()
+        {
+            var events = new List<CalendarModel>
+            {
+                new() {
+                    Id = 1,
+                    Title = "Event 1",
+                    Start = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    End = DateTime.Now.AddHours(2).ToString("yyyy-MM-ddTHH:mm:ss"),
+                    BackgroundColor= "#f56954",
+                    BorderColor= "#f56954",
+                    AllDay= true,
+                },
+                new() {
+                    Id = 2,
+                    Title = "Event 2",
+                    Start = DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ss"),
+                    End = DateTime.Now.AddDays(1).AddHours(2).ToString("yyyy-MM-ddTHH:mm:ss"),
+                    BackgroundColor= "#000",
+                    BorderColor= "#f56954",
+                    Holyday= true,
+                }
+            };
+            return Json(events);
+        }
         #endregion
     }
 }

@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<GetMenuWithPermissions_Result>
 <nav class="mt-2">
-    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+    <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
             <a href="/" class="nav-link home-link">
                 <i class="nav-icon fas fa-home"></i>
@@ -16,11 +16,11 @@
                     <i class="nav-icon fas fa-@icon"></i>
                     <p>
                         @item.Caption
+                        @if (children.Count() > 0)
+                        {
+                            <i class="right fas fa-angle-left"></i>
+                        }
                     </p>
-                    @if (children.Count() > 0)
-                    {
-                        <i class="right fas fa-angle-left"></i>
-                    }
                 </a>
                 @if (children.Count() > 0)
                 {
@@ -29,13 +29,16 @@
                         {
                             var subchildren = Model.Where(m => m.Prnt == child.MenuId);
                             <li class="nav-item">
-                                <a href="@child.Frm" class="nav-link" style="padding-left: 1.5rem;">
+                                <a href="@child.Frm" class="nav-link">
                                     <i class="nav-icon fa fa-minus" style="font-size: 0.5rem;"></i>
-                                    <p>@child.Caption</p>
-                                    @if (subchildren.Count() > 0)
-                                    {
-                                        <i class="right fas fa-angle-left"></i>
-                                    }
+                                    <p>
+                                        @child.Caption
+                                        @if (subchildren.Count() > 0)
+                                        {
+                                            <i class="right fas fa-angle-left"></i>
+                                        }
+                                    </p>
+
                                 </a>
                                 @if (subchildren.Count() > 0)
                                 {
@@ -43,7 +46,7 @@
                                         @foreach (var subchild in subchildren)
                                         {
                                             <li class="nav-item">
-                                                <a href="@subchild.Frm" class="nav-link" style="padding-left: 2rem;">
+                                                <a href="@subchild.Frm" class="nav-link">
                                                     <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
                                                     <p>@subchild.Caption</p>
                                                 </a>

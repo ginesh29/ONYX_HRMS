@@ -63,7 +63,7 @@
             if (result.isConfirmed) {
                 deleteAjax(`/Organisation/DeleteComponent?cd=${cd}&type=${type}`, function (response) {
                     showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 });
             }
         });
@@ -76,7 +76,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#ComponentModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

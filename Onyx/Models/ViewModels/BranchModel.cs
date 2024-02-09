@@ -17,6 +17,9 @@ namespace Onyx.Models.ViewModels
         public string BU_Cd { get; set; }
         public string BU_SDes { get; set; }
         public string CoCd { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public string Image { get; set; }
+        public IFormFile ImageFile { get; set; }
         public string Mode
         {
             get

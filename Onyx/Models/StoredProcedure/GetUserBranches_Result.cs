@@ -5,5 +5,6 @@
         public string Cd { get; set; }
         public string Branch { get; set; }
         public string UserDes { get; set; }
+        public string Image { get; set; }
     }
 }

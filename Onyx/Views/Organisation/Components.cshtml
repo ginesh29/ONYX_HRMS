@@ -12,6 +12,6 @@
 </div>
 @section scripts {
     <script>
-        $('#ComponentsDataTable').DataTable(dataTableDefaultOptions);
+        window["datatable"] = $('#ComponentsDataTable').DataTable(dataTableDefaultOptions);
     </script>
 }

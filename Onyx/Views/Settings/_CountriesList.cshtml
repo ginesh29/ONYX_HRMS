@@ -57,8 +57,12 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteAjax(`/settings/DeleteCountry?cd=${cd}`, function (response) {
-                    showSuccessToastr(response.message);
-                    reloadPageAfterSometime();
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadDatatable();
+                    }
+                    else
+                        showErrorToastr(response.message);
                 });
             }
         });
@@ -71,7 +75,7 @@
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $("#CountryModal").modal("hide");
-                    reloadPageAfterSometime();
+                    reloadDatatable();
                 }
                 else {
                     showErrorToastr(response.message);

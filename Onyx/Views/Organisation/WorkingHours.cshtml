@@ -2,7 +2,7 @@
     ViewData["Title"] = "Working Hrs/Shift";
 }
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <partial name="_WorkingHoursList" model="ViewBag.WorkingHoursList" />
@@ -12,6 +12,6 @@
 </div>
 @section scripts {
     <script>
-        $('#WorkingHoursDataTable').DataTable(dataTableDefaultOptions);
+        window["datatable"] = $('#WorkingHoursDataTable').DataTable(dataTableDefaultOptions);
     </script>
 }

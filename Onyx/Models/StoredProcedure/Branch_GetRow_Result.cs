@@ -11,5 +11,6 @@
         public DateTime? EditDt { get; set; }
         public string BU_Cd { get; set; }
         public string BU_SDes { get; set; }
+        public string Image { get;}
     }
 }
