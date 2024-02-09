@@ -19,21 +19,6 @@
                     <th></th>
                 </tr>
             </thead>
-            @* @foreach (var item in Model.Select((value, i) => new { i, value }))
-            {
-            <tr>
-            <td class="text-right">@(item.i + 1).</td>
-            <td>@item.value.Code</td>
-            <td>@item.value.LoginId</td>
-            <td>@item.value.Abbr</td>
-            <td>@item.value.Username</td>
-            <td>@item.value.ExpiryDt.ToString(CommonSetting.DateFormat)</td>
-            <td>
-            <button class="btn btn-sm btn-info" onclick="showUserModal('@item.value.Code')"><i class="fas fa-pen"></i></button>
-            <button class="btn btn-sm btn-danger ml-2" onclick="deleteUser('@item.value.Code')"><i class="fa fa-trash"></i></button>
-            </td>
-            </tr>
-            } *@
         </table>
     </div>
 </div>

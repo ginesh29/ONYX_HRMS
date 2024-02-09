@@ -1,17 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Countries";
 }
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <partial name="_CountriesList" model="ViewBag.CountriesList" />
-            </div>
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showCountryModal('')">New Country</button>
         </div>
+        <div class="table-responsive">
+            <table class="table table-sm" id="CountriesDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>No.</th>
+                        <th>Code</th>
+                        <th>Short Desc.</th>
+                        <th>Description</th>
+                        <th>Nationality</th>
+                        <th>Region</th>
+                        <th>Provisions</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="CountryModal" class="modal fade" role="dialog" tabindex='-1'></div>
     </div>
 </div>
 @section scripts {
-    <script>
-        window["datatable"] = $('#CountriesDataTable').DataTable(dataTableDefaultOptions);
-    </script>
+    <script src="~/js/page/country.js" asp-append-version="true"></script>
 }

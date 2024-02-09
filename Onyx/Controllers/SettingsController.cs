@@ -88,7 +88,6 @@ namespace Onyx.Controllers
         #region User
         public IActionResult Users()
         {
-            ViewBag.UsersList = _settingService.GetUsers();
             return View();
         }
         public IActionResult FetchUsers()
@@ -151,8 +150,16 @@ namespace Onyx.Controllers
         #region Department
         public IActionResult Departments()
         {
-            ViewBag.DepartmentsList = _settingService.GetDepartments();
             return View();
+        }
+        public IActionResult FetchDepartments()
+        {
+            var departments = _settingService.GetDepartments();
+            CommonResponse result = new()
+            {
+                Data = departments,
+            };
+            return Json(result);
         }
         public IActionResult GetDepartment(string cd)
         {
@@ -254,8 +261,16 @@ namespace Onyx.Controllers
         #region Country
         public IActionResult Countries()
         {
-            ViewBag.CountriesList = _settingService.GetCountries();
             return View();
+        }
+        public IActionResult FetchCountries()
+        {
+            var countries = _settingService.GetCountries();
+            CommonResponse result = new()
+            {
+                Data = countries,
+            };
+            return Json(result);
         }
         public IActionResult GetCountry(string cd)
         {
@@ -301,8 +316,16 @@ namespace Onyx.Controllers
         #region Currency
         public IActionResult Currencies()
         {
-            ViewBag.CurrenciesList = _settingService.GetCurrencies(_loggedInUser.CompanyCd);
             return View();
+        }
+        public IActionResult FetchCurrencies()
+        {
+            var currencies = _settingService.GetCurrencies(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = currencies,
+            };
+            return Json(result);
         }
         public IActionResult GetCurrency(string cd)
         {

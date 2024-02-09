@@ -1,17 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Departments";
 }
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <partial name="_DepartmentsList" model="ViewBag.DepartmentsList" />
-            </div>
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showDepartmentModal('')">New Department</button>
         </div>
+        <table class="table table-sm" id="DepartmentsDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+        <div id="DepartmentModal" class="modal fade" role="dialog" tabindex='-1'></div>
     </div>
 </div>
 @section scripts {
-    <script>
-        window["datatable"] = $('#DepartmentsDataTable').DataTable(dataTableDefaultOptions);
-    </script>
+    <script src="~/js/page/department.js" asp-append-version="true"></script>
 }

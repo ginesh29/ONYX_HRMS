@@ -1,17 +1,32 @@
 ﻿@{
     ViewData["Title"] = "Currencies";
 }
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <partial name="_CurrenciesList" model="ViewBag.CurrenciesList" />
-            </div>
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showCurrencyModal('')">New Currency</button>
         </div>
+        <div class="table-responsive">
+            <table class="table table-sm" id="CurrenciesDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="5px">No.</th>
+                        <th width="50px">Code</th>
+                        <th>Description</th>
+                        <th>Main Currency</th>
+                        <th>Sub Currency</th>
+                        <th>Exchange Rate</th>
+                        <th>Decimal</th>
+                        <th>Symbol</th>
+                        <th>Abbriviation</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="CurrencyModal" class="modal fade" role="dialog" tabindex='-1'></div>
     </div>
 </div>
 @section scripts {
-    <script>
-        window["datatable"] = $('#CurrenciesDataTable').DataTable(dataTableDefaultOptions);
-    </script>
+    <script src="~/js/page/currency.js" asp-append-version="true"></script>
 }
