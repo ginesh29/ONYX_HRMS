@@ -1,36 +1,40 @@
 ﻿@{
     ViewData["Title"] = "Codes";
 }
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <div style="float:right">
-                    <label>Type</label>
-                    <select class="select-picker" asp-items="@ViewBag.CodeGroupsItems" data-live-search="true" id="code-type" onchange="setType()">
-                    </select>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <button class="btn btn-info" onclick="showCodeModal('')">New <span id="code-type-text"></span></button>
-                </div>
-                <div id="CodesList"></div>
-            </div>
+<div class="card">
+    <div class="card-header">
+        <div style="float:right">
+            <label>Type</label>
+            <select class="select-picker" asp-items="@ViewBag.CodeGroupsItems" data-live-search="true" id="code-type" onchange="setType()">
+            </select>
         </div>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showCodeModal('')">New <span id="code-type-text"></span></button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm" id="CodesDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="5px">No.</th>
+                        <th width="50px">Code</th>
+                        <th width="50px">Type</th>
+                        <th width="50px">Abbriviation</th>
+                        <th width="200px">Short Des.</th>
+                        <th>Description</th>
+                        <th>Active</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="CodeModal" class="modal fade" role="dialog" tabindex='-1'></div>
     </div>
 </div>
 @section scripts {
+    <script src="~/js/page/code.js" asp-append-version="true"></script>
     <script>
-        function setType() {
-            $('#CodeModal').html("");
-            var typeText = $("#code-type option:selected").text();
-            var typeVal = $("#code-type option:selected").val();
-            $("#code-type-text").text(typeText);
-            $('#CodesList').load(`/settings/FetchCodesByType?type=${typeVal}`, function () {
-                window["datatable"] = $('#CodesDataTable').DataTable(dataTableDefaultOptions);
-            });
-        }
         setType();
     </script>
 }

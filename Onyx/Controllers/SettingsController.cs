@@ -207,8 +207,12 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCodesByType(string type)
         {
-            var codes = _settingService.GetCodes().Where(m => m.Typ.Trim() == type);
-            return PartialView("_CodesList", codes);
+            var codes = _settingService.GetCodes().Where(m => m.Typ.Trim() == type.Trim());
+            CommonResponse result = new()
+            {
+                Data = codes,
+            };
+            return Json(result);
         }
         public IActionResult GetCode(string cd, string type)
         {
