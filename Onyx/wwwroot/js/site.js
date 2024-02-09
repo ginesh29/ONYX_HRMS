@@ -121,13 +121,9 @@ function formatDate(date) {
 function reloadPageAfterSometime() {
     window["datatable"].redraw();
 }
-function reloadDatatable(id, data) {
-    window["datatable"].destroy();
-    $(`#${id}`).DataTable({
-        "pagingType": "simple",
-        "ordering": false,
-        data: data
-    });
+function reloadDatatable() {
+    window["datatable"].ajax.reload();
+    window["datatable"].search('').draw();
 }
 function parseDynamicForm() {
     $("form").removeData("validator");

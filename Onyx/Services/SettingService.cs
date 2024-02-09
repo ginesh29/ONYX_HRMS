@@ -27,10 +27,10 @@ namespace Onyx.Services
             var procedureName = "Branch_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
-            parameters.Add("v_Des", model.Name);
+            parameters.Add("v_Des", model.Description);
             parameters.Add("v_CoCd", model.CoCd);
             parameters.Add("v_BU_Cd", "");
-            parameters.Add("v_SDes", model.Description);
+            parameters.Add("v_SDes", model.Name);
             parameters.Add("v_Image", model.Image);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);

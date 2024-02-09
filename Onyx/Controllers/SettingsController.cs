@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System;
 
 namespace Onyx.Controllers
 {
@@ -24,8 +25,16 @@ namespace Onyx.Controllers
         #region Branch
         public IActionResult Branches()
         {
-            ViewBag.BranchesList = _settingService.GetBranches(_loggedInUser.CompanyCd);
             return View();
+        }
+        public IActionResult FetchBranches()
+        {
+            var branches = _settingService.GetBranches(_loggedInUser.CompanyCd);
+            CommonResponse result = new CommonResponse()
+            {
+                Data = branches,
+            };
+            return Json(result);
         }
         public IActionResult GetBranch(string cd)
         {
@@ -35,8 +44,9 @@ namespace Onyx.Controllers
                 model = new BranchModel
                 {
                     Code = branch.Cd,
-                    Name = branch.Des,
-                    Description = branch.SDes,
+                    Cd = branch.Cd,
+                    Name = branch.SDes,
+                    Description = branch.Des,
                     Image = branch.Image,
                 };
             return PartialView("_BranchModal", model);

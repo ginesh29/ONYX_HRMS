@@ -20,11 +20,12 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Image { get; set; }
         public IFormFile ImageFile { get; set; }
+        public string Cd { get; set; }
         public string Mode
         {
             get
             {
-                return !string.IsNullOrEmpty(Code) ? "U" : "I";
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
             }
         }
     }

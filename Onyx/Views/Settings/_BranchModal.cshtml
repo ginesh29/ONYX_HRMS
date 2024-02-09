@@ -1,4 +1,7 @@
 ﻿@model BranchModel
+@{
+    var image = !string.IsNullOrEmpty(Model.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
+}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -8,6 +11,7 @@
         </div>
         <div class="modal-body">
             <form id="branch-frm">
+                <input type="hidden" asp-for="Cd" />
                 <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
                     <label asp-for="Code"></label>
                     <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
@@ -28,6 +32,7 @@
                         <div class="form-group">
                             <label for="ImageFile">Image</label>
                             <div class="custom-file">
+                                <input type="hidden" asp-for="Image" />
                                 <input asp-for="ImageFile" class="custom-file-input" onchange="previewImage(event)">
                                 <label class="custom-file-label" id="image-file-label" asp-for="ImageFile">@(!string.IsNullOrEmpty(Model.Image) ? Model.Image : "Choose file")</label>
                             </div>
@@ -38,7 +43,7 @@
                         <div class="form-group">
                             <label>&nbsp;</label>
                             <div>
-                                <img id="Image-Preview" style="height:35px" src="~/uploads/branch/@Model.Image" class="rounded border rounded-circle @(string.IsNullOrEmpty(Model.Image) ? "d-none" :"")" asp-append-version="true">
+                                <img id="Image-Preview" style="height:35px" src="@image" class="rounded border rounded-circle @(!string.IsNullOrEmpty(image) ? "" :"d-none")" asp-append-version="true">
                             </div>
                         </div>
                     </div>

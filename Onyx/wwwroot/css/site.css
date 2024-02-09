@@ -80,6 +80,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: auto;
     width: 2.1rem;
 }
+
 .fc-event-title {
     width: 100% !important;
 }
@@ -170,6 +171,10 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     color: #fff;
     background-color: #17a2b8 !important;
     border-color: #17a2b8 !important;
+}
+
+.table.dataTable {
+    width: 100% !important;
 }
 
 .content-wrapper table tbody a:not(.btn):hover {
