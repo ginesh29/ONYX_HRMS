@@ -72,7 +72,7 @@
                                 @foreach (var item in UserBranchItems)
                                 {
                                     var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
-                                    <option data-content="@item.Branch @img"></option>
+                                    <option data-content="@item.Branch @img" value="@item.Cd" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
                                 }
                             </select>
                             <span asp-validation-for="UserBranchCd" class="text-danger"></span>

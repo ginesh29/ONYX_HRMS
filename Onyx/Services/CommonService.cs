@@ -102,14 +102,14 @@ namespace Onyx.Services
                 Print = g.Any(p => p.Print == "Y") ? "\'Y\'" : "null",
             }).ToList();
         }
-        public void SaveUserBranch(string UserCd, string[] UserBranchIds)
+        public void SaveUserBranch(string UserCd, List<string> UserBranchIds)
         {
             var connectionString = GetConnectionString();
             string insertQuery = UserBranchIds != null ? "INSERT INTO UserBranch(UserCd,Div,Des) VALUES" : null;
             if (UserBranchIds != null)
             {
                 foreach (var item in UserBranchIds)
-                    insertQuery += $"('{UserCd}','{item}','Y'),";
+                    insertQuery += $"('{UserCd}','{item.Trim()}','Y'),";
                 insertQuery = insertQuery.Trim([',']);
             }
             string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";

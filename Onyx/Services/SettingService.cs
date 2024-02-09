@@ -22,7 +22,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveBranch(BranchModel model)
+        public int SaveBranch(BranchModel model)
         {
             var procedureName = "Branch_Update";
             var parameters = new DynamicParameters();
@@ -31,12 +31,13 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", model.CoCd);
             parameters.Add("v_BU_Cd", "");
             parameters.Add("v_SDes", model.Name);
-            parameters.Add("v_Image", model.Image);
+            parameters.Add("v_Image", model.Image ?? "");
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            int result = connection.QueryFirstOrDefault(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteBranch(string Cd, string CoCd)
         {

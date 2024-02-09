@@ -5,6 +5,7 @@ namespace Onyx.Models.ViewModels
 {
     public class UserModel
     {
+        public string Cd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "User Cd")]
         public string Code { get; set; }
@@ -35,12 +36,12 @@ namespace Onyx.Models.ViewModels
         public string ViewAllEmp { get; set; }
         [Display(Name = "User Branch")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        public string[] UserBranchCd { get; set; }
+        public List<string> UserBranchCd { get; set; }
         public string Mode
         {
             get
             {
-                return !string.IsNullOrEmpty(Code) ? "U" : "I";
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
             }
         }
         public IEnumerable<GetMenuWithPermissions_Result> Menus { get; set; }

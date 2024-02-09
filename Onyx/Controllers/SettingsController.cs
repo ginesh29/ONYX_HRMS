@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
-using System;
 
 namespace Onyx.Controllers
 {
@@ -30,7 +27,7 @@ namespace Onyx.Controllers
         public IActionResult FetchBranches()
         {
             var branches = _settingService.GetBranches(_loggedInUser.CompanyCd);
-            CommonResponse result = new CommonResponse()
+            CommonResponse result = new()
             {
                 Data = branches,
             };
@@ -67,11 +64,11 @@ namespace Onyx.Controllers
                     await model.ImageFile.CopyToAsync(stream);
                 model.Image = filename;
             }
-            _settingService.SaveBranch(model);
+            int isSuccess = _settingService.SaveBranch(model);
             var result = new CommonResponse
             {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+                Success = isSuccess > 0,
+                Message = isSuccess > 0 ? model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED : CommonMessage.USEREXISTS
             };
             return Json(result);
         }
@@ -94,6 +91,15 @@ namespace Onyx.Controllers
             ViewBag.UsersList = _settingService.GetUsers();
             return View();
         }
+        public IActionResult FetchUsers()
+        {
+            var users = _settingService.GetUsers();
+            CommonResponse result = new()
+            {
+                Data = users,
+            };
+            return Json(result);
+        }
         public IActionResult GetUser(string cd)
         {
             var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
@@ -102,6 +108,7 @@ namespace Onyx.Controllers
                 model = new UserModel
                 {
                     Code = user.Code,
+                    Cd = user.Code,
                     LoginId = user.LoginId,
                     UPwd = user.UPwd.Decrypt(),
                     Abbr = user.Abbr,
@@ -116,6 +123,7 @@ namespace Onyx.Controllers
         public IActionResult SaveUser(UserModel model)
         {
             model.EntryBy = _loggedInUser.Username;
+            model.UPwd = model.UPwd.Encrypt();
             _settingService.SaveUser(model);
             _commonService.SaveUserBranch(model.Code, model.UserBranchCd);
             _commonService.SaveUserMenu(model.Code, model.MenuIds);
