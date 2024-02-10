@@ -8,6 +8,7 @@
         </div>
         <div class="modal-body">
             <form id="workig-hour-frm">
+                <input type="hidden" asp-for="Cd" />
                 <input type="hidden" asp-for="FromDt" />
                 <input type="hidden" asp-for="ToDt" />
                 <div class="row">
@@ -22,15 +23,16 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Date range:</label>
+                            <label asp-for="DateRange"></label>
                             <div class="input-group">
-                                <input type="text" class="form-control daterangepicker-input" id="DateRange">
+                                <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="far fa-calendar-alt"></i>
                                     </span>
                                 </div>
                             </div>
+                            <span asp-validation-for="DateRange" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">

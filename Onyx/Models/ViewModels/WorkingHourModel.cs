@@ -10,6 +10,9 @@ namespace Onyx.Models.StoredProcedure
         public string Description { get; set; }
         public DateTime FromDt { get; set; }
         public DateTime ToDt { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        [Display(Name = "Date Range")]
+        public string DateRange { get; set; }
         public string FormattedFromDate { get; set; }
         public string FormattedToDate { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
@@ -24,11 +27,12 @@ namespace Onyx.Models.StoredProcedure
         [Display(Name = "Day Type")]
         public string HolTypCd { get; set; }
         public string EntryBy { get; set; }
+        public string Cd { get; set; }
         public string Mode
         {
             get
             {
-                return !string.IsNullOrEmpty(Code) ? "U" : "I";
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
             }
         }
     }

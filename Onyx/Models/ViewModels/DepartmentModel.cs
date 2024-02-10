@@ -4,6 +4,7 @@ namespace Onyx.Models.StoredProcedure
 {
     public class DepartmentModel
     {
+        public string Cd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Code { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
@@ -18,7 +19,7 @@ namespace Onyx.Models.StoredProcedure
         {
             get
             {
-                return !string.IsNullOrEmpty(Code) ? "U" : "I";
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
             }
         }
     }

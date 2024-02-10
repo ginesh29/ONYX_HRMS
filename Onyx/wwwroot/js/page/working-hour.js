@@ -40,11 +40,18 @@ function showWorkingHourModal(cd) {
         $('.decimal-input').attr("placeholder", "0.00");
         $('.decimal-input').inputmask(decimalMaskOptions);
         $(".select-picker").selectpicker();
-        $('#DateRange').daterangepicker().change(function () {
-            var startDate = $('#DateRange').data('daterangepicker').startDate.format('MM/DD/YYYY');
-            var endDate = $('#DateRange').data('daterangepicker').endDate.format('MM/DD/YYYY');
+        $('#DateRange').daterangepicker({
+            autoUpdateInput: false
+        });
+        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format('MM/DD/YYYY');
+            var endDate = picker.endDate.format('MM/DD/YYYY');
+            $(this).val(startDate + ' - ' + endDate);
             $("#FromDt").val(startDate);
             $("#ToDt").val(endDate);
+        });
+        $('#DateRange').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
         });
         $("#WorkingHourModal").modal("show");
     });

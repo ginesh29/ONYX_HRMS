@@ -64,12 +64,7 @@ namespace Onyx.Controllers
                     await model.ImageFile.CopyToAsync(stream);
                 model.Image = filename;
             }
-            string isSuccess = _settingService.SaveBranch(model);
-            var result = new CommonResponse
-            {
-                Success = string.IsNullOrEmpty(isSuccess),
-                Message = string.IsNullOrEmpty(isSuccess) ? model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED : CommonMessage.USEREXISTS
-            };
+            var result = _settingService.SaveBranch(model);
             return Json(result);
         }
         [HttpDelete]
@@ -123,15 +118,13 @@ namespace Onyx.Controllers
         {
             model.EntryBy = _loggedInUser.Username;
             model.UPwd = model.UPwd.Encrypt();
-            _settingService.SaveUser(model);
-            _commonService.SaveUserBranch(model.Code, model.UserBranchCd);
-            _commonService.SaveUserMenu(model.Code, model.MenuIds);
-            _commonService.SaveUserPermission(model.Code, model.Permissions);
-            var result = new CommonResponse
+            var result = _settingService.SaveUser(model);
+            if (result.Success)
             {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+                _commonService.SaveUserBranch(model.Code, model.UserBranchCd);
+                _commonService.SaveUserMenu(model.Code, model.MenuIds);
+                _commonService.SaveUserPermission(model.Code, model.Permissions);
+            }
             return Json(result);
         }
         [HttpDelete]
@@ -169,6 +162,7 @@ namespace Onyx.Controllers
                 model = new DepartmentModel
                 {
                     Code = department.Code,
+                    Cd = department.Code,
                     Name = department.Department,
                     Description = department.Description,
                 };
@@ -178,12 +172,7 @@ namespace Onyx.Controllers
         public IActionResult SaveDepartment(DepartmentModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _settingService.SaveDepartment(model);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _settingService.SaveDepartment(model);
             return Json(result);
         }
         [HttpDelete]
@@ -241,12 +230,7 @@ namespace Onyx.Controllers
         public IActionResult SaveCode(CodeModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _settingService.SaveCode(model);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _settingService.SaveCode(model);
             return Json(result);
         }
         [HttpDelete]
@@ -284,6 +268,7 @@ namespace Onyx.Controllers
                 model = new CountryModel
                 {
                     Code = country.Code,
+                    Cd = country.Code,
                     Nationality = country.Nationality,
                     Provisions = country.Provisions,
                     ShortDesc = country.ShortDesc,
@@ -296,23 +281,13 @@ namespace Onyx.Controllers
         public IActionResult SaveCountry(CountryModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _settingService.SaveCountry(model);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _settingService.SaveCountry(model);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult DeleteCountry(string cd)
         {
-            int deleteSuccess = _settingService.DeleteCountry(cd);
-            var result = new CommonResponse
-            {
-                Success = deleteSuccess > 0,
-                Message = deleteSuccess > 0 ? CommonMessage.DELETED : "You can not delete this country. Already Employee exist in country"
-            };
+            var result = _settingService.DeleteCountry(cd);
             return Json(result);
         }
         #endregion
@@ -339,6 +314,7 @@ namespace Onyx.Controllers
                 model = new CurrencyModel
                 {
                     Code = currency.Code,
+                    Cd = currency.Code,
                     Abbriviation = currency.Abbr,
                     NoDecs = currency.NoDecs,
                     MainCurr = currency.MainCurr,
@@ -353,12 +329,7 @@ namespace Onyx.Controllers
         public IActionResult SaveCurrency(CurrencyModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _settingService.SaveCurrency(model, _loggedInUser.CompanyCd);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _settingService.SaveCurrency(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
         [HttpDelete]

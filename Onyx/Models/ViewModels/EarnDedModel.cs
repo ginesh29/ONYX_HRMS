@@ -38,11 +38,12 @@ namespace Onyx.Models.StoredProcedure
         public bool JobCosting { get; set; }
         public bool OT { get; set; }
         public bool OtCd { get; set; }
+        public string Code { get; set; }
         public string Mode
         {
             get
             {
-                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+                return !string.IsNullOrEmpty(Code) ? "U" : "I";
             }
         }
     }

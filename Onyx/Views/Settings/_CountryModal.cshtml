@@ -8,6 +8,7 @@
         </div>
         <div class="modal-body">
             <form id="country-frm">
+                <input type="hidden" asp-for="Cd" />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">

@@ -43,6 +43,7 @@ namespace Onyx.Controllers
                 model = new EarnDedModel
                 {
                     Cd = component.Cd,
+                    Code = component.Cd,
                     Abbriviation = component.Abbr,
                     Description = component.Des,
                     JobCosting = component.JobCosting == "Yes",
@@ -67,12 +68,7 @@ namespace Onyx.Controllers
         public IActionResult SaveComponent(EarnDedModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _organisationService.SaveComponent(model);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _organisationService.SaveComponent(model);
             return Json(result);
         }
         [HttpDelete]
@@ -134,12 +130,7 @@ namespace Onyx.Controllers
         public IActionResult SaveLoanType(LoanTypeModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _organisationService.SaveLoanType(model);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _organisationService.SaveLoanType(model);
             return Json(result);
         }
         [HttpDelete]
@@ -178,6 +169,7 @@ namespace Onyx.Controllers
                 model = new WorkingHourModel
                 {
                     Code = component.Code,
+                    Cd = component.Code,
                     DutyHrs = component.DutyHrs,
                     FromDt = component.FromDt,
                     ToDt = component.ToDt,
@@ -195,12 +187,7 @@ namespace Onyx.Controllers
         public IActionResult SaveWorkingHour(WorkingHourModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _organisationService.SaveWorkingHour(model, _loggedInUser.CompanyCd);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _organisationService.SaveWorkingHour(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
         [HttpDelete]
@@ -261,12 +248,7 @@ namespace Onyx.Controllers
         public IActionResult SaveOvertimeRate(OvertimeRateModel model)
         {
             model.EntryBy = _loggedInUser.Username;
-            _organisationService.SaveOvertimeRate(model, _loggedInUser.CompanyCd);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
-            };
+            var result = _organisationService.SaveOvertimeRate(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
         [HttpDelete]

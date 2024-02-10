@@ -17,9 +17,9 @@
             { data: "payCd" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('${row.srNo}','${row.typCd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteOvertimeRate('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteOvertimeRate('${row.srNo}','${row.typCd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

@@ -33,8 +33,7 @@ function showComponentModal(cd) {
     $('#ComponentModal').load(url, function () {
         parseDynamicForm();
         $(".select-picker").selectpicker();
-        $('.percentage-input').attr("placeholder", "0 %");
-        $('.percentage-input').inputmask(percentageMaskOptions);
+        changePercentageAmt();
         $("#ComponentModal").modal("show");
     });
 }
@@ -73,4 +72,18 @@ function saveComponent(btn) {
             unloadingButton(btn);
         });
     }
+}
+function changePercentageAmt() {
+    var val = $("#PercAmt_Cd").val();
+    if (val)
+        if (val == "A") {
+            $("#Perc_Val").removeClass("percentage-input").addClass("decimal-input");
+            $('.decimal-input').attr("placeholder", "0.00");
+            $('.decimal-input').inputmask(decimalMaskOptions);
+        }
+        else {
+            $("#Perc_Val").removeClass("decimal-input").addClass("percentage-input");
+            $('.percentage-input').attr("placeholder", "0.00 %");
+            $('.percentage-input').inputmask(percentageMaskOptions);
+        }
 }

@@ -22,7 +22,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveComponent(EarnDedModel model)
+        public CommonResponse SaveComponent(EarnDedModel model)
         {
             var procedureName = "CompanyEarnDed_Update";
             var parameters = new DynamicParameters();
@@ -42,7 +42,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteComponent(string Cd, string type)
         {
@@ -68,7 +69,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveLoanType(LoanTypeModel model)
+        public CommonResponse SaveLoanType(LoanTypeModel model)
         {
             var procedureName = "CompanyLoanTypes_Update";
             var parameters = new DynamicParameters();
@@ -86,7 +87,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteLoanType(string Cd)
         {
@@ -112,11 +114,11 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveWorkingHour(WorkingHourModel model, string CoCd)
+        public CommonResponse SaveWorkingHour(WorkingHourModel model, string CoCd)
         {
             var procedureName = "CompanyWHrs_Update";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_Cd", model.Code.Trim());
             parameters.Add("v_Narr", model.Description);
             parameters.Add("v_FromDt", model.FromDt);
             parameters.Add("v_ToDt", model.ToDt);
@@ -125,9 +127,11 @@ namespace Onyx.Services
             parameters.Add("v_RelgTyp", model.RelgTypCd);
             parameters.Add("v_HolTyp", model.HolTypCd);
             parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteWorkingHour(string Cd)
         {
@@ -153,7 +157,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveOvertimeRate(OvertimeRateModel model, string CoCd)
+        public CommonResponse SaveOvertimeRate(OvertimeRateModel model, string CoCd)
         {
             var procedureName = "CompanyOvertimeRates_Update";
             var parameters = new DynamicParameters();
@@ -169,7 +173,8 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteOvertimeRate(string Cd, string type, string CoCd)
         {

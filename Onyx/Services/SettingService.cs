@@ -22,11 +22,11 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public string SaveBranch(BranchModel model)
+        public CommonResponse SaveBranch(BranchModel model)
         {
             var procedureName = "Branch_Update";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", model.Code);
+            parameters.Add("v_Cd", model.Code.Trim());
             parameters.Add("v_Des", model.Description);
             parameters.Add("v_CoCd", model.CoCd);
             parameters.Add("v_BU_Cd", "");
@@ -36,11 +36,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-
-            try
-            { return connection.QueryFirstOrDefault(procedureName, parameters, commandType: CommandType.StoredProcedure); }
-            catch (Exception ex)
-            { return ex.Message; }
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteBranch(string Cd, string CoCd)
         {
@@ -66,7 +63,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveUser(UserModel model)
+        public CommonResponse SaveUser(UserModel model)
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Users_Update";
@@ -78,9 +75,10 @@ namespace Onyx.Services
             parameters.Add("v_UName", model.Username);
             parameters.Add("v_ExpiryDt", Convert.ToDateTime(model.ExpiryDt).ToString("d"));
             parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_Mode", null);
+            parameters.Add("v_Mode", model.Mode);
             var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteUser(string Cd)
         {
@@ -126,7 +124,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveDepartment(DepartmentModel model)
+        public CommonResponse SaveDepartment(DepartmentModel model)
         {
             var procedureName = "Dept_Update";
             var parameters = new DynamicParameters();
@@ -137,7 +135,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteDepartment(string Cd)
         {
@@ -185,7 +184,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveCode(CodeModel model)
+        public CommonResponse SaveCode(CodeModel model)
         {
             var procedureName = "Codes_Update";
             var parameters = new DynamicParameters();
@@ -199,7 +198,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteCode(string Cd)
         {
@@ -224,7 +224,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveCountry(CountryModel model)
+        public CommonResponse SaveCountry(CountryModel model)
         {
             var procedureName = "Country_Update";
             var parameters = new DynamicParameters();
@@ -238,16 +238,17 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
-        public int DeleteCountry(string Cd)
+        public CommonResponse DeleteCountry(string Cd)
         {
             var procedureName = "Country_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            int result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
         #endregion
@@ -265,7 +266,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void SaveCurrency(CurrencyModel model, string CoCd)
+        public CommonResponse SaveCurrency(CurrencyModel model, string CoCd)
         {
             var procedureName = "Currency_Update";
             var parameters = new DynamicParameters();
@@ -282,7 +283,8 @@ namespace Onyx.Services
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void DeleteCurrency(string Cd)
         {

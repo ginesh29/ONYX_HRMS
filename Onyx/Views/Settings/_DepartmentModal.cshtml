@@ -8,6 +8,7 @@
         </div>
         <div class="modal-body">
             <form id="dept-frm">
+                <input type="hidden" asp-for="Cd" />
                 <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
                     <label asp-for="Code"></label>
                     <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
