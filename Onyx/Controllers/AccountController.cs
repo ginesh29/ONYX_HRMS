@@ -50,14 +50,16 @@ namespace Onyx.Controllers
                 var result = new CommonResponse { Success = false };
                 if (model.UserType == UserTypeEnum.User)
                 {
-                    var user = _userEmployeeService.ValidateUser(model);
-                    if (user != null)
+                    var validateUser = _userEmployeeService.ValidateUser(model);
+                    if (validateUser != null)
                     {
+                        var user = _userEmployeeService.GetUser(validateUser.Cd);
                         var u = new LoggedInUserModel
                         {
                             CompanyCd = model.CoCd,
-                            UserCd = user.Cd,
-                            Username = user.UName,
+                            UserCd = validateUser.Cd,
+                            Username = validateUser.UName,
+                            UserAbbr = user.Abbr,
                             LoginId = model.LoginId,
                             UserType = (int)model.UserType,
                             Browser = model.Browser
@@ -79,6 +81,7 @@ namespace Onyx.Controllers
                             CompanyCd = model.CoCd,
                             UserCd = employee.UserCd,
                             Username = user.Username,
+                            UserAbbr = user.Abbr,
                             UserType = (int)model.UserType,
                             LoginId = model.LoginId,
                             Browser = model.Browser

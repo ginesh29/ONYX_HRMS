@@ -13,6 +13,7 @@ namespace Onyx.Services
             var claims = new List<Claim>()
             {
                 new("Username", model.Username),
+                new("UserAbbr", model.UserAbbr),
                 new("LoginId", model.LoginId),
                 new("UserCd",model.UserCd),
                 new("UserType",model.UserType.ToString()),
@@ -47,6 +48,7 @@ namespace Onyx.Services
                 if (claims.Any())
                 {
                     user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
+                    user.UserAbbr = claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value;
                     user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
                     user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
                     user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);

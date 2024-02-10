@@ -67,7 +67,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveComponent(EarnDedModel model)
         {
-            model.EntryBy = _loggedInUser.Username;
+            model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveComponent(model);
             return Json(result);
         }
@@ -129,7 +129,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveLoanType(LoanTypeModel model)
         {
-            model.EntryBy = _loggedInUser.Username;
+            model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveLoanType(model);
             return Json(result);
         }
@@ -186,7 +186,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveWorkingHour(WorkingHourModel model)
         {
-            model.EntryBy = _loggedInUser.Username;
+            model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveWorkingHour(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -247,7 +247,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveOvertimeRate(OvertimeRateModel model)
         {
-            model.EntryBy = _loggedInUser.Username;
+            model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveOvertimeRate(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
