@@ -24,8 +24,16 @@ namespace Onyx.Controllers
         #region Component
         public IActionResult Components()
         {
-            ViewBag.ComponentsList = _organisationService.GetComponents();
             return View();
+        }
+        public IActionResult FetchComponents()
+        {
+            var components = _organisationService.GetComponents();
+            CommonResponse result = new()
+            {
+                Data = components,
+            };
+            return Json(result);
         }
         public IActionResult GetComponent(string cd)
         {
@@ -83,7 +91,6 @@ namespace Onyx.Controllers
         #region Loan Type
         public IActionResult LoanTypes()
         {
-            ViewBag.LoanTypesList = _organisationService.GetLoanTypes();
             return View();
         }
         public IActionResult GetLoanType(string cd)
@@ -114,6 +121,15 @@ namespace Onyx.Controllers
             ViewBag.ChargesTypesItems = _commonService.GetChargesTypes();
             return PartialView("_LoanTypeModal", model);
         }
+        public IActionResult FetchLoanTypes()
+        {
+            var loanTypes = _organisationService.GetLoanTypes();
+            CommonResponse result = new()
+            {
+                Data = loanTypes,
+            };
+            return Json(result);
+        }
         [HttpPost]
         public IActionResult SaveLoanType(LoanTypeModel model)
         {
@@ -142,8 +158,17 @@ namespace Onyx.Controllers
         #region Working Hour
         public IActionResult WorkingHours()
         {
-            ViewBag.WorkingHoursList = _organisationService.GetWorkingHours(_loggedInUser.CompanyCd);
             return View();
+        }
+        public IActionResult FetchWorkingHours()
+        {
+            var workingHours
+                = _organisationService.GetWorkingHours(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = workingHours,
+            };
+            return Json(result);
         }
         public IActionResult GetWorkingHour(string cd)
         {
@@ -194,8 +219,17 @@ namespace Onyx.Controllers
         #region Overtime Rate
         public IActionResult OvertimeRates()
         {
-            ViewBag.OvertimeRatesList = _organisationService.GetOvertimeRates(_loggedInUser.CompanyCd);
+
             return View();
+        }
+        public IActionResult FetchOvertimeRates()
+        {
+            var overtimeRates = _organisationService.GetOvertimeRates(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = overtimeRates,
+            };
+            return Json(result);
         }
         public IActionResult GetOvertimeRate(int Cd, string type)
         {
