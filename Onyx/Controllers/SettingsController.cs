@@ -64,11 +64,11 @@ namespace Onyx.Controllers
                     await model.ImageFile.CopyToAsync(stream);
                 model.Image = filename;
             }
-            int isSuccess = _settingService.SaveBranch(model);
+            string isSuccess = _settingService.SaveBranch(model);
             var result = new CommonResponse
             {
-                Success = isSuccess > 0,
-                Message = isSuccess > 0 ? model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED : CommonMessage.USEREXISTS
+                Success = string.IsNullOrEmpty(isSuccess),
+                Message = string.IsNullOrEmpty(isSuccess) ? model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED : CommonMessage.USEREXISTS
             };
             return Json(result);
         }
