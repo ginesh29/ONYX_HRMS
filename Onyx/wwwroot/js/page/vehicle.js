@@ -1,6 +1,6 @@
-﻿window["datatable"] = $('#BanksDataTable').DataTable(
+﻿window["datatable"] = $('#VehiclesDataTable').DataTable(
     {
-        ajax: "/Organisation/FetchBanks",
+        ajax: "/Organisation/FetchVehicles",
         ordering: false,
         columns: [
             {
@@ -8,22 +8,16 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "bank" },            
-            { data: "branch" },
-            { data: "swift" },
-            { data: "address1" },
-            { data: "address2" },
-            { data: "address3" },
-            { data: "contact" },
-            { data: "phone" },
-            { data: "fax" },
-            { data: "email" },
-            { data: "url" },
+            { data: "cd" },            
+            { data: "des" },
+            { data: "regnNo" },
+            { data: "model" },
+            { data: "brand" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showVehicleModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteVehicle('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -31,14 +25,14 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showVehicleModal(cd) {
+    var url = `/Organisation/GetVehicle?cd=${cd}`;
+    $('#VehicleModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $("#VehicleModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteVehicle(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -49,26 +43,26 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteVehicle?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveVehicle(btn) {
+    var frm = $("#Vehicle-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveVehicle", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#VehicleModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#VehicleModal").modal("hide");
             }
             unloadingButton(btn);
         });

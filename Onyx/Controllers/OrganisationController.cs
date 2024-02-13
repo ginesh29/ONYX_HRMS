@@ -307,7 +307,7 @@ namespace Onyx.Controllers
                 Text = m.Department,
                 Value = m.Code
             });
-            ViewBag.DesignationItems = _commonService.GetDesignations().Select(m => new SelectListItem
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
             {
                 Text = m.SDes,
                 Value = m.Cd
@@ -478,6 +478,70 @@ namespace Onyx.Controllers
         //    };
         //    return Json(result);
         //}
+        #endregion
+
+        #region Document
+        public IActionResult Documents()
+        {
+            return View();
+        }
+        public IActionResult FetchDocuments()
+        {
+            var documents = _organisationService.GetDocuments(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = documents,
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Vehicle
+        public IActionResult Vehicles()
+        {
+            return View();
+        }
+        public IActionResult FetchVehicles()
+        {
+            var vehicles = _organisationService.GetVehicles();
+            CommonResponse result = new()
+            {
+                Data = vehicles,
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Designation
+        public IActionResult Designations()
+        {
+            return View();
+        }
+        public IActionResult FetchDesignations()
+        {
+            var designations = _organisationService.GetDesignations();
+            CommonResponse result = new()
+            {
+                Data = designations,
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Leave Type
+        public IActionResult LeaveTypes()
+        {
+            return View();
+        }
+        public IActionResult FetchLeaveTypes()
+        {
+            var leaveTypes = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = leaveTypes,
+            };
+            return Json(result);
+        }
         #endregion
     }
 }

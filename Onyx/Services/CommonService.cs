@@ -235,17 +235,6 @@ namespace Onyx.Services
             };
             return percentageAmtTypes;
         }
-        public IEnumerable<Designation_GetRow_Result> GetDesignations()
-        {
-            var procedureName = "Designation_GetRow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", string.Empty);
-            var connectionString = GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<Designation_GetRow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
         public IEnumerable<SelectListItem> GetBeforeAfter()
         {
             var beforeAfter = new List<SelectListItem>()

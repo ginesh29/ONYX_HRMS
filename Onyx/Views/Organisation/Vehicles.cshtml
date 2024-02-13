@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Vehicles";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showVehicleModal('')">New Vehicle</button>
+        </div>
+        <table class="table table-sm" id="VehiclesDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Reg. Number</th>
+                    <th>Type</th>
+                    <th>Brand</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="VehicleModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/vehicle.js" asp-append-version="true"></script>
+}

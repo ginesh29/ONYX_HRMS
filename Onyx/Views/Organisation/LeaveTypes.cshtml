@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Leave Types";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showLeaveTypeModal('')">New Leave Type</button>
+        </div>
+        <table class="table table-sm" id="LeaveTypesDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Appr. Levels</th>
+                    <th>Max. Leave</th>
+                    <th>Accrued</th>
+                    <th>Encash</th>
+                    <th>Min. Encash Limit</th>
+                    <th>Pay Fact</th>
+                    <th>Accr Limit</th>
+                    <th>Service Period</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="LeaveTypeModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/leave-type.js" asp-append-version="true"></script>
+}

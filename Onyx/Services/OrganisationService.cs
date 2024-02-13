@@ -387,5 +387,64 @@ namespace Onyx.Services
         //    connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         //}
         #endregion
+
+        #region Document
+        public IEnumerable<CompanyDocuments_GetRow_Result> GetDocuments(string CoCd)
+        {
+            var procedureName = "CompanyDocuments_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_DocTypCd", string.Empty);
+            parameters.Add("v_DivCd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyDocuments_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
+
+        #region Vehicle
+        public IEnumerable<CompanyVehicle_GetRow_Result> GetVehicles()
+        {
+            var procedureName = "CompanyVehicle_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyVehicle_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
+
+        #region Designation
+        public IEnumerable<Designation_GetRow_Result> GetDesignations()
+        {
+            var procedureName = "Designation_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Designation_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
+
+        #region Leave Type
+        public IEnumerable<CompanyLeave_GetRow_Result> GetLeaveTypes(string CoCd)
+        {
+            var procedureName = "CompanyLeave_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyLeave_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
     }
 }

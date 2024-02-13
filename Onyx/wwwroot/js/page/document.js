@@ -1,6 +1,6 @@
-﻿window["datatable"] = $('#BanksDataTable').DataTable(
+﻿window["datatable"] = $('#DocumentsDataTable').DataTable(
     {
-        ajax: "/Organisation/FetchBanks",
+        ajax: "/Organisation/FetchDocuments",
         ordering: false,
         columns: [
             {
@@ -8,22 +8,29 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "bank" },            
-            { data: "branch" },
-            { data: "swift" },
-            { data: "address1" },
-            { data: "address2" },
-            { data: "address3" },
-            { data: "contact" },
-            { data: "phone" },
-            { data: "fax" },
-            { data: "email" },
-            { data: "url" },
+            { data: "docTypSDes" },
+            { data: "divSDes" },
+            { data: "docNo", width: "100px" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    var formattedDate = moment(row.issueDt).format('DD/MM/YYYY');
+                    return formattedDate;
+                },
+            },
+            { data: "issuePlace" },
+            {
+                data: function (row) {
+                    var formattedDate = moment(row.expDt).format('DD/MM/YYYY');
+                    return formattedDate;
+                }, width: "100px"
+            },
+            { data: "refNo" },
+            { data: "refDt" },
+            {
+                data: function (row) {
+                    return `<button class="btn btn-sm btn-info" onclick="showDocumentModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -31,14 +38,14 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showDocumentModal(cd) {
+    var url = `/Organisation/GetDocument?cd=${cd}`;
+    $('#DocumentModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $("#DocumentModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteDocument(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -49,26 +56,26 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteDocument?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveDocument(btn) {
+    var frm = $("#Document-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveDocument", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#DocumentModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#DocumentModal").modal("hide");
             }
             unloadingButton(btn);
         });

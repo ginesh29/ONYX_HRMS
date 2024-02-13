@@ -1,6 +1,6 @@
-﻿window["datatable"] = $('#BanksDataTable').DataTable(
+﻿window["datatable"] = $('#LeaveTypesDataTable').DataTable(
     {
-        ajax: "/Organisation/FetchBanks",
+        ajax: "/Organisation/FetchLeaveTypes",
         ordering: false,
         columns: [
             {
@@ -8,22 +8,21 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "bank" },            
-            { data: "branch" },
-            { data: "swift" },
-            { data: "address1" },
-            { data: "address2" },
-            { data: "address3" },
-            { data: "contact" },
-            { data: "phone" },
-            { data: "fax" },
-            { data: "email" },
-            { data: "url" },
+            { data: "cd" },            
+            { data: "des" },
+            { data: "apprLvl" },
+            { data: "lvMax" },
+            { data: "accrued" },
+            { data: "enCash" },
+            { data: "enCashMinLmt" },
+            { data: "payFact" },
+            { data: "accrLmt" },
+            { data: "servicePrd" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLeaveTypeModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteLeaveType('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -31,14 +30,14 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showLeaveTypeModal(cd) {
+    var url = `/Organisation/GetLeaveType?cd=${cd}`;
+    $('#LeaveTypeModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $("#LeaveTypeModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteLeaveType(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -49,26 +48,26 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteLeaveType?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveLeaveType(btn) {
+    var frm = $("#LeaveType-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveLeaveType", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#LeaveTypeModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#LeaveTypeModal").modal("hide");
             }
             unloadingButton(btn);
         });
