@@ -446,5 +446,54 @@ namespace Onyx.Services
             return data;
         }
         #endregion
+
+        #region Leave Pay Component
+        public IEnumerable<CompanyLeavePay_GetRow_Result> GetLeavePayComponents(string CoCd)
+        {
+            var procedureName = "CompanyLeavePay_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_LvCd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyLeavePay_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
+
+        #region Travel Fare
+        public IEnumerable<AirFare_GetRow_Result> GetTravelFares()
+        {
+            var procedureName = "AirFare_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SectCd", string.Empty);
+            parameters.Add("v_Class", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<AirFare_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
+
+        #region Approval Process
+        public IEnumerable<CompanyProcessApproval_GetRow> GetApprovalProcesses(string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_ProcessId", "0");
+            parameters.Add("v_ApplTyp", "0");
+            parameters.Add("v_Div", "0");
+            parameters.Add("v_Dept", "0");
+            parameters.Add("v_typ", "0");
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyProcessApproval_GetRow>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        #endregion
     }
 }

@@ -543,5 +543,53 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Leave Type
+        public IActionResult LeavePayComponents()
+        {
+            return View();
+        }
+        public IActionResult FetchLeavePayComponents()
+        {
+            var leaveTypes = _organisationService.GetLeavePayComponents(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = leaveTypes,
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Travel Fare
+        public IActionResult TravelFares()
+        {
+            return View();
+        }
+        public IActionResult FetchTravelFares()
+        {
+            var travelfares = _organisationService.GetTravelFares();
+            CommonResponse result = new()
+            {
+                Data = travelfares,
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Travel Fare
+        public IActionResult ApprovalProcesses()
+        {
+            return View();
+        }
+        public IActionResult FetchApprovalProcesses()
+        {
+            var approvalProcesses = _organisationService.GetApprovalProcesses(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = approvalProcesses,
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }
