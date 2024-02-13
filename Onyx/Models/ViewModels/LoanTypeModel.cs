@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.StoredProcedure
+namespace Onyx.Models.ViewModels
 {
     public class LoanTypeModel
     {
@@ -23,7 +23,7 @@ namespace Onyx.Models.StoredProcedure
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Interest %")]
         public decimal? IntPerc { get; set; }
-        [Display(Name ="Pay Component")]
+        [Display(Name = "Pay Component")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string PayCd { get; set; }
         [Display(Name = "Ded. Component")]

@@ -1,6 +1,6 @@
 ﻿namespace Onyx.Models.StoredProcedure
 {
-    public class CompanyLoanTypes_GetRow
+    public class CompanyLoanTypes_GetRow_Result
     {
         public string Cd { get; set; }
         public string Des { get; set; }

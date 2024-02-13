@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.StoredProcedure
+namespace Onyx.Models.ViewModels
 {
     public class WorkingHourModel
     {
@@ -17,7 +17,7 @@ namespace Onyx.Models.StoredProcedure
         public string FormattedToDate { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Duty Hours")]
-        public decimal? DutyHrs { get; set; }        
+        public decimal? DutyHrs { get; set; }
         public string Religion { get; set; }
         public string HolTypDesc { get; set; }
         [Display(Name = "Religion")]
