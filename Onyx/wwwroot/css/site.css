@@ -1,4 +1,5 @@
-.main-sidebar {
+.main-sidebar,
+.layout-fixed .brand-link {
     width: 265px;
 }
 
@@ -268,6 +269,29 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     display: none !important;
 }
 
+.bootstrap-tagsinput .label {
+    display: inline;
+    padding: 0.2em 0.6em 0.3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25em;
+}
+
+.bootstrap-tagsinput .tag {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+.bootstrap-tagsinput {
+    height: calc(2.25rem + 2px);
+    width: 100%;
+    padding: 6px 6px;
+}
 @media (max-width: 991.98px) {
     body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
         margin-left: 0;

@@ -3,11 +3,7 @@
         ajax: "/Organisation/FetchOvertimeRates",
         ordering: false,
         columns: [
-            {
-                data: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
+            { data: "srNo" },
             { data: "type" },
             { data: "hrsApply" },
             { data: "rate" },

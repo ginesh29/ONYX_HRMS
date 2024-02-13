@@ -183,6 +183,17 @@ namespace Onyx.Services
                 (procedureName, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<Codes_Grp_GetRow_Result> GetCodesGroups(string grp)
+        {
+            var procedureName = "Codes_Grp_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Grp", grp);
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Codes_Grp_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public IEnumerable<SelectListItem> GetComponentTypes()
         {
             var componentTypes = new List<SelectListItem>()
@@ -223,6 +234,26 @@ namespace Onyx.Services
                 new() { Text="Reducing Balance", Value="R"},
             };
             return percentageAmtTypes;
+        }
+        public IEnumerable<Designation_GetRow_Result> GetDesignations()
+        {
+            var procedureName = "Designation_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Designation_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<SelectListItem> GetBeforeAfter()
+        {
+            var beforeAfter = new List<SelectListItem>()
+            {
+                new() {Text="Before", Value="B" ,Selected=true},
+                new() { Text="After", Value="A"},
+            };
+            return beforeAfter;
         }
     }
 }

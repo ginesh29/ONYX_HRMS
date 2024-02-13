@@ -13,6 +13,7 @@
         public const string DayType = "HOTC2";
         public const string Religion = "HOTC1";
         public const string OtTpe = "HCOTT";
+        public const string EmpDeployLoc = "HLOC";
     }
     public class CommonMessage
     {

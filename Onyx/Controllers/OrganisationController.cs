@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -13,13 +12,19 @@ namespace Onyx.Controllers
         private readonly AuthService _authService;
         private readonly OrganisationService _organisationService;
         private readonly CommonService _commonService;
+        private readonly SettingService _settingService;
+        private readonly UserEmployeeService _userEmployeeService;
+        private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
-        public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService)
+        public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, UserEmployeeService userEmployeeService, EmailService emailService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
             _commonService = commonService;
+            _settingService = settingService;
+            _userEmployeeService = userEmployeeService;
+            _emailService = emailService;
         }
         #region Component
         public IActionResult Components()
@@ -220,7 +225,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetOvertimeRate(int Cd, string type)
         {
-            var overtimeRate = _organisationService.GetOvertimeRates(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.TypCd.Trim() == type && m.CoCd.Trim() == _loggedInUser.CompanyCd);
+            var overtimeRate = _organisationService.GetOvertimeRates(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.TypCd.Trim() == type);
             var model = new OvertimeRateModel();
             if (overtimeRate != null)
                 model = new OvertimeRateModel
@@ -271,29 +276,208 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCalendarEvents()
         {
-            var events = new List<CalendarModel>
+            var events = _organisationService.GetCalendarEvents(_loggedInUser.CompanyCd).Select(m => new CalendarModel
             {
-                new() {
-                    Id = 1,
-                    Title = "Event 1",
-                    Start = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"),
-                    End = DateTime.Now.AddHours(2).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    BackgroundColor= "#f56954",
-                    BorderColor= "#f56954",
-                    AllDay= true,
-                },
-                new() {
-                    Id = 2,
-                    Title = "Event 2",
-                    Start = DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    End = DateTime.Now.AddDays(1).AddHours(2).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    BackgroundColor= "#000",
-                    BorderColor= "#f56954",
-                    Holyday= true,
-                }
-            };
+                Id = m.Cd.Trim(),
+                AllDay = true,
+                BackgroundColor = "#f56954",
+                BorderColor = "#f56954",
+                Start = m.Date.ToString("yyyy-MM-ddTHH:mm:ss"),
+                Title = m.Description
+            });
             return Json(events);
         }
+        public IActionResult GetCalendarEvent(string Cd)
+        {
+            var calendarEvent = _organisationService.GetCalendarEvents(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd == Cd);
+            var model = new CompanyCalendarModel();
+            if (calendarEvent != null)
+                model = new CompanyCalendarModel
+                {
+                    Cd = calendarEvent.Cd,
+                    Code = calendarEvent.Cd,
+                    CoCd = calendarEvent.CoCd,
+                    Date = calendarEvent.Date,
+                    Description = calendarEvent.Description,
+                    Holiday = calendarEvent.Holiday,
+                    MeetingLink = calendarEvent.MeetingLink
+                };
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Text = m.Department,
+                Value = m.Code
+            });
+            ViewBag.DesignationItems = _commonService.GetDesignations().Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd
+            });
+            ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(SysCode.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code
+            });
+            ViewBag.EmployeeItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = $"{m.Fname} {m.Lname}",
+                Value = m.Cd.Trim()
+            });
+            return PartialView("_CalendarEventModal", model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SaveCalendarEvent(CompanyCalendarModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveCalendarEvent(model, _loggedInUser.CompanyCd);
+            if (result.Success)
+            {
+                _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
+                var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                await _emailService.SendEmailAsync("ginesh@yopmail.com", "TestEmail", "Email Body");
+            }
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteCalendarEvent(string cd)
+        {
+            _organisationService.DeleteCalendarEvent(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Notification
+        public IActionResult Notifications()
+        {
+            return View();
+        }
+        public IActionResult FetchNotifications()
+        {
+            var overtimeRates = _organisationService.GetNotifications(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = overtimeRates,
+            };
+            return Json(result);
+        }
+        public IActionResult GetNotification(int Cd, string docType)
+        {
+            var notification = _organisationService.GetNotifications(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType);
+            var model = new NotificationModel();
+            if (notification != null)
+                model = new NotificationModel
+                {
+                    BeforeOrAfter = notification.BeforeOrAfter,
+                    CoCd = notification.CoCd,
+                    DocTyp = notification.DocTyp.Trim(),
+                    DocTypDes = notification.DocTypDes,
+                    EmailIds = notification.EmailIds,
+                    MessageBody = notification.MessageBody,
+                    NoOfDays = notification.NoOfDays,
+                    Type = notification.NotificationType,
+                    ProcessId = notification.ProcessId,
+                    SrNo = notification.SrNo,
+                };
+            ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
+            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
+            ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
+            return PartialView("_NotificationModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveNotification(NotificationModel model)
+        {
+            model.SrNo = model.SrNo > 0 ? model.SrNo : _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
+            var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
+            if (result.Success)
+            {
+                _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
+                foreach (var email in model.EmailIds.Split(","))
+                    _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+            }
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteNotification(int cd, string processId)
+        {
+            _organisationService.DeleteNotificationDetail(cd, processId, _loggedInUser.CompanyCd);
+            _organisationService.DeleteNotificationMaster(cd, processId, _loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Bank
+        public IActionResult Banks()
+        {
+            return View();
+        }
+        public IActionResult FetchBanks()
+        {
+            var banks = _organisationService.GetBanks();
+            CommonResponse result = new()
+            {
+                Data = banks,
+            };
+            return Json(result);
+        }
+        //public IActionResult GetBank(string cd)
+        //{
+        //    var Bank = _organisationService.GetBanks().FirstOrDefault(m => m.BankCd.Trim() == cd);
+        //    var model = new BankModel();
+        //    if (Bank != null)
+        //        model = new BankModel
+        //        {
+        //            Code = Bank.Cd,
+        //            Cd = Bank.Cd,
+        //            Name = Bank.SDes,
+        //            Description = Bank.Des,
+        //            Image = Bank.Image,
+        //        };
+        //    return PartialView("_BankModal", model);
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> SaveBank(BankModel model)
+        //{
+        //    model.EntryBy = _loggedInUser.UserAbbr;
+        //    model.CoCd = _loggedInUser.CompanyCd;
+        //    if (model.ImageFile != null)
+        //    {
+        //        var ext = Path.GetExtension(model.ImageFile.FileName);
+        //        var filename = $"Bank-{model.CoCd}{ext}";
+        //        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/Bank", filename);
+        //        if (System.IO.File.Exists(filePath))
+        //            System.IO.File.Delete(filePath);
+        //        using (var stream = new FileStream(filePath, FileMode.Create))
+        //            await model.ImageFile.CopyToAsync(stream);
+        //        model.Image = filename;
+        //    }
+        //    var result = _settingService.SaveBank(model);
+        //    return Json(result);
+        //}
+        //[HttpDelete]
+        //public IActionResult DeleteBank(string cd)
+        //{
+        //    _settingService.DeleteBank(cd, _loggedInUser.CompanyCd);
+        //    var result = new CommonResponse
+        //    {
+        //        Success = true,
+        //        Message = CommonMessage.DELETED
+        //    };
+        //    return Json(result);
+        //}
         #endregion
     }
 }

@@ -13,6 +13,7 @@ builder.Services.AddSingleton<CompanyService>();
 builder.Services.AddSingleton<UserEmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
+builder.Services.AddSingleton<EmailService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

@@ -43,8 +43,8 @@ namespace Onyx.Services
             var user = connection.QueryFirstOrDefault<UserModel>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
-        }        
-        public Employee_Find_Result GetEmployee(string Cd,string CoCd)
+        }
+        public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_Find";
@@ -54,6 +54,17 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.QueryFirstOrDefault<Employee_Find_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return employee;
+        }
+        public IEnumerable<GetEmployee_Result> GetEmployees(string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "GetEmployees";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var employee = connection.Query<GetEmployee_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }

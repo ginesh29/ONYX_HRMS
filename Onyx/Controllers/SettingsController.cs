@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class SettingsController : Controller
     {
         private readonly AuthService _authService;
