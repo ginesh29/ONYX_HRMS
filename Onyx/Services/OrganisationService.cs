@@ -359,33 +359,39 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        //public CommonResponse SaveBank(BankModel model)
-        //{
-        //    var procedureName = "Bank_Update";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_Cd", model.Code.Trim());
-        //    parameters.Add("v_Des", model.Description);
-        //    parameters.Add("v_CoCd", model.CoCd);
-        //    parameters.Add("v_BU_Cd", "");
-        //    parameters.Add("v_SDes", model.Name);
-        //    parameters.Add("v_Image", model.Image ?? "");
-        //    parameters.Add("v_EntryBy", model.EntryBy);
-        //    parameters.Add("v_Mode", model.Mode);
-        //    var connectionString = _commonService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //    return result;
-        //}
-        //public void DeleteBank(string Cd, string CoCd)
-        //{
-        //    var procedureName = "Bank_Delete";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_Cd", Cd);
-        //    parameters.Add("v_CoCd", CoCd);
-        //    var connectionString = _commonService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //}
+        public CommonResponse SaveBank(BankModel model)
+        {
+            var procedureName = "Bank_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_BankCd", model.BankCd);
+            parameters.Add("v_BranchCd", model.BranchCd);
+            parameters.Add("v_Bank", model.Bank);
+            parameters.Add("v_Swift", model.Swift);
+            parameters.Add("v_Add1", model.Address1);
+            parameters.Add("v_Add2", model.Address2);
+            parameters.Add("v_Add3", model.Address3);
+            parameters.Add("v_Contact", model.Contact);
+            parameters.Add("v_Phone", model.Phone);
+            parameters.Add("v_Fax", model.Fax);
+            parameters.Add("v_Email", model.Email);
+            parameters.Add("v_URL", model.URL);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteBank(string bankCd, string branchCd)
+        {
+            var procedureName = "Bank_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_BankCd", bankCd);
+            parameters.Add("v_BranchCd", branchCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Document
@@ -493,6 +499,33 @@ namespace Onyx.Services
             var data = connection.Query<CompanyProcessApproval_GetRow>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public CommonResponse SaveApprovalProcess(NotificationModel model, string CoCd)
+        {
+            var procedureName = "Notification_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_ProcessId", model.ProcessId);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_NoOfDays", model.NoOfDays);
+            parameters.Add("v_BeforeOrAfter", model.BeforeOrAfter);
+            parameters.Add("v_MessageBody", model.MessageBody);
+            parameters.Add("v_DocTyp", model.DocTyp);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteApprovalProcess(int Cd, string ProcessId, string CoCd)
+        {
+            var procedureName = "Notification_Master_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", Cd);
+            parameters.Add("v_ProcessId", ProcessId);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
     }

@@ -433,51 +433,56 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        //public IActionResult GetBank(string cd)
-        //{
-        //    var Bank = _organisationService.GetBanks().FirstOrDefault(m => m.BankCd.Trim() == cd);
-        //    var model = new BankModel();
-        //    if (Bank != null)
-        //        model = new BankModel
-        //        {
-        //            Code = Bank.Cd,
-        //            Cd = Bank.Cd,
-        //            Name = Bank.SDes,
-        //            Description = Bank.Des,
-        //            Image = Bank.Image,
-        //        };
-        //    return PartialView("_BankModal", model);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> SaveBank(BankModel model)
-        //{
-        //    model.EntryBy = _loggedInUser.UserAbbr;
-        //    model.CoCd = _loggedInUser.CompanyCd;
-        //    if (model.ImageFile != null)
-        //    {
-        //        var ext = Path.GetExtension(model.ImageFile.FileName);
-        //        var filename = $"Bank-{model.CoCd}{ext}";
-        //        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/Bank", filename);
-        //        if (System.IO.File.Exists(filePath))
-        //            System.IO.File.Delete(filePath);
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //            await model.ImageFile.CopyToAsync(stream);
-        //        model.Image = filename;
-        //    }
-        //    var result = _settingService.SaveBank(model);
-        //    return Json(result);
-        //}
-        //[HttpDelete]
-        //public IActionResult DeleteBank(string cd)
-        //{
-        //    _settingService.DeleteBank(cd, _loggedInUser.CompanyCd);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = CommonMessage.DELETED
-        //    };
-        //    return Json(result);
-        //}
+        public IActionResult GetBank(string bankCd, string branchCd)
+        {
+            var bank = _organisationService.GetBanks().FirstOrDefault(m => m.BankCd.Trim() == bankCd && m.BranchCd.Trim() == branchCd);
+            var model = new BankModel();
+            if (bank != null)
+                model = new BankModel
+                {
+                    BankCd = bank.BankCd.Trim(),
+                    Cd = bank.BankCd.Trim(),
+                    Address1 = bank.Address1,
+                    Address2 = bank.Address2,
+                    Address3 = bank.Address3,
+                    BranchCd = bank.BranchCd.Trim(),
+                    Contact = bank.Contact,
+                    Email = bank.Email,
+                    Fax = bank.Fax,
+                    Phone = bank.Phone,
+                    Swift = bank.Swift,
+                    URL = bank.URL,
+                };
+            ViewBag.BankItems = _settingService.GetCodeGroupItems(CodeGroup.Bank).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.BranchItems = _settingService.GetCodeGroupItems(CodeGroup.BankBranch).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_BankModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveBank(BankModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveBank(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteBank(string bankCd, string branchCd)
+        {
+            _organisationService.DeleteBank(bankCd, branchCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region Document
@@ -544,7 +549,7 @@ namespace Onyx.Controllers
         }
         #endregion
 
-        #region Leave Type
+        #region Leave Pay Component
         public IActionResult LeavePayComponents()
         {
             return View();
@@ -576,7 +581,7 @@ namespace Onyx.Controllers
         }
         #endregion
 
-        #region Travel Fare
+        #region Approval Process
         public IActionResult ApprovalProcesses()
         {
             return View();
@@ -590,6 +595,54 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        //public IActionResult GetApprovalProcess(int Cd, string docType)
+        //{
+        //    var notification = _organisationService.GetApprovalProcesses(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType);
+        //    var model = new NotificationModel();
+        //    if (notification != null)
+        //        model = new NotificationModel
+        //        {
+        //            BeforeOrAfter = notification.BeforeOrAfter,
+        //            CoCd = notification.CoCd,
+        //            DocTyp = notification.DocTyp.Trim(),
+        //            DocTypDes = notification.DocTypDes,
+        //            EmailIds = notification.EmailIds,
+        //            MessageBody = notification.MessageBody,
+        //            NoOfDays = notification.NoOfDays,
+        //            Type = notification.NotificationType,
+        //            ProcessId = notification.ProcessId,
+        //            SrNo = notification.SrNo,
+        //        };
+        //    ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
+        //    ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
+        //    ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
+        //    return PartialView("_NotificationModal", model);
+        //}
+        //[HttpPost]
+        //public IActionResult SaveApprovalProcess(NotificationModel model)
+        //{
+        //    model.SrNo = model.SrNo > 0 ? model.SrNo : _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
+        //    var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
+        //    if (result.Success)
+        //    {
+        //        _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
+        //        foreach (var email in model.EmailIds.Split(","))
+        //            _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+        //    }
+        //    return Json(result);
+        //}
+        //[HttpDelete]
+        //public IActionResult DeleteApprovalProcess(int cd, string processId)
+        //{
+        //    _organisationService.DeleteNotificationDetail(cd, processId, _loggedInUser.CompanyCd);
+        //    _organisationService.DeleteNotificationMaster(cd, processId, _loggedInUser.CompanyCd);
+        //    var result = new CommonResponse
+        //    {
+        //        Success = true,
+        //        Message = CommonMessage.DELETED
+        //    };
+        //    return Json(result);
+        //}
         #endregion
     }
 }

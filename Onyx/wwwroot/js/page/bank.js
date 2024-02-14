@@ -21,9 +21,9 @@
             { data: "url" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showBankModal('${row.bankCd.trim()}','${row.branchCd.trim() }')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBank('${row.bankCd.trim()}','${row.branchCd.trim() }')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -31,14 +31,15 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showBankModal(bankCd, branchCd) {
+    var url = `/Organisation/GetBank?bankCd=${bankCd }&branchCd=${branchCd}`;
+    $('#BankModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $(".select-picker").selectpicker();
+        $("#BankModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteBank(bankCd, branchCd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -49,26 +50,26 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteBank?bankCd=${bankCd}&branchCd=${branchCd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveBank(btn) {
+    var frm = $("#bank-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveBank", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#BankModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#BankModal").modal("hide");
             }
             unloadingButton(btn);
         });

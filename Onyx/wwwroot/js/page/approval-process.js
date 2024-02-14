@@ -15,9 +15,9 @@
             { data: "dept" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showApprovalProcessModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteApprovalProcess('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -25,14 +25,14 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showApprovalProcessModal(cd) {
+    var url = `/Organisation/GetApprovalProcess?cd=${cd}`;
+    $('#ApprovalProcessModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $("#ApprovalProcessModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteApprovalProcess(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -43,26 +43,26 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteApprovalProcess?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveApprovalProcess(btn) {
+    var frm = $("#ApprovalProcess-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveApprovalProcess", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#ApprovalProcessModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#ApprovalProcessModal").modal("hide");
             }
             unloadingButton(btn);
         });

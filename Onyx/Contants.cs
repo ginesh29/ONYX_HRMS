@@ -15,6 +15,11 @@
         public const string OtTpe = "HCOTT";
         public const string EmpDeployLoc = "HLOC";
     }
+    public class CodeGroup
+    {
+        public const string Bank = "BANK";
+        public const string BankBranch = "BNKBR";
+    }
     public class CommonMessage
     {
         public const string INSERTED = "Inserted Successfully.";
@@ -41,5 +46,6 @@
         public const string REQUIREDSELECTVALIDATION = "Please select {0}";
         public const string REQUIREDFILEVALIDATION = "Please upload {0}";
         public const string PASSWORDMISMATCHVALIDATION = "{0} mismatch";
+        public const string ENTERVALID = "Please enter valid {0}";
     }
 }

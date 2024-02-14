@@ -173,6 +173,17 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<Codes_Grp_GetRow_Result> GetCodeGroupItems(string grp)
+        {
+            var procedureName = "Codes_Grp_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Grp", grp);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Codes_Grp_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public IEnumerable<Codes_GetRow_Result> GetCodes()
         {
             var procedureName = "Codes_GetRow";
