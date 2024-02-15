@@ -3,7 +3,7 @@
         ajax: "/Organisation/FetchTravelFares",
         ordering: false,
         columns: [
-            { data: "srNo" },            
+            { data: "srNo" },
             { data: "sector" },
             { data: "travelClass" },
             { data: "sDes" },
@@ -18,9 +18,9 @@
             { data: "fare" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showTravelFareModal('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBranch('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteTravelFare('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -28,14 +28,27 @@
         ],
     }
 );
-function showBranchModal(cd) {
-    var url = `/Organisation/GetBranch?cd=${cd}`;
-    $('#BranchModal').load(url, function () {
+function showTravelFareModal(cd, sectCd, classCd) {
+    var url = `/Organisation/GetTravelFare?cd=${cd}&sectCd=${sectCd}&classCd=${classCd}`;
+    $('#TravelFareModal').load(url, function () {
         parseDynamicForm();
-        $("#BranchModal").modal("show");
+        $(".select-picker").selectpicker();
+        $('#DateRange').daterangepicker({
+            autoUpdateInput: false
+        });
+        $('.decimal-input').attr("placeholder", "0.00");
+        $('.decimal-input').inputmask(decimalMaskOptions);
+        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format('MM/DD/YYYY');
+            var endDate = picker.endDate.format('MM/DD/YYYY');
+            $(this).val(startDate + ' - ' + endDate);
+            $("#FromDate").val(startDate);
+            $("#ToDate").val(endDate);
+        });
+        $("#TravelFareModal").modal("show");
     });
 }
-function deleteBranch(cd) {
+function deleteTravelFare(cd, sectCd, classCd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -46,39 +59,28 @@ function deleteBranch(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteBranch?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteTravelFare?cd=${cd}&sectCd=${sectCd}&classCd=${classCd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveBranch(btn) {
-    var frm = $("#branch-frm");
+function saveTravelFare(btn) {
+    var frm = $("#travel-fare-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBranch", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveTravelFare", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#TravelFareModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
+                $("#TravelFareModal").modal("hide");
             }
             unloadingButton(btn);
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
-};

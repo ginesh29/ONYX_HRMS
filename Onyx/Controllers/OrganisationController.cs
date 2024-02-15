@@ -169,21 +169,22 @@ namespace Onyx.Controllers
         }
         public IActionResult GetWorkingHour(string cd)
         {
-            var component = _organisationService.GetWorkingHours(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Code.Trim() == cd);
+            var workingHour = _organisationService.GetWorkingHours(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Code.Trim() == cd);
             var model = new WorkingHourModel();
-            if (component != null)
+            if (workingHour != null)
                 model = new WorkingHourModel
                 {
-                    Code = component.Code,
-                    Cd = component.Code,
-                    DutyHrs = component.DutyHrs,
-                    FromDt = component.FromDt,
-                    ToDt = component.ToDt,
-                    HolTypCd = component.HolTypCd.Trim(),
-                    HolTypDesc = component.HolTypDesc,
-                    Description = component.Narr,
-                    RelgTypCd = component.RelgTypCd.Trim(),
-                    Religion = component.Religion,
+                    Code = workingHour.Code,
+                    Cd = workingHour.Code,
+                    DutyHrs = workingHour.DutyHrs,
+                    FromDt = workingHour.FromDt,
+                    ToDt = workingHour.ToDt,
+                    DateRange = $"{Convert.ToDateTime(workingHour.FromDt).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(workingHour.ToDt).ToString(CommonSetting.DateFormat)}",
+                    HolTypCd = workingHour.HolTypCd.Trim(),
+                    HolTypDesc = workingHour.HolTypDesc,
+                    Description = workingHour.Narr,
+                    RelgTypCd = workingHour.RelgTypCd.Trim(),
+                    Religion = workingHour.Religion,
                 };
             ViewBag.DayTypeItems = _commonService.GetSysCodes(SysCode.DayType).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.SDes });
             ViewBag.ReligionItems = _commonService.GetSysCodes(SysCode.Religion).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.SDes });
@@ -759,6 +760,58 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = travelfares,
+            };
+            return Json(result);
+        }
+        public IActionResult GetTravelFare(int cd, string sectCd, string classCd)
+        {
+            var travelFare = _organisationService.GetTravelFares().FirstOrDefault(m => m.SrNo == cd && m.SectCd.Trim() == sectCd && m.ClassCd.Trim() == classCd);
+            var model = new AirFareModel();
+            if (travelFare != null)
+                model = new AirFareModel
+                {
+                    Cd = travelFare.ClassCd,
+                    SrNo = travelFare.SrNo,
+                    ClassCd = travelFare.ClassCd,
+                    SDes = travelFare.SDes,
+                    Fare = travelFare.Fare,
+                    SectCd = travelFare.SectCd,
+                    Description = travelFare.Des,
+                    FromDate = travelFare.FromDate,
+                    ToDate = travelFare.ToDate,
+                    DateRange = $"{Convert.ToDateTime(travelFare.FromDate).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(travelFare.ToDate).ToString(CommonSetting.DateFormat)}",
+                    Sector = travelFare.Sector,
+                    TravelClass = travelFare.TravelClass
+                };
+            else
+                model.SrNo = _organisationService.GetTravelFare_SrNo(sectCd, classCd);
+            ViewBag.SectorItems = _settingService.GetCodeGroupItems(CodeGroup.Sector).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            ViewBag.ClassItems = _settingService.GetCodeGroupItems(CodeGroup.Class).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            return PartialView("_TravelFareModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveTravelFare(AirFareModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveTravelFare(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteTravelFare(int cd, string sectCd, string classCd)
+        {
+            _organisationService.DeleteTravelFare(cd, sectCd, classCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
             };
             return Json(result);
         }

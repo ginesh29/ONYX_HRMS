@@ -597,6 +597,48 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public CommonResponse SaveTravelFare(AirFareModel model)
+        {
+            var procedureName = "AirFare_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SectCd", model.SectCd);
+            parameters.Add("v_Class", model.ClassCd);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_FromDt", model.FromDate);
+            parameters.Add("v_ToDt", model.ToDate);
+            parameters.Add("v_SDes", model.SDes);
+            parameters.Add("v_Fare", model.Fare);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteTravelFare(int cd, string sectCd, string classCd)
+        {
+            var procedureName = "AirFare_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SectCd", sectCd);
+            parameters.Add("v_Class", classCd);
+            parameters.Add("v_SrNo", cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public int GetTravelFare_SrNo(string sectCd, string classCd)
+        {
+            var procedureName = "AirFare_SrNo_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SectCd", sectCd);
+            parameters.Add("v_Class", classCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         #endregion
 
         #region Approval Process

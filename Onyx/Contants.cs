@@ -20,6 +20,8 @@
         public const string Bank = "BANK";
         public const string BankBranch = "BNKBR";
         public const string DocType = "HCDOC";
+        public const string Sector = "TSECTTSECT";
+        public const string Class = "TCLAS";
     }
     public class CommonMessage
     {

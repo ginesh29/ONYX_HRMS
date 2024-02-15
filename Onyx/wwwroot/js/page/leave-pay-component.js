@@ -75,9 +75,6 @@ function onChangePayType(e) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
         $("#PayCd").append(html);        
-        setTimeout(function () {
-            $("#PayCd").attr('data-placeholder', '-- Select --');
-            $('.select-picker').selectpicker('refresh');
-        }, 2000)
+        $('.select-picker').selectpicker('refresh');
     });
 }
