@@ -5,7 +5,7 @@
         columns: [
             { data: "srNo" },
             { data: "notificationType" },
-            { data: "docTyp" },
+            { data: "docTypDes" },
             {
                 data: function (row) {
                     return `${row.beforeOrAfter} ${row.noOfDays} Days`
@@ -14,7 +14,7 @@
             { data: "messageBody" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showNotificationModal('${row.srNo}','${row.docTyp}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showNotificationModal('${row.srNo}','${row.docTyp.trim()}','${row.processId}')">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteNotification('${row.srNo}','${row.processId}')">
                                 <i class="fa fa-trash"></i>
@@ -24,8 +24,9 @@
         ],
     }
 );
-function showNotificationModal(cd, docType) {
-    var url = `/Organisation/GetNotification?cd=${cd}&docType=${docType}`;
+function showNotificationModal(cd, docType, processId) {
+    var url = `/Organisation/GetNotification?cd=${cd}&docType=${docType}&processId=${processId}`;
+    console.log(url)
     $('#NotificationModal').load(url, function () {
         parseDynamicForm();
         $('.int-input').attr("placeholder", "0");

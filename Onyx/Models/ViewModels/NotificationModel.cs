@@ -4,6 +4,7 @@ namespace Onyx.Models.ViewModels
 {
     public class NotificationModel
     {
+        public string Cd { get; set; }
         public string CoCd { get; set; }
         [Display(Name = "Type")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
@@ -22,5 +23,12 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string MessageBody { get; set; }
         public string EmailIds { get; set; }
+        public string Mode
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+            }
+        }
     }
 }

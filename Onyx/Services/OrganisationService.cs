@@ -172,6 +172,7 @@ namespace Onyx.Services
             parameters.Add("v_Sdes", model.Sdes);
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -279,6 +280,7 @@ namespace Onyx.Services
             parameters.Add("v_BeforeOrAfter", model.BeforeOrAfter);
             parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_DocTyp", model.DocTyp);
+            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

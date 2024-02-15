@@ -371,13 +371,14 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult GetNotification(int Cd, string docType)
+        public IActionResult GetNotification(int Cd, string processId, string docType)
         {
-            var notification = _organisationService.GetNotifications(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType);
+            var notification = _organisationService.GetNotifications(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType && m.ProcessId.Trim() == processId);
             var model = new NotificationModel();
             if (notification != null)
                 model = new NotificationModel
                 {
+                    Cd = notification.DocTyp,
                     BeforeOrAfter = notification.BeforeOrAfter,
                     CoCd = notification.CoCd,
                     DocTyp = notification.DocTyp.Trim(),
@@ -389,6 +390,8 @@ namespace Onyx.Controllers
                     ProcessId = notification.ProcessId,
                     SrNo = notification.SrNo,
                 };
+            else
+                model.SrNo = _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
             ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
             ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
@@ -397,13 +400,13 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveNotification(NotificationModel model)
         {
-            model.SrNo = model.SrNo > 0 ? model.SrNo : _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
             var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                foreach (var email in model.EmailIds.Split(","))
-                    _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+                if (!string.IsNullOrEmpty(model.EmailIds))
+                    foreach (var email in model.EmailIds.Split(","))
+                        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
             }
             return Json(result);
         }
