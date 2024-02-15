@@ -19,6 +19,7 @@
     {
         public const string Bank = "BANK";
         public const string BankBranch = "BNKBR";
+        public const string DocType = "HCDOC";
     }
     public class CommonMessage
     {

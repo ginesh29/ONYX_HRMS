@@ -3,6 +3,7 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Onyx.Services
 {
@@ -407,6 +408,39 @@ namespace Onyx.Services
             var data = connection.Query<CompanyDocuments_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public CommonResponse SaveDocument(CompanyDocumentModel model, string CoCd)
+        {
+            var procedureName = "CompanyDocuments_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_DivCd", model.DivCd);
+            parameters.Add("v_DocTypCd", model.DocTypCd);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_RefNo", model.RefNo);
+            parameters.Add("v_RefDt", model.RefDt);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_Partners", model.Partners);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteDocument(string docTypeCd, string divCd, string CoCd)
+        {
+            var procedureName = "CompanyDocuments_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Div", divCd);
+            parameters.Add("v_DocTyp", docTypeCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
 

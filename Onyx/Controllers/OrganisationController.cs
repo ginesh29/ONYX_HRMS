@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -496,6 +497,56 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = documents,
+            };
+            return Json(result);
+        }
+        public IActionResult GetDocument(string docTypeCd, string divCd)
+        {
+            var document = _organisationService.GetDocuments(_loggedInUser.CompanyCd).FirstOrDefault(m => m.DivCd.Trim() == divCd && m.DocTypCd.Trim() == docTypeCd);
+            var model = new CompanyDocumentModel();
+            if (document != null)
+                model = new CompanyDocumentModel
+                {
+                    DocTypCd = document.DocTypCd.Trim().Split(" _")[0],
+                    Cd = document.DocTypCd.Trim().Split(" _")[0],
+                    DivCd = divCd.Trim(),
+                    DivSDes = document.DivSDes,
+                    DocNo = document.DocNo,
+                    DocTypSDes = document.DocTypSDes,
+                    IssueDt = document.IssueDt,
+                    IssuePlace = document.IssuePlace,
+                    RefNo = document.RefNo,
+                    RefDt = document.RefDt,
+                    Narr = document.Narr,
+                    ExpDt = document.ExpDt,
+                };
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd.Trim(),
+            });
+            return PartialView("_DocumentModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveDocument(CompanyDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveDocument(model, _loggedInUser.CompanyCd);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDocument(string docTypeCd, string divCd)
+        {
+            _organisationService.DeleteDocument(docTypeCd, divCd, _loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
             };
             return Json(result);
         }

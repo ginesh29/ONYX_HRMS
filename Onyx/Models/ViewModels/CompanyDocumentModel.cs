@@ -1,7 +1,8 @@
 ﻿namespace Onyx.Models.StoredProcedure
 {
-    public class CompanyDocuments_GetRow_Result
+    public class CompanyDocumentModel
     {
+        public string Cd { get; set; }
         public string DocTypSDes { get; set; }
         public string DivSDes { get; set; }
         public string DocNo { get; set; }
@@ -24,5 +25,12 @@
         public string FormatedEditDt { get; set; }
         public string Filter { get; set; }
         public string Partners { get; set; }
+        public string Mode
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+            }
+        }
     }
 }
