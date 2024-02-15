@@ -508,6 +508,38 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public CommonResponse SaveLeaveType(CompanyLeaveModel model, string Cocd)
+        {
+            var procedureName = "CompanyLeave_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Cd);
+            parameters.Add("v_SDes", model.SDes);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_ApprLvl", model.ApprLvl);
+            parameters.Add("v_LvMax", model.LvMax);
+            parameters.Add("v_Accrued", model.Accrued ? "Y" : "N");
+            parameters.Add("v_Encash", model.EnCash ? "Y" : "N");
+            parameters.Add("v_EncashMinLmt", model.EnCashMinLmt);
+            parameters.Add("v_PayFact", model.PayFact);
+            parameters.Add("v_AccrLmt", model.AccrLmt);
+            parameters.Add("v_Service", model.ServicePrd ? "Y" : "N");
+            parameters.Add("v_CoCd", Cocd);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteLeaveType(string Cd)
+        {
+            var procedureName = "CompanyLeave_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Leave Pay Component

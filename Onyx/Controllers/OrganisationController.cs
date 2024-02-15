@@ -630,6 +630,47 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult GetLeaveType(string cd)
+        {
+            var leaveType = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
+            var model = new CompanyLeaveModel();
+            if (leaveType != null)
+                model = new CompanyLeaveModel
+                {
+                    Cd = leaveType.Cd,
+                    Code = leaveType.Cd,
+                    AccrLmt = leaveType.AccrLmt,
+                    Accrued = leaveType.Accrued == "Y",
+                    ApprLvl = leaveType.ApprLvl,
+                    Description = leaveType.Des,
+                    EnCash = leaveType.EnCash == "Y",
+                    EnCashMinLmt = leaveType.EnCashMinLmt,
+                    LvCd = leaveType.LvCd,
+                    LvMax = leaveType.LvMax,
+                    PayFact = leaveType.PayFact,
+                    ServicePrd = leaveType.ServicePrd == "Y",
+                    SDes = leaveType.SDes,
+                };
+            return PartialView("_LeaveTypeModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveLeaveType(CompanyLeaveModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveLeaveType(model, _loggedInUser.CompanyCd);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteLeaveType(string cd)
+        {
+            _organisationService.DeleteLeaveType(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region Leave Pay Component

@@ -34,6 +34,9 @@ function showLeaveTypeModal(cd) {
     var url = `/Organisation/GetLeaveType?cd=${cd}`;
     $('#LeaveTypeModal').load(url, function () {
         parseDynamicForm();
+        $(".select-picker").selectpicker();
+        $('.int-input').attr("placeholder", "0");
+        $('.int-input').inputmask(intMaskOptions);
         $("#LeaveTypeModal").modal("show");
     });
 }
@@ -56,7 +59,7 @@ function deleteLeaveType(cd) {
     });
 }
 function saveLeaveType(btn) {
-    var frm = $("#LeaveType-frm");
+    var frm = $("#leave-type-frm");
     if (frm.valid()) {
         loadingButton(btn);
         filePostAjax("/Organisation/SaveLeaveType", frm[0], function (response) {
