@@ -470,6 +470,29 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public CommonResponse SaveDesignation(DesignationModel model)
+        {
+            var procedureName = "Designation_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Cd);
+            parameters.Add("v_SDes", model.SDes);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteDesignation(string Cd)
+        {
+            var procedureName = "Designation_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Leave Type

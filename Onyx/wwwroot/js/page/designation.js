@@ -13,9 +13,9 @@
             { data: "des" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showVehicleModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showDesignationModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteVehicle('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteDesignation('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -23,14 +23,14 @@
         ],
     }
 );
-function showVehicleModal(cd) {
-    var url = `/Organisation/GetVehicle?cd=${cd}`;
-    $('#VehicleModal').load(url, function () {
+function showDesignationModal(cd) {
+    var url = `/Organisation/GetDesignation?cd=${cd}`;
+    $('#DesignationModal').load(url, function () {
         parseDynamicForm();
-        $("#VehicleModal").modal("show");
+        $("#DesignationModal").modal("show");
     });
 }
-function deleteVehicle(cd) {
+function deleteDesignation(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -41,39 +41,28 @@ function deleteVehicle(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteVehicle?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteDesignation?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveVehicle(btn) {
-    var frm = $("#Vehicle-frm");
+function saveDesignation(btn) {
+    var frm = $("#designation-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveVehicle", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveDesignation", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#VehicleModal").modal("hide");
+                $("#DesignationModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#VehicleModal").modal("hide");
+                $("#DesignationModal").modal("hide");
             }
             unloadingButton(btn);
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
-};

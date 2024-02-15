@@ -582,6 +582,38 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult GetDesignation(string cd)
+        {
+            var designation = _organisationService.GetDesignations().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var model = new DesignationModel();
+            if (designation != null)
+                model = new DesignationModel
+                {
+                    Cd = designation.Cd,
+                    Code = designation.Cd,
+                    Description = designation.Des,
+                    SDes = designation.SDes,
+                };
+            return PartialView("_DesignationModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveDesignation(DesignationModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveDesignation(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDesignation(string cd)
+        {
+            _organisationService.DeleteDesignation(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region Leave Type
