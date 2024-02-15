@@ -13,9 +13,9 @@
             { data: "paycode" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLeaveTypeModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLeavePayComponentModal('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteLeaveType('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteLeavePayComponent('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -23,14 +23,15 @@
         ],
     }
 );
-function showLeaveTypeModal(cd) {
-    var url = `/Organisation/GetLeaveType?cd=${cd}`;
-    $('#LeaveTypeModal').load(url, function () {
+function showLeavePayComponentModal(lvCd, payTypCd, payCd) {
+    var url = `/Organisation/GetLeavePayComponent?lvCd=${lvCd}&payTypCd=${payTypCd}&payCd=${payCd}`;
+    $('#LeavePayComponentModal').load(url, function () {
         parseDynamicForm();
-        $("#LeaveTypeModal").modal("show");
+        $(".select-picker").selectpicker();
+        $("#LeavePayComponentModal").modal("show");
     });
 }
-function deleteLeaveType(cd) {
+function deleteLeavePayComponent(lvCd, payTypCd, payCd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -41,39 +42,42 @@ function deleteLeaveType(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteLeaveType?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteLeavePayComponent?lvCd=${lvCd}&payTypCd=${payTypCd}&payCd=${payCd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveLeaveType(btn) {
-    var frm = $("#LeaveType-frm");
+function saveLeavePayComponent(btn) {
+    var frm = $("#leave-pay-component-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveLeaveType", frm[0], function (response) {
+        filePostAjax("/Organisation/SaveLeavePayComponent", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#LeaveTypeModal").modal("hide");
+                $("#LeavePayComponentModal").modal("hide");
                 reloadDatatable();
             }
             else {
                 showErrorToastr(response.message);
-                $("#LeaveTypeModal").modal("hide");
+                $("#LeavePayComponentModal").modal("hide");
             }
             unloadingButton(btn);
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
-};
+function onChangePayType(e) {
+    $("#PayCd").empty();
+    getAjax(`/Organisation/FetchPayCodeItems?payTypCd=${e.value}`, function (response) {
+        var html = '<option value="">-- Select --</option>'
+        $.each(response, function (i, item) {
+            html += `<option value='${item.value}'>${item.text}</option>`
+        })
+        $("#PayCd").append(html);        
+        setTimeout(function () {
+            $("#PayCd").attr('data-placeholder', '-- Select --');
+            $('.select-picker').selectpicker('refresh');
+        }, 2000)
+    });
+}

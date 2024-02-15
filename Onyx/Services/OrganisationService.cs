@@ -11,12 +11,12 @@ namespace Onyx.Services
     {
         private readonly CommonService _commonService = commonService;
         #region Component
-        public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents()
+        public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents(string type)
         {
             var procedureName = "CompanyEarnDed_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            parameters.Add("v_Typ", string.Empty);
+            parameters.Add("v_Typ", type);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyEarnDed_GetRow_Result>
@@ -554,6 +554,33 @@ namespace Onyx.Services
             var data = connection.Query<CompanyLeavePay_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public CommonResponse SaveLeavePayComponent(CompanyLeavePayModel model, string CoCd)
+        {
+            var procedureName = "CompanyLeavePay_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_PayTyp", model.PayTypCd);
+            parameters.Add("v_PayCd", model.PayCd);
+            parameters.Add("v_LvCd", model.LvCd);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteLeavePayComponent(string lvCd, string payTypCd, string payCd, string CoCd)
+        {
+            var procedureName = "CompanyLeavePay_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("@v_CoCd", CoCd);
+            parameters.Add("@v_PayTyp", payTypCd);
+            parameters.Add("@v_PayCd", payCd);
+            parameters.Add("@v_LvCd", lvCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
 

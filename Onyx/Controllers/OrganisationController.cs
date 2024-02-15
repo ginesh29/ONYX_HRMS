@@ -34,7 +34,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchComponents()
         {
-            var components = _organisationService.GetComponents();
+            var components = _organisationService.GetComponents("");
             CommonResponse result = new()
             {
                 Data = components,
@@ -43,7 +43,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetComponent(string cd)
         {
-            var component = _organisationService.GetComponents().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var component = _organisationService.GetComponents("").FirstOrDefault(m => m.Cd.Trim() == cd);
             var model = new EarnDedModel();
             if (component != null)
                 model = new EarnDedModel
@@ -684,6 +684,65 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = leaveTypes,
+            };
+            return Json(result);
+        }
+        public IActionResult GetLeavePayComponent(string lvCd, string payTypCd, string payCd)
+        {
+            var leavePayComponent = _organisationService.GetLeavePayComponents(_loggedInUser.CompanyCd).FirstOrDefault(m => m.LvCd.Trim() == lvCd && m.PayTypCd.Trim() == payTypCd && m.PayCd.Trim() == payCd);
+            var model = new CompanyLeavePayModel();
+            if (leavePayComponent != null)
+                model = new CompanyLeavePayModel
+                {
+                    Cd = leavePayComponent.PayCd.Trim(),
+                    PayCd = leavePayComponent.PayCd.Trim(),
+                    Leave = leavePayComponent.Leave,
+                    LvCd = leavePayComponent.LvCd.Trim(),
+                    Paycode = leavePayComponent?.Paycode,
+                    PayTypCd = leavePayComponent?.PayTypCd.Trim(),
+                    PayType = leavePayComponent?.PayType,
+                };
+            ViewBag.LeaveTypeItems = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.PayTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.PayCodeItems = _organisationService.GetComponents(model.PayTypCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            return PartialView("_LeavePayComponentModal", model);
+        }
+        public IActionResult FetchPayCodeItems(string payTypCd)
+        {
+            var payCodeItems = _organisationService.GetComponents(payTypCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            return Json(payCodeItems);
+        }
+        [HttpPost]
+        public IActionResult SaveLeavePayComponent(CompanyLeavePayModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveLeavePayComponent(model, _loggedInUser.CompanyCd);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteLeavePayComponent(string lvCd, string payTypCd, string payCd)
+        {
+            _organisationService.DeleteLeavePayComponent(lvCd, payTypCd, payCd, _loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
             };
             return Json(result);
         }

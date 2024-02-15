@@ -1,0 +1,50 @@
+﻿@model CompanyLeavePayModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Cd) ? "Edit" : "Add") Component</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="leave-pay-component-frm">
+                <input type="hidden" asp-for="Cd" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LvCd"></label>
+                            <select asp-for="LvCd" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="LvCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PayTypCd"></label>
+                            <select asp-for="PayTypCd" class="form-control select-picker" asp-items="ViewBag.PayTypeItems" onchange="onChangePayType(this)">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="PayTypCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PayCd"></label>
+                            <select asp-for="PayCd" class="form-control select-picker" asp-items="ViewBag.PayCodeItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="PayCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLeavePayComponent(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
