@@ -9,7 +9,7 @@
         <div class="modal-body">
             <form id="document-frm">
                 <input type="hidden" asp-for="Cd" />
-                <div class="row">
+                <div class=" row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
                             <label asp-for="DocTypCd"></label>
@@ -87,7 +87,7 @@
                 <div class="form-group">
                     <label>Files</label>
                     <div class="file-drop-area">
-                        <span class="choose-file-button" id="doc-file-label">@(Model.DocsPaths != null && Model.DocsPaths.Any() ? $"{Model.DocsPaths.Count()} files Chosen" : "Choose files")</span>
+                        <span class="choose-file-button" id="doc-file-label">Choose files</span>
                         <span class="file-message">or drag and drop files here</span>
                         <input asp-for="DocFiles" class="file-input" onchange="filesPreview(this)">
                     </div>

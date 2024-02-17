@@ -57,7 +57,7 @@
                 <div class="form-group">
                     <label>Files</label>
                     <div class="file-drop-area">
-                        <span class="choose-file-button" id="doc-file-label">@(Model.VehicleDocsPaths != null && Model.VehicleDocsPaths.Any() ? $"{Model.VehicleDocsPaths.Count()} files Chosen" : "Choose files")</span>
+                        <span class="choose-file-button" id="doc-file-label">Choose files</span>
                         <span class="file-message">or drag and drop files here</span>
                         <input asp-for="VehicleDocFiles" class="file-input" onchange="filesPreview(this)">
                     </div>
