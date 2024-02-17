@@ -103,15 +103,14 @@ function filesPreview(input) {
                     $("#Files-Preview").append(html);
                 }
                 reader.readAsDataURL(input.files[i]);
-                var totalFiles = $("#DocList img").length + filesCount;
-                $("#doc-file-label").text(`${totalFiles} files Chosen`);
+                $("#doc-file-label").text(`${filesCount} files Chosen`);
             }
             else
                 showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
     }
 };
-function deleteDocumentFile(curr, vehCd, docType, srNo) {
+function deleteDocumentFile(curr, divCd, docType, srNo) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -122,7 +121,7 @@ function deleteDocumentFile(curr, vehCd, docType, srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/organisation/DeleteDocumentFile?vehCd=${vehCd}&docType=${docType}&slNo=${srNo}`, function (response) {
+            deleteAjax(`/organisation/DeleteDocumentFile?divCd=${divCd}&docTypCd=${docType}&slNo=${srNo}`, function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
                     $(curr).closest(".btn-file-edit-container").remove();
@@ -155,12 +154,12 @@ function filesEditPreview(input, id) {
 };
 function saveEditFile() {
     var docTypCd = $("#DocTypCd").val();
-    var vehCd = $("#Cd").val();
+    var divCd = $("#DivCd").val();
     var srNo = $("#File_SrNo").val();
     var file = $(`#doc-file-${srNo}`)[0].files[0];
     var formData = new FormData();
     formData.append('docTypCd', docTypCd);
-    formData.append('vehCd', vehCd);
+    formData.append('divCd', divCd);
     formData.append('srNo', srNo);
     formData.append('file', file);
     $.ajax({

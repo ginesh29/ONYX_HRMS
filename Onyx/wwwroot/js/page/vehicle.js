@@ -160,8 +160,7 @@ function filesPreview(input) {
                     $("#Files-Preview").append(html);
                 }
                 reader.readAsDataURL(input.files[i]);
-                var totalFiles = $("#VehicleDocList img").length + filesCount;
-                $("#doc-file-label").text(`${totalFiles} files Chosen`);
+                $("#doc-file-label").text(`${filesCount} files Chosen`);
             }
             else
                 showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
@@ -202,7 +201,7 @@ function filesEditPreview(input, id) {
             var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
             $(`#file-${id}`).attr("src", src)
         };
-        reader.readAsDataURL(input.files[i]);
+        reader.readAsDataURL(input.target.files[0]);
         $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
         $(`#btn-upload-${id}`).removeClass("d-none");
         $("#File_SrNo").val(id);
