@@ -1,4 +1,6 @@
-﻿namespace Onyx.Models.ViewModels
+﻿using Onyx.Models.StoredProcedure;
+
+namespace Onyx.Models.ViewModels
 {
     public class CompanyDocumentModel
     {
@@ -25,6 +27,8 @@
         public string FormatedEditDt { get; set; }
         public string Filter { get; set; }
         public string Partners { get; set; }
+        public IEnumerable<IFormFile> DocFiles { get; set; }
+        public IEnumerable<CompDocImages_GetRow_Result> DocsPaths { get; set; }
         public string Mode
         {
             get

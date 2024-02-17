@@ -444,6 +444,45 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public IEnumerable<CompDocImages_GetRow_Result> GetDocumentFiles(string divCd, string docTypCd, string CoCd)
+        {
+            var procedureName = "CompDocImages_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Div", divCd);
+            parameters.Add("v_DocTyp", docTypCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompDocImages_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveDocumentFile(CompDocImageModel model)
+        {
+            var procedureName = "CompDocImages_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", model.CompanyCode);
+            parameters.Add("v_Div", model.DivCd);
+            parameters.Add("v_DocTyp", model.DocumentTypeCd);
+            parameters.Add("v_SlNo", model.SlNo);
+            parameters.Add("v_ImageFile", model.ImageFile);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse DeleteDocumentFile(string docTypeCd, string docType)
+        {
+            var procedureName = "CompDocImages_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", docTypeCd);
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SrNo", 0);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         #endregion
 
         #region Vehicle

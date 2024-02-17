@@ -76,8 +76,7 @@ function saveBranch(btn) {
 function previewImage(event) {
     var reader = new FileReader();
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-    if (allowedExtensions.includes(ext)) {
+    if (imageExtensions.includes(ext)) {
         reader.onload = function () {
             var output = document.getElementById('Image-Preview');
             output.src = reader.result;

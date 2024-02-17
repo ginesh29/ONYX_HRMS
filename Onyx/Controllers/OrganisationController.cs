@@ -525,6 +525,7 @@ namespace Onyx.Controllers
                     RefDt = document.RefDt,
                     Narr = document.Narr,
                     ExpDt = document.ExpDt,
+                    DocsPaths = _organisationService.GetDocumentFiles(document.DivCd, document.DocTypCd, _loggedInUser.CompanyCd)
                 };
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
             {
@@ -539,10 +540,35 @@ namespace Onyx.Controllers
             return PartialView("_DocumentModal", model);
         }
         [HttpPost]
-        public IActionResult SaveDocument(CompanyDocumentModel model)
+        public async Task<IActionResult> SaveDocument(CompanyDocumentModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveDocument(model, _loggedInUser.CompanyCd);
+            if (result.Success)
+            {
+                if (model.DocFiles?.Count() > 0)
+                {
+                    var totalFiles = _organisationService.GetDocumentFiles(model.DivCd, model.DocTypCd, _loggedInUser.CompanyCd).Count();
+                    string uploadedFilePath = string.Empty;
+                    foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
+                    {
+                        if (item != null)
+                        {
+                            var filePath = await _fileHelper.UploadFile(item.value, "comp-doc");
+                            uploadedFilePath = filePath;
+                            _organisationService.SaveDocumentFile(new CompDocImageModel
+                            {
+                                EntryBy = _loggedInUser.UserAbbr,
+                                CompanyCode = _loggedInUser.CompanyCd,
+                                DocumentTypeCd = model.DocTypCd,
+                                ImageFile = uploadedFilePath,
+                                SlNo = item.i + 1 + totalFiles,
+                                DivCd = model.DivCd
+                            });
+                        }
+                    }
+                }
+            }
             return Json(result);
         }
         [HttpDelete]
@@ -553,6 +579,37 @@ namespace Onyx.Controllers
             {
                 Success = true,
                 Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        public IActionResult FetchDocumentFiles(string docTypeCd, string divCd)
+        {
+            var files = _organisationService.GetDocumentFiles(divCd, docTypeCd, _loggedInUser.CompanyCd);
+            return PartialView("_DocFilesList", files);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDocumentFile(string docTypeCd, string divCd, int slNo)
+        {
+            var result = _organisationService.DeleteDocumentFile(docTypeCd, docTypeCd);
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateDocumentFile(string docTypCd, string vehCd, int SrNo, IFormFile file)
+        {
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc");
+            _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
+            {
+                EntryBy = _loggedInUser.UserAbbr,
+                CompanyCode = _loggedInUser.CompanyCd,
+                DocumentTypeCd = docTypCd,
+                ImageFile = uploadedFilePath,
+                SlNo = SrNo,
+                VehCd = vehCd
+            });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
             };
             return Json(result);
         }

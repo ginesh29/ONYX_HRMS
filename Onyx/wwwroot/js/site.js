@@ -37,6 +37,8 @@ const dataTableDefaultOptions = {
     "pagingType": "simple",
     "ordering": false
 }
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+const pdfExtensions = ['pdf'];
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
@@ -124,8 +126,10 @@ function reloadPageAfterSometime() {
 function reloadDatatable() {
     window["datatable"].ajax.reload();
     window["datatable"].search('').draw();
-    window["datatable-2"].ajax.reload();
-    window["datatable-2"].search('').draw();
+    if (window["datatable-2"]) {
+        window["datatable-2"].ajax.reload();
+        window["datatable-2"].search('').draw();
+    }
 }
 function parseDynamicForm() {
     $("form").removeData("validator");
@@ -214,6 +218,14 @@ function getQueryStringParams() {
         }
     }
     return params;
+}
+function filePreview(path) {
+    var url = `/Home/FilePreview?path=${path}`;
+    $('#PreviewModal').load(url, function () {
+        $("#file-preview").attr("src", path);
+        $("#file-preview").css("height", "100vh")
+        $("#PreviewModal").modal("show");
+    });
 }
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {

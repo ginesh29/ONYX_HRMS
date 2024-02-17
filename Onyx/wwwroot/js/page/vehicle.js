@@ -147,13 +147,12 @@ function deleteVehicleDocument(vehCd, docTypCd, srNo) {
         }
     });
 }
-const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
 function filesPreview(input) {
     if (input.files) {
-        var filesAmount = input.files.length;
-        for (i = 0; i < filesAmount; i++) {
+        var filesCount = input.files.length;
+        for (i = 0; i < filesCount; i++) {
             var ext = input.files[i].name.split('.').pop().toLowerCase();
-            if (allowedExtensions.includes(ext)) {
+            if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
                 var reader = new FileReader();
                 reader.onload = function (event) {
                     var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
@@ -161,7 +160,7 @@ function filesPreview(input) {
                     $("#Files-Preview").append(html);
                 }
                 reader.readAsDataURL(input.files[i]);
-                var totalFiles = $("#VehicleDocList img").length + filesAmount;
+                var totalFiles = $("#VehicleDocList img").length + filesCount;
                 $("#doc-file-label").text(`${totalFiles} files Chosen`);
             }
             else
@@ -196,14 +195,14 @@ function editDoc(curr) {
     $(`#doc-file-${srno}`).click();
 }
 function filesEditPreview(input, id) {
-    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
-    if (allowedExtensions.includes(ext)) {
+    var ext = input.target.files[0].name.split('.').pop().toLowerCase();
+    if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
         var reader = new FileReader();
         reader.onload = function () {
             var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
             $(`#file-${id}`).attr("src", src)
         };
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(input.files[i]);
         $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
         $(`#btn-upload-${id}`).removeClass("d-none");
         $("#File_SrNo").val(id);
@@ -234,13 +233,5 @@ function saveEditFile() {
                 showSuccessToastr(response.message);
             }
         },
-    });
-}
-function filePreview(path) {
-    var url = `/Home/FilePreview?path=${path}`;
-    $('#PreviewModal').load(url, function () {
-        $("#file-preview").attr("src", path);
-        $("#file-preview").css("height", "100vh")
-        $("#PreviewModal").modal("show");
     });
 }

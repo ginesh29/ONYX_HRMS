@@ -49,6 +49,8 @@ function showDocumentModal(docTypeCd, divCd) {
         $('.date-input').datetimepicker({
             format: 'L'
         });
+        docTypeCd = docTypeCd.split(" _")[0];
+        $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`);
         $("#DocumentModal").modal("show");
     });
 }
@@ -88,14 +90,91 @@ function saveDocument(btn) {
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
+function filesPreview(input) {
+    if (input.files) {
+        var filesCount = input.files.length;
+        for (i = 0; i < filesCount; i++) {
+            var ext = input.files[i].name.split('.').pop().toLowerCase();
+            if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
+                    var html = `<div class="btn-file-edit-container"><img style="height:100px;max-width:100%" src='${src}' class="img-thumbnail mb-3"></div>`;
+                    $("#Files-Preview").append(html);
+                }
+                reader.readAsDataURL(input.files[i]);
+                var totalFiles = $("#DocList img").length + filesCount;
+                $("#doc-file-label").text(`${totalFiles} files Chosen`);
+            }
+            else
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
+        }
+    }
 };
+function deleteDocumentFile(curr, vehCd, docType, srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/organisation/DeleteDocumentFile?vehCd=${vehCd}&docType=${docType}&slNo=${srNo}`, function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $(curr).closest(".btn-file-edit-container").remove();
+                }
+                else
+                    showErrorToastr(response.message);
+            });
+        }
+    });
+}
+function editDoc(curr) {
+    var srno = $(curr).attr("data-srno");
+    $(`#doc-file-${srno}`).click();
+}
+function filesEditPreview(input, id) {
+    var ext = input.target.files[0].name.split('.').pop().toLowerCase();
+    if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
+            $(`#file-${id}`).attr("src", src)
+        };
+        reader.readAsDataURL(input.target.files[0]);
+        $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
+        $(`#btn-upload-${id}`).removeClass("d-none");
+        $("#File_SrNo").val(id);
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
+};
+function saveEditFile() {
+    var docTypCd = $("#DocTypCd").val();
+    var vehCd = $("#Cd").val();
+    var srNo = $("#File_SrNo").val();
+    var file = $(`#doc-file-${srNo}`)[0].files[0];
+    var formData = new FormData();
+    formData.append('docTypCd', docTypCd);
+    formData.append('vehCd', vehCd);
+    formData.append('srNo', srNo);
+    formData.append('file', file);
+    $.ajax({
+        url: "/organisation/UpdateDocumentFile",
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (response.success) {
+                $(`#btn-file-delete-${srNo},#btn-upload-file-${srNo}`).removeClass("d-none");
+                $(`#btn-upload-${srNo}`).addClass("d-none");
+                showSuccessToastr(response.message);
+            }
+        },
+    });
+}
