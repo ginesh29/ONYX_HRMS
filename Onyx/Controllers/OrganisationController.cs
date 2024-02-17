@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Onyx.Controllers
 {
@@ -17,6 +19,8 @@ namespace Onyx.Controllers
         private readonly UserEmployeeService _userEmployeeService;
         private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
+        private readonly FileHelper _fileHelper;
+
         public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, UserEmployeeService userEmployeeService, EmailService emailService)
         {
             _authService = authService;
@@ -26,6 +30,7 @@ namespace Onyx.Controllers
             _settingService = settingService;
             _userEmployeeService = userEmployeeService;
             _emailService = emailService;
+            _fileHelper = new FileHelper();
         }
         #region Component
         public IActionResult Components()
@@ -319,7 +324,7 @@ namespace Onyx.Controllers
                 Text = m.SDes,
                 Value = m.Cd
             });
-            ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(SysCode.EmpDeployLoc).Select(m => new SelectListItem
+            ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code
@@ -567,6 +572,207 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = vehicles,
+            };
+            return Json(result);
+        }
+        public IActionResult GetVehicle(string cd)
+        {
+            var vehicle = _organisationService.GetVehicles().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var model = new CompanyVehicleModel();
+            if (vehicle != null)
+                model = new CompanyVehicleModel
+                {
+                    Cd = vehicle.Cd.Trim(),
+                    Code = vehicle.Cd,
+                    Branch = vehicle.Branch,
+                    BranchCd = vehicle.BranchCd.Trim(),
+                    Brand = vehicle.Brand,
+                    ChassisNo = vehicle.ChassisNo,
+                    Description = vehicle.Des,
+                    Driver = vehicle.Driver,
+                    DriverCd = vehicle.DriverCd.Trim(),
+                    EngineNo = vehicle.EngineNo,
+                    InsAmt = vehicle.InsAmt,
+                    InsCo = vehicle.InsCo,
+                    InsExpDt = vehicle.InsExpDt,
+                    InsFrmDt = vehicle.InsFrmDt,
+                    InsPolicyNo = vehicle.InsPolicyNo,
+                    InsPrem = vehicle.InsPrem,
+                    Location = vehicle.Location,
+                    LocationCd = vehicle.LocationCd.Trim(),
+                    ModelCd = vehicle.ModelCd.Trim(),
+                    Narr = vehicle.Narr,
+                    OrgPrice = vehicle.OrgPrice,
+                    Owner = vehicle.Owner,
+                    OwnerCd = vehicle.OWNERCd.Trim(),
+                    PetrolCard = vehicle.PetrolCard,
+                    PetrolCardAmt = vehicle.PetrolCardAmt,
+                    PlateColor = vehicle.PlateColor,
+                    PlateColorCd = vehicle.PlateColorCd.Trim(),
+                    PurDt = vehicle.PurDt,
+                    RegnExpDt = vehicle.RegnExpDt,
+                    RegnFrmDt = vehicle.RegnFrmDt,
+                    RegnNo = vehicle.RegnNo,
+                    SDes = vehicle.SDes,
+                    State = vehicle.State,
+                    StateCd = vehicle.StateCd.Trim(),
+                };
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd.Trim(),
+            });
+            ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.StateItems = _settingService.GetCodeGroupItems(CodeGroup.State).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.OwnerItems = _settingService.GetCodeGroupItems(CodeGroup.Owner).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.YearModelItems = _settingService.GetCodeGroupItems(CodeGroup.Model).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.PlateColorItems = _settingService.GetCodeGroupItems(CodeGroup.Color).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DriverItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = $"{m.Fname} {m.Lname}",
+                Value = m.Cd.Trim(),
+            });
+            return View("VehicleForm", model);
+        }
+        [HttpPost]
+        public IActionResult SaveVehicle(CompanyVehicleModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveVehicle(model);
+            TempData["success"] = result.Message;
+            return RedirectToAction("GetVehicle", new { cd = model.Cd });
+        }
+        [HttpDelete]
+        public IActionResult DeleteVehicle(string cd)
+        {
+            var result = _organisationService.DeleteVehicle(cd);
+            return Json(result);
+        }
+        public IActionResult FetchVehicleDocuments(string vehCd)
+        {
+            var vehicleDocuments = _organisationService.GetVehicleDocuments(vehCd);
+            CommonResponse result = new()
+            {
+                Data = vehicleDocuments,
+            };
+            return Json(result);
+        }
+        public IActionResult GetVehicleDocument(string vehCd, string docType)
+        {
+            var vehicleDocument = _organisationService.GetVehicleDocuments(vehCd).FirstOrDefault(m => m.DocTypCd.Trim() == docType);
+            var model = new VehDocumentModel();
+            if (vehicleDocument != null)
+                model = new VehDocumentModel
+                {
+                    Cd = vehicleDocument.VehCd,
+                    IssueDt = vehicleDocument.IssueDt,
+                    IssuePlace = vehicleDocument.IssuePlace,
+                    OthRefNo = vehicleDocument.OthRefNo,
+                    SrNo = vehicleDocument.SrNo,
+                    DocNo = vehicleDocument.DocNo,
+                    DocTypCd = vehicleDocument.DocTypCd.Trim(),
+                    DocTypSDes = vehicleDocument.DocTypSDes,
+                    VehName = vehicleDocument.VehName,
+                    ExpDt = vehicleDocument.ExpDt,
+                    VehicleDocsPaths = _organisationService.GetVehicleDocumentFiles(vehCd)
+                };
+            else
+                model.SrNo = _organisationService.GetVehicleDocument_SrNo(vehCd, docType);
+            model.VehCd = vehCd;
+            ViewBag.DocumentTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDoc).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+
+            return PartialView("_VehicleDocumentModal", model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SaveVehicleDocument(VehDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _organisationService.SaveVehicleDocument(model);
+            if (result.Success)
+            {
+                if (model.VehicleDocFiles?.Count() > 0)
+                {
+                    var totalFiles = _organisationService.GetVehicleDocumentFiles(model.VehCd).Count();
+                    string uploadedFilePath = string.Empty;
+                    foreach (var item in model.VehicleDocFiles.Select((value, i) => new { i, value }))
+                    {
+                        if (item != null)
+                        {
+                            var filePath = await _fileHelper.UploadFile(item.value, "comp-vehicle-doc");
+                            uploadedFilePath = filePath;
+                            _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
+                            {
+                                EntryBy = _loggedInUser.UserAbbr,
+                                CompanyCode = _loggedInUser.CompanyCd,
+                                DocumentTypeCd = model.DocTypCd,
+                                ImageFile = uploadedFilePath,
+                                SlNo = item.i + 1 + totalFiles,
+                                VehCd = model.VehCd
+                            });
+                        }
+                    }
+                }
+            }
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteVehicleDocument(string vehCd, string docType)
+        {
+            var result = _organisationService.DeleteVehicleDocument(vehCd, docType);
+            return Json(result);
+        }
+        public IActionResult FetchVehicleDocumentFiles(string vehCd)
+        {
+            var files = _organisationService.GetVehicleDocumentFiles(vehCd);
+            return PartialView("_VehicleDocFilesList", files);
+        }
+        [HttpDelete]
+        public IActionResult DeleteVehicleDocumentFile(string vehCd, string docType, int slNo)
+        {
+            var result = _organisationService.DeleteVehicleDocumentFile(vehCd, docType, slNo);
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateVehicleDocumentFile(string docTypCd, string vehCd, int SrNo, IFormFile file)
+        {
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc");
+            _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
+            {
+                EntryBy = _loggedInUser.UserAbbr,
+                CompanyCode = _loggedInUser.CompanyCd,
+                DocumentTypeCd = docTypCd,
+                ImageFile = uploadedFilePath,
+                SlNo = SrNo,
+                VehCd = vehCd
+            });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
             };
             return Json(result);
         }
@@ -834,29 +1040,28 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        //public IActionResult GetApprovalProcess(int Cd, string docType)
-        //{
-        //    var notification = _organisationService.GetApprovalProcesses(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType);
-        //    var model = new NotificationModel();
-        //    if (notification != null)
-        //        model = new NotificationModel
-        //        {
-        //            BeforeOrAfter = notification.BeforeOrAfter,
-        //            CoCd = notification.CoCd,
-        //            DocTyp = notification.DocTyp.Trim(),
-        //            DocTypDes = notification.DocTypDes,
-        //            EmailIds = notification.EmailIds,
-        //            MessageBody = notification.MessageBody,
-        //            NoOfDays = notification.NoOfDays,
-        //            Type = notification.NotificationType,
-        //            ProcessId = notification.ProcessId,
-        //            SrNo = notification.SrNo,
-        //        };
-        //    ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
-        //    ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
-        //    ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
-        //    return PartialView("_NotificationModal", model);
-        //}
+        public IActionResult GetApprovalProcess(string processIdCd, string applTypCd, string branchCd, string deptCd)
+        {
+            var approvalProcess = _organisationService.GetApprovalProcess(processIdCd, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd);
+            var model = new CompanyProcessApprovalModel();
+            if (approvalProcess != null)
+                model = new CompanyProcessApprovalModel
+                {
+                    Branch = approvalProcess.Branch,
+                    ApplTypCd = approvalProcess.ApplTypCd.Trim(),
+                    ApplTyp = approvalProcess?.ApplTyp,
+                    BranchCd = approvalProcess?.BranchCd.Trim(),
+                    DeptCd = approvalProcess?.DeptCd.Trim(),
+                    Dept = approvalProcess?.Dept,
+                    ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
+                    ProcessId = approvalProcess?.ProcessId,
+                };
+            ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
+            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.Department });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd.Trim(), Text = m.SDes });
+            return PartialView("_ApprovalProcessModal", model);
+        }
         //[HttpPost]
         //public IActionResult SaveApprovalProcess(NotificationModel model)
         //{

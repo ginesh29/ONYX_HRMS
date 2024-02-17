@@ -1,0 +1,117 @@
+﻿@model CompanyProcessApprovalModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.ProcessId) ? "Edit" : "Add") Approval Process</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="approval-process-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ProcessId"></label>
+                            <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="ProcessId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ApplTypCd"></label>
+                            <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="ApplTypCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BranchCd"></label>
+                            <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="BranchCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DeptCd"></label>
+                            <select asp-for="DeptCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
+                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="DeptCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                @*  <input type="hidden" asp-for="Code" />
+
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="PercAmt_Cd"></label>
+                <select asp-for="PercAmt_Cd" class="form-control select-picker" asp-items="ViewBag.PercentageAmtItems" onchange="changePercentageAmt()">
+                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                </select>
+                <span asp-validation-for="PercAmt_Cd" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Perc_Val"></label>
+                <input asp-for="Perc_Val" class="form-control" />
+                <span asp-validation-for="Perc_Val" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Abbriviation"></label>
+                <input asp-for="Abbriviation" class="form-control" />
+                <span asp-validation-for="Abbriviation" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="SDes"></label>
+                <input asp-for="SDes" class="form-control" />
+                <span asp-validation-for="SDes" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="form-group">
+                <label asp-for="Description"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div>
+                <div class="custom-control custom-checkbox">
+                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="OT">
+                <label asp-for="OT" class="custom-control-label font-weight-normal">OT Pay Comp.</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="OtCd">
+                <label asp-for="OtCd" class="custom-control-label font-weight-normal">Used for OT calculation</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="JobCosting">
+                <label asp-for="JobCosting" class="custom-control-label font-weight-normal">Job Cost Comp.</label>
+                </div>
+                <div class="custom-control custom-checkbox">
+                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="LoanTyp">
+                <label asp-for="LoanTyp" class="custom-control-label font-weight-normal">Loan Comp.</label>
+                </div>
+                </div> *@
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveApprovalProcess(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

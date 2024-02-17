@@ -23,7 +23,7 @@ namespace Onyx.Controllers
             return View();
         }
         public async Task<IActionResult> UpdateCompany(string CoCd)
-        {            
+        {
             await _authService.UpdateClaim("CompanyCd", CoCd.Trim());
             var result = new CommonResponse
             {
@@ -41,6 +41,11 @@ namespace Onyx.Controllers
                 Data = companies
             };
             return Json(result);
+        }
+        public IActionResult FilePreview(string path)
+        {
+            ViewBag.FilePath = path;
+            return PartialView("_FilePreview");
         }
     }
 }

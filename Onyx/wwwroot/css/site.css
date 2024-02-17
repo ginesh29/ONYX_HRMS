@@ -245,13 +245,13 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     position: absolute;
 }
 
-.btn-image-upload,
-.btn-image-edit {
+.btn-file-upload,
+.btn-file-edit {
     margin-left: -10px;
     margin-top: -10px;
 }
 
-.btn-image-delete {
+.btn-file-delete {
     margin-top: 90px;
     margin-left: -10px;
 }

@@ -13,7 +13,7 @@
         public const string DayType = "HOTC2";
         public const string Religion = "HOTC1";
         public const string OtTpe = "HCOTT";
-        public const string EmpDeployLoc = "HLOC";
+
     }
     public class CodeGroup
     {
@@ -22,6 +22,13 @@
         public const string DocType = "HCDOC";
         public const string Sector = "TSECTTSECT";
         public const string Class = "TCLAS";
+        public const string EmpDeployLoc = "HLOC";
+        public const string State = "STATE";
+        public const string Owner = "OWNER";
+        public const string Model = "MODEL";
+        public const string Color = "COLOR";
+        public const string Driver = "DRIV";
+        public const string VehicleDoc = "HVDOC";        
     }
     public class CommonMessage
     {

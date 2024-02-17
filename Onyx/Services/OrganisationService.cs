@@ -458,6 +458,146 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public CommonResponse SaveVehicle(CompanyVehicleModel model)
+        {
+            var procedureName = "CompanyVehicle_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Cd);
+            parameters.Add("v_SDes", model.SDes);
+            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_Div", model.BranchCd);
+            parameters.Add("v_Loc", model.LocationCd);
+            parameters.Add("v_Brand", model.Brand);
+            parameters.Add("v_Model", model.ModelCd);
+            parameters.Add("v_PurDt", model.PurDt);
+            parameters.Add("v_OrgPrice", model.OrgPrice);
+            parameters.Add("v_Owner", model.OwnerCd);
+            parameters.Add("v_Driver", model.DriverCd);
+            parameters.Add("v_EngineNo", model.EngineNo);
+            parameters.Add("v_ChassisNo", model.ChassisNo);
+            parameters.Add("v_PlateColor", model.PlateColorCd);
+            parameters.Add("v_RegnNo", model.RegnNo);
+            parameters.Add("v_RegnFrmDt", model.RegnFrmDt);
+            parameters.Add("v_RegnExpDt", model.RegnExpDt);
+            parameters.Add("v_State", model.StateCd);
+            parameters.Add("v_PetrolCard", model.PetrolCard);
+            parameters.Add("v_PetrolCardAmt", model.PetrolCardAmt);
+            parameters.Add("v_InsCo", model.InsCo);
+            parameters.Add("v_InsPolicyNo", model.InsPolicyNo);
+            parameters.Add("v_InsAmt", model.InsAmt);
+            parameters.Add("v_InsPrem", model.InsPrem);
+            parameters.Add("v_InsFrmDt", model.InsFrmDt);
+            parameters.Add("v_InsExpDt", model.InsExpDt);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse DeleteVehicle(string cd)
+        {
+            var procedureName = "CompanyVehicle_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", cd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<VehDocuments_GetRow_Result> GetVehicleDocuments(string vehCd)
+        {
+            var procedureName = "VehDocuments_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", vehCd);
+            parameters.Add("v_DocTyp", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<VehDocuments_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse SaveVehicleDocument(VehDocumentModel model)
+        {
+            var procedureName = "VehDocuments_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", model.VehCd);
+            parameters.Add("v_DocTyp", model.DocTypCd);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_OthRefNo", model.OthRefNo); // NOTE: does n't exists in TelconHRP database
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public int GetVehicleDocument_SrNo(string vehCd, string docType)
+        {
+            var procedureName = "VehDocuments_GetSrNo";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", vehCd);
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SrNo", 0);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse DeleteVehicleDocument(string vehCd, string docType)
+        {
+            var procedureName = "VehDocuments_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", vehCd);
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SrNo", 0);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<VehDocImages_GetRow_Result> GetVehicleDocumentFiles(string vehCd)
+        {
+            var procedureName = "VehDocImages_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", vehCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<VehDocImages_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveVehicleDocumentFile(CompDocImageModel model)
+        {
+            var procedureName = "VehDocImages_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", model.VehCd);
+            parameters.Add("v_DocTyp", model.DocumentTypeCd);
+            parameters.Add("v_SlNo", model.SlNo);
+            parameters.Add("v_ImageFile", model.ImageFile);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse DeleteVehicleDocumentFile(string vehCd, string docType, int slNo)
+        {
+            var procedureName = "VehDocImages_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", vehCd);
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SlNo", slNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         #endregion
 
         #region Designation
@@ -660,6 +800,22 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public CompanyProcessApproval_GetRow GetApprovalProcess(string processIdCd, string applTypCd, string branchCd, string deptCd, string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_GetRowSingle";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_ProcessId", processIdCd);
+            parameters.Add("v_ApplTyp", applTypCd);
+            parameters.Add("v_Div", branchCd);
+            parameters.Add("v_Dept", deptCd);
+            parameters.Add("v_typ", "0");
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<CompanyProcessApproval_GetRow>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public CommonResponse SaveApprovalProcess(NotificationModel model, string CoCd)
         {
             var procedureName = "Notification_Update";
@@ -686,6 +842,17 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<CompanyProcessApproval_Type_GetRow_Result> GetProcessApprovalTypes(string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_Type_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyProcessApproval_Type_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
         #endregion
     }

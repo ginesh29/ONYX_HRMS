@@ -124,6 +124,8 @@ function reloadPageAfterSometime() {
 function reloadDatatable() {
     window["datatable"].ajax.reload();
     window["datatable"].search('').draw();
+    window["datatable-2"].ajax.reload();
+    window["datatable-2"].search('').draw();
 }
 function parseDynamicForm() {
     $("form").removeData("validator");
@@ -197,6 +199,21 @@ function changePassword(btn) {
         $("#ChangePasswordModal").modal("hide");
         unloadingButton(btn);
     }
+}
+function getQueryStringParams() {
+    var queryString = window.location.search;
+    var params = {};
+    if (queryString) {
+        queryString = queryString.substring(1); // Remove leading '?'
+        var pairs = queryString.split('&');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].split('=');
+            var key = decodeURIComponent(pair[0]);
+            var value = decodeURIComponent(pair[1] || '');
+            params[key] = value;
+        }
+    }
+    return params;
 }
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
