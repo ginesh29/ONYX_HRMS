@@ -75,12 +75,18 @@ function saveBranch(btn) {
 }
 function previewImage(event) {
     var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    if (allowedExtensions.includes(ext)) {
+        reader.onload = function () {
+            var output = document.getElementById('Image-Preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        var filename = $("#ImageFile").val().split("\\").pop();
+        $("#Image-Preview").removeClass("d-none");
+        $("#image-file-label").text(filename);
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 };

@@ -147,6 +147,7 @@ function deleteVehicleDocument(vehCd, docTypCd, srNo) {
         }
     });
 }
+const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
 function filesPreview(input) {
     if (input.files) {
         var filesAmount = input.files.length;
@@ -195,16 +196,20 @@ function editDoc(curr) {
     $(`#doc-file-${srno}`).click();
 }
 function filesEditPreview(input, id) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
-        $(`#file-${id}`).attr("src", src)
-    };
-    console.log(event.target.files[0])
-    reader.readAsDataURL(event.target.files[0]);
-    $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
-    $(`#btn-upload-${id}`).removeClass("d-none");
-    $("#File_SrNo").val(id);
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    if (allowedExtensions.includes(ext)) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
+            $(`#file-${id}`).attr("src", src)
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
+        $(`#btn-upload-${id}`).removeClass("d-none");
+        $("#File_SrNo").val(id);
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 };
 function saveEditFile() {
     var docTypCd = $("#DocTypCd").val();
