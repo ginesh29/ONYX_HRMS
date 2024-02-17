@@ -471,13 +471,14 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public CommonResponse DeleteDocumentFile(string docTypeCd, string docType)
+        public CommonResponse DeleteDocumentFile(string divCd, string docTypCd, int srNo, string CoCd)
         {
             var procedureName = "CompDocImages_Delete";
             var parameters = new DynamicParameters();
-            parameters.Add("v_VehCd", docTypeCd);
-            parameters.Add("v_DocTyp", docType);
-            parameters.Add("v_SrNo", 0);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Div", divCd);
+            parameters.Add("v_DocTyp", docTypCd);
+            parameters.Add("v_SlNo", srNo);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

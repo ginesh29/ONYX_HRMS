@@ -588,23 +588,23 @@ namespace Onyx.Controllers
             return PartialView("_DocFilesList", files);
         }
         [HttpDelete]
-        public IActionResult DeleteDocumentFile(string docTypeCd, string divCd, int slNo)
+        public IActionResult DeleteDocumentFile(string divCd, string docTypCd, int slNo)
         {
-            var result = _organisationService.DeleteDocumentFile(docTypeCd, docTypeCd);
+            var result = _organisationService.DeleteDocumentFile(divCd, docTypCd, slNo, _loggedInUser.CompanyCd);
             return Json(result);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateDocumentFile(string docTypCd, string vehCd, int SrNo, IFormFile file)
+        public async Task<IActionResult> UpdateDocumentFile(string docTypCd, string divCd, int SrNo, IFormFile file)
         {
-            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc");
-            _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-doc");
+            _organisationService.SaveDocumentFile(new CompDocImageModel
             {
                 EntryBy = _loggedInUser.UserAbbr,
                 CompanyCode = _loggedInUser.CompanyCd,
                 DocumentTypeCd = docTypCd,
                 ImageFile = uploadedFilePath,
                 SlNo = SrNo,
-                VehCd = vehCd
+                DivCd = divCd
             });
             var result = new CommonResponse
             {
