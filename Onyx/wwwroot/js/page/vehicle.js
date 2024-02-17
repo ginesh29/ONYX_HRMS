@@ -151,16 +151,21 @@ function filesPreview(input) {
     if (input.files) {
         var filesAmount = input.files.length;
         for (i = 0; i < filesAmount; i++) {
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
-                var html = `<div class="btn-file-edit-container"><img style="height:100px;max-width:100%" src='${src}' class="img-thumbnail mb-3"></div>`;
-                $("#Files-Preview").append(html);
+            var ext = input.files[i].name.split('.').pop().toLowerCase();
+            if (allowedExtensions.includes(ext)) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
+                    var html = `<div class="btn-file-edit-container"><img style="height:100px;max-width:100%" src='${src}' class="img-thumbnail mb-3"></div>`;
+                    $("#Files-Preview").append(html);
+                }
+                reader.readAsDataURL(input.files[i]);
+                var totalFiles = $("#VehicleDocList img").length + filesAmount;
+                $("#doc-file-label").text(`${totalFiles} files Chosen`);
             }
-            reader.readAsDataURL(input.files[i]);
+            else
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
-        var totalFiles = $("#VehicleDocList img").length + filesAmount;
-        $("#doc-file-label").text(`${totalFiles} files Chosen`);
     }
 };
 function deleteVehicleDocumentFile(curr, vehCd, docType, srNo) {
@@ -228,6 +233,9 @@ function saveEditFile() {
 }
 function filePreview(path) {
     var url = `/Home/FilePreview?path=${path}`;
-
-    window.open(url);
+    $('#PreviewModal').load(url, function () {
+        $("#file-preview").attr("src", path);
+        $("#file-preview").css("height", "100vh")
+        $("#PreviewModal").modal("show");
+    });
 }

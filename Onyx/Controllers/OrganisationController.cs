@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
-using System;
-using static Org.BouncyCastle.Math.EC.ECCurve;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Onyx.Controllers
 {

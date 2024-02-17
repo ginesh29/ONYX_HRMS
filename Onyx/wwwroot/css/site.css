@@ -287,11 +287,13 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     border-color: #007bff;
     color: #fff;
 }
+
 .bootstrap-tagsinput {
     height: calc(2.25rem + 2px);
     width: 100%;
     padding: 6px 6px;
 }
+
 @media (max-width: 991.98px) {
     body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
         margin-left: 0;

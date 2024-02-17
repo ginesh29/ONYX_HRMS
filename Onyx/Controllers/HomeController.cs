@@ -42,9 +42,8 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult FilePreview(string path)
+        public IActionResult FilePreview()
         {
-            ViewBag.FilePath = path;
             return PartialView("_FilePreview");
         }
     }

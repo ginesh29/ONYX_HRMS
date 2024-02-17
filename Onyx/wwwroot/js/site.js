@@ -37,6 +37,7 @@ const dataTableDefaultOptions = {
     "pagingType": "simple",
     "ordering": false
 }
+const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'gif'];
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
@@ -214,6 +215,42 @@ function getQueryStringParams() {
         }
     }
     return params;
+}
+function getFileExtensionFromBase64(base64String) {
+    // Extract the data part from the base64 string
+    var dataPart = base64String.split(',')[1];
+
+    // Decode the base64 string to binary data
+    var binaryData = atob(dataPart);
+
+    // Extract the first few bytes to determine the file type
+    var bytes = [];
+    for (var i = 0; i < 4; i++) {
+        bytes.push(binaryData.charCodeAt(i));
+    }
+
+    // Determine the file extension based on the file signature
+    var signature = bytes.join('');
+    var extension = '';
+    switch (signature) {
+        case '25504446':
+            extension = 'pdf';
+            break;
+        case '47494638':
+            extension = 'gif';
+            break;
+        case '89504E47':
+            extension = 'png';
+            break;
+        case 'FFD8FFDB':
+        case 'FFD8FFE0':
+            extension = 'jpg';
+            break;
+        default:
+            extension = 'unknown';
+    }
+
+    return extension;
 }
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
