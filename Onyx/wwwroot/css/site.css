@@ -259,6 +259,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 .btn-file-edit-container {
     display: inline-block;
     margin-right: 20px;
+    cursor:pointer;
 }
 
 .menu-checkbox {

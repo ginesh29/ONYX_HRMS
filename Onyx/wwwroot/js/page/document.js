@@ -50,8 +50,10 @@ function showDocumentModal(docTypeCd, divCd) {
             format: 'L'
         });
         docTypeCd = docTypeCd.split(" _")[0];
-        $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`);
-        $("#DocumentModal").modal("show");
+        $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`, function () {
+            $("#DocumentModal").modal("show");
+            $('[data-toggle="tooltip"]').tooltip();
+        });
     });
 }
 function deleteDocument(docTypeCd, divCd) {
@@ -91,6 +93,7 @@ function saveDocument(btn) {
     }
 }
 function filesPreview(input) {
+    $("#Files-Preview").html("");
     if (input.files) {
         var filesCount = input.files.length;
         for (i = 0; i < filesCount; i++) {

@@ -223,9 +223,32 @@ function filePreview(path) {
     var url = `/Home/FilePreview?path=${path}`;
     $('#PreviewModal').load(url, function () {
         $("#file-preview").attr("src", path);
-        $("#file-preview").css("height", "100vh")
+        setTimeout(function () {
+            adjustIframeHeight();
+        }, 200);
         $("#PreviewModal").modal("show");
     });
+}
+function adjustIframeHeight() {
+    var iframe = document.getElementById('file-preview');
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    function resizeIframe() {
+        var img = innerDoc.getElementsByTagName('img')[0];
+        if (img) {
+            iframe.style.height = img.offsetHeight + 'px';
+            iframe.style.width = img.offsetWidth + 'px';
+        }
+        else {
+            iframe.style.height = '100vh';
+            iframe.style.width = '100%';
+        }
+    }
+
+    if (innerDoc.readyState == 'complete') {
+        resizeIframe();
+    } else {
+        iframe.onload = resizeIframe;
+    }
 }
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {

@@ -3,7 +3,6 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Onyx.Services
 {
