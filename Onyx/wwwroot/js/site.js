@@ -272,7 +272,7 @@ function initConrols() {
     $('.int-input').inputmask(intMaskOptions);
     $('.percentage-input').attr("placeholder", "0 %");
     $('.percentage-input').inputmask(percentageMaskOptions);
-    $(".texarea-input").on("input", function (e) {
+    $("textarea.form-control").on("input", function (e) {
         autoResizeTextarea(e.target)
     });
     $('[data-toggle="tooltip"]').tooltip();
