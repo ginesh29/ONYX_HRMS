@@ -44,19 +44,9 @@ function showDocumentModal(docTypeCd, divCd) {
     var url = `/Organisation/GetDocument?docTypeCd=${encodeURI(docTypeCd)}&divCd=${divCd}`;
     $('#DocumentModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
-        $('.date-input').attr("placeholder", "mm/dd/yyyy");
-        $('.date-input').datetimepicker({
-            format: 'L'
-        });
         docTypeCd = docTypeCd.split(" _")[0];
-        $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`, function () {
-            $(".texarea-input").on("input", function (e) {
-                autoResizeTextarea(e.target)
-            });
-            $('[data-toggle="tooltip"]').tooltip();
-            $("#DocumentModal").modal("show");
-        });
+        $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`);
+        $("#DocumentModal").modal("show");
     });
 }
 function deleteDocument(docTypeCd, divCd) {

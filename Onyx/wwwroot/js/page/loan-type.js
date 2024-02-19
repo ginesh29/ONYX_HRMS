@@ -35,9 +35,7 @@ function showLoanTypeModal(cd) {
     var url = `/Organisation/GetLoanType?cd=${cd}`;
     $('#LoanTypeModal').load(url, function () {
         parseDynamicForm();
-        $('.percentage-input').attr("placeholder", "0 %");
-        $('.percentage-input').inputmask(percentageMaskOptions);
-        $(".select-picker").selectpicker();
+        
         $("#LoanTypeModal").modal("show");
     });
 }

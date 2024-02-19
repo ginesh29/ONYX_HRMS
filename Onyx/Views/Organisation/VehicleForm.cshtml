@@ -45,7 +45,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="ModelCd"></label>
-                                        <select asp-for="ModelCd" class="form-control select-picker" asp-items="ViewBag.YearModelItems" data-live-search="true">
+                                        <select asp-for="ModelCd" class="form-control select-picker" asp-items="ViewBag.YearModelItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="ModelCd" class="text-danger"></span>
@@ -88,7 +88,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="DriverCd"></label>
-                                        <select asp-for="DriverCd" class="form-control select-picker" asp-items="ViewBag.DriverItems" data-live-search="true">
+                                        <select asp-for="DriverCd" class="form-control select-picker" asp-items="ViewBag.DriverItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="DriverCd" class="text-danger"></span>
@@ -97,7 +97,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="PlateColorCd"></label>
-                                        <select asp-for="PlateColorCd" class="form-control select-picker" asp-items="ViewBag.PlateColorItems" data-live-search="true">
+                                        <select asp-for="PlateColorCd" class="form-control select-picker" asp-items="ViewBag.PlateColorItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="PlateColorCd" class="text-danger"></span>
@@ -108,7 +108,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="BranchCd"></label>
-                                        <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems" data-live-search="true">
+                                        <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="BranchCd" class="text-danger"></span>
@@ -117,7 +117,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="LocationCd"></label>
-                                        <select asp-for="LocationCd" class="form-control select-picker" asp-items="ViewBag.LocationItems" data-live-search="true">
+                                        <select asp-for="LocationCd" class="form-control select-picker" asp-items="ViewBag.LocationItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="LocationCd" class="text-danger"></span>
@@ -128,7 +128,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="StateCd"></label>
-                                        <select asp-for="StateCd" class="form-control select-picker" asp-items="ViewBag.StateItems" data-live-search="true">
+                                        <select asp-for="StateCd" class="form-control select-picker" asp-items="ViewBag.StateItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="StateCd" class="text-danger"></span>
@@ -137,7 +137,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="OwnerCd"></label>
-                                        <select asp-for="OwnerCd" class="form-control select-picker" asp-items="ViewBag.OwnerItems" data-live-search="true">
+                                        <select asp-for="OwnerCd" class="form-control select-picker" asp-items="ViewBag.OwnerItems">
                                             <option value=''>@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="OwnerCd" class="text-danger"></span>
@@ -295,12 +295,4 @@
 <div id="PreviewModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script src="~/js/page/vehicle.js" asp-append-version="true"></script>
-    <script>
-        $('.date-input').attr("placeholder", "mm/dd/yyyy");
-        $('.date-input').datetimepicker({
-            format: 'L'
-        });
-        $('.decimal-input').attr("placeholder", "0.00");
-        $('.decimal-input').inputmask(decimalMaskOptions);
-    </script>
 }

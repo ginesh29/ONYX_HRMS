@@ -69,7 +69,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="UserBranchCd"></label>
-                            <select asp-for="UserBranchCd" class="select-picker" multiple data-selected-text-format="count > 1" data-live-search="true" data-actions-box="true" data-width="100%">
+                            <select asp-for="UserBranchCd" class="select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%">
                                 @foreach (var item in UserBranchItems)
                                 {
                                     var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;

@@ -38,12 +38,7 @@ calendar.render();
 function showCalendarEventModal(cd) {
     var url = `/organisation/GetCalendarEvent?cd=${cd}`;
     $('#CalendarEventModal').load(url, function () {
-        parseDynamicForm();
-        $('.date-input').attr("placeholder", "mm/dd/yyyy");
-        $('.date-input').datetimepicker({
-            format: 'L'
-        });
-        $(".select-picker").selectpicker();
+        parseDynamicForm();    
         $("#Date").prop("readonly", true);
         $("#CalendarEventModal").modal("show");
     });

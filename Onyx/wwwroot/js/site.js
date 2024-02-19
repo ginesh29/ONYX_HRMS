@@ -259,6 +259,25 @@ $("#company-dropdown").change(function (e) {
         window.location.reload();
     });
 })
-$(document).ajaxComplete(function () {
+function initConrols() {
+    $(".select-picker").attr("data-live-search", true);
     $(".select-picker").selectpicker();
+    $('.date-input').attr("placeholder", "mm/dd/yyyy");
+    $('.date-input').datetimepicker({
+        format: 'L'
+    });
+    $('.decimal-input').attr("placeholder", "0.00");
+    $('.decimal-input').inputmask(decimalMaskOptions);
+    $('.int-input').attr("placeholder", "0");
+    $('.int-input').inputmask(intMaskOptions);
+    $('.percentage-input').attr("placeholder", "0 %");
+    $('.percentage-input').inputmask(percentageMaskOptions);
+    $(".texarea-input").on("input", function (e) {
+        autoResizeTextarea(e.target)
+    });
+    $('[data-toggle="tooltip"]').tooltip();
+}
+initConrols();
+$(document).ajaxComplete(function () {
+    initConrols();
 });

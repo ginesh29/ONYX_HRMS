@@ -34,9 +34,6 @@ function showLeaveTypeModal(cd) {
     var url = `/Organisation/GetLeaveType?cd=${cd}`;
     $('#LeaveTypeModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
-        $('.int-input').attr("placeholder", "0");
-        $('.int-input').inputmask(intMaskOptions);
         $("#LeaveTypeModal").modal("show");
     });
 }

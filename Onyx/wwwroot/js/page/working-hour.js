@@ -36,10 +36,7 @@
 function showWorkingHourModal(cd) {
     var url = `/Organisation/GetWorkingHour?cd=${cd}`;
     $('#WorkingHourModal').load(url, function () {
-        parseDynamicForm();
-        $('.decimal-input').attr("placeholder", "0.00");
-        $('.decimal-input').inputmask(decimalMaskOptions);
-        $(".select-picker").selectpicker();
+        parseDynamicForm();        
         $('#DateRange').daterangepicker({
             autoUpdateInput: false
         });

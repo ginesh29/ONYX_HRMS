@@ -31,8 +31,6 @@ function showCountryModal(cd) {
     var url = `/Settings/GetCountry?cd=${cd}`;
     $('#CountryModal').load(url, function () {
         parseDynamicForm();
-        $('.int-input').attr("placeholder", "0");
-        $('.int-input').inputmask(intMaskOptions);
         $("#CountryModal").modal("show");
     });
 }

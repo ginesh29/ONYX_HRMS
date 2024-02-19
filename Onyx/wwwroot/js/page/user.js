@@ -35,11 +35,6 @@ function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
         parseDynamicForm();
-        $('.date-input').attr("placeholder", "mm/dd/yyyy");
-        $('.date-input').datetimepicker({
-            format: 'L'
-        });
-        $(".select-picker").selectpicker();
         $("#UserModal").modal("show");
         $('#tree-view').jstree({
             "checkbox": {

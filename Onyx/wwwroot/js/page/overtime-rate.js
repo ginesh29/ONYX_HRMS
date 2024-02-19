@@ -27,9 +27,6 @@ function showOvertimeRateModal(cd, type) {
     var url = `/Organisation/GetOvertimeRate?cd=${cd}&type=${type}`;
     $('#OvertimeRateModal').load(url, function () {
         parseDynamicForm();
-        $('.decimal-input').attr("placeholder", "0.00");
-        $('.decimal-input').inputmask(decimalMaskOptions);
-        $(".select-picker").selectpicker();
         $("#OvertimeRateModal").modal("show");
     });
 }

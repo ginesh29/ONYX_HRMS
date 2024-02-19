@@ -35,7 +35,6 @@ function showBankModal(bankCd, branchCd) {
     var url = `/Organisation/GetBank?bankCd=${bankCd }&branchCd=${branchCd}`;
     $('#BankModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
         $("#BankModal").modal("show");
     });
 }

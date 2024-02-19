@@ -33,10 +33,6 @@ function showCurrencyModal(cd) {
     var url = `/Settings/GetCurrency?cd=${cd}`;
     $('#CurrencyModal').load(url, function () {
         parseDynamicForm();
-        $('.int-input').attr("placeholder", "0");
-        $('.int-input').inputmask(intMaskOptions);
-        $('.decimal-input').attr("placeholder", "0.00");
-        $('.decimal-input').inputmask(decimalMaskOptions);
         $("#CurrencyModal").modal("show");
     });
 }

@@ -32,7 +32,6 @@ function showComponentModal(cd) {
     var url = `/Organisation/GetComponent?cd=${cd}`;
     $('#ComponentModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
         changePercentageAmt();
         $("#ComponentModal").modal("show");
     });

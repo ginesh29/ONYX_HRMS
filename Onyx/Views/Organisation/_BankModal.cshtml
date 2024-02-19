@@ -12,7 +12,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
                             <label asp-for="BankCd"></label>
-                            <select asp-for="BankCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled" : "")" asp-items="ViewBag.BankItems" data-live-search="true">
+                            <select asp-for="BankCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled" : "")" asp-items="ViewBag.BankItems">
                                 <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="BankCd" class="text-danger"></span>
@@ -21,7 +21,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
                             <label asp-for="BranchCd"></label>
-                            <select asp-for="BranchCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BranchCd) ? "disabled" : "")" asp-items="ViewBag.BranchItems" data-live-search="true">
+                            <select asp-for="BranchCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BranchCd) ? "disabled" : "")" asp-items="ViewBag.BranchItems">
                                 <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="BranchCd" class="text-danger"></span>

@@ -26,12 +26,8 @@
 );
 function showNotificationModal(cd, docType, processId) {
     var url = `/Organisation/GetNotification?cd=${cd}&docType=${docType}&processId=${processId}`;
-    console.log(url)
     $('#NotificationModal').load(url, function () {
         parseDynamicForm();
-        $('.int-input').attr("placeholder", "0");
-        $('.int-input').inputmask(intMaskOptions);
-        $(".select-picker").selectpicker();
         $(".tags-input").tagsinput();
         $("#NotificationModal").modal("show");
     });

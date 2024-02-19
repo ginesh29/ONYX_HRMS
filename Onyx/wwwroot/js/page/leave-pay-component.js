@@ -27,7 +27,6 @@ function showLeavePayComponentModal(lvCd, payTypCd, payCd) {
     var url = `/Organisation/GetLeavePayComponent?lvCd=${lvCd}&payTypCd=${payTypCd}&payCd=${payCd}`;
     $('#LeavePayComponentModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
         $("#LeavePayComponentModal").modal("show");
     });
 }

@@ -98,11 +98,6 @@ function showVehicleDocumentModal(vehCd, docTypCd, srNo) {
     var url = `/Organisation/GetVehicleDocument?vehCd=${vehCd}&docType=${docTypCd}&srNo=${srNo}`;
     $('#VehicleDocumentModal').load(url, function () {
         parseDynamicForm();
-        $(".select-picker").selectpicker();
-        $('.date-input').attr("placeholder", "mm/dd/yyyy");
-        $('.date-input').datetimepicker({
-            format: 'L'
-        });
         $('#VehicleDocList').load(`/Organisation/FetchVehicleDocumentFiles?vehCd=${vehCd}`);
         $("#VehicleDocumentModal").modal("show");
     });
