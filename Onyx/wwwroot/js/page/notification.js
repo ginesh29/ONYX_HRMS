@@ -28,7 +28,13 @@ function showNotificationModal(cd, docType, processId) {
     var url = `/Organisation/GetNotification?cd=${cd}&docType=${docType}&processId=${processId}`;
     $('#NotificationModal').load(url, function () {
         parseDynamicForm();
-        $(".tags-input").tagsinput();
+        $("#Dept_Filter,#Designation_Filter,#Branch_Filter,#Location_Filter").on('change', function () {
+            var departments = $("#Dept_Filter").val();
+            var designations = $("#Designation_Filter").val();
+            var branches = $("#Branch_Filter").val();
+            var locations = $("#Location_Filter").val();
+            bindEmployeeDropdown(departments, designations, branches, locations);
+        })
         $("#NotificationModal").modal("show");
     });
 }
@@ -67,4 +73,15 @@ function saveNotification(btn) {
             unloadingButton(btn);
         });
     }
+}
+function bindEmployeeDropdown(departments, designations, branches, locations) {
+    $("#Attendees").empty();
+    getAjax(`/Organisation/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.cd}' data-subtext='${item.department}_${item.designation}_${item.branch}_${item.location}'>${item.name}</option>`
+        })
+        $("#Attendees").append(html);
+        $('.select-picker').selectpicker('refresh');
+    });
 }

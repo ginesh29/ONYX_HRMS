@@ -1,9 +1,5 @@
 ﻿var Calendar = FullCalendar.Calendar;
 var calendarEl = document.getElementById('calendar');
-var date = new Date()
-var d = date.getDate(),
-    m = date.getMonth(),
-    y = date.getFullYear()
 var calendar = new Calendar(calendarEl, {
     headerToolbar: {
         left: 'today',
@@ -15,7 +11,6 @@ var calendar = new Calendar(calendarEl, {
     eventDidMount: function (info) {
         var eventElement = info.el;
         var event = info.event;
-        var extendedProps = event.extendedProps;
         var color = event.allDay ? "white" : "dark";
         $(eventElement).find(".fc-event-title").append(`<span class='fc-event-icons float-right'><button class='btn btn-icon btn-sm p-0 mr-1 edit-event'><i class='fas fa-pencil-alt text-${color}'></i></button><button class='btn btn-icon btn-sm p-0 delete-event mr-2'><i class='fa fa-trash text-${color}'></i></button></span>`);
         $(eventElement).find(".edit-event").click(function () {
@@ -38,8 +33,15 @@ calendar.render();
 function showCalendarEventModal(cd) {
     var url = `/organisation/GetCalendarEvent?cd=${cd}`;
     $('#CalendarEventModal').load(url, function () {
-        parseDynamicForm();    
+        parseDynamicForm();
         $("#Date").prop("readonly", true);
+        $("#Dept_Filter,#Designation_Filter,#Branch_Filter,#Location_Filter").on('change', function () {
+            var departments = $("#Dept_Filter").val();
+            var designations = $("#Designation_Filter").val();
+            var branches = $("#Branch_Filter").val();
+            var locations = $("#Location_Filter").val();
+            bindEmployeeDropdown(departments, designations, branches, locations);
+        })
         $("#CalendarEventModal").modal("show");
     });
 }
@@ -78,4 +80,15 @@ function saveCalendarEvent(btn) {
             unloadingButton(btn);
         });
     }
+}
+function bindEmployeeDropdown(departments, designations, branches, locations) {
+    $("#Attendees").empty();
+    getAjax(`/Organisation/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.cd}' data-subtext='${item.department}_${item.designation}_${item.branch}_${item.location}'>${item.name}</option>`
+        })
+        $("#Attendees").append(html);
+        $('.select-picker').selectpicker('refresh');
+    });
 }

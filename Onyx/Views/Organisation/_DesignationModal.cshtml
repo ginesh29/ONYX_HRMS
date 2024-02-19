@@ -13,7 +13,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.Cd) ? "disabled-container" : "")">
                             <label asp-for="Cd"></label>
-                            <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")" />
+                            <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")" value="@Model.Cd" />
                             <span asp-validation-for="Cd" class="text-danger"></span>
                         </div>
                     </div>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Description"></label>
-                    <input asp-for="Description" class="form-control" />
+                    <textarea asp-for="Description" class="form-control"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
             </form>

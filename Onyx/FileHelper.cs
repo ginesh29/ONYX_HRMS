@@ -17,5 +17,11 @@
                 await file.CopyToAsync(stream);
             return newFileName;
         }
+        public void RemoveFile(string filename, string folderName)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{folderName}", filename);
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+        }
     }
 }

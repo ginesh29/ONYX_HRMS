@@ -14,7 +14,7 @@
                         <div class="form-group">
                             <label asp-for="LvCd"></label>
                             <select asp-for="LvCd" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="LvCd" class="text-danger"></span>
                         </div>
@@ -23,7 +23,7 @@
                         <div class="form-group">
                             <label asp-for="PayTypCd"></label>
                             <select asp-for="PayTypCd" class="form-control select-picker" asp-items="ViewBag.PayTypeItems" onchange="onChangePayType(this)">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="PayTypCd" class="text-danger"></span>
                         </div>
@@ -34,7 +34,7 @@
                         <div class="form-group">
                             <label asp-for="PayCd"></label>
                             <select asp-for="PayCd" class="form-control select-picker" asp-items="ViewBag.PayCodeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="PayCd" class="text-danger"></span>
                         </div>

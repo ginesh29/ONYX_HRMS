@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System.Data;
 
 namespace Onyx.Controllers
 {
@@ -99,26 +100,27 @@ namespace Onyx.Controllers
         }
         public IActionResult GetLoanType(string cd)
         {
-            var component = _organisationService.GetLoanTypes().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var loanType = _organisationService.GetLoanTypes().FirstOrDefault(m => m.Cd.Trim() == cd);
             var model = new LoanTypeModel();
-            if (component != null)
+            if (loanType != null)
                 model = new LoanTypeModel
                 {
-                    Code = component.Cd,
-                    Abbriviation = component.Abbr,
-                    ChgsTyp = component.ChgsTyp,
-                    ChgsTypCd = component.ChgsTypCd.Trim(),
-                    DedCd = component.DedCd,
-                    DedComp = component.DedComp,
-                    DedTyp = component.DedTyp,
-                    DedTypCd = component.DedTypCd,
-                    Description = component.Des,
-                    IntPerc = component.IntPerc,
-                    PayCd = component.PayCd,
-                    PayComp = component.PayComp,
-                    PayTyp = component.PayTyp,
-                    PayTypCd = component.PayTypCd,
-                    SDes = component.Sdes,
+                    Code = loanType.Cd,
+                    Abbriviation = loanType.Abbr,
+                    ChgsTyp = loanType.ChgsTyp,
+                    ChgsTypCd = loanType.ChgsTypCd.Trim(),
+                    DedCd = loanType.DedCd,
+                    DedComp = loanType.DedComp,
+                    DedTyp = loanType.DedTyp,
+                    DedTypCd = loanType.DedTypCd,
+                    Description = loanType.Des,
+                    IntPerc = loanType.IntPerc,
+                    PayCd = loanType.PayCd,
+                    PayComp = loanType.PayComp,
+                    PayTyp = loanType.PayTyp,
+                    PayTypCd = loanType.PayTypCd,
+                    SDes = loanType.Sdes,
+                    Active = loanType.Active,
                 };
             ViewBag.PayComponentItems = _commonService.GetEarnDedTypes("HEDT03").Select(m => new SelectListItem { Value = m.Cd, Text = m.SDes });
             ViewBag.DeductionComponentItems = _commonService.GetEarnDedTypes("HEDT02").Select(m => new SelectListItem { Value = m.Cd, Text = m.SDes });
@@ -293,7 +295,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetCalendarEvent(string Cd)
         {
-            var calendarEvent = _organisationService.GetCalendarEvents(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd == Cd);
+            var calendarEvent = _organisationService.GetCalendarEvents(_loggedInUser.CompanyCd, Cd).FirstOrDefault(m => m.Cd == Cd);
             var model = new CompanyCalendarModel();
             if (calendarEvent != null)
                 model = new CompanyCalendarModel
@@ -309,30 +311,35 @@ namespace Onyx.Controllers
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {
                 Text = m.Department,
-                Value = m.Code
+                Value = m.Code.Trim()
             });
             ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
             {
                 Text = m.SDes,
-                Value = m.Cd
+                Value = m.Cd.Trim()
             });
             ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Text = m.SDes,
-                Value = m.Cd
+                Value = m.Cd.Trim()
             });
             ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
-                Value = m.Code
-            });
-            ViewBag.EmployeeItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
-            {
-                Text = m.Name,
-                Value = m.Cd.Trim()
+                Value = m.Code.Trim()
             });
             return PartialView("_CalendarEventModal", model);
         }
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
+        {
+            var deptList = departments?.Split(",").ToList();
+            var designationList = designations?.Split(",").ToList();
+            var branchList = branches?.Split(",").ToList();
+            var locationsList = locations?.Split(",").ToList();
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => (deptList != null && deptList.Contains(m.DepartmentCd.Trim())) || (designationList != null && designationList.Contains(m.Designation.Trim())) || (branchList != null && branchList.Contains(m.BranchCd.Trim())) || (locationsList != null && locationsList.Contains(m.LocationCd.Trim())));
+            return Json(employees);
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveCalendarEvent(CompanyCalendarModel model)
         {
@@ -342,6 +349,7 @@ namespace Onyx.Controllers
             {
                 _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
                 var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+
                 await _emailService.SendEmailAsync("ginesh@yopmail.com", "TestEmail", "Email Body");
             }
             return Json(result);
@@ -385,7 +393,6 @@ namespace Onyx.Controllers
                     CoCd = notification.CoCd,
                     DocTyp = notification.DocTyp.Trim(),
                     DocTypDes = notification.DocTypDes,
-                    EmailIds = notification.EmailIds,
                     MessageBody = notification.MessageBody,
                     NoOfDays = notification.NoOfDays,
                     Type = notification.NotificationType,
@@ -397,6 +404,26 @@ namespace Onyx.Controllers
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.ParameterCd.Trim(), Text = m.Val });
             ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem { Value = m.Code.Trim(), Text = m.ShortDes });
             ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Text = m.Department,
+                Value = m.Code.Trim()
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd.Trim()
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd.Trim()
+            });
+            ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim()
+            });
             return PartialView("_NotificationModal", model);
         }
         [HttpPost]
@@ -406,9 +433,9 @@ namespace Onyx.Controllers
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                if (!string.IsNullOrEmpty(model.EmailIds))
-                    foreach (var email in model.EmailIds.Split(","))
-                        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+                //if (!string.IsNullOrEmpty(model.EmailIds))
+                //    foreach (var email in model.EmailIds.Split(","))
+                //        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
             }
             return Json(result);
         }
@@ -590,6 +617,8 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteDocumentFile(string divCd, string docTypCd, int slNo)
         {
+            var documentFile = _organisationService.GetDocumentFiles(divCd, docTypCd, _loggedInUser.CompanyCd).FirstOrDefault(m => m.SlNo == slNo);
+            _fileHelper.RemoveFile(documentFile.ImageFile, "comp-doc");
             var result = _organisationService.DeleteDocumentFile(divCd, docTypCd, slNo, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -807,6 +836,8 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteVehicleDocumentFile(string vehCd, string docType, int slNo)
         {
+            var vehicleDocumentFile = _organisationService.GetVehicleDocumentFiles(vehCd).FirstOrDefault(m => m.DocumentType.Trim() == docType && m.SlNo == slNo);
+            _fileHelper.RemoveFile(vehicleDocumentFile.ImageFile, "comp-vehicle-doc");
             var result = _organisationService.DeleteVehicleDocumentFile(vehCd, docType, slNo);
             return Json(result);
         }
@@ -858,6 +889,8 @@ namespace Onyx.Controllers
                     Description = designation.Des,
                     SDes = designation.SDes,
                 };
+            else
+                model.Cd = _organisationService.GetDesignation_SrNo();
             return PartialView("_DesignationModal", model);
         }
         [HttpPost]

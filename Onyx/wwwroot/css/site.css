@@ -138,10 +138,13 @@ textarea {
             color: #007bff !important;
         }
 
-        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
+        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text,
+        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text-muted {
             color: #fff !important;
         }
-
+.dropdown-menu .dropdown-item .text-muted {
+    color: red; /* Change the color to your desired color */
+}
 .bs-ok-default.check-mark {
     border: 1px solid #007bff;
     width: 1rem;

@@ -13,7 +13,7 @@
                         <div class="form-group">
                             <label asp-for="ProcessId"></label>
                             <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="ProcessId" class="text-danger"></span>
                         </div>
@@ -22,7 +22,7 @@
                         <div class="form-group">
                             <label asp-for="ApplTypCd"></label>
                             <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="ApplTypCd" class="text-danger"></span>
                         </div>
@@ -33,7 +33,7 @@
                         <div class="form-group">
                             <label asp-for="BranchCd"></label>
                             <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="BranchCd" class="text-danger"></span>
                         </div>
@@ -42,7 +42,7 @@
                         <div class="form-group">
                             <label asp-for="DeptCd"></label>
                             <select asp-for="DeptCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="DeptCd" class="text-danger"></span>
                         </div>
@@ -55,7 +55,7 @@
                 <div class="form-group">
                 <label asp-for="PercAmt_Cd"></label>
                 <select asp-for="PercAmt_Cd" class="form-control select-picker" asp-items="ViewBag.PercentageAmtItems" onchange="changePercentageAmt()">
-                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                
                 </select>
                 <span asp-validation-for="PercAmt_Cd" class="text-danger"></span>
                 </div>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="form-group">
                 <label asp-for="Description"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div>

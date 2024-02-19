@@ -16,7 +16,7 @@
                         <div class="form-group">
                             <label asp-for="SectCd"></label>
                             <select asp-for="SectCd" class="form-control select-picker" asp-items="ViewBag.SectorItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="SectCd" class="text-danger"></span>
                         </div>
@@ -25,7 +25,7 @@
                         <div class="form-group">
                             <label asp-for="ClassCd"></label>
                             <select asp-for="ClassCd" class="form-control select-picker" asp-items="ViewBag.ClassItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                                
                             </select>
                             <span asp-validation-for="ClassCd" class="text-danger"></span>
                         </div>
@@ -42,21 +42,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="DateRange"></label>
-                            <div class="input-group">
-                                <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <i class="far fa-calendar-alt"></i>
-                                    </span>
-                                </div>
-                            </div>
+                            <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
                             <span asp-validation-for="DateRange" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="Description"></label>
-                    <input asp-for="Description" class="form-control" />
+                    <textarea asp-for="Description" class="form-control"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="row">

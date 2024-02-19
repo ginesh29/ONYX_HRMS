@@ -17,5 +17,6 @@
         public string DedCd { get; set; }
         public string DedTypCd { get; set; }
         public string PayTypCd { get; set; }
+        public bool Active { get; set; }
     }
 }

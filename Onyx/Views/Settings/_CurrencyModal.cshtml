@@ -17,12 +17,7 @@
                             <span asp-validation-for="Code" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Description"></label>
-                    <input asp-for="Description" class="form-control" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                </div>                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -70,6 +65,11 @@
                             <span asp-validation-for="Abbriviation" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
             </form>
         </div>

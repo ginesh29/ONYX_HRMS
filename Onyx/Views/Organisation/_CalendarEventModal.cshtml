@@ -26,13 +26,11 @@
                             <span asp-validation-for="Date" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Description"></label>
-                            <input asp-for="Description" class="form-control" />
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="MeetingLink"></label>
@@ -49,16 +47,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Department</label>
-                            <select id="Dept_Filter" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            <select id="Dept_Filter" class="form-control select-picker" asp-items="ViewBag.DepartmentItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Designation</label>
-                            <select id="Designation_Filter" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            <select id="Designation_Filter" class="form-control select-picker" asp-items="ViewBag.DesignationItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
                             </select>
                         </div>
                     </div>
@@ -67,23 +63,22 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Branch</label>
-                            <select id="Dept_Filter" class="form-control select-picker" asp-items="ViewBag.BranchItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            <select id="Branch_Filter" class="form-control select-picker" asp-items="ViewBag.BranchItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Emp. deploy Location</label>
-                            <select id="Designation_Filter" class="form-control select-picker" asp-items="ViewBag.EmpDeployLocationItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
+                            <label>Location</label>
+                            <select id="Location_Filter" class="form-control select-picker" asp-items="ViewBag.EmpDeployLocationItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
                             </select>
                         </div>
                     </div>
                 </div>
                 <label>Meeting Attendees</label>
-                <select asp-for="Attendees" class="form-control select-picker" asp-items="ViewBag.EmployeeItems" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%">
+                <select asp-for="Attendees" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
                 </select>
+                <span asp-validation-for="Attendees" class="text-danger"></span>
             </form>
         </div>
         <div class="modal-footer">

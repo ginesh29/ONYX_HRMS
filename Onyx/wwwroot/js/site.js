@@ -259,8 +259,9 @@ $("#company-dropdown").change(function (e) {
         window.location.reload();
     });
 })
-function initConrols() {
+function initControls() {
     $(".select-picker").attr("data-live-search", true);
+    $(".select-picker").attr("title", "-- Select --");
     $(".select-picker").selectpicker();
     $('.date-input').attr("placeholder", "mm/dd/yyyy");
     $('.date-input').datetimepicker({
@@ -277,7 +278,7 @@ function initConrols() {
     });
     $('[data-toggle="tooltip"]').tooltip();
 }
-initConrols();
+initControls();
 $(document).ajaxComplete(function () {
-    initConrols();
+    initControls();
 });

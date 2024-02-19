@@ -16,6 +16,7 @@ namespace Onyx.Models.ViewModels
         public string MeetingLink { get; set; }
         public string CoCd { get; set; }
         public string CoId { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public List<string> Attendees { get; set; }
         public string EntryBy { get; set; }
         public string Mode

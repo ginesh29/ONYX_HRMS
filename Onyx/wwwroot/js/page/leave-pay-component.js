@@ -69,11 +69,12 @@ function saveLeavePayComponent(btn) {
 function onChangePayType(e) {
     $("#PayCd").empty();
     getAjax(`/Organisation/FetchPayCodeItems?payTypCd=${e.value}`, function (response) {
-        var html = '<option value="">-- Select --</option>'
+        var html = ''
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
-        $("#PayCd").append(html);        
+        $("#PayCd").append(html);
+        $("#PayCd").attr("title", "-- Select --");
         $('.select-picker').selectpicker('refresh');
     });
 }

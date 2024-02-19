@@ -35,6 +35,7 @@ namespace Onyx.Models.ViewModels
         public string PayTypCd { get; set; }
         public string EntryBy { get; set; }
         public string Cd { get; set; }
+        public bool Active { get; set; }
         public string Mode
         {
             get

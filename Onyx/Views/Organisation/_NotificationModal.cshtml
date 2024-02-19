@@ -17,7 +17,6 @@
                         <div class="form-group">
                             <label asp-for="ProcessId"></label>
                             <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="ProcessId" class="text-danger"></span>
                         </div>
@@ -26,7 +25,6 @@
                         <div class="form-group">
                             <label asp-for="DocTyp"></label>
                             <select asp-for="DocTyp" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
-                                <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="DocTyp" class="text-danger"></span>
                         </div>
@@ -55,7 +53,44 @@
                     <textarea asp-for="MessageBody" class="form-control"></textarea>
                     <span asp-validation-for="MessageBody" class="text-danger"></span>
                 </div>
-                <input type="text" asp-for="EmailIds" class="form-control tags-input" />
+                <hr />
+                <h5>Filter Employee by</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select id="Dept_Filter" class="form-control select-picker" asp-items="ViewBag.DepartmentItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Designation</label>
+                            <select id="Designation_Filter" class="form-control select-picker" asp-items="ViewBag.DesignationItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Branch</label>
+                            <select id="Branch_Filter" class="form-control select-picker" asp-items="ViewBag.BranchItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <select id="Location_Filter" class="form-control select-picker" asp-items="ViewBag.EmpDeployLocationItems" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <label>Meeting Attendees</label>
+                <select asp-for="Attendees" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                </select>
+                <span asp-validation-for="Attendees" class="text-danger"></span>
             </form>
         </div>
         <div class="modal-footer">

@@ -8,16 +8,17 @@
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill border border-info">
                 <div class="card-header text-muted border-bottom-0">
-                    @item.Designation
+                    <h2 class="lead pb-0"><b>@item.Salutation @item.Name</b></h2>
                 </div>
                 <div class="card-body pt-0 pb-0">
                     <div class="row">
                         <div class="col-7">
-                            <h2 class="lead"><b>@item.Salutation @item.Name</b></h2>
                             <p class="text-muted text-sm mb-0"><b>Code: </b> @item.Cd</p>
                             <p class="text-muted text-sm mb-0"><b>Branch: </b> @item.Branch</p>
-                            <p class="text-muted text-sm mb-0"><b>Department: </b> @item.Department</p>
                             <p class="text-muted text-sm mb-0"><b>Sponsor: </b> @item.Sponsor</p>
+                            <p class="text-muted text-sm mb-0"><b>Designation: </b> @item.Designation</p>
+                            <p class="text-muted text-sm mb-0"><b>Department: </b> @item.Department</p>
+                            <p class="text-muted text-sm mb-0"><b>Type: </b> @item.EmpType</p>
                             <p class="text-muted text-sm mb-0"><b>Nationality: </b> @item.Nationality</p>
                         </div>
                         <div class="col-5 text-center">

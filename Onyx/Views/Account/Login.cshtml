@@ -105,7 +105,7 @@
         getAjax("/home/FetchCompanies", function (response) {
             var drpHtml = "";
             if (response.data.length > 1) {
-                drpHtml += "<option value=''>@CommonSetting.DEFAULTSELECT</option>";
+                drpHtml += "";
                 $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
             }
             else

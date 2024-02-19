@@ -83,6 +83,7 @@ namespace Onyx.Services
             parameters.Add("v_Abbr", model.Abbriviation);
             parameters.Add("v_Percval", model.IntPerc);
             parameters.Add("v_ChgTyp", model.ChgsTypCd);
+            parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
@@ -203,11 +204,12 @@ namespace Onyx.Services
         #endregion
 
         #region Calendar Event
-        public IEnumerable<CompanyCalendar_GetRow_Result> GetCalendarEvents(string CoCd)
+        public IEnumerable<CompanyCalendar_GetRow_Result> GetCalendarEvents(string CoCd, string Cd = "")
         {
             var procedureName = "CompanyCalendar_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyCalendar_GetRow_Result>
@@ -673,6 +675,15 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public string GetDesignation_SrNo()
+        {
+            var query = $"SELECT 'DESG' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DESG', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Designation;";
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<string>
+                (query);
+            return data;
         }
         #endregion
 
