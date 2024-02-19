@@ -12,7 +12,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ProcessId"></label>
-                            <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems">
+                            <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems" data-live-search="true">
                                 <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="ProcessId" class="text-danger"></span>
@@ -21,7 +21,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ApplTypCd"></label>
-                            <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
+                            <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems" data-live-search="true">
                                 <option value=''>@CommonSetting.DEFAULTSELECT</option>
                             </select>
                             <span asp-validation-for="ApplTypCd" class="text-danger"></span>

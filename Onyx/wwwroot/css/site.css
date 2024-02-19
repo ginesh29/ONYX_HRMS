@@ -81,6 +81,18 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: auto;
     width: 2.1rem;
 }
+textarea {
+    resize: none;
+    overflow-y: hidden;
+    min-height: 50px;
+    max-height: 200px;
+}
+.status-container i {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    font-size: 10px;
+}
 
 .fc-event-title {
     width: 100% !important;
@@ -259,7 +271,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 .btn-file-edit-container {
     display: inline-block;
     margin-right: 20px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .menu-checkbox {

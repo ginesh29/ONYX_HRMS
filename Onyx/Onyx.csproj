@@ -9,5 +9,7 @@
 		<PackageReference Include="Dapper" Version="2.1.28" />
 		<PackageReference Include="MailKit" Version="4.3.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+		<PackageReference Include="X.PagedList" Version="8.4.7" />
+		<PackageReference Include="X.PagedList.Mvc.Core" Version="8.4.7" />
 	</ItemGroup>
 </Project>

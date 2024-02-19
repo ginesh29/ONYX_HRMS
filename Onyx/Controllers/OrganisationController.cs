@@ -328,7 +328,7 @@ namespace Onyx.Controllers
             });
             ViewBag.EmployeeItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Text = $"{m.Fname} {m.Lname}",
+                Text = m.Name,
                 Value = m.Cd.Trim()
             });
             return PartialView("_CalendarEventModal", model);
@@ -703,7 +703,7 @@ namespace Onyx.Controllers
             });
             ViewBag.DriverItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Text = $"{m.Fname} {m.Lname}",
+                Text = m.Name,
                 Value = m.Cd.Trim(),
             });
             return View("VehicleForm", model);

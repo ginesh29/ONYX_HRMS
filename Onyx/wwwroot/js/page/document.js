@@ -51,8 +51,11 @@ function showDocumentModal(docTypeCd, divCd) {
         });
         docTypeCd = docTypeCd.split(" _")[0];
         $('#DocList').load(`/Organisation/FetchDocumentFiles?docTypeCd=${docTypeCd}&divCd=${divCd}`, function () {
-            $("#DocumentModal").modal("show");
+            $(".texarea-input").on("input", function (e) {
+                autoResizeTextarea(e.target)
+            });
             $('[data-toggle="tooltip"]').tooltip();
+            $("#DocumentModal").modal("show");
         });
     });
 }

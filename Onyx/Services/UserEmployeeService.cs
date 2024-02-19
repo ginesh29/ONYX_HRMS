@@ -57,14 +57,22 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<GetEmployee_Result> GetEmployees(string CoCd)
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
-            var procedureName = "GetEmployees";
+            var procedureName = "Employee_GetRow";
             var parameters = new DynamicParameters();
+            parameters.Add("v_Param", "");
+            parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_RowsCnt", "2");
+            parameters.Add("v_Div", "0");
+            parameters.Add("v_Dept", "0");
+            parameters.Add("v_Sponsor", "0");
+            parameters.Add("v_Designation", "0");
+            parameters.Add("v_Status", "0");
             var connection = new SqlConnection(connectionString);
-            var employee = connection.Query<GetEmployee_Result>
+            var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }

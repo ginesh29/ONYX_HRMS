@@ -1,6 +1,5 @@
 ﻿setActiveMenu();
 setBrowserInfo();
-$(".select-picker").selectpicker();
 const decimalMaskOptions = {
     alias: 'numeric',
     radixPoint: '.',
@@ -250,9 +249,16 @@ function adjustIframeHeight() {
         iframe.onload = resizeIframe;
     }
 }
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, parseInt(window.getComputedStyle(textarea).getPropertyValue("max-height"))) + 'px';
+}
 $("#company-dropdown").change(function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
         window.location.reload();
     });
 })
+$(document).ajaxComplete(function () {
+    $(".select-picker").selectpicker();
+});
