@@ -93,5 +93,12 @@ namespace Onyx
             decryptedstring = Encoding.ASCII.GetString(data);
             return decryptedstring;
         }
+        public static string ConvertToSlug(this string text)
+        {
+            string lowercaseText = text.ToLower();
+            string withoutAmpersand = lowercaseText.Replace("&", "");
+            string slug = withoutAmpersand.Replace(" ", "-");
+            return slug;
+        }
     }
 }

@@ -26,13 +26,9 @@ namespace Onyx.Controllers
             IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return View(pagedEmployees);
         }
-        public IActionResult FetchEmployees(int? page)
+        public IActionResult Profile(string Cd)
         {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-            int pageNumber = page ?? 1;
-            int pageSize = 9;
-            IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
-            return PartialView("_EmployeesList", pagedEmployees);
+            return View();
         }
     }
 }

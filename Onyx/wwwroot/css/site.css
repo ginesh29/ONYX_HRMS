@@ -76,17 +76,29 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     background: #777 !important;
 }
 
+.bs-stepper .step-trigger {
+    padding: 10px !important;
+}
+
+.bs-stepper-circle {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0.3em 0;
+}
+
 .branch-img {
     border-radius: 50%;
     height: auto;
     width: 2.1rem;
 }
+
 textarea {
     resize: none;
     overflow-y: hidden;
     min-height: 50px;
     max-height: 200px;
 }
+
 .status-container i {
     position: absolute;
     right: -5px;
@@ -138,13 +150,12 @@ textarea {
             color: #007bff !important;
         }
 
-        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text,
-        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text-muted {
+        .dropdown-menu li:not(.selected) .dropdown-item .text .text-muted,
+        .dropdown-menu li.selected:hover .dropdown-item .text .text-muted,
+        .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
             color: #fff !important;
         }
-.dropdown-menu .dropdown-item .text-muted {
-    color: red; /* Change the color to your desired color */
-}
+
 .bs-ok-default.check-mark {
     border: 1px solid #007bff;
     width: 1rem;
