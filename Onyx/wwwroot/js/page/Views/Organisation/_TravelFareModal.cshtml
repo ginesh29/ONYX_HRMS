@@ -1,0 +1,71 @@
+﻿@model AirFareModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(Model.SrNo > 0 ? "Edit" : "Add") Travel Fare</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="travel-fare-frm">
+                <input type="hidden" asp-for="SrNo" />
+                <input type="hidden" asp-for="FromDate" />
+                <input type="hidden" asp-for="ToDate" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SectCd"></label>
+                            <select asp-for="SectCd" class="form-control select-picker" asp-items="ViewBag.SectorItems">
+                                
+                            </select>
+                            <span asp-validation-for="SectCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ClassCd"></label>
+                            <select asp-for="ClassCd" class="form-control select-picker" asp-items="ViewBag.ClassItems">
+                                
+                            </select>
+                            <span asp-validation-for="ClassCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SDes"></label>
+                            <input asp-for="SDes" class="form-control" />
+                            <span asp-validation-for="SDes" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DateRange"></label>
+                            <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
+                            <span asp-validation-for="DateRange" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Fare"></label>
+                            <input asp-for="Fare" class="form-control decimal-input" />
+                            <span asp-validation-for="Fare" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveTravelFare(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

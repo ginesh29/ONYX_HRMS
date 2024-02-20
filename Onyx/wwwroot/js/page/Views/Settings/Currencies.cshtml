@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Currencies";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showCurrencyModal('')">New Currency</button>
+        </div>
+        <table class="table table-sm" id="CurrenciesDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Main Currency</th>
+                    <th>Sub Currency</th>
+                    <th>Exchange Rate</th>
+                    <th>Decimal</th>
+                    <th>Symbol</th>
+                    <th>Abbriviation</th>
+                    <th width="90px"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="CurrencyModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/currency.js" asp-append-version="true"></script>
+}

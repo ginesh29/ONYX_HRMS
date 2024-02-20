@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -45,6 +47,14 @@ namespace Onyx.Controllers
         public IActionResult FilePreview()
         {
             return PartialView("_FilePreview");
+        }
+        public IActionResult DownloadFile(string folderName, string filename)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{folderName}", filename);
+            if (System.IO.File.Exists(filePath))
+                return PhysicalFile(filePath, "application/octet-stream", filename);
+            else
+                return NotFound();
         }
     }
 }

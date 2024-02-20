@@ -1,0 +1,64 @@
+﻿@model IEnumerable<GetMenuWithPermissions_Result>
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+            <a href="/" class="nav-link home-link">
+                <i class="nav-icon fas fa-home"></i>
+                <p>Home</p>
+            </a>
+        </li>
+        @foreach (var item in Model.Where(m => m.Prnt == 0))
+        {
+            var children = Model.Where(m => m.Prnt == item.MenuId);
+            var icon = item.Caption.Contains("settings", StringComparison.OrdinalIgnoreCase) ? "cog" : item.Caption.Contains("organisation", StringComparison.OrdinalIgnoreCase) ? "building" : item.Caption.Contains("employee", StringComparison.OrdinalIgnoreCase) ? "users" : item.Caption.Contains("transaction", StringComparison.OrdinalIgnoreCase) ? "right-left" : item.Caption.Contains("report", StringComparison.OrdinalIgnoreCase) ? "chart-simple" : item.Caption.Contains("house", StringComparison.OrdinalIgnoreCase) ? "person-shelter" : item.Caption.Contains("service", StringComparison.OrdinalIgnoreCase) ? "hand-holding-heart" : "money-bill-1-wave";
+            <li class="nav-item">
+                <a href="@item.Frm" class="nav-link">
+                    <i class="nav-icon fas fa-@icon"></i>
+                    <p>
+                        @item.Caption
+                        @if (children.Count() > 0)
+                        {
+                            <i class="right fas fa-angle-left"></i>
+                        }
+                    </p>
+                </a>
+                @if (children.Count() > 0)
+                {
+                    <ul class="nav nav-treeview">
+                        @foreach (var child in children)
+                        {
+                            var subchildren = Model.Where(m => m.Prnt == child.MenuId);
+                            <li class="nav-item">
+                                <a href="@child.Frm" class="nav-link">
+                                    <i class="nav-icon fa fa-minus" style="font-size: 0.5rem;"></i>
+                                    <p>
+                                        @child.Caption
+                                        @if (subchildren.Count() > 0)
+                                        {
+                                            <i class="right fas fa-angle-left"></i>
+                                        }
+                                    </p>
+
+                                </a>
+                                @if (subchildren.Count() > 0)
+                                {
+                                    <ul class="nav nav-treeview">
+                                        @foreach (var subchild in subchildren)
+                                        {
+                                            <li class="nav-item">
+                                                <a href="@subchild.Frm" class="nav-link">
+                                                    <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
+                                                    <p>@subchild.Caption</p>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ul>
+</nav>

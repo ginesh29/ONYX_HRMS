@@ -25,7 +25,7 @@
         ],
     }
 );
-var queryParams = getQueryStringParams();
+var queryParams = getQueryStringParams(window.location.search);
 window["datatable-2"] = $('#VehicleDocumentsDataTable').DataTable(
     {
         ajax: `/Organisation/FetchVehicleDocuments?vehCd=${queryParams.cd}`,

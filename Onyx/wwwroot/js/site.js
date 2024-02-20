@@ -203,16 +203,16 @@ function changePassword(btn) {
         unloadingButton(btn);
     }
 }
-function getQueryStringParams() {
-    var queryString = window.location.search;
+function getQueryStringParams(queryString) {
     var params = {};
     if (queryString) {
-        queryString = queryString.substring(1); // Remove leading '?'
-        var pairs = queryString.split('&');
+        var queryStringWithoutQuestionMark = queryString.substring(1); // Remove leading '?'
+        var pairs = queryStringWithoutQuestionMark.split('&');
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i].split('=');
-            var key = decodeURIComponent(pair[0]);
-            var value = decodeURIComponent(pair[1] || '');
+            var key = decodeURIComponent(pair.shift()); // Extract and decode key
+            var value = pair.length ? pair.join('=') : ''; // Join remaining parts to get value
+            value = decodeURIComponent(value); // Decode value
             params[key] = value;
         }
     }
@@ -277,7 +277,36 @@ function initControls() {
         autoResizeTextarea(e.target)
     });
     $('[data-toggle="tooltip"]').tooltip();
+    handleImageError();
 }
+function handleImageError() {
+    var images = document.getElementsByTagName('img');
+    for (var i = 0; i < images.length; i++) {
+        images[i].onerror = function () {
+            this.src = '/images/fallback-image.png';
+            $(this).attr("data-original-title", "File not found");
+        };
+    }
+}
+function downloadFile(foldername, filename) {
+    $.ajax({
+        url: `/Home/DownloadFile?foldername=${foldername}&filename=${filename}`,
+        type: 'GET',
+        success: function (data) {
+            var blob = new Blob([data], { type: 'application/octet-stream' });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            window.URL.revokeObjectURL(link.href);
+            document.body.removeChild(link);
+        },
+        error: function () {
+            showErrorToastr('File not found.');
+        }
+    });
+};
 initControls();
 $(document).ajaxComplete(function () {
     initControls();

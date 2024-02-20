@@ -1,0 +1,142 @@
+﻿@model LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Login";
+    var userTypeList = Html.GetEnumSelectList<UserTypeEnum>().Select(m => { m.Selected = m.Value == ((int)UserTypeEnum.User).ToString(); return m; });
+    IEnumerable<SelectListItem> companyItems = ViewBag.CompanyItems;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+    <div class="bg-div">
+        <div class="container">
+            <div class="screen">
+                <img src="~/images/logo.png" class="login__logo" />
+                <div class="screen__content">
+                    <form class="login" method="post" id="login-frm">
+                        <input type="hidden" id="returnUrl" value="@Context.Request.Query["returnUrl"]" />
+                        <input type="hidden" asp-for="Browser" />
+                        <div class="login__field">
+                            <i class="login__icon fas fa-user"></i>
+                            <input asp-for="LoginId" class="login__input" placeholder="Username">
+                        </div>
+                        <span asp-validation-for="LoginId" class="text-danger"></span>
+                        <div class="login__field">
+                            <i class="login__icon fas fa-lock"></i>
+                            <input type="password" asp-for="Password" class="login__input" placeholder="Password">
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <div class="login__field">
+                            <div>
+                                @foreach (var item in userTypeList)
+                                {
+                                    <label class="radio-inline mb-0">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" asp-for="UserType" class="custom-control-input custom-control-input-secondary custom-control-input-outline" id="usertype_@item.Value" value="@item.Value" checked="@item.Selected">
+                                            <label for="usertype_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
+                                        </div>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                        <div class="login__field d-none">
+                            <div>
+                                <i class="login__icon fas fa-building"></i>
+                                <select asp-for="CoCd" class="login__input" id="login-company-dropdown" onchange="changeCompany(this)">
+                                    <option value="0">@CommonSetting.DEFAULTSELECT</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CoCd" class="text-danger"></span>
+                        </div>
+                        <div class="login__field">
+                            <div class="custom-control custom-checkbox">
+                                <input asp-for="RememberMe" class="custom-control-input custom-control-input-secondary custom-control-input-outline" type="checkbox" id="rememberme">
+                                <label for="rememberme" class="custom-control-label font-weight-normal">Remember Me</label>
+                            </div>
+                        </div>
+                        <button class="button login__submit" onclick="loginUser(this)" type="button" id="btn-login">
+                            <span class="button__text">Sign In</span>
+                            <i class="button__icon fas fa-chevron-right"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="screen__background">
+                    <span class="screen__background__shape screen__background__shape4"></span>
+                    <span class="screen__background__shape screen__background__shape3"></span>
+                    <span class="screen__background__shape screen__background__shape2"></span>
+                    <span class="screen__background__shape screen__background__shape1"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <partial name="_Notification" />
+    <partial name="_ScriptImports" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
+<script>
+    function loginUser(btn) {
+        var frm = $("#login-frm");
+        if (frm.valid()) {
+            loadingButton(btn);
+            var returnUrl = $("#returnUrl").val();
+            postAjax(`/account/login?returnUrl=${returnUrl}`, frm.serialize(), function (response) {
+                if (response.success) {
+                    bindCompanyDropdown();
+                    if (response.redirectUrl) {
+                        showSuccessToastr(response.message)
+                        setTimeout(function () {
+                            window.location.href = response.redirectUrl;
+                        }, 1000)
+                    }
+                }
+                else
+                    showErrorToastr(response.message)
+            });
+            unloadingButton(btn);
+        }
+    }
+    function bindCompanyDropdown() {
+        getAjax("/home/FetchCompanies", function (response) {
+            var drpHtml = "";
+            if (response.data.length > 1) {
+                drpHtml += "";
+                $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
+            }
+            else
+                setTimeout(function () {
+                    loginUser(null);
+                }, 2000);
+            $.each(response.data, function (i, company) {
+                drpHtml += `<option value="${company.value}">${company.text}</option>`;
+            });
+            $("#login-company-dropdown").html(drpHtml);
+            $("#login-frm input").prop("disabled", true);
+        });
+    }
+    function changeCompany() {
+        $("#btn-login").click();
+    }
+    $('#Password').keypress(function (e) {
+        e.preventDefault();
+        if (e.keyCode === 13) {
+            $("#btn-login").click();
+        }
+    });
+</script>
+<style>
+    .bg-div {
+        background-image: url('/images/login-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-blend-mode: multiply !important;
+        --tw-bg-opacity: 0.6;
+        background-color: rgb(55 65 81/var(--tw-bg-opacity));
+    }
+</style>

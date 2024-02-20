@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Travel Fares";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showTravelFareModal('')">New Travel Fare</button>
+        </div>
+        <table class="table table-sm" id="TravelFaresDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Sr No</th>
+                    <th>Sector</th>
+                    <th>Class</th>
+                    <th>Short Des.</th>
+                    <th>Description</th>
+                    <th>Duration</th>
+                    <th>Fare</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="TravelFareModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/travel-fare.js" asp-append-version="true"></script>
+}

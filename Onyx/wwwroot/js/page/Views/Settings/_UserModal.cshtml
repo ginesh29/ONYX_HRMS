@@ -1,0 +1,137 @@
+﻿@using System.Text.Json
+@model UserModel
+@{
+    var menus = Model.Menus.Where(m => m.Visible == "Y").Select(m => m.MenuId).ToArray();
+    string menuArray = JsonSerializer.Serialize(menus);
+    string[] actionTypes = { "Add", "Edit", "Delete", "View", "Print" };
+    List<GetUserBranches_Result> UserBranchItems = ViewBag.UserBranchItems;
+}
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Code) ? "Edit" : "Add") User</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="user-frm">
+                <input type="hidden" asp-for="Cd" />
+                <input type="hidden" asp-for="MenuIds" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
+                            <label asp-for="Code"></label>
+                            <input asp-for="Code" class="form-control @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" />
+                            <span asp-validation-for="Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LoginId"></label>
+                            <input asp-for="LoginId" class="form-control" />
+                            <span asp-validation-for="LoginId" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UPwd"></label>
+                            <input type="password" asp-for="UPwd" class="form-control" value="@Model.UPwd" />
+                            <span asp-validation-for="UPwd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CUPwd"></label>
+                            <input type="password" asp-for="CUPwd" class="form-control" value="@Model.UPwd" />
+                            <span asp-validation-for="CUPwd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Abbr"></label>
+                            <input asp-for="Abbr" class="form-control" />
+                            <span asp-validation-for="Abbr" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="UserBranchCd"></label>
+                            <select asp-for="UserBranchCd" class="select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%">
+                                @foreach (var item in UserBranchItems)
+                                {
+                                    var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
+                                    <option data-content="@item.Branch @img" value="@item.Cd" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
+                                }
+                            </select>
+                            <span asp-validation-for="UserBranchCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ExpiryDt"></label>
+                            <input asp-for="ExpiryDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#ExpiryDate">
+                            <span asp-validation-for="ExpiryDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.Username != "Administrator")
+                {
+                    <label>Menu & Permission</label>
+                    <div id="tree-view">
+                        <ul>
+                            @foreach (var item in Model.Menus)
+                            {
+                                <li id="@item.MenuId">
+                                    <span class="jstree-checkbox">
+                                        @item.Caption
+                                    </span>
+                                    <div class="permissions d-flex" style="float:right">
+                                        @foreach (var action in actionTypes)
+                                        {
+                                            var a = action == "Add" ? item.UAdd : action == "Edit" ? item.UEdit : action == "Delete" ? item.UDelete : action == "View" ? item.UView : item.UPrint;
+                                            <div class="custom-control custom-checkbox ml-2" onclick="changePermission(this)" data-id="checkbox_@(action)_@item.MenuId">
+                                                <input class="custom-control-input custom-control-input-secondary custom-control-input-outline permission_checkbox" type="checkbox" id="permission_checkbox_@(action)_@item.MenuId" checked="@(a=="Y")" value="@(item.MenuId)_@(action)" name="Permissions">
+                                                <label for="permission_checkbox_@(action)_@item.MenuId" class="custom-control-label">@action</label>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (item.Children != null && item.Children.Any())
+                                    {
+                                        @await Component.InvokeAsync("UserPermissionMenuChild", new { items = item.Children })
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveUser(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+<script>
+    setTimeout(function () {
+        var selectedNodes = JSON.parse('@menuArray');
+        $.each(selectedNodes, function (i, item) {
+            $('#tree-view').jstree('check_node', '#' + item);
+        });
+    }, 0)
+</script>

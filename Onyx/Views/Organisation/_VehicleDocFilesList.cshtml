@@ -7,12 +7,13 @@
         {
             var iconPath = !string.IsNullOrEmpty(item.ImageFile) ? item.ImageFile.Contains("pdf") ? "/images/pdf-icon.png" : $"/uploads/comp-vehicle-doc/{item.ImageFile}" : "";
             var path = !string.IsNullOrEmpty(item.ImageFile) ? $"/uploads/comp-vehicle-doc/{item.ImageFile}" : "";
-            <div class="btn-file-edit-container" data-toggle="tooltip" title="Click to Preview File">
-                <img id="file-@item.SlNo" style="height:100px;max-width:100%;" src="@iconPath" class="img-thumbnail @(string.IsNullOrEmpty(item.ImageFile) ? "d-none" :"")" onclick="filePreview('@path')">
+            <div class="btn-file-edit-container">
+                <img id="file-@item.SlNo" style="height:100px;max-width:100%;" src="@iconPath" class="img-thumbnail @(string.IsNullOrEmpty(item.ImageFile) ? "d-none" :"")" onclick="filePreview('@path')" data-toggle="tooltip" title="Click to Preview File">
                 <input type="file" id="doc-file-@item.SlNo" style="display:none" onchange="filesEditPreview(event,'@item.SlNo')" name="file-edit" />
                 <button class="btn btn-sm btn-info btn-circle btn-file-edit" id="btn-upload-file-@item.SlNo" data-srno="@item.SlNo" onclick="editDoc(this)" type="button"><i class="fa fa-pen"></i></button>
                 <button class="btn btn-sm btn-info btn-circle btn-file-upload d-none" id="btn-upload-@item.SlNo" data-srno="@item.SlNo" onclick="saveEditFile()" type="button"><i class="fa fa-upload"></i></button>
                 <button class="btn btn-sm btn-danger btn-circle btn-file-delete" id="btn-file-delete-@item.SlNo" onclick="deleteVehicleDocumentFile(this,'@item.Code','@item.DocumentTypeCd','@item.SlNo')" type="button"><i class="fa fa-times"></i></button>
+                <a onclick="downloadFile('comp-vehicle-doc','@item.ImageFile')" style="position: absolute;bottom:-25px;left:20px;">Download</a>
             </div>
         }
     </div>

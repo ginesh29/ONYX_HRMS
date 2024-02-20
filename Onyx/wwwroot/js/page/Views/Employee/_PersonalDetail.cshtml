@@ -1,0 +1,217 @@
+﻿@model Employee_GetRow_Result
+@{
+    var genderList = new List<SelectListItem>{
+        new SelectListItem{Value="M",Text="Male",Selected=true},
+        new SelectListItem{Value="F",Text="Female"},
+    };
+    var image = !string.IsNullOrEmpty(Model.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
+}
+<div class="row">
+    <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="Cd"></label>
+                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="Cd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="Salute"></label>
+                    <select asp-for="Salute" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="Salute" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="MiddleName"></label>
+                    <input asp-for="MiddleName" class="form-control" placeholder="Middle Name">
+                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" placeholder="Last Name">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Sex"></label>
+                    <div>
+                        @foreach (var gender in genderList)
+                        {
+                            <label class="radio-inline mb-0">
+                                <label class="custom-control custom-radio">
+                                    <input type="radio" asp-for="Sex" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="gender_@gender.Value" value="@gender.Value" checked="@gender.Selected">
+                                    <label for="gender_@gender.Value" class="custom-control-label font-weight-normal">@gender.Text</label>
+                                </label>
+                            </label>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="DOB"></label>
+                    <input asp-for="DOB" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#DOB">
+                    <span asp-validation-for="DOB" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Marital"></label>
+                    <select asp-for="Marital" class="form-control select-picker" asp-items="ViewBag.MaritalStatusItems">
+                    </select>
+                    <span asp-validation-for="Marital" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Nat"></label>
+                    <select asp-for="Nat" class="form-control select-picker" asp-items="ViewBag.NationalityItems">
+                    </select>
+                    <span asp-validation-for="Nat" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Relg"></label>
+                    <select asp-for="Relg" class="form-control select-picker" asp-items="ViewBag.ReligionItems">
+                    </select>
+                    <span asp-validation-for="Relg" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="POB"></label>
+                    <input asp-for="POB" class="form-control" placeholder="Last Name">
+                    <span asp-validation-for="POB" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Father"></label>
+                    <input asp-for="Father" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="Father" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Mother"></label>
+                    <input asp-for="Mother" class="form-control" placeholder="Middle Name">
+                    <span asp-validation-for="Mother" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Spouse"></label>
+                    <input asp-for="Spouse" class="form-control" placeholder="Last Name">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6" style="padding-left:15px">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="SponsorCd"></label>
+                    <select asp-for="SponsorCd" class="form-control select-picker" asp-items="ViewBag.SponsorItems">
+                    </select>
+                    <span asp-validation-for="SponsorCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Desg"></label>
+                    <select asp-for="Desg" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
+                    </select>
+                    <span asp-validation-for="Desg" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="BranchCd"></label>
+                    <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                    </select>
+                    <span asp-validation-for="BranchCd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="DepartmentCd"></label>
+                    <select asp-for="DepartmentCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
+                    </select>
+                    <span asp-validation-for="DepartmentCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="LocationCd"></label>
+                    <select asp-for="LocationCd" class="form-control select-picker" asp-items="ViewBag.LocationItems">
+                    </select>
+                    <span asp-validation-for="LocationCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="ReportingTo"></label>
+                    <select asp-for="ReportingTo" class="form-control select-picker" asp-items="ViewBag.ReportingToItems">
+                    </select>
+                    <span asp-validation-for="ReportingTo" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="UserCd"></label>
+                    <select asp-for="UserCd" class="form-control select-picker" asp-items="ViewBag.UserItems">
+                    </select>
+                    <span asp-validation-for="UserCd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="ImageFile">Image</label>
+                    <div class="custom-file">
+                        <input type="hidden" asp-for="ImageFilePath" />
+                        <input asp-for="Image" class="custom-file-input" onchange="previewImage(event)">
+                        <label class="custom-file-label" id="image-file-label" asp-for="ImageFilePath">@(!string.IsNullOrEmpty(Model.Image) ? Model.Image : "Choose file")</label>
+                    </div>
+                    <span asp-validation-for="ImageFilePath" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <div>
+                        <img id="Image-Preview" style="height:35px" src="@image" class="rounded border rounded-circle @(!string.IsNullOrEmpty(image) ? "" :"d-none")" asp-append-version="true">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

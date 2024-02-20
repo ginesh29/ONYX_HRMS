@@ -1,0 +1,39 @@
+﻿@model UserMenuModel
+@{
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+    var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/emp_photo/{companyCd}/{Model.ProfilePic}" : "/images/avatar.png";
+    IEnumerable<SelectListItem> companies = (IEnumerable<SelectListItem>)ViewBag.CompanyItems;
+}
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item mr-3">
+        <div style="width:200px;">
+            <select class="select-picker" asp-items="@companies" id="company-dropdown">
+            </select>
+        </div>
+    </li>
+    <!-- Navbar Search -->
+    <li class="nav-item dropdown user-menu">
+        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <img src="@profilePic" class="user-image img-circle border" alt="User Image">
+            <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;" id="user-menu">
+            <!-- User image -->
+            <li class="user-header" style="height:90px">
+                <p>
+                    @if (!string.IsNullOrEmpty(Model.EmployeeName))
+                    {
+                        <span>@Model.EmployeeName -</span>
+                    }
+                    @Model.Username
+                    <small>Current period : @Model.CurrentPeriod</small>
+                    <small>Current logged : @Model.CurrentLogged</small>
+                </p>
+            </li>
+            <li class="user-footer">
+                <a href="javascript:void(0)" class="btn btn-flat btn-outline-secondary" onclick="showChangePasswordModal()">Change Password</a>
+                <a href="javascript:void(0)" class="btn btn-primary btn-flat float-right" onclick="logOut(this)">Sign out</a>
+            </li>
+        </ul>
+    </li>
+</ul>

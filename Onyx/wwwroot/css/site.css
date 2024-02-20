@@ -77,7 +77,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 }
 
 .bs-stepper .step-trigger {
-    padding: 10px !important;
+    padding: 5px !important;
 }
 
 .bs-stepper-circle {
@@ -85,7 +85,20 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: 1.5em;
     padding: 0.3em 0;
 }
-
+.image-input {
+    position: relative;
+    display: inline-block;
+    border-radius: 0.42rem;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.image-input .image-input-wrapper {
+    width: 120px;
+    height: 120px;
+    border-radius: 0.42rem;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 .branch-img {
     border-radius: 50%;
     height: auto;
@@ -286,6 +299,7 @@ textarea {
     display: inline-block;
     margin-right: 20px;
     cursor: pointer;
+    position: relative;
 }
 
 .menu-checkbox {

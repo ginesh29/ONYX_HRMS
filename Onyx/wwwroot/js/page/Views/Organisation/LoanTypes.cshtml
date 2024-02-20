@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Loan Types";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showLoanTypeModal('')">New Loan Type</button>
+        </div>
+        <table class="table table-sm" id="LoanTypesDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th width="5px">No.</th>
+                    <th width="50">Code</th>
+                    <th>Pay Type</th>
+                    <th>Pay Comp.</th>
+                    <th>Ded. Type</th>
+                    <th>Ded. Comp.</th>
+                    <th>Abbr.</th>
+                    <th>Charges Type</th>
+                    <th>Interest %</th>
+                    <th>Short Desc.</th>
+                    <th>Description</th>
+                    <th width="90px"></th>
+                </tr>
+            </thead>           
+        </table>
+    </div>
+</div>
+<div id="LoanTypeModal" class="modal fade" role="dialog" tabindex='-1'></div>k
+@section scripts {
+    <script src="~/js/page/loan-type.js"></script>
+}

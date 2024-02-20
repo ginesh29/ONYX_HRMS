@@ -10,4 +10,11 @@
         Before = 1,
         After = 2
     }
+    public enum SalutationEnum
+    {
+        Mr,
+        Mrs,
+        Miss,
+        Dr
+    }
 }

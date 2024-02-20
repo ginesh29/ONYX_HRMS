@@ -1,11 +1,15 @@
-﻿namespace Onyx.Models.StoredProcedure
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Onyx.Models.StoredProcedure
 {
     public class Employee_GetRow_Result
     {
         public string Cd { get; set; }
-        public string Salutation { get; set; }
+        public string Salute { get; set; }
+        public string Salutation { get; set; }        
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string LastName { get; set; }
         public string Name { get; set; }
         public string Sex { get; set; }
@@ -18,10 +22,14 @@
         public string Location { get; set; }
         public string LocationCd { get; set; }
         public string POB { get; set; }
+        public string Nat { get; set; }
         public string Nationality { get; set; }
+        public string Relg { get; set; }
         public string Religion { get; set; }
+        public string Marital { get; set; }
         public string MaritalStatus { get; set; }
         public string Designation { get; set; }
+        public string Desg { get; set; }
         public DateTime? DOB { get; set; }
         public string FormatedDOB { get; set; }
         public DateTime? DOJ { get; set; }
@@ -52,6 +60,7 @@
         public decimal? LeaveDays { get; set; }
         public string Status { get; set; }
         public string Sponsor { get; set; }
+        public string SponsorCd { get; set; }
         public string ImageFilePath { get; set; }
         public string SignatureFilePath { get; set; }
         public string OTEligible { get; set; }
@@ -61,6 +70,7 @@
         public string ApprCd { get; set; }
         public string BasicCurr { get; set; }
         public string UserId { get; set; }
+        public string UserCd { get; set; }
         public string Shift { get; set; }
         public string CalcBasis { get; set; }
         public string GT { get; set; }
@@ -70,6 +80,7 @@
         public string MobNo { get; set; }
         public decimal? Total { get; set; }
         public string Image { get; set; }
+        public IFormFile ImageFile { get; set; }
         public string PassportLocation { get; set; }
         public string LvStatus { get; set; }
     }
