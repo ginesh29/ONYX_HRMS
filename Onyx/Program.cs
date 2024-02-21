@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Onyx.BackgroundTask;
 using Onyx.Data;
 using Onyx.Services;
 
@@ -14,6 +15,8 @@ builder.Services.AddSingleton<UserEmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddHostedService<QueuedHostedService>();
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

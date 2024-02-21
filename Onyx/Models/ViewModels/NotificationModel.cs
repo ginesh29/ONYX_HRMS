@@ -19,6 +19,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public int NoOfDays { get; set; }
         public string BeforeOrAfter { get; set; }
+        public string EmailSubject { get; set; }
         [Display(Name = "Message Body")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string MessageBody { get; set; }

@@ -83,7 +83,7 @@ function saveCalendarEvent(btn) {
 }
 function bindEmployeeDropdown(departments, designations, branches, locations) {
     $("#Attendees").empty();
-    getAjax(`/Organisation/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
+    getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
         var html = ''
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}' data-subtext='${item.department}_${item.designation}_${item.branch}_${item.location}'>${item.name}</option>`

@@ -19,7 +19,6 @@ namespace Onyx.Controllers
         private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-
         public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, UserEmployeeService userEmployeeService, EmailService emailService)
         {
             _authService = authService;
@@ -290,7 +289,7 @@ namespace Onyx.Controllers
                 BackgroundColor = "#f56954",
                 BorderColor = "#f56954",
                 Start = m.Date.ToString("yyyy-MM-ddTHH:mm:ss"),
-                Title = m.Description
+                Title = m.Title
             });
             return Json(events);
         }
@@ -305,9 +304,10 @@ namespace Onyx.Controllers
                     Code = calendarEvent.Cd,
                     CoCd = calendarEvent.CoCd,
                     Date = calendarEvent.Date,
-                    Description = calendarEvent.Description,
+                    MessageBody = calendarEvent.MessageBody,
+                    Title = calendarEvent.Title,
                     Holiday = calendarEvent.Holiday,
-                    MeetingLink = calendarEvent.MeetingLink
+                    EmailSubject = calendarEvent.EmailSubject,
                 };
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {
@@ -330,9 +330,9 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim()
             });
             return PartialView("_CalendarEventModal", model);
-        }        
+        }
         [HttpPost]
-        public async Task<IActionResult> SaveCalendarEvent(CompanyCalendarModel model)
+        public IActionResult SaveCalendarEvent(CompanyCalendarModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             var result = _organisationService.SaveCalendarEvent(model, _loggedInUser.CompanyCd);
@@ -340,9 +340,23 @@ namespace Onyx.Controllers
             {
                 _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
                 var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
-                var emailIds = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => m.Email);
-                if (emailIds.Any())
-                    await _emailService.SendEmailAsync(emailIds, "TestEmail", "Email Body");
+                var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
+                {
+                    RecipientEmail = m.Email,
+                    RecipientName = m.Name
+                });                
+                if (recipients.Any())
+                {
+                    foreach (var recipient in recipients)
+                    {
+                        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
+                        StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
+                        mainEmailTemplateHtml.Replace("@YEAR", DateTime.Now.Year.ToString());
+                        mainEmailTemplateHtml.Replace("@NAME", recipient.RecipientName);
+                        mainEmailTemplateHtml.Replace("@EMAILTEXT", model.MessageBody);
+                        _emailService.SendEmail(recipient, model.EmailSubject, mainEmailTemplateHtml.ToString());
+                    }
+                }
             }
             return Json(result);
         }
@@ -366,10 +380,10 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchNotifications()
         {
-            var overtimeRates = _organisationService.GetNotifications(_loggedInUser.CompanyCd);
+            var notifications = _organisationService.GetNotifications(_loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
-                Data = overtimeRates,
+                Data = notifications,
             };
             return Json(result);
         }
@@ -390,6 +404,8 @@ namespace Onyx.Controllers
                     Type = notification.NotificationType,
                     ProcessId = notification.ProcessId,
                     SrNo = notification.SrNo,
+                    EmailSubject=notification.EmailSubject
+                    //Attendees = [.. notification.EmailIds.Split([','])],
                 };
             else
                 model.SrNo = _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
@@ -419,22 +435,30 @@ namespace Onyx.Controllers
             return PartialView("_NotificationModal", model);
         }
         [HttpPost]
-        public async Task<IActionResult> SaveNotification(NotificationModel model)
+        public IActionResult SaveNotification(NotificationModel model)
         {
             var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
                 var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
-                var emailIds = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => m.Email);
-                emailIds = ["ginesh29@gmail.com"];
-                if (emailIds.Any())
+                var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
                 {
-                    foreach (var email in emailIds)
-                        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
-                    string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
-                    StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
-                    await _emailService.SendEmailAsync(emailIds, "Subject", mainEmailTemplateHtml.ToString());
+                    RecipientEmail = m.Email,
+                    RecipientName = m.Name
+                });
+                if (recipients.Any())
+                {
+                    foreach (var recipient in recipients)
+                    {
+                        _organisationService.SaveNotificationDetail(model, recipient.RecipientEmail, _loggedInUser.CompanyCd);
+                        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
+                        StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
+                        mainEmailTemplateHtml.Replace("@YEAR", DateTime.Now.Year.ToString());
+                        mainEmailTemplateHtml.Replace("@NAME", recipient.RecipientName);
+                        mainEmailTemplateHtml.Replace("@EMAILTEXT", model.MessageBody);
+                        _emailService.SendEmail(recipient, model.EmailSubject, mainEmailTemplateHtml.ToString());
+                    }
                 }
             }
             return Json(result);

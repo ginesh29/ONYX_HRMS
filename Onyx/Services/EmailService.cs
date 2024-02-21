@@ -1,34 +1,44 @@
-﻿
-using System.Net;
-using System.Net.Mail;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
+using Onyx.BackgroundTask;
+using Onyx.Models.ViewModels;
 
 namespace Onyx.Services
 {
-    public class EmailService
+    public class EmailService(IBackgroundTaskQueue queue)
     {
-        public async Task SendEmailAsync(IEnumerable<string> toEmails, string subject, string body)
+        private readonly IBackgroundTaskQueue _queue = queue;
+        public void SendEmail(EmailRecipientModel recipient, string subject, string htmlBody)
         {
             try
             {
-                var message = new MailMessage
+                _queue.QueueBackgroundWorkItem(async (token) =>
                 {
-                    From = new MailAddress("ginesh29@gmail.com", "Onyx")
-                };
-                foreach (var toEmail in toEmails)
-                    message.To.Add(toEmail);
-                message.Subject = subject;
-                message.Body = body;
-                message.IsBodyHtml = true;
-                using var client = new SmtpClient("smtp.gmail.com", 587);
-                client.EnableSsl = true;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("ginesh29@gmail.com", "agta ufih lejq taaa");
-                await client.SendMailAsync(message);
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("Onyx Email Notification", "ginesh29@gmail.com"));
+                    using var client = new SmtpClient();
+                    message.To.Add(new MailboxAddress(recipient.RecipientName, recipient.RecipientEmail));
+                    message.Subject = subject;
+                    List<System.Net.Mail.LinkedResource> linkedResources = [];
+                    var bodyBuilder = new BodyBuilder
+                    {
+                        HtmlBody = htmlBody
+                    };
+                    var header_logo = bodyBuilder.LinkedResources.Add(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/brand_logo.png"));
+                    header_logo.ContentId = "HeaderLogo";
+                    if (linkedResources != null)
+                        foreach (var linkedResource in linkedResources)
+                            bodyBuilder.LinkedResources.Add(linkedResource.ContentId);
+                    message.Body = bodyBuilder.ToMessageBody();
+                    await client.ConnectAsync("smtp.gmail.com", 587, false);
+                    await client.AuthenticateAsync("ginesh29@gmail.com", "agta ufih lejq taaa");
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw;
+                Console.WriteLine($"Error: {ex.Message}");
             }
         }
     }

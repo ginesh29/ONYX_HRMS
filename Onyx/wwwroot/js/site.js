@@ -276,6 +276,9 @@ function initControls() {
     $("textarea.form-control").on("input", function (e) {
         autoResizeTextarea(e.target)
     });
+    setTimeout(function () {
+        $("textarea.form-control").trigger('input');
+    }, 200)
     $('[data-toggle="tooltip"]').tooltip();
     handleImageError();
 }

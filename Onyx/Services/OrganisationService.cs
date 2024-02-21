@@ -223,9 +223,10 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Date", model.Date);
-            parameters.Add("v_Des", model.Description);
+            parameters.Add("v_Title", model.Title);
             parameters.Add("v_Holiday", model.Holiday);
-            parameters.Add("v_MeetingLink", model.MeetingLink);
+            parameters.Add("v_EmailSubject", model.EmailSubject);
+            parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
@@ -279,6 +280,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_NoOfDays", model.NoOfDays);
             parameters.Add("v_BeforeOrAfter", model.BeforeOrAfter);
+            parameters.Add("v_EmailSubject", model.EmailSubject);
             parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_DocTyp", model.DocTyp);
             parameters.Add("v_Mode", model.Mode);

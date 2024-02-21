@@ -109,7 +109,7 @@ textarea {
     resize: none;
     overflow-y: hidden;
     min-height: 50px;
-    max-height: 200px;
+    max-height: 2000px;
 }
 
 .status-container i {

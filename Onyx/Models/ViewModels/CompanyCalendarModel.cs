@@ -10,15 +10,18 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Date { get; set; }
         public bool Holiday { get; set; }
+        [Display(Name = "Email Message Body")]
+        public string MessageBody { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
-        public string Description { get; set; }
-        [Display(Name = "Meeting Link")]
-        public string MeetingLink { get; set; }
+        public string Title { get; set; }
         public string CoCd { get; set; }
         public string CoId { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public List<string> Attendees { get; set; }
+        [Display(Name = "Email Subject")]
+        public string EmailSubject { get; set; }
         public string EntryBy { get; set; }
+
         public string Mode
         {
             get
