@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 using System.Data;
+using System.Text;
 
 namespace Onyx.Controllers
 {
@@ -329,17 +330,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim()
             });
             return PartialView("_CalendarEventModal", model);
-        }
-        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
-        {
-            var deptList = departments?.Split(",").ToList();
-            var designationList = designations?.Split(",").ToList();
-            var branchList = branches?.Split(",").ToList();
-            var locationsList = locations?.Split(",").ToList();
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => (deptList != null && deptList.Contains(m.DepartmentCd.Trim())) || (designationList != null && designationList.Contains(m.Designation.Trim())) || (branchList != null && branchList.Contains(m.BranchCd.Trim())) || (locationsList != null && locationsList.Contains(m.LocationCd.Trim())));
-            return Json(employees);
-        }
-
+        }        
         [HttpPost]
         public async Task<IActionResult> SaveCalendarEvent(CompanyCalendarModel model)
         {
@@ -349,8 +340,9 @@ namespace Onyx.Controllers
             {
                 _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
                 var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
-
-                await _emailService.SendEmailAsync("ginesh@yopmail.com", "TestEmail", "Email Body");
+                var emailIds = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => m.Email);
+                if (emailIds.Any())
+                    await _emailService.SendEmailAsync(emailIds, "TestEmail", "Email Body");
             }
             return Json(result);
         }
@@ -427,15 +419,23 @@ namespace Onyx.Controllers
             return PartialView("_NotificationModal", model);
         }
         [HttpPost]
-        public IActionResult SaveNotification(NotificationModel model)
+        public async Task<IActionResult> SaveNotification(NotificationModel model)
         {
             var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                //if (!string.IsNullOrEmpty(model.EmailIds))
-                //    foreach (var email in model.EmailIds.Split(","))
-                //        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+                var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                var emailIds = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => m.Email);
+                emailIds = ["ginesh29@gmail.com"];
+                if (emailIds.Any())
+                {
+                    foreach (var email in emailIds)
+                        _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
+                    string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
+                    StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
+                    await _emailService.SendEmailAsync(emailIds, "Subject", mainEmailTemplateHtml.ToString());
+                }
             }
             return Json(result);
         }

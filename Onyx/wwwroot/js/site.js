@@ -284,6 +284,7 @@ function handleImageError() {
     for (var i = 0; i < images.length; i++) {
         images[i].onerror = function () {
             this.src = '/images/fallback-image.png';
+            $(this).attr("data-toggle", "tooltip");
             $(this).attr("data-original-title", "File not found");
         };
     }

@@ -4,8 +4,9 @@
 });
 $('.step-trigger:not(.disabled)').click(function () {
     var stepIndex = $(this).closest('.step').index();
-    stepper.to(stepIndex);
-    // $('.step-trigger').addClass("disabled");
+    //$('.step-trigger').addClass("disabled");
+    stepper.to(stepIndex + 1);
+    // 
     // $(`.step-trigger:nth-child(${stepIndex + 1})`).removeClass("disabled");
 });
 //$('.step-trigger').addClass("disabled");
@@ -26,12 +27,20 @@ function previewImage(event) {
 function GoToNextPrev(back) {
     if (!back) {
         var frm = $("#emp-profile-frm");
-        if (frm.valid())
-            stepper.next()
+        if (frm.valid()) {
+            var activeStepIndex = $('.step.active').index();
+            if (activeStepIndex <= 1) {
+                saveBasicDetail();
+            }
+            stepper.next();
+        }
     }
     else
         stepper.previous()
 }
 function GotoStep(no) {
     stepper.to(no);
+}
+function saveBasicDetail() {
+    alert()
 }

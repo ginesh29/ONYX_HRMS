@@ -60,7 +60,7 @@ function saveBank(btn) {
     var frm = $("#bank-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveBank", frm[0], function (response) {
+        postAjax("/Organisation/SaveBank", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#BankModal").modal("hide");

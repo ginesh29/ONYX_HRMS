@@ -6,12 +6,13 @@ namespace Onyx.Models.StoredProcedure
     {
         public string Cd { get; set; }
         public string Salute { get; set; }
-        public string Salutation { get; set; }        
+        public string Salutation { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string LastName { get; set; }
         public string Name { get; set; }
+        public string Email { get; set; }
         public string Sex { get; set; }
         public string Company { get; set; }
         public string Branch { get; set; }
@@ -83,5 +84,6 @@ namespace Onyx.Models.StoredProcedure
         public IFormFile ImageFile { get; set; }
         public string PassportLocation { get; set; }
         public string LvStatus { get; set; }
+        public string EntryBy { get; set; }
     }
 }

@@ -68,7 +68,7 @@ function saveTravelFare(btn) {
     var frm = $("#travel-fare-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveTravelFare", frm[0], function (response) {
+        postAjax("/Organisation/SaveTravelFare", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#TravelFareModal").modal("hide");

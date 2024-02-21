@@ -29,6 +29,10 @@
                                     {
                                         <partial name="_PersonalDetail" />
                                     }
+                                    @if (item.value.Contains("Official"))
+                                    {
+                                        <partial name="_OfficialDetail" />
+                                    }
                                     @if (item.value.Contains("Education"))
                                     {
                                         <partial name="_EducationDetail" />
@@ -47,6 +51,6 @@
     </div>
 </div>
 @section scripts {
-    <script src="~/js/page/employee-profile.js" asp-append-version="true"></script>
     <script src="~/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+    <script src="~/js/page/employee-profile.js" asp-append-version="true"></script>
 }

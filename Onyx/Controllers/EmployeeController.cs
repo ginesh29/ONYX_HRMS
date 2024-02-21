@@ -32,6 +32,23 @@ namespace Onyx.Controllers
             IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return View(pagedEmployees);
         }
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
+        {
+            var deptList = departments?.Split(",").ToList();
+            var designationList = designations?.Split(",").ToList();
+            var branchList = branches?.Split(",").ToList();
+            var locationsList = locations?.Split(",").ToList();
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => (deptList != null && deptList.Contains(m.DepartmentCd.Trim())) || (designationList != null && designationList.Contains(m.Designation.Trim())) || (branchList != null && branchList.Contains(m.BranchCd.Trim())) || (locationsList != null && locationsList.Contains(m.LocationCd.Trim())));
+            employees = employees.Select(m =>
+            {
+                m.Department = m.Department.Trim();
+                m.Designation = m.Designation?.Trim();
+                m.Branch = m.Branch.Trim();
+                m.Location = m.Location.Trim();
+                return m;
+            }).ToList();
+            return Json(employees);
+        }
         public IActionResult FetchEmployees(int? page)
         {
             var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);

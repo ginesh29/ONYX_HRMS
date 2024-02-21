@@ -52,7 +52,7 @@ function saveLeavePayComponent(btn) {
     var frm = $("#leave-pay-component-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveLeavePayComponent", frm[0], function (response) {
+        postAjax("/Organisation/SaveLeavePayComponent", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#LeavePayComponentModal").modal("hide");

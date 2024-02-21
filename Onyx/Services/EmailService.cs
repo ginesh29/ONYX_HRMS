@@ -6,15 +6,16 @@ namespace Onyx.Services
 {
     public class EmailService
     {
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(IEnumerable<string> toEmails, string subject, string body)
         {
             try
             {
                 var message = new MailMessage
                 {
-                    From = new MailAddress("ginesh29@gmail.com", "Your Name")
+                    From = new MailAddress("ginesh29@gmail.com", "Onyx")
                 };
-                message.To.Add(toEmail);
+                foreach (var toEmail in toEmails)
+                    message.To.Add(toEmail);
                 message.Subject = subject;
                 message.Body = body;
                 message.IsBodyHtml = true;

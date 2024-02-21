@@ -67,7 +67,7 @@ function saveCalendarEvent(btn) {
     var frm = $("#calendar-event-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/organisation/SaveCalendarEvent", frm[0], function (response) {
+        postAjax("/organisation/SaveCalendarEvent", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#CalendarEventModal").modal("hide");
@@ -86,7 +86,7 @@ function bindEmployeeDropdown(departments, designations, branches, locations) {
     getAjax(`/Organisation/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
         var html = ''
         $.each(response, function (i, item) {
-            html += `<option value='${item.cd}' data-subtext='${item.department}_${item.designation}_${item.branch}_${item.location}'>${item.name}</option>`
+            html += `<option value='${item.cd.trim()}' data-subtext='${item.department}_${item.designation}_${item.branch}_${item.location}'>${item.name}</option>`
         })
         $("#Attendees").append(html);
         $('.select-picker').selectpicker('refresh');

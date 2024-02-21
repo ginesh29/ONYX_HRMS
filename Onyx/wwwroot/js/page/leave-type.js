@@ -59,7 +59,7 @@ function saveLeaveType(btn) {
     var frm = $("#leave-type-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveLeaveType", frm[0], function (response) {
+        postAjax("/Organisation/SaveLeaveType", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#LeaveTypeModal").modal("hide");

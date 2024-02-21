@@ -190,43 +190,42 @@
                     <span asp-validation-for="UserCd" class="text-danger"></span>
                 </div>
             </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Cd"></label>
-                            <input asp-for="Cd" class="form-control" placeholder="First Name">
-                            <span asp-validation-for="Cd" class="text-danger"></span>
-                        </div>
-            </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Cd"></label>
-                            <input asp-for="Cd" class="form-control" placeholder="First Name">
-                            <span asp-validation-for="Cd" class="text-danger"></span>
-                        </div>
-                    </div>
-                    </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
-                    <label for="ImageFile">Image</label><br />
-                    <div class="btn-file-edit-container">
-                        <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-fluid img-thumbnail">
-                        <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
-                        <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
-                        <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
-                    </div>
+                    <label asp-for="Cd"></label>
+                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="form-group">
-                    <label for="ImageFile">Signature</label><br />
-                    <div class="btn-file-edit-container">
-                        <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-thumbnail">
-                        <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
-                        <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
-                        <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
-                    </div>
+                    <label asp-for="Cd"></label>
+                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="Cd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="ImageFile">Image</label><br />
+                <div class="btn-file-edit-container">
+                    <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-fluid img-thumbnail">
+                    <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
+                    <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="ImageFile">Signature</label><br />
+                <div class="btn-file-edit-container">
+                    <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-thumbnail">
+                    <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
+                    <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
                 </div>
             </div>
         </div>

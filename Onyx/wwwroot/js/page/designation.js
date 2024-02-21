@@ -52,7 +52,7 @@ function saveDesignation(btn) {
     var frm = $("#designation-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveDesignation", frm[0], function (response) {
+        postAjax("/Organisation/SaveDesignation", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#DesignationModal").modal("hide");

@@ -53,7 +53,7 @@ function saveApprovalProcess(btn) {
     var frm = $("#ApprovalProcess-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Organisation/SaveApprovalProcess", frm[0], function (response) {
+        postAjax("/Organisation/SaveApprovalProcess", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#ApprovalProcessModal").modal("hide");
