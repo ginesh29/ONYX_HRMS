@@ -162,13 +162,11 @@ textarea {
         .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected .text {
             color: #007bff !important;
         }
-
-        .dropdown-menu li:not(.selected) .dropdown-item .text .text-muted,
+        .dropdown-menu li:hover .dropdown-item .text .text-muted,
         .dropdown-menu li.selected:hover .dropdown-item .text .text-muted,
         .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
             color: #fff !important;
         }
-
 .bs-ok-default.check-mark {
     border: 1px solid #007bff;
     width: 1rem;

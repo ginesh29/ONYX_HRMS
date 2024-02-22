@@ -146,7 +146,7 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }
+        }        
         #endregion
 
         #region Code

@@ -1,4 +1,7 @@
 ﻿@model CompanyCalendarModel
+@{
+    string jsonString = Model.Attendees.JsonObjectToString();
+}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -13,7 +16,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.Cd) ? "disabled-container" : "")">
                             <label asp-for="Cd"></label>
-                            <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")" />
+                            <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")" value="@Model.Cd" />
                             <span asp-validation-for="Cd" class="text-danger"></span>
                         </div>
                     </div>
@@ -95,3 +98,9 @@
         </div>
     </div>
 </div>
+<script>
+    var attendeesValues = '@jsonString'.replace(/&quot;/g, '"');
+    bindEmployeeDropdown('', '', '', '', function () {
+        $('#Attendees').selectpicker('val', JSON.parse(attendeesValues));
+    });
+</script>

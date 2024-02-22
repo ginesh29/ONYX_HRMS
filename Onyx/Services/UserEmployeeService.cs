@@ -57,7 +57,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd)
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string departments = "0", string designations = "0", string branches = "0", string locations = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
@@ -66,10 +66,11 @@ namespace Onyx.Services
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_RowsCnt", "2");
-            parameters.Add("v_Div", "0");
-            parameters.Add("v_Dept", "0");
+            parameters.Add("v_Div", branches ?? "0");
+            parameters.Add("v_Dept", departments ?? "0");
             parameters.Add("v_Sponsor", "0");
-            parameters.Add("v_Designation", "0");
+            parameters.Add("v_Designation", designations ?? "0");
+            parameters.Add("v_Location", locations ?? "0");
             parameters.Add("v_Status", "0");
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>

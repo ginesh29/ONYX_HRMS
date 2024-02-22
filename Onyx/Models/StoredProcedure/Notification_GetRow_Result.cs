@@ -12,6 +12,7 @@
         public string BeforeOrAfter { get; set; }
         public string MessageBody { get; set; }
         public string EmailIds { get; set; }
+        public string Attendees { get; set; }
         public string EmailSubject { get; set; }
     }
 }

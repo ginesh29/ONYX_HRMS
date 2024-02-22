@@ -257,6 +257,15 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
         }
+        public string GetCalendarEvent_SrNo()
+        {
+            var query = $"SELECT FORMAT(MAX(Cd) + 1, '00') AS NextID FROM companycalendar;";
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<string>
+                (query);
+            return data;
+        }
         #endregion
 
         #region Notification
@@ -289,7 +298,7 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public CommonResponse SaveNotificationDetail(NotificationModel model, string EmailId, string CoCd)
+        public CommonResponse SaveNotificationDetail(NotificationModel model, string EmpCd, string CoCd)
         {
             var procedureName = "Notification_Detail_Insert";
             var parameters = new DynamicParameters();
@@ -297,7 +306,7 @@ namespace Onyx.Services
             parameters.Add("v_ProcessId", model.ProcessId);
             parameters.Add("v_DocTyp", model.DocTyp);
             parameters.Add("v_SrNo", model.SrNo);
-            parameters.Add("v_EmailIdCC", EmailId);
+            parameters.Add("v_EmpCd", EmpCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

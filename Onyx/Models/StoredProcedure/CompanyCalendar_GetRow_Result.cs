@@ -9,5 +9,7 @@
         public string MessageBody { get; set; }
         public string EmailSubject { get; set; }
         public string CoCd { get; set; }
+        public string EmailIds { get; set; }
+        public string Attendees { get; set; }
     }
 }

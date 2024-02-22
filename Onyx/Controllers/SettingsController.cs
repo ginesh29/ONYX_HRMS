@@ -224,7 +224,11 @@ namespace Onyx.Controllers
                 var nextCode = _settingService.GetNextCode(type);
                 model.Code = $"{type}{nextCode}";
             }
-            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
+            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd,
+                Text = $"{m.ShortDes}({m.Cd.Trim()})",
+            });
             return PartialView("_CodeModal", model);
         }
         [HttpPost]

@@ -1,5 +1,7 @@
-﻿@model NotificationModel
+﻿@using System.Text.Json
+@model NotificationModel
 @{
+    string jsonString = Model.Attendees.JsonObjectToString();
     IEnumerable<SelectListItem> beforeAfterList = ViewBag.BeforeAfter;
 }
 <div class="modal-dialog modal-md">
@@ -107,3 +109,9 @@
         </div>
     </div>
 </div>
+<script>
+    var attendeesValues = '@jsonString'.replace(/&quot;/g, '"');
+    bindEmployeeDropdown('', '', '', '', function () {
+        $('#Attendees').selectpicker('val', JSON.parse(attendeesValues));
+    });
+</script>

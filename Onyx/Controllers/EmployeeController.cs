@@ -32,21 +32,11 @@ namespace Onyx.Controllers
             IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return View(pagedEmployees);
         }
-        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations, string term)
         {
-            var deptList = departments?.Split(",").ToList();
-            var designationList = designations?.Split(",").ToList();
-            var branchList = branches?.Split(",").ToList();
-            var locationsList = locations?.Split(",").ToList();
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => (deptList != null && deptList.Contains(m.DepartmentCd.Trim())) || (designationList != null && designationList.Contains(m.Designation.Trim())) || (branchList != null && branchList.Contains(m.BranchCd.Trim())) || (locationsList != null && locationsList.Contains(m.LocationCd.Trim())));
-            employees = employees.Select(m =>
-            {
-                m.Department = m.Department.Trim();
-                m.Designation = m.Designation?.Trim();
-                m.Branch = m.Branch.Trim();
-                m.Location = m.Location.Trim();
-                return m;
-            }).ToList();
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, departments, designations, branches, locations);
+            if (!string.IsNullOrEmpty(term))
+                employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             return Json(employees);
         }
         public IActionResult FetchEmployees(int? page)
@@ -63,57 +53,57 @@ namespace Onyx.Controllers
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDes
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
             ViewBag.MaritalStatusItems = _commonService.GetCodesGroups(CodeGroup.MaritalStatus).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDes
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
             ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.Nationality.Trim()
+                Text = $"{m.Nationality}({m.Code.Trim()})"
             });
             ViewBag.ReligionItems = _commonService.GetCodesGroups(CodeGroup.Religion).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDes
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDes
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
             ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = m.SDes
+                Text = $"{m.SDes}({m.Cd.Trim()})"
             });
             ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = m.SDes
+                Text = $"{m.SDes}({m.Cd.Trim()})"
             });
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.Department
+                Text = $"{m.Department}({m.Code.Trim()})"
             });
             ViewBag.LocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDes
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
             ViewBag.ReportingToItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = m.Name
+                Text = $"{m.Name}({m.Cd.Trim()})"
             });
             ViewBag.UserItems = _settingService.GetUsers().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.Username
+                Text = $"{m.Username}({m.Code.Trim()})"
             });
             return View(employee);
         }
