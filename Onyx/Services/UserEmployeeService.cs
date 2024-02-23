@@ -57,11 +57,12 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string departments = "0", string designations = "0", string branches = "0", string locations = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string Cd = "", string departments = "0", string designations = "0", string branches = "0", string locations = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
             var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd ?? string.Empty);
             parameters.Add("v_Param", "");
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
@@ -85,14 +86,11 @@ namespace Onyx.Services
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Salute", model.Salute);
             parameters.Add("v_Fname", model.FirstName);
-            parameters.Add("v_Mname", model.MiddleName);
+            parameters.Add("v_Mname", model.MiddleName ?? string.Empty);
             parameters.Add("v_Lname", model.LastName);
             parameters.Add("v_Sex", model.Sex);
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", model.BranchCd);
-            //parameters.Add("v_CC", model.CC);
-            parameters.Add("v_Dept", model.DepartmentCd);
-            parameters.Add("v_LocCd", model.LocationCd);
             parameters.Add("v_POB", model.POB);
             parameters.Add("v_Nat", model.Nat);
             parameters.Add("v_Relg", model.Relg);
@@ -100,15 +98,22 @@ namespace Onyx.Services
             parameters.Add("v_Desg", model.Desg);
             parameters.Add("v_Dob", model.DOB);
             parameters.Add("v_Doj", model.DOJ);
-            parameters.Add("v_RepTo", model.ReportingTo);
             parameters.Add("v_Father", model.Father);
             parameters.Add("v_Mother", model.Mother);
             parameters.Add("v_Spouse", model.Spouse);
+            parameters.Add("v_Sponsor", model.SponsorCd);
+            parameters.Add("v_Dept", model.DepartmentCd);
+            parameters.Add("v_LocCd", model.LocationCd);
+            parameters.Add("v_RepTo", model.ReportingTo);
+            parameters.Add("v_UserCd", model.UserCd);
+            parameters.Add("v_Probation", model.Probation);
+            parameters.Add("v_Active", model.Active);
+            parameters.Add("v_EntryBy", model.EntryBy);
+
             //parameters.Add("v_EmpCat1", model.EmployeeCategory1); //
             //parameters.Add("v_EmpCat2", model.EmployeeCategory2);//
             //parameters.Add("v_EmpCat3", model.EmployeeCategory3);//
-
-            //parameters.Add("v_Probation", model.Probation);
+            //
             //parameters.Add("v_Confrm", model.FormatedConfrm);
             //parameters.Add("v_Leaving", model.Leaving);
             //parameters.Add("v_BasicCurr", model.BasicCurr);
@@ -125,16 +130,15 @@ namespace Onyx.Services
             //parameters.Add("v_BankCd", model.BankCd);
             //parameters.Add("v_LvDays", model.LvDays);
             //parameters.Add("v_LvSalaryDays", model.LvSalaryDays);
-            parameters.Add("v_Status", model.Status);
-            parameters.Add("v_Sponsor", model.Sponsor);
-            parameters.Add("v_EntryBy", model.EntryBy); //
+            //parameters.Add("v_Status", model.Status);
+
+
             //parameters.Add("v_OTEligible", model.OTEligible);
             //parameters.Add("v_LvPrd", model.LvPrd);
             //parameters.Add("v_TradeCd", model.TradeCd); //
-            parameters.Add("v_EmpTyp", model.EmpType);
+            // parameters.Add("v_EmpTyp", model.EmpType);
             //parameters.Add("v_Pwd", model.Pwd);     //
             //parameters.Add("v_ApprCd", model.ApprCd);       //
-            parameters.Add("v_UserCd", model.UserCd);  //
             //parameters.Add("v_ShiftCd", model.ShiftCd);  //
             //parameters.Add("v_CalcBasis", model.CalcBasis);
             //parameters.Add("v_GT", model.GT);

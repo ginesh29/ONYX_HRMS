@@ -197,7 +197,9 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCodesByType(string type)
         {
-            var codes = _settingService.GetCodes().Where(m => m.Typ.Trim() == type.Trim());
+            var codes = _settingService.GetCodes();
+            if (!string.IsNullOrEmpty(type))
+                codes = codes.Where(m => m.Typ.Trim() == type.Trim());
             CommonResponse result = new()
             {
                 Data = codes,

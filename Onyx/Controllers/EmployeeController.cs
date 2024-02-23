@@ -49,11 +49,11 @@ namespace Onyx.Controllers
         }
         public IActionResult Profile(string Cd)
         {
-            var employee = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == Cd);
+            var employee = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, Cd).FirstOrDefault(m => m.Cd.Trim() == Cd);
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})"
+                Text = m.ShortDes
             });
             ViewBag.MaritalStatusItems = _commonService.GetCodesGroups(CodeGroup.MaritalStatus).Select(m => new SelectListItem
             {
@@ -106,6 +106,13 @@ namespace Onyx.Controllers
                 Text = $"{m.Username}({m.Code.Trim()})"
             });
             return View(employee);
+        }
+        [HttpPost]
+        public IActionResult SavePesonalDetail(Employee_GetRow_Result model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _userEmployeeService.SaveEmployee(model, _loggedInUser.CompanyCd);
+            return Json(result);
         }
     }
 }

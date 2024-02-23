@@ -1093,7 +1093,7 @@ namespace Onyx.Controllers
             var payCodeItems = _organisationService.GetComponents(payTypCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = m.SDes
+                Text = $"{m.SDes}({m.Cd.Trim()})",
             });
             return Json(payCodeItems);
         }

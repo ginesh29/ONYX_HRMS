@@ -24,15 +24,16 @@ function previewImage(event) {
     var filename = $("#ImageFile").val().split("\\").pop();
     $("#image-file-label").text(filename);
 };
-function GoToNextPrev(back) {
+function GoToNextPrev(btn, back) {
     if (!back) {
         var frm = $("#emp-profile-frm");
         if (frm.valid()) {
             var activeStepIndex = $('.step.active').index();
             if (activeStepIndex <= 1) {
-                saveBasicDetail();
+                saveBasicDetail(btn);
             }
-            stepper.next();
+            else
+                stepper.next();
         }
     }
     else
@@ -41,6 +42,19 @@ function GoToNextPrev(back) {
 function GotoStep(no) {
     stepper.to(no);
 }
-function saveBasicDetail() {
-    alert()
+function saveBasicDetail(btn) {
+    var frm = $("#emp-profile-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Employee/SavePesonalDetail", frm.serialize(), function (response) {
+            if (response.success) {
+                stepper.next();
+                showSuccessToastr(response.message);
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
 }

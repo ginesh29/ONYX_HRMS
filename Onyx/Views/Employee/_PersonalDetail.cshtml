@@ -4,15 +4,16 @@
         new SelectListItem{Value="M",Text="Male",Selected=true},
         new SelectListItem{Value="F",Text="Female"},
     };
-    var image = !string.IsNullOrEmpty(Model.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
+    var image = !string.IsNullOrEmpty(Model?.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
 }
+<input type="hidden" asp-for="Active" />
 <div class="row">
     <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
         <div class="row">
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <input asp-for="Cd" class="form-control">
                     <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
             </div>
@@ -100,7 +101,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="POB"></label>
-                    <input asp-for="POB" class="form-control" placeholder="Last Name">
+                    <input asp-for="POB" class="form-control">
                     <span asp-validation-for="POB" class="text-danger"></span>
                 </div>
             </div>
@@ -109,21 +110,21 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Father"></label>
-                    <input asp-for="Father" class="form-control" placeholder="First Name">
+                    <input asp-for="Father" class="form-control">
                     <span asp-validation-for="Father" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Mother"></label>
-                    <input asp-for="Mother" class="form-control" placeholder="Middle Name">
+                    <input asp-for="Mother" class="form-control">
                     <span asp-validation-for="Mother" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Spouse"></label>
-                    <input asp-for="Spouse" class="form-control" placeholder="Last Name">
+                    <input asp-for="Spouse" class="form-control">
                 </div>
             </div>
         </div>
@@ -193,14 +194,14 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <input asp-for="Cd" class="form-control">
                     <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control" placeholder="First Name">
+                    <input asp-for="Cd" class="form-control">
                     <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
             </div>

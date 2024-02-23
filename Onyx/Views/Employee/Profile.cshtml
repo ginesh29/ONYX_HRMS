@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Employee Profile";
+    ViewData["AdditionLinkWithTitle"] = "Employees_/Employee/Details";
     string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Earnings & Deductions", "Addresses" };
 }
 <link rel="stylesheet" href="~/plugins/bs-stepper/css/bs-stepper.min.css">
@@ -33,13 +34,14 @@
                                     {
                                         <partial name="_OfficialDetail" />
                                     }
-                                    @if (item.value.Contains("Education"))
-                                    {
-                                        <partial name="_EducationDetail" />
-                                    }
-                                    <button type="button" class="btn btn-primary" onclick="GoToNextPrev(true)">&laquo; Previous</button>
-                                    <button type="button" class="btn btn-primary" onclick="GoToNextPrev()">Next &raquo;</button>
                                 </form>
+                                @if (item.value.Contains("Education"))
+                                {
+                                    <partial name="_EducationDetail" />
+                                }
+                                <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
+                                <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this)">Next &raquo;</button>
+
                             </div>
                         }
                     </div>

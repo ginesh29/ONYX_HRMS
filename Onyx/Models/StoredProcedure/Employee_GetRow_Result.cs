@@ -37,9 +37,7 @@ namespace Onyx.Models.StoredProcedure
         public string FormatedDOJ { get; set; }
         public string FormatedProbation { get; set; }
         public string FormatedConfrm { get; set; }
-        public string EmployeeCategory1 { get; set; }
-        public string EmployeeCategory2 { get; set; }
-        public string EmployeeCategory3 { get; set; }
+        public string Personal_No { get; set; }
         public string ReportingTo { get; set; }
         public string Father { get; set; }
         public string Mother { get; set; }
@@ -50,6 +48,7 @@ namespace Onyx.Models.StoredProcedure
         public string CurrencyCd { get; set; }
         public string Currency { get; set; }
         public decimal? CurrencyExchangeRate { get; set; }
+        public bool FareEligible { get; set; }
         public string FareEligiblity { get; set; }
         public decimal? NoOfTickets { get; set; }
         public string TravelSector { get; set; }
@@ -84,6 +83,7 @@ namespace Onyx.Models.StoredProcedure
         public IFormFile ImageFile { get; set; }
         public string PassportLocation { get; set; }
         public string LvStatus { get; set; }
+        public string Active { get; set; }
         public string EntryBy { get; set; }
     }
 }

@@ -1,18 +1,121 @@
 ﻿@model Employee_GetRow_Result
-@* <div class="row">
-    <div class="col-md-2">
-        <div class="form-group">
-            <label asp-for="p"></label>
-            <input asp-for="Cd" class="form-control" placeholder="First Name">
-            <span asp-validation-for="Cd" class="text-danger"></span>
+<div class="row">
+    <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Personal_No"></label>
+                    <input asp-for="Personal_No" class="form-control">
+                    <span asp-validation-for="Personal_No" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="PayMode"></label>
+                    <input asp-for="PayMode" class="form-control">
+                    <span asp-validation-for="PayMode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="PayFrequency"></label>
+                    <select asp-for="PayFrequency" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="PayFrequency" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Bank"></label>
+                    <select asp-for="Bank" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="Bank" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Basic"></label>
+                    <input asp-for="Basic" class="form-control">
+                    <span asp-validation-for="Basic" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="BasicCurr"></label>
+                    <select asp-for="BasicCurr" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="BasicCurr" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="CurrencyCd"></label>
+                    <select asp-for="CurrencyCd" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="CurrencyCd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <h5 class="text-primary">Dates</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="DOJ"></label>
+                    <input asp-for="DOJ" class="form-control">
+                    <span asp-validation-for="DOJ" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Probation"></label>
+                    <select asp-for="Probation" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="Probation" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Confirm"></label>
+                    <select asp-for="Confirm" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="Confirm" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <h5 class="text-primary">Travelling</h5>
+        <div class="form-group custom-control custom-checkbox ">
+            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="FareEligible">
+            <label asp-for="FareEligible" class="custom-control-label font-weight-normal">Fare Eligibe</label>
+        </div>
+        <h5 class="text-primary">Leave</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="LeaveDays"></label>
+                    <input asp-for="LeaveDays" class="form-control">
+                    <span asp-validation-for="LeaveDays" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="TravelSector"></label>
+                    <select asp-for="TravelSector" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="TravelSector" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Leaveperiod"></label>
+                    <select asp-for="Leaveperiod" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
+                    </select>
+                    <span asp-validation-for="Leaveperiod" class="text-danger"></span>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label asp-for="Salute"></label>
-            <select asp-for="Salute" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
-            </select>
-            <span asp-validation-for="Salute" class="text-danger"></span>
-        </div>
-    </div>
-</div> *@
+</div>
