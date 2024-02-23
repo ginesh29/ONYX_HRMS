@@ -26,13 +26,13 @@ namespace Onyx.Controllers
             _organisationService = organisationService;
             _fileHelper = new FileHelper();
         }
-        public IActionResult Profiles(int? page)
+        public IActionResult Profiles()
         {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-            int pageNumber = page ?? 1;
-            int pageSize = 9;
-            IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
-            return View(pagedEmployees);
+            //var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
+            //int pageNumber = page ?? 1;
+            //int pageSize = 9;
+            //IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
+            return View();
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations, string term)
         {
@@ -40,6 +40,15 @@ namespace Onyx.Controllers
             if (!string.IsNullOrEmpty(term))
                 employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             return Json(employees);
+        }
+        public IActionResult FetchEmployees()
+        {
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = employees,
+            };
+            return Json(result);
         }
         //public IActionResult FetchEmployees(int? page)
         //{

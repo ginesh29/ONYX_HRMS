@@ -2,21 +2,10 @@
     linear: false,
     animation: true
 });
-function editAvatar() {
-    $(`#AvatarFile`).click();
-}
 $('.step-trigger:not(.disabled)').click(function () {
     var stepIndex = $(this).closest('.step').index();
-    //$('.step-trigger').addClass("disabled");
     stepper.to(stepIndex + 1);
-    // 
-    // $(`.step-trigger:nth-child(${stepIndex + 1})`).removeClass("disabled");
 });
-//$('.step-trigger').addClass("disabled");
-// $('.step-trigger').click(function () {
-//     var stepIndex = $(this).closest('.step').index() + 1;
-//     stepper.to(stepIndex); // Jump to the clicked step
-// });
 function previewAvatar(event) {
     var reader = new FileReader();
     reader.onload = function () {
@@ -26,18 +15,9 @@ function previewAvatar(event) {
     reader.readAsDataURL(event.target.files[0]);
     $("#btn-avatar-delete").addClass("d-none");
 };
-function previewSignature(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('signature-preview')
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#SignatureFile").val().split("\\").pop();
-
-    $("#signature-file-label").text(filename);
-    $("#signature-preview").removeClass("d-none");
-};
+function editAvatar() {
+    $(`#AvatarFile`).click();
+}
 function deleteAvatar(cd) {
     Swal.fire({
         title: "Are you sure?",
@@ -61,6 +41,18 @@ function deleteAvatar(cd) {
         }
     });
 }
+function previewSignature(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+        var output = document.getElementById('signature-preview')
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+    var filename = $("#SignatureFile").val().split("\\").pop();
+
+    $("#signature-file-label").text(filename);
+    $("#signature-preview").removeClass("d-none");
+};
 function GoToNextPrev(btn, back) {
     if (!back) {
         var frm = $("#emp-profile-frm");
