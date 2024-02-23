@@ -15,6 +15,7 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
+        private readonly FileHelper _fileHelper;
         public EmployeeController(AuthService authService, UserEmployeeService userEmployeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService)
         {
             _userEmployeeService = userEmployeeService;
@@ -23,8 +24,9 @@ namespace Onyx.Controllers
             _settingService = settingService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
+            _fileHelper = new FileHelper();
         }
-        public IActionResult Details(int? page)
+        public IActionResult Profiles(int? page)
         {
             var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
             int pageNumber = page ?? 1;
@@ -39,17 +41,39 @@ namespace Onyx.Controllers
                 employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             return Json(employees);
         }
-        public IActionResult FetchEmployees(int? page)
-        {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-            int pageNumber = page ?? 1;
-            int pageSize = 9;
-            IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
-            return PartialView("_EmployeesList", pagedEmployees);
-        }
+        //public IActionResult FetchEmployees(int? page)
+        //{
+        //    var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
+        //    int pageNumber = page ?? 1;
+        //    int pageSize = 9;
+        //    IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
+        //    return PartialView("_EmployeesList", pagedEmployees);
+        //}
         public IActionResult Profile(string Cd)
         {
-            var employee = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, Cd).FirstOrDefault(m => m.Cd.Trim() == Cd);
+            var employee = _userEmployeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
+            employee.Cd = employee.Cd.Trim();
+            employee.Salute = employee.Salute?.Trim();
+            employee.Marital = employee.Marital?.Trim();
+            employee.Nat = employee.Nat?.Trim();
+            employee.Relg = employee.Relg?.Trim();
+            employee.Sponsor = employee.Sponsor?.Trim();
+            employee.Desg = employee.Desg?.Trim();
+            employee.Dept = employee.Dept?.Trim();
+            employee.LocCd = employee.LocCd?.Trim();
+            employee.RepTo = employee.RepTo?.Trim();
+            employee.UserCd = employee.UserCd?.Trim();
+            employee.Pwd = employee.Pwd.Trim().Decrypt();
+            employee.ConfirmPassword = employee.Pwd;
+
+            var avatarFileExist = employee?.Imagefile.FileExist("emp-photo", _loggedInUser.CompanyCd);
+            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(employee?.Imagefile) ? $"/uploads/{_loggedInUser.CompanyCd}/emp-photo/{employee.Imagefile}" : "/images/avatar.png";
+            var signatureFileExist = employee?.ImageSign.FileExist("emp-sign", _loggedInUser.CompanyCd);
+            var signatureImage = signatureFileExist == true && !string.IsNullOrEmpty(employee?.ImageSign) ? $"/uploads/{_loggedInUser.CompanyCd}/emp-sign/{employee.ImageSign}" : $"/uploads/{_loggedInUser.CompanyCd}/emp-sign/{employee.ImageSign}";
+            ViewBag.AvatarFileExist = avatarFileExist;
+            ViewBag.SignatureFileExist = signatureFileExist;
+            ViewBag.AvatarPath = avatarImage;
+            ViewBag.SignaturePath = signatureImage;
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
@@ -58,17 +82,17 @@ namespace Onyx.Controllers
             ViewBag.MaritalStatusItems = _commonService.GetCodesGroups(CodeGroup.MaritalStatus).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})"
+                Text = m.ShortDes
             });
             ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.Nationality}({m.Code.Trim()})"
+                Text = m.ShortDesc
             });
             ViewBag.ReligionItems = _commonService.GetCodesGroups(CodeGroup.Religion).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})"
+                Text = m.ShortDes
             });
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
             {
@@ -105,13 +129,35 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Username}({m.Code.Trim()})"
             });
-            return View(employee);
+            return View("ProfileUpsert", employee);
         }
         [HttpPost]
-        public IActionResult SavePesonalDetail(Employee_GetRow_Result model)
+        public async Task<IActionResult> SavePesonalDetail(Employee_Find_Result model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            model.ConfirmPassword = model.ConfirmPassword.Encrypt();
+            if (model.AvatarFile != null)
+            {
+                var filePath = await _fileHelper.UploadFile(model.AvatarFile, "emp-photo", _loggedInUser.CompanyCd);
+                model.Imagefile = filePath;
+            }
+            if (model.SignatureFile != null)
+            {
+                var filePath = await _fileHelper.UploadFile(model.SignatureFile, "emp-sign", _loggedInUser.CompanyCd);
+                model.ImageSign = filePath;
+            }
             var result = _userEmployeeService.SaveEmployee(model, _loggedInUser.CompanyCd);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult RemoveAvatar(string Cd)
+        {
+            _userEmployeeService.RemoveAvatar(Cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Avatar removed successfully"
+            };
             return Json(result);
         }
     }

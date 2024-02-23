@@ -2,11 +2,11 @@
 {
     public class FileHelper()
     {
-        public async Task<string> UploadFile(IFormFile file, string folderName)
+        public async Task<string> UploadFile(IFormFile file, string folderName,string CoCd)
         {
             var ext = Path.GetExtension(file.FileName);
             var newFileName = $"{Guid.NewGuid()}{ext}";
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads", folderName);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{CoCd}", folderName);
             bool exists = Directory.Exists(folderPath);
             if (!exists)
                 Directory.CreateDirectory(folderPath);

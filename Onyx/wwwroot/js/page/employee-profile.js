@@ -2,6 +2,9 @@
     linear: false,
     animation: true
 });
+function editAvatar() {
+    $(`#AvatarFile`).click();
+}
 $('.step-trigger:not(.disabled)').click(function () {
     var stepIndex = $(this).closest('.step').index();
     //$('.step-trigger').addClass("disabled");
@@ -14,16 +17,50 @@ $('.step-trigger:not(.disabled)').click(function () {
 //     var stepIndex = $(this).closest('.step').index() + 1;
 //     stepper.to(stepIndex); // Jump to the clicked step
 // });
-function previewImage(event) {
+function previewAvatar(event) {
     var reader = new FileReader();
     reader.onload = function () {
         var output = document.getElementById('avatar-preview')
         output.src = reader.result;
     };
     reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#image-file-label").text(filename);
+    $("#btn-avatar-delete").addClass("d-none");
 };
+function previewSignature(event) {
+    var reader = new FileReader();
+    reader.onload = function () {
+        var output = document.getElementById('signature-preview')
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+    var filename = $("#SignatureFile").val().split("\\").pop();
+
+    $("#signature-file-label").text(filename);
+    $("#signature-preview").removeClass("d-none");
+};
+function deleteAvatar(cd) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Remove Profile Image?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/RemoveAvatar?Cd=${encodeURI(cd)}`, function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $("#avatar-preview").attr('src', "/images/avatar.png");
+                    $("#btn-avatar-delete").addClass("d-none");
+                }
+                else
+                    showErrorToastr(response.message);
+            });
+        }
+    });
+}
 function GoToNextPrev(btn, back) {
     if (!back) {
         var frm = $("#emp-profile-frm");
@@ -46,8 +83,9 @@ function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        postAjax("/Employee/SavePesonalDetail", frm.serialize(), function (response) {
+        filePostAjax("/Employee/SavePesonalDetail", frm[0], function (response) {
             if (response.success) {
+                $("#btn-avatar-delete").removeClass("d-none");
                 stepper.next();
                 showSuccessToastr(response.message);
             }

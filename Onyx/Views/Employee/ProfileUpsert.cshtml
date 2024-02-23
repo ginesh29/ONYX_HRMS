@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Employee Profile";
-    ViewData["AdditionLinkWithTitle"] = "Employees_/Employee/Details";
+    ViewData["AdditionLinkWithTitle"] = "Employees_/Employee/Profiles";
     string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Earnings & Deductions", "Addresses" };
 }
 <link rel="stylesheet" href="~/plugins/bs-stepper/css/bs-stepper.min.css">
@@ -22,10 +22,11 @@
                     </div>
                     <hr />
                     <div class="bs-stepper-content">
-                        @foreach (var item in sections.Select((value, i) => new { i, value }))
-                        {
-                            <div id="@item.value.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.value.ConvertToSlug()-part-trigger">
-                                <form id="emp-profile-frm">
+                        <form id="emp-profile-frm">
+                            @foreach (var item in sections.Select((value, i) => new { i, value }))
+                            {
+                                <div id="@item.value.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.value.ConvertToSlug()-part-trigger">
+
                                     @if (item.value.Contains("Personal"))
                                     {
                                         <partial name="_PersonalDetail" />
@@ -34,16 +35,16 @@
                                     {
                                         <partial name="_OfficialDetail" />
                                     }
-                                </form>
-                                @if (item.value.Contains("Education"))
-                                {
-                                    <partial name="_EducationDetail" />
-                                }
-                                <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
-                                <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this)">Next &raquo;</button>
 
-                            </div>
-                        }
+                                    @if (item.value.Contains("Education"))
+                                    {
+                                        <partial name="_EducationDetail" />
+                                    }
+                                    <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
+                                    <button type="button" class="btn btn-primary float-right" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                </div>
+                            }
+                        </form>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,5 @@
-﻿
+﻿$("#code-type option:eq(1)").prop("selected", true);
+$('.select-picker').selectpicker('refresh');
 function showCodeModal(cd) {
     var typeVal = $("#code-type option:selected").val();
     var url = `/Settings/GetCode?cd=${cd}&type=${typeVal}`;

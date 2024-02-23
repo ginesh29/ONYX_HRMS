@@ -100,5 +100,10 @@ namespace Onyx
             string slug = withoutAmpersand.Replace(" ", "-");
             return slug;
         }
+        public static bool FileExist(this string filename, string foldername, string CoCd)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{CoCd}/{foldername}/{filename}");
+            return File.Exists(path);
+        }
     }
 }

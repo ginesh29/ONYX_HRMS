@@ -1,7 +1,7 @@
 ﻿@model UserMenuModel
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
-    var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/emp_photo/{companyCd}/{Model.ProfilePic}" : "/images/avatar.png";
+    var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/emp-photo/{companyCd}/{Model.ProfilePic}" : "/images/avatar.png";
     IEnumerable<SelectListItem> companies = (IEnumerable<SelectListItem>)ViewBag.CompanyItems;
 }
 <ul class="navbar-nav ml-auto">

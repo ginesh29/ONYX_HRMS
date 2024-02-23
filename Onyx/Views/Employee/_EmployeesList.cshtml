@@ -1,9 +1,13 @@
 ﻿@using X.PagedList
 @model IPagedList<Employee_GetRow_Result>
+@{
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+}
 <div class="row" id="EmployeeGrid">
     @foreach (var item in Model)
     {
-        var profilePic = !string.IsNullOrEmpty(item.Image) ? $"/images/avatar.png" : "/images/avatar.png";
+        var avatarFileExist = item.ImageFilePath.FileExist("emp-photo", companyCd);
+        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImageFilePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImageFilePath}" : "/images/avatar.png";
         var statusClass = item.Status == "";
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill border border-info">
@@ -25,7 +29,7 @@
                             <div class="status-container position-relative">
                                 <i class="fas fa-circle nav-icon text-warning" data-toggle="tooltip" title="@item.Status"></i>
                             </div>
-                            <img src="@profilePic" alt="user-avatar" class="rounded img-fluid border">
+                            <img src="@avatarImage" alt="user-avatar" class="rounded img-fluid border">
                         </div>
                     </div>
                 </div>

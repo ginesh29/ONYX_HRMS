@@ -3,7 +3,7 @@
 @using X.PagedList.Web.Common
 @model IPagedList<Employee_GetRow_Result>
 @{
-    ViewData["Title"] = "Employees";
+    ViewData["Title"] = "Employee Profiles";
 }
 <div class="card card-solid">
     <div class="card-body pb-0">
@@ -13,20 +13,20 @@
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li class="page-item @(Model.IsFirstPage ? "disabled" : string.Empty)">
-                    <a class="page-link" href="@Url.Action("Details", new { page = Model.PageNumber - 1 })" data-page="@(Model.PageNumber - 1)">Previous</a>
+                    <a class="page-link" href="@Url.Action("Profiles", new { page = Model.PageNumber - 1 })" data-page="@(Model.PageNumber - 1)">Previous</a>
                 </li>
                 @for (int i = 1; i <= Model.PageCount; i++)
                 {
                     if (Model.PageNumber <= 3 && (i <= 5 || i == Model.PageCount))
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : string.Empty)">
-                            <a class="page-link" href="@Url.Action("Details", new { page = i })" data-page="@i">@i</a>
+                            <a class="page-link" href="@Url.Action("Profiles", new { page = i })" data-page="@i">@i</a>
                         </li>
                     }
                     else if (Model.PageNumber > 3 && (i == 1 || i >= Model.PageNumber - 2) && (i <= Model.PageNumber + 2 || i == Model.PageCount))
                     {
                         <li class="page-item @(i == Model.PageNumber ? "active" : string.Empty)">
-                            <a class="page-link" href="@Url.Action("Details", new { page = i })" data-page="@i">@i</a>
+                            <a class="page-link" href="@Url.Action("Profiles", new { page = i })" data-page="@i">@i</a>
                         </li>
                     }
                     else if (i == Model.PageCount - 1)
@@ -37,9 +37,15 @@
                     }
                 }
                 <li class="page-item @(Model.IsLastPage ? "disabled" : string.Empty) next">
-                    <a class="page-link" href="@Url.Action("Details", new { page = Model.PageNumber + 1 })" data-page="@(Model.PageNumber + 1)">Next</a>
+                    <a class="page-link" href="@Url.Action("Profiles", new { page = Model.PageNumber + 1 })" data-page="@(Model.PageNumber + 1)">Next</a>
                 </li>
             </ul>
         </nav>
     </div>
 </div>
+@* @section scripts {
+    <script>
+        $('#EmployeeTableContainer').load('/Employee/FetchEmployees', function () {
+        });
+    </script>
+} *@

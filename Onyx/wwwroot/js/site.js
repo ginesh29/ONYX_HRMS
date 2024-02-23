@@ -206,27 +206,31 @@ function changePassword(btn) {
 function getQueryStringParams(queryString) {
     var params = {};
     if (queryString) {
-        var queryStringWithoutQuestionMark = queryString.substring(1); // Remove leading '?'
+        var queryStringWithoutQuestionMark = queryString.substring(1);
         var pairs = queryStringWithoutQuestionMark.split('&');
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i].split('=');
-            var key = decodeURIComponent(pair.shift()); // Extract and decode key
-            var value = pair.length ? pair.join('=') : ''; // Join remaining parts to get value
-            value = decodeURIComponent(value); // Decode value
+            var key = decodeURIComponent(pair.shift());
+            var value = pair.length ? pair.join('=') : '';
+            value = decodeURIComponent(value);
             params[key] = value;
         }
     }
     return params;
 }
 function filePreview(path) {
-    var url = `/Home/FilePreview?path=${path}`;
-    $('#PreviewModal').load(url, function () {
-        $("#file-preview").attr("src", path);
-        setTimeout(function () {
-            adjustIframeHeight();
-        }, 200);
-        $("#PreviewModal").modal("show");
-    });
+    if (!path.includes("not found")) {
+        var url = `/Home/FilePreview?path=${path}`;
+        $('#PreviewModal').load(url, function () {
+            $("#file-preview").attr("src", path);
+            setTimeout(function () {
+                adjustIframeHeight();
+            }, 200);
+            $("#PreviewModal").modal("show");
+        });
+    }
+    else
+        showErrorToastr(path);
 }
 function adjustIframeHeight() {
     var iframe = document.getElementById('file-preview');
@@ -280,17 +284,6 @@ function initControls() {
         $("textarea.form-control").trigger('input');
     }, 200)
     $('[data-toggle="tooltip"]').tooltip();
-    handleImageError();
-}
-function handleImageError() {
-    var images = document.getElementsByTagName('img');
-    for (var i = 0; i < images.length; i++) {
-        images[i].onerror = function () {
-            this.src = '/images/fallback-image.png';
-            $(this).attr("data-toggle", "tooltip");
-            $(this).attr("data-original-title", "File not found");
-        };
-    }
 }
 function downloadFile(foldername, filename) {
     $.ajax({
@@ -311,7 +304,9 @@ function downloadFile(foldername, filename) {
         }
     });
 };
-initControls();
+setTimeout(function () {
+    initControls();
+}, 1000)
 $(document).ajaxComplete(function () {
     initControls();
 });

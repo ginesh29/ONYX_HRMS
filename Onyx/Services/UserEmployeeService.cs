@@ -78,35 +78,51 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public CommonResponse SaveEmployee(Employee_GetRow_Result model, string CoCd)
+        public IEnumerable<Employee_Find_Result> EmployeeFind(string Cd, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "Employee_Find";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Param", Cd);
+            parameters.Add("v_Typ", "1");
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var employee = connection.Query<Employee_Find_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return employee;
+        }
+        public CommonResponse SaveEmployee(Employee_Find_Result model, string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Salute", model.Salute);
-            parameters.Add("v_Fname", model.FirstName);
-            parameters.Add("v_Mname", model.MiddleName ?? string.Empty);
-            parameters.Add("v_Lname", model.LastName);
+            parameters.Add("v_Fname", model.Fname);
+            parameters.Add("v_Mname", model.Mname ?? string.Empty);
+            parameters.Add("v_Lname", model.Lname);
             parameters.Add("v_Sex", model.Sex);
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_Div", model.BranchCd);
+            parameters.Add("v_Div", model.Div);
             parameters.Add("v_POB", model.POB);
             parameters.Add("v_Nat", model.Nat);
             parameters.Add("v_Relg", model.Relg);
             parameters.Add("v_Marital", model.Marital);
             parameters.Add("v_Desg", model.Desg);
-            parameters.Add("v_Dob", model.DOB);
-            parameters.Add("v_Doj", model.DOJ);
+            parameters.Add("v_Dob", model.Dob);
+            parameters.Add("v_Doj", model.Doj);
             parameters.Add("v_Father", model.Father);
             parameters.Add("v_Mother", model.Mother);
             parameters.Add("v_Spouse", model.Spouse);
-            parameters.Add("v_Sponsor", model.SponsorCd);
-            parameters.Add("v_Dept", model.DepartmentCd);
-            parameters.Add("v_LocCd", model.LocationCd);
-            parameters.Add("v_RepTo", model.ReportingTo);
+            parameters.Add("v_Sponsor", model.Sponsor);
+            parameters.Add("v_Dept", model.Dept);
+            parameters.Add("v_LocCd", model.LocCd);
+            parameters.Add("v_RepTo", model.RepTo);
             parameters.Add("v_UserCd", model.UserCd);
             parameters.Add("v_Probation", model.Probation);
+            parameters.Add("v_Pwd", model.ConfirmPassword);
+            parameters.Add("v_ImageFile", model.Imagefile);
+            parameters.Add("v_ImageSign", model.ImageSign);
             parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
 
@@ -145,8 +161,19 @@ namespace Onyx.Services
             //parameters.Add("v_LS", model.LS);
             //parameters.Add("v_LT", model.LT);
             //parameters.Add("v_LeaveOB", model.LeaveOB);
-            //parameters.Add("v_Active", model.Active);
             //parameters.Add("v_PassportLocation", model.PassportLocation);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>
+               (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse RemoveAvatar(string Cd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmployeePhoto_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            parameters.Add("ImageFile", string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);

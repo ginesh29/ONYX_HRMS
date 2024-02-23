@@ -206,12 +206,12 @@ namespace Onyx.Controllers
             ViewBag.DayTypeItems = _commonService.GetSysCodes(SysCode.DayType).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = m.SDes
             });
             ViewBag.ReligionItems = _commonService.GetSysCodes(SysCode.Religion).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = m.SDes
             });
             return PartialView("_WorkingHourModal", model);
         }
@@ -274,17 +274,17 @@ namespace Onyx.Controllers
             ViewBag.OtTypeItems = _commonService.GetSysCodes(SysCode.OtTpe).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = m.SDes
             });
             ViewBag.DayTypeItems = _commonService.GetSysCodes(SysCode.DayType).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = m.SDes
             });
             ViewBag.PayElementItems = _commonService.GetPayElements().Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = m.SDes
             });
             return PartialView("_OvertimeRateModal", model);
         }
@@ -341,7 +341,6 @@ namespace Onyx.Controllers
                     Title = calendarEvent.Title,
                     Holiday = calendarEvent.Holiday,
                     EmailSubject = calendarEvent.EmailSubject,
-                    //EmailIds = calendarEvent.EmailIds,
                     Attendees = calendarEvent.Attendees.Length != 0 ? [.. calendarEvent.Attendees.Split(',')] : null,
                 };
             else
@@ -442,7 +441,6 @@ namespace Onyx.Controllers
                     ProcessId = notification.ProcessId,
                     SrNo = notification.SrNo,
                     EmailSubject = notification.EmailSubject,
-                    //EmailIds = notification.EmailIds,
                     Attendees = notification.Attendees != null ? [.. notification.Attendees.Split(',')] : null,
                 };
             else
@@ -450,12 +448,12 @@ namespace Onyx.Controllers
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.ParameterCd.Trim(),
-                Text = $"{m.Val}({m.ParameterCd.Trim()})",
+                Text = m.Val
             });
             ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes
             });
             ViewBag.BeforeAfter = _commonService.GetBeforeAfter();
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
@@ -561,12 +559,12 @@ namespace Onyx.Controllers
                 };
             ViewBag.BankItems = _settingService.GetCodeGroupItems(CodeGroup.Bank).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             ViewBag.BranchItems = _settingService.GetCodeGroupItems(CodeGroup.BankBranch).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             return PartialView("_BankModal", model);
@@ -628,7 +626,7 @@ namespace Onyx.Controllers
                 };
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
@@ -653,7 +651,7 @@ namespace Onyx.Controllers
                     {
                         if (item != null)
                         {
-                            var filePath = await _fileHelper.UploadFile(item.value, "comp-doc");
+                            var filePath = await _fileHelper.UploadFile(item.value, "comp-doc", _loggedInUser.CompanyCd);
                             uploadedFilePath = filePath;
                             _organisationService.SaveDocumentFile(new CompDocImageModel
                             {
@@ -697,7 +695,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateDocumentFile(string docTypCd, string divCd, int SrNo, IFormFile file)
         {
-            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-doc");
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-doc", _loggedInUser.CompanyCd);
             _organisationService.SaveDocumentFile(new CompDocImageModel
             {
                 EntryBy = _loggedInUser.UserAbbr,
@@ -784,7 +782,7 @@ namespace Onyx.Controllers
             });
             ViewBag.StateItems = _settingService.GetCodeGroupItems(CodeGroup.State).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             ViewBag.OwnerItems = _settingService.GetCodeGroupItems(CodeGroup.Owner).Select(m => new SelectListItem
@@ -794,12 +792,12 @@ namespace Onyx.Controllers
             });
             ViewBag.YearModelItems = _settingService.GetCodeGroupItems(CodeGroup.Model).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             ViewBag.PlateColorItems = _settingService.GetCodeGroupItems(CodeGroup.Color).Select(m => new SelectListItem
             {
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
             ViewBag.DriverItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
@@ -877,7 +875,7 @@ namespace Onyx.Controllers
                     {
                         if (item != null)
                         {
-                            var filePath = await _fileHelper.UploadFile(item.value, "comp-vehicle-doc");
+                            var filePath = await _fileHelper.UploadFile(item.value, "comp-vehicle-doc", _loggedInUser.CompanyCd);
                             uploadedFilePath = filePath;
                             _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
                             {
@@ -916,7 +914,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateVehicleDocumentFile(string docTypCd, string vehCd, int SrNo, IFormFile file)
         {
-            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc");
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc", _loggedInUser.CompanyCd);
             _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
             {
                 EntryBy = _loggedInUser.UserAbbr,
@@ -1074,17 +1072,17 @@ namespace Onyx.Controllers
             ViewBag.LeaveTypeItems = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})",
+                Text = m.SDes
             });
             ViewBag.PayTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})",
+                Text = m.SDes
             });
             ViewBag.PayCodeItems = _organisationService.GetComponents(model.PayTypCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})",
+                Text = m.SDes
             });
             return PartialView("_LeavePayComponentModal", model);
         }
@@ -1093,7 +1091,7 @@ namespace Onyx.Controllers
             var payCodeItems = _organisationService.GetComponents(payTypCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})",
+                Text = m.SDes
             });
             return Json(payCodeItems);
         }
@@ -1156,12 +1154,12 @@ namespace Onyx.Controllers
             ViewBag.SectorItems = _settingService.GetCodeGroupItems(CodeGroup.Sector).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes
             });
             ViewBag.ClassItems = _settingService.GetCodeGroupItems(CodeGroup.Class).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes
             });
             return PartialView("_TravelFareModal", model);
         }
@@ -1218,12 +1216,12 @@ namespace Onyx.Controllers
             ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.ParameterCd.Trim(),
-                Text = $"{m.Val}({m.ParameterCd.Trim()})",
+                Text = m.Val
             });
             ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Text = m.ShortDes
             });
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {

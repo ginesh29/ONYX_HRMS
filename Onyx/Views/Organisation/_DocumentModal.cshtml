@@ -1,5 +1,5 @@
 ﻿@model CompanyDocumentModel
-<div class="modal-dialog modal-md">
+<div class="modal-dialog modal-md" style="max-width:700px">
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
@@ -14,7 +14,6 @@
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
                             <label asp-for="DocTypCd"></label>
                             <select asp-for="DocTypCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled" : "")" asp-items="ViewBag.DocTypeItems">
-                                
                             </select>
                             <span asp-validation-for="DocTypCd" class="text-danger"></span>
                         </div>
@@ -23,7 +22,6 @@
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DivCd) ? "disabled-container" : "")">
                             <label asp-for="DivCd"></label>
                             <select asp-for="DivCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DivCd) ? "disabled" : "")" asp-items="ViewBag.BranchItems">
-                                
                             </select>
                             <span asp-validation-for="DivCd" class="text-danger"></span>
                         </div>

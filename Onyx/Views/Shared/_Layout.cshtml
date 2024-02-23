@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <partial name="_HeadImports" />
@@ -69,6 +72,7 @@
             </div>
             <section class="content">
                 <div class="container-fluid">
+                    <input type="hidden" id="CoCd" value="@companyCd" />
                     @RenderBody()
                 </div>
             </section>

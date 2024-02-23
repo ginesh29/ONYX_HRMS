@@ -13,12 +13,14 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
+        private readonly FileHelper _fileHelper;
         public SettingsController(AuthService authService, SettingService settingService, CommonService commonService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
             _commonService = commonService;
+            _fileHelper = new FileHelper();
         }
         #region Branch
         public IActionResult Branches()
@@ -56,14 +58,8 @@ namespace Onyx.Controllers
             model.CoCd = _loggedInUser.CompanyCd;
             if (model.ImageFile != null)
             {
-                var ext = Path.GetExtension(model.ImageFile.FileName);
-                var filename = $"branch-{model.CoCd}{ext}";
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/branch", filename);
-                if (System.IO.File.Exists(filePath))
-                    System.IO.File.Delete(filePath);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                    await model.ImageFile.CopyToAsync(stream);
-                model.Image = filename;
+                var filePath = await _fileHelper.UploadFile(model.ImageFile, "branch", _loggedInUser.CompanyCd);
+                model.Image = filePath;
             }
             var result = _settingService.SaveBranch(model);
             return Json(result);

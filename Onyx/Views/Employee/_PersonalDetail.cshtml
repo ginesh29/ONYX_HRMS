@@ -1,23 +1,24 @@
-﻿@model Employee_GetRow_Result
+﻿@model Employee_Find_Result
 @{
     var genderList = new List<SelectListItem>{
         new SelectListItem{Value="M",Text="Male",Selected=true},
         new SelectListItem{Value="F",Text="Female"},
     };
-    var image = !string.IsNullOrEmpty(Model?.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
+    var avatarFileExist = ViewBag.AvatarFileExist;
+    var signatureFileExist = ViewBag.SignatureFileExist;
+    var avatarImage = ViewBag.AvatarPath;
+    var signatureImage = ViewBag.SignaturePath;
 }
 <input type="hidden" asp-for="Active" />
 <div class="row">
     <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <div class="form-group">
                     <label asp-for="Cd"></label>
                     <input asp-for="Cd" class="form-control">
                     <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
-            </div>
-            <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="Salute"></label>
                     <select asp-for="Salute" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
@@ -25,26 +26,37 @@
                     <span asp-validation-for="Salute" class="text-danger"></span>
                 </div>
             </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label asp-for="Imagefile"></label><br />
+                    <div class="btn-file-edit-container mb-0">
+                        <img style="height:100px;max-width:100%;" src="@avatarImage" class="img-thumbnail" id="avatar-preview">
+                        <input type="file" asp-for="AvatarFile" class="d-none" onchange="previewAvatar(event)">
+                        <button class="btn btn-sm btn-info btn-circle btn-file-edit" id="btn-upload-file" type="button" onclick="editAvatar()"><i class="fa fa-pen"></i></button>
+                        <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete @(avatarFileExist!=true ?"d-none":"")" id="btn-avatar-delete" type="button" onclick="deleteAvatar('@Model?.Cd')"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label asp-for="FirstName"></label>
-                    <input asp-for="FirstName" class="form-control" placeholder="First Name">
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                    <label asp-for="Fname"></label>
+                    <input asp-for="Fname" class="form-control" placeholder="First Name">
+                    <span asp-validation-for="Fname" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label asp-for="MiddleName"></label>
-                    <input asp-for="MiddleName" class="form-control" placeholder="Middle Name">
-                    <span asp-validation-for="MiddleName" class="text-danger"></span>
+                    <label asp-for="Mname"></label>
+                    <input asp-for="Mname" class="form-control" placeholder="Middle Name">
+                    <span asp-validation-for="Mname" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label asp-for="LastName"></label>
-                    <input asp-for="LastName" class="form-control" placeholder="Last Name">
+                    <label asp-for="Lname"></label>
+                    <input asp-for="Lname" class="form-control" placeholder="Last Name">
                 </div>
             </div>
         </div>
@@ -67,9 +79,9 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label asp-for="DOB"></label>
-                    <input asp-for="DOB" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#DOB">
-                    <span asp-validation-for="DOB" class="text-danger"></span>
+                    <label asp-for="Dob"></label>
+                    <input asp-for="Dob" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#DOB">
+                    <span asp-validation-for="Dob" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-4">
@@ -131,15 +143,15 @@
     </div>
     <div class="col-md-6" style="padding-left:15px">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="SponsorCd"></label>
-                    <select asp-for="SponsorCd" class="form-control select-picker" asp-items="ViewBag.SponsorItems">
+                    <label asp-for="Sponsor"></label>
+                    <select asp-for="Sponsor" class="form-control select-picker" asp-items="ViewBag.SponsorItems">
                     </select>
-                    <span asp-validation-for="SponsorCd" class="text-danger"></span>
+                    <span asp-validation-for="Sponsor" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="Desg"></label>
                     <select asp-for="Desg" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
@@ -147,43 +159,45 @@
                     <span asp-validation-for="Desg" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="BranchCd"></label>
-                    <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                    <label asp-for="Div"></label>
+                    <select asp-for="Div" class="form-control select-picker" asp-items="ViewBag.BranchItems">
                     </select>
-                    <span asp-validation-for="BranchCd" class="text-danger"></span>
+                    <span asp-validation-for="Div" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Dept"></label>
+                    <select asp-for="Dept" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
+                    </select>
+                    <span asp-validation-for="Dept" class="text-danger"></span>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="DepartmentCd"></label>
-                    <select asp-for="DepartmentCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
+                    <label asp-for="LocCd"></label>
+                    <select asp-for="LocCd" class="form-control select-picker" asp-items="ViewBag.LocationItems">
                     </select>
-                    <span asp-validation-for="DepartmentCd" class="text-danger"></span>
+                    <span asp-validation-for="LocCd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="LocationCd"></label>
-                    <select asp-for="LocationCd" class="form-control select-picker" asp-items="ViewBag.LocationItems">
+                    <label asp-for="RepTo"></label>
+                    <select asp-for="RepTo" class="form-control select-picker" asp-items="ViewBag.ReportingToItems">
                     </select>
-                    <span asp-validation-for="LocationCd" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label asp-for="ReportingTo"></label>
-                    <select asp-for="ReportingTo" class="form-control select-picker" asp-items="ViewBag.ReportingToItems">
-                    </select>
-                    <span asp-validation-for="ReportingTo" class="text-danger"></span>
+                    <span asp-validation-for="RepTo" class="text-danger"></span>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="UserCd"></label>
                     <select asp-for="UserCd" class="form-control select-picker" asp-items="ViewBag.UserItems">
@@ -191,42 +205,41 @@
                     <span asp-validation-for="UserCd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control">
-                    <span asp-validation-for="Cd" class="text-danger"></span>
+                    <label asp-for="Pwd"></label>
+                    <input asp-for="Pwd" type="password" class="form-control" value="@Model.Pwd">
+                    <span asp-validation-for="Pwd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control">
-                    <span asp-validation-for="Cd" class="text-danger"></span>
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" value="@Model.Pwd">
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="ImageFile">Image</label><br />
-                <div class="btn-file-edit-container">
-                    <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-fluid img-thumbnail">
-                    <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
-                    <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="SingatureFile"></label>
+                    <div class="custom-file">
+                        <input type="hidden" asp-for="ImageSign" />
+                        <input asp-for="SignatureFile" class="custom-file-input" onchange="previewSignature(event)">
+                        <label class="custom-file-label" id="signature-file-label" asp-for="SignatureFile">@(signatureFileExist != false ? Model.ImageSign : "Choose file")</label>
+                    </div>
+                    <span asp-validation-for="SignatureFile" class="text-danger"></span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="ImageFile">Signature</label><br />
-                <div class="btn-file-edit-container">
-                    <img id="file-1" style="height:100px;max-width:100%;" src="@image" class="img-thumbnail">
-                    <input asp-for="ImageFile" class="d-none" onchange="avatarPreview(this)">
-                    <button class="btn btn-sm btn-info btn-circle btn-avatar-edit" id="btn-upload-avatar" type="button"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger btn-circle btn-avatar-delete" id="btn-avatar-delete" type="button"><i class="fa fa-times"></i></button>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="mb-0">&nbsp;</label>
+                    <div>
+                        <img id="signature-preview" alt="Not Found" style="height:80px" src="@signatureImage" class="rounded border @(signatureFileExist !=false ? "" :"")" asp-append-version="true">
+                    </div>
                 </div>
             </div>
         </div>

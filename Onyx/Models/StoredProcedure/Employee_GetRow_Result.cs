@@ -62,6 +62,7 @@ namespace Onyx.Models.StoredProcedure
         public string Sponsor { get; set; }
         public string SponsorCd { get; set; }
         public string ImageFilePath { get; set; }
+        public IFormFile SignatureFile { get; set; }
         public string SignatureFilePath { get; set; }
         public string OTEligible { get; set; }
         public decimal? Leaveperiod { get; set; }
@@ -83,6 +84,10 @@ namespace Onyx.Models.StoredProcedure
         public IFormFile ImageFile { get; set; }
         public string PassportLocation { get; set; }
         public string LvStatus { get; set; }
+        public string Password { get; set; }
+        [Compare("NewPassword", ErrorMessage = CommonMessage.CONFIRMPASSWORDNOTMATCHED)]
+        [Display(Name = "Confirm Password")]
+        public string ConfirmPassword { get; set; }
         public string Active { get; set; }
         public string EntryBy { get; set; }
     }

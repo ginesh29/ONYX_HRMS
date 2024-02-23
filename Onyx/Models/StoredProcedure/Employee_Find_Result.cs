@@ -1,4 +1,6 @@
-﻿namespace Onyx.Models.StoredProcedure
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Onyx.Models.StoredProcedure
 {
     public class Employee_Find_Result
     {
@@ -50,6 +52,8 @@
         public string Sponsor { get; set; }
         public string Imagefile { get; set; }
         public string ImageSign { get; set; }
+        public IFormFile AvatarFile { get; set; }
+        public IFormFile SignatureFile { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }
@@ -61,6 +65,9 @@
         public string TradeCd { get; set; }
         public string EmpTyp { get; set; }
         public string Pwd { get; set; }
+        [Compare("Pwd", ErrorMessage = CommonMessage.CONFIRMPASSWORDNOTMATCHED)]
+        [Display(Name = "Confirm Password")]
+        public string ConfirmPassword { get; set; }
         public string ApprCd { get; set; }
         public string SkillClass { get; set; }
         public string MoreInfo { get; set; }

@@ -1,4 +1,5 @@
-﻿window["datatable"] = $('#BranchesDataTable').DataTable(
+﻿var coCd = $("#CoCd").val();
+window["datatable"] = $('#BranchesDataTable').DataTable(
     {
         ajax: "/Settings/FetchBranches",
         ordering: false,
@@ -11,8 +12,8 @@
             { data: "cd" },
             {
                 data: function (row) {
-                    var src = row.image ? `/uploads/branch/${row.image}` : "";
-                    var img = src ? `<img id="Image-Preview" style="height:35px" src="${src}" class="rounded border rounded-circle">` : "";
+                    var src = row.image ? `/uploads/${coCd}/branch/${row.image}` : "";
+                    var img = src ? `<img style="height:30px" src="${src}" class="rounded border rounded-circle">` : "";
                     return img;
                 },
             },

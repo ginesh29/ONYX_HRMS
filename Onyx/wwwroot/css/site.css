@@ -85,6 +85,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: 1.5em;
     padding: 0.3em 0;
 }
+
 .image-input {
     position: relative;
     display: inline-block;
@@ -92,13 +93,15 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     background-repeat: no-repeat;
     background-size: cover;
 }
-.image-input .image-input-wrapper {
-    width: 120px;
-    height: 120px;
-    border-radius: 0.42rem;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+
+    .image-input .image-input-wrapper {
+        width: 120px;
+        height: 120px;
+        border-radius: 0.42rem;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
 .branch-img {
     border-radius: 50%;
     height: auto;
@@ -162,11 +165,13 @@ textarea {
         .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected .text {
             color: #007bff !important;
         }
+
         .dropdown-menu li:hover .dropdown-item .text .text-muted,
         .dropdown-menu li.selected:hover .dropdown-item .text .text-muted,
         .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
             color: #fff !important;
         }
+
 .bs-ok-default.check-mark {
     border: 1px solid #007bff;
     width: 1rem;
@@ -282,12 +287,14 @@ textarea {
     position: absolute;
 }
 
+.btn-avatar-edit,
 .btn-file-upload,
 .btn-file-edit {
     margin-left: -10px;
     margin-top: -10px;
 }
 
+.btn-avatar-delete,
 .btn-file-delete {
     margin-top: 90px;
     margin-left: -10px;
@@ -298,6 +305,7 @@ textarea {
     margin-right: 20px;
     cursor: pointer;
     position: relative;
+    margin-bottom: 50px;
 }
 
 .menu-checkbox {
