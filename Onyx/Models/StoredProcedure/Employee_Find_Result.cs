@@ -36,6 +36,7 @@ namespace Onyx.Models.StoredProcedure
         public decimal? Basic { get; set; }
         public string CurrCd { get; set; }
         public string FareEligible { get; set; }
+        public bool FareEligibleValue { get; set; }
         public decimal? NoTickets { get; set; }
         public string TravSect { get; set; }
         public string TravClass { get; set; }
@@ -75,9 +76,13 @@ namespace Onyx.Models.StoredProcedure
         public string ShiftCd { get; set; }
         public string CalcBasis { get; set; }
         public string GT { get; set; }
+        public bool GTValue { get; set; }
         public string LS { get; set; }
+        public bool LSValue { get; set; }
         public string LT { get; set; }
+        public bool LTValue { get; set; }
         public string Active { get; set; }
+        public bool ActiveValue { get; set; }
         public string Personal_No { get; set; }
         public string PassportLocation { get; set; }
         public string FormatedDOB { get; set; }

@@ -6,12 +6,13 @@
     };
     var avatarFileExist = ViewBag.AvatarFileExist;
     var signatureFileExist = ViewBag.SignatureFileExist;
-    var avatarImage = ViewBag.AvatarPath;
+    var avatarImage = ViewBag.AvatarPath != null ? ViewBag.AvatarPath : "/images/avatar.png";
     var signatureImage = ViewBag.SignaturePath;
 }
-<input type="hidden" asp-for="Active" />
 <div class="row">
     <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
+        <input asp-for="Imagefile" type="hidden" />
+        <input asp-for="ImageSign" type="hidden" />
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
@@ -229,7 +230,7 @@
                     <div class="custom-file">
                         <input type="hidden" asp-for="ImageSign" />
                         <input asp-for="SignatureFile" class="custom-file-input" onchange="previewSignature(event)">
-                        <label class="custom-file-label" id="signature-file-label" asp-for="SignatureFile">@(signatureFileExist != false ? Model.ImageSign : "Choose file")</label>
+                        <label class="custom-file-label" id="signature-file-label">@(Convert.ToBoolean(signatureFileExist) ? Model.ImageSign : "Choose file")</label>
                     </div>
                     <span asp-validation-for="SignatureFile" class="text-danger"></span>
                 </div>
@@ -238,7 +239,7 @@
                 <div class="form-group">
                     <label class="mb-0">&nbsp;</label>
                     <div>
-                        <img id="signature-preview" alt="Not Found" style="height:80px" src="@signatureImage" class="rounded border @(signatureFileExist !=false ? "" :"")" asp-append-version="true">
+                        <img id="signature-preview" alt="Not Found" style="height:80px" src="@signatureImage" class="rounded border @(Convert.ToBoolean(signatureFileExist) ? "" :"d-none")" asp-append-version="true">
                     </div>
                 </div>
             </div>

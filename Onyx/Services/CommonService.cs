@@ -215,6 +215,26 @@ namespace Onyx.Services
             };
             return percentageAmtTypes;
         }
+        public IEnumerable<SelectListItem> GetStatusTypes()
+        {
+            var statusTypes = new List<SelectListItem>()
+            {
+                new() {Text="Present(Working)", Value="PW"},
+                new() { Text="Leave requested", Value="LR"},
+                new() {Text="Leave approved", Value="LA"},
+                new() { Text="On Leave", Value="OL"}};
+            return statusTypes;
+        }
+        public IEnumerable<SelectListItem> GetCalulationBasisTypes()
+        {
+            var calculationTypes = new List<SelectListItem>()
+            {
+                new() {Text="Monthly", Value="M",Selected=true},
+                new() { Text="Daily", Value="D"},
+                new() {Text="Hourly", Value="H"}
+            };
+            return calculationTypes;
+        }
         public IEnumerable<GetSysCodes_Result> GetEarnDedTypes(string type)
         {
             var procedureName = "CompanyEarnDed_Loan_GetRow";

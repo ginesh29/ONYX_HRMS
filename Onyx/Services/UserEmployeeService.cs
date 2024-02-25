@@ -57,7 +57,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, int? pageNumber = 0, int pageSize = 0, string Cd = "", string departments = "0", string designations = "0", string branches = "0", string locations = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string Cd = "", string departments = "0", string designations = "0", string branches = "0", string locations = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
@@ -73,8 +73,6 @@ namespace Onyx.Services
             parameters.Add("v_Designation", designations ?? "0");
             parameters.Add("v_Location", locations ?? "0");
             parameters.Add("v_Status", "0");
-            //parameters.Add("PageNumber", pageNumber);
-            //parameters.Add("PageSize", pageSize);
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -112,7 +110,6 @@ namespace Onyx.Services
             parameters.Add("v_Marital", model.Marital);
             parameters.Add("v_Desg", model.Desg);
             parameters.Add("v_Dob", model.Dob);
-            parameters.Add("v_Doj", model.Doj);
             parameters.Add("v_Father", model.Father);
             parameters.Add("v_Mother", model.Mother);
             parameters.Add("v_Spouse", model.Spouse);
@@ -125,45 +122,38 @@ namespace Onyx.Services
             parameters.Add("v_Pwd", model.ConfirmPassword);
             parameters.Add("v_ImageFile", model.Imagefile);
             parameters.Add("v_ImageSign", model.ImageSign);
-            parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
-
-            //parameters.Add("v_EmpCat1", model.EmployeeCategory1); //
-            //parameters.Add("v_EmpCat2", model.EmployeeCategory2);//
-            //parameters.Add("v_EmpCat3", model.EmployeeCategory3);//
-            //
-            //parameters.Add("v_Confrm", model.FormatedConfrm);
-            //parameters.Add("v_Leaving", model.Leaving);
-            //parameters.Add("v_BasicCurr", model.BasicCurr);
-            //parameters.Add("v_Basic", model.Basic);
-            //parameters.Add("v_CurrCd", model.CurrencyCd);
-            //parameters.Add("v_Personal_No", model.PersonID);
-            //parameters.Add("v_FareEligible", model.FareEligible);
-            //parameters.Add("v_NoTickets", model.NoOfTickets);
-            //parameters.Add("v_TravSect", model.TravelSector);
-            //parameters.Add("v_TravClass", model.TravelClass);
-            //parameters.Add("v_HomeBase", model.HomeBase);
-            //parameters.Add("v_PayMode", model.PayMode);
-            //parameters.Add("v_PayFreq", model.PayFrequency);
-            //parameters.Add("v_BankCd", model.BankCd);
-            //parameters.Add("v_LvDays", model.LvDays);
-            //parameters.Add("v_LvSalaryDays", model.LvSalaryDays);
-            //parameters.Add("v_Status", model.Status);
-
-
+            parameters.Add("v_Personal_No", model.Personal_No);
+            parameters.Add("v_PayMode", model.PayMode);
+            parameters.Add("v_PayFreq", model.PayFreq);
+            parameters.Add("v_BankCd", model.BankCd);
+            parameters.Add("v_BasicCurr", model.BasicCurr);
+            parameters.Add("v_Basic", model.Basic);
+            parameters.Add("v_CurrCd", model.CurrCd);
+            parameters.Add("v_Doj", model.Doj);
+            parameters.Add("v_Confrm", model.Confrm);
+            parameters.Add("v_Leaving", model.Leaving);
+            parameters.Add("v_FareEligible", model.FareEligibleValue ? "Y" : "N");
+            parameters.Add("v_NoTickets", model.NoTickets);
+            parameters.Add("v_TravSect", model.TravSect);
+            parameters.Add("v_TravClass", model.TravClass);
+            parameters.Add("v_HomeBase", model.HomeBase);
+            parameters.Add("v_LvDays", model.LvMax);
+            parameters.Add("v_LvSalaryDays", model.LvDays);
+            parameters.Add("v_LvPrd", model.LvPrd);
+            parameters.Add("v_EmpTyp", model.EmpTyp);
+            parameters.Add("v_Status", model.Status);
+            parameters.Add("v_PassportLocation", model.PassportLocation);
+            parameters.Add("v_CalcBasis", model.CalcBasis);
+            parameters.Add("v_GT", model.GTValue ? "Y" : "N");
+            parameters.Add("v_LS", model.LSValue ? "Y" : "N");
+            parameters.Add("v_LT", model.LTValue ? "Y" : "N");
+            parameters.Add("v_Active", model.ActiveValue ? "Y" : "N");
             //parameters.Add("v_OTEligible", model.OTEligible);
-            //parameters.Add("v_LvPrd", model.LvPrd);
-            //parameters.Add("v_TradeCd", model.TradeCd); //
-            // parameters.Add("v_EmpTyp", model.EmpType);
-            //parameters.Add("v_Pwd", model.Pwd);     //
-            //parameters.Add("v_ApprCd", model.ApprCd);       //
-            //parameters.Add("v_ShiftCd", model.ShiftCd);  //
-            //parameters.Add("v_CalcBasis", model.CalcBasis);
-            //parameters.Add("v_GT", model.GT);
-            //parameters.Add("v_LS", model.LS);
-            //parameters.Add("v_LT", model.LT);
+            //parameters.Add("v_TradeCd", model.TradeCd);
+            //parameters.Add("v_ApprCd", model.ApprCd);
+            //parameters.Add("v_ShiftCd", model.ShiftCd);
             //parameters.Add("v_LeaveOB", model.LeaveOB);
-            //parameters.Add("v_PassportLocation", model.PassportLocation);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
