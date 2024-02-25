@@ -86,10 +86,12 @@
                         </div>
                     </div>
                 </div>
-                <label>Meeting Attendees</label>
-                <select asp-for="Attendees" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
-                </select>
-                <span asp-validation-for="Attendees" class="text-danger"></span>
+                <div class="form-group">
+                    <label>Meeting Attendees</label>
+                    <select asp-for="Attendees" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                    </select>
+                    <span asp-validation-for="Attendees" class="text-danger"></span>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
@@ -99,7 +101,8 @@
     </div>
 </div>
 <script>
-    var attendeesValues = '@jsonString'.replace(/&quot;/g, '"');
+    var attendeesJson = '@jsonString';
+    var attendeesValues = attendeesJson ? attendeesJson.replace(/&quot;/g, '"') : null;
     bindEmployeeDropdown('', '', '', '', function () {
         $('#Attendees').selectpicker('val', JSON.parse(attendeesValues));
     });

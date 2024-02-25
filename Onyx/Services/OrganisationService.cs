@@ -3,6 +3,10 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Diagnostics;
 
 namespace Onyx.Services
 {
@@ -863,7 +867,7 @@ namespace Onyx.Services
         }
         public CompanyProcessApproval_GetRow GetApprovalProcess(string processIdCd, string applTypCd, string branchCd, string deptCd, string CoCd)
         {
-            var procedureName = "CompanyProcessApproval_GetRowSingle";
+            var procedureName = "CompanyProcessApproval_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", processIdCd);
@@ -877,29 +881,72 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public CommonResponse SaveApprovalProcess(NotificationModel model, string CoCd)
+        public IEnumerable<CompanyProcessApproval_Detail_GetRow_Result> GetCompanyProcessApproval_Detail(string processIdCd, string applTypCd, string branchCd, string deptCd, string CoCd)
         {
-            var procedureName = "Notification_Update";
+            var procedureName = "CompanyProcessApproval_Detail_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_SrNo", model.SrNo);
-            parameters.Add("v_ProcessId", model.ProcessId);
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_NoOfDays", model.NoOfDays);
-            parameters.Add("v_BeforeOrAfter", model.BeforeOrAfter);
-            parameters.Add("v_MessageBody", model.MessageBody);
-            parameters.Add("v_DocTyp", model.DocTyp);
+            parameters.Add("v_ProcessId", processIdCd);
+            parameters.Add("v_ApplTyp", applTypCd);
+            parameters.Add("v_Div", branchCd);
+            parameters.Add("v_Dept", deptCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyProcessApproval_Detail_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveApprovalProcess(CompanyProcessApprovalModel model, string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_ProcessId", model.ProcessIdCd);
+            parameters.Add("v_ApplTyp", model.ApplTypCd);
+            parameters.Add("v_Div", model.BranchCd);
+            parameters.Add("v_Dept", model.DeptCd);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void SaveApprovalProcess_Detail(CompanyProcessApprovalModel model, int srNo, string empCd, string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_Detail_Insert";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_ProcessId", model.ProcessIdCd);
+            parameters.Add("v_ApplTyp", model.ApplTypCd);
+            parameters.Add("v_Div", model.BranchCd);
+            parameters.Add("v_Dept", model.DeptCd);
+            parameters.Add("v_SrNo", srNo);
+            parameters.Add("v_EmpCd", empCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse DeleteApprovalProcess(string processId, string applTyp, string branchCd, string deptCd, string CoCd)
+        {
+            var procedureName = "CompanyProcessApproval_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_ProcessId", processId);
+            parameters.Add("v_ApplTyp", applTyp);
+            parameters.Add("v_Div", branchCd);
+            parameters.Add("v_Dept", deptCd);
+            parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public void DeleteApprovalProcess(int Cd, string ProcessId, string CoCd)
+        public void DeleteCompanyProcessApproval_Detail(string processId, string applTyp, string branchCd, string deptCd, string CoCd)
         {
-            var procedureName = "Notification_Master_Delete";
+            var procedureName = "CompanyProcessApproval_Detail_Delete";
             var parameters = new DynamicParameters();
-            parameters.Add("v_SrNo", Cd);
-            parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_ProcessId", processId);
+            parameters.Add("v_ApplTyp", applTyp);
+            parameters.Add("v_Div", branchCd);
+            parameters.Add("v_Dept", deptCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -914,6 +961,87 @@ namespace Onyx.Services
             var data = connection.Query<CompanyProcessApproval_Type_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public IEnumerable<CompanyProvisions_GetRow_Result> GetCompanyProvisions()
+        {
+            var procedureName = "CompanyProvisions_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyProvisions_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<CompanyFundTypes_GetRow_Result> GetCompanyFundTypes()
+        {
+            var procedureName = "CompanyFundTypes_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyFundTypes_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<SelectListItem> GetDocumentTypeByType(string proccessId, string CoCd)
+        {
+            IEnumerable<SelectListItem> result = new List<SelectListItem>();
+            if (proccessId == "HRPSS2" || proccessId == "HRPSS3")
+            {
+                var leaveTypes = GetLeaveTypes(CoCd).Select(m => new SelectListItem
+                {
+                    Value = m.Cd.Trim(),
+                    Text = m.SDes
+                });
+                result = leaveTypes;
+            }
+            else if (proccessId == "HRPSS1")
+            {
+                var loanTypes = GetLoanTypes().Select(m => new SelectListItem
+                {
+                    Value = m.Cd.Trim(),
+                    Text = m.Sdes
+                });
+                result = loanTypes;
+            }
+            else if (proccessId == "HRPT6")
+            {
+                var empProgressions = _commonService.GetSysCodes("HREP").Select(m => new SelectListItem
+                {
+                    Value = m.Cd.Trim(),
+                    Text = m.SDes
+                });
+                result = empProgressions;
+            }
+            else if (proccessId == "HRPT14")
+            {
+                var provisions = GetCompanyProvisions().Select(m => new SelectListItem
+                {
+                    Value = m.Cd.Trim(),
+                    Text = m.SDes
+                });
+                result = provisions;
+            }
+            else if (proccessId == "HRPT8")
+            {
+                var docTypes = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
+                {
+                    Value = m.Code.Trim(),
+                    Text = m.ShortDes
+                });
+                result = docTypes;
+            }
+            else if (proccessId == "HRPSS4")
+            {
+                var fundTypes = GetCompanyFundTypes().Select(m => new SelectListItem
+                {
+                    Value = m.Cd.Trim(),
+                    Text = m.Des
+                });
+                result = fundTypes;
+            }
+            return result;
         }
         #endregion
     }

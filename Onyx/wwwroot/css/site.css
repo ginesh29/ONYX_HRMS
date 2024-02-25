@@ -3,6 +3,10 @@
     width: 265px;
 }
 
+.pagination-container .pagination {
+    margin-bottom: 0;
+}
+
 .sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before {
     margin-left: -265px;
 }
@@ -237,7 +241,8 @@ textarea {
 
 .disabled-container {
     opacity: 0.7;
-    cursor: not-allowed
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .file-drop-area {

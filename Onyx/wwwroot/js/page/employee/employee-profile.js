@@ -75,7 +75,7 @@ function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Employee/SavePesonalDetail", frm[0], function (response) {
+        filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
             if (response.success) {
                 $("#btn-avatar-delete").removeClass("d-none");
                 stepper.next();

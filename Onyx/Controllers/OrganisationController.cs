@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace Onyx.Controllers
@@ -519,6 +520,91 @@ namespace Onyx.Controllers
                 Success = true,
                 Message = CommonMessage.DELETED
             };
+            return Json(result);
+        }
+        #endregion
+
+        #region Approval Process
+        public IActionResult ApprovalProcesses()
+        {
+            return View();
+        }
+        public IActionResult FetchApprovalProcesses()
+        {
+            var approvalProcesses = _organisationService.GetApprovalProcesses(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = approvalProcesses,
+            };
+            return Json(result);
+        }
+        public IActionResult GetApprovalProcess(string processId, string applTypCd, string branchCd, string deptCd)
+        {
+            var approvalProcess = _organisationService.GetApprovalProcess(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd);
+            var model = new CompanyProcessApprovalModel();
+            if (approvalProcess != null & !string.IsNullOrEmpty(processId))
+                model = new CompanyProcessApprovalModel
+                {
+                    Cd = approvalProcess.Branch,
+                    Branch = approvalProcess.Branch,
+                    ApplTypCd = approvalProcess.ApplTypCd.Trim(),
+                    ApplTyp = approvalProcess?.ApplTyp,
+                    BranchCd = approvalProcess?.BranchCd.Trim(),
+                    DeptCd = approvalProcess?.DeptCd.Trim(),
+                    Dept = approvalProcess?.Dept,
+                    ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
+                    ProcessId = approvalProcess?.ProcessId,
+                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd).Select(m => m.EmpCd.Trim()).ToList(),
+                };
+            ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.ParameterCd.Trim(),
+                Text = m.Val
+            });
+            ViewBag.DocumentTypeItems = _organisationService.GetDocumentTypeByType(processId, _loggedInUser.CompanyCd);
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})",
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})",
+            });
+            return PartialView("_ApprovalProcessModal", model);
+        }
+
+        public IActionResult FetchDocTypeByType(string proccessId)
+        {
+            var types = _organisationService.GetDocumentTypeByType(proccessId, _loggedInUser.CompanyCd);
+            return Json(types);
+        }
+        [HttpPost]
+        public IActionResult SaveApprovalProcess(CompanyProcessApprovalModel model)
+        {
+            if (model.Mode == "I")
+                _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
+            _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
+            foreach (var item in model.ApprovalLevels.Select((value, i) => new { i, value }))
+            {
+                _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value, _loggedInUser.CompanyCd);
+            }
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = model.Mode == "U" ? CommonMessage.UPDATED : CommonMessage.INSERTED
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteApprovalProcess(string processId, string applTyp, string branchCd, string deptCd)
+        {
+            var result = _organisationService.DeleteApprovalProcess(processId, applTyp, branchCd, deptCd, _loggedInUser.CompanyCd);
+            if (result.Success)
+            {
+                _organisationService.DeleteCompanyProcessApproval_Detail(processId, applTyp, branchCd, deptCd, _loggedInUser.CompanyCd);
+            }
             return Json(result);
         }
         #endregion
@@ -1181,85 +1267,6 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        #endregion
-
-        #region Approval Process
-        public IActionResult ApprovalProcesses()
-        {
-            return View();
-        }
-        public IActionResult FetchApprovalProcesses()
-        {
-            var approvalProcesses = _organisationService.GetApprovalProcesses(_loggedInUser.CompanyCd);
-            CommonResponse result = new()
-            {
-                Data = approvalProcesses,
-            };
-            return Json(result);
-        }
-        public IActionResult GetApprovalProcess(string processIdCd, string applTypCd, string branchCd, string deptCd)
-        {
-            var approvalProcess = _organisationService.GetApprovalProcess(processIdCd, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd);
-            var model = new CompanyProcessApprovalModel();
-            if (approvalProcess != null)
-                model = new CompanyProcessApprovalModel
-                {
-                    Branch = approvalProcess.Branch,
-                    ApplTypCd = approvalProcess.ApplTypCd.Trim(),
-                    ApplTyp = approvalProcess?.ApplTyp,
-                    BranchCd = approvalProcess?.BranchCd.Trim(),
-                    DeptCd = approvalProcess?.DeptCd.Trim(),
-                    Dept = approvalProcess?.Dept,
-                    ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
-                    ProcessId = approvalProcess?.ProcessId,
-                };
-            ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
-            {
-                Value = m.ParameterCd.Trim(),
-                Text = m.Val
-            });
-            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
-            {
-                Value = m.Code.Trim(),
-                Text = m.ShortDes
-            });
-            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
-            {
-                Value = m.Code.Trim(),
-                Text = $"{m.Department}({m.Code.Trim()})",
-            });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
-            {
-                Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})",
-            });
-            return PartialView("_ApprovalProcessModal", model);
-        }
-        //[HttpPost]
-        //public IActionResult SaveApprovalProcess(NotificationModel model)
-        //{
-        //    model.SrNo = model.SrNo > 0 ? model.SrNo : _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
-        //    var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
-        //    if (result.Success)
-        //    {
-        //        _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-        //        foreach (var email in model.EmailIds.Split(","))
-        //            _organisationService.SaveNotificationDetail(model, email, _loggedInUser.CompanyCd);
-        //    }
-        //    return Json(result);
-        //}
-        //[HttpDelete]
-        //public IActionResult DeleteApprovalProcess(int cd, string processId)
-        //{
-        //    _organisationService.DeleteNotificationDetail(cd, processId, _loggedInUser.CompanyCd);
-        //    _organisationService.DeleteNotificationMaster(cd, processId, _loggedInUser.CompanyCd);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = CommonMessage.DELETED
-        //    };
-        //    return Json(result);
-        //}
-        #endregion
+        #endregion        
     }
 }

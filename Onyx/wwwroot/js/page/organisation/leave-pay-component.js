@@ -73,7 +73,7 @@ function onChangePayType(e) {
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
-        $("#PayCd").append(html);
+        $("#PayCd").html(html);
         $("#PayCd").attr("title", "-- Select --");
         $('.select-picker').selectpicker('refresh');
     });

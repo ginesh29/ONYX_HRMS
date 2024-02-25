@@ -1,4 +1,7 @@
 ﻿@model CompanyProcessApprovalModel
+@{
+    string jsonString = Model.ApprovalLevels.JsonObjectToString();
+}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -8,105 +11,51 @@
         </div>
         <div class="modal-body">
             <form id="approval-process-frm">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="ProcessId"></label>
-                            <select asp-for="ProcessId" class="form-control select-picker" asp-items="ViewBag.TypeItems">
-                                
-                            </select>
-                            <span asp-validation-for="ProcessId" class="text-danger"></span>
+                <input type="hidden" asp-for="Cd" />
+                <div class="@(!string.IsNullOrEmpty(Model.ProcessId) ? "disabled-container" : "")">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ProcessIdCd"></label>
+                                <select asp-for="ProcessIdCd" class="form-control select-picker" asp-items="ViewBag.TypeItems" onchange="onChangeType(this)">
+                                </select>
+                                <span asp-validation-for="ProcessIdCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ApplTypCd"></label>
+                                <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
+                                </select>
+                                <span asp-validation-for="ApplTypCd" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="ApplTypCd"></label>
-                            <select asp-for="ApplTypCd" class="form-control select-picker" asp-items="ViewBag.DocumentTypeItems">
-                                
-                            </select>
-                            <span asp-validation-for="ApplTypCd" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="BranchCd"></label>
+                                <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                                </select>
+                                <span asp-validation-for="BranchCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DeptCd"></label>
+                                <select asp-for="DeptCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
+                                </select>
+                                <span asp-validation-for="DeptCd" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="BranchCd"></label>
-                            <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
-                                
-                            </select>
-                            <span asp-validation-for="BranchCd" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="DeptCd"></label>
-                            <select asp-for="DeptCd" class="form-control select-picker" asp-items="ViewBag.DepartmentItems">
-                                
-                            </select>
-                            <span asp-validation-for="DeptCd" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                @*  <input type="hidden" asp-for="Code" />
-
-                <div class="row">
-                <div class="col-md-6">
                 <div class="form-group">
-                <label asp-for="PercAmt_Cd"></label>
-                <select asp-for="PercAmt_Cd" class="form-control select-picker" asp-items="ViewBag.PercentageAmtItems" onchange="changePercentageAmt()">
-                
-                </select>
-                <span asp-validation-for="PercAmt_Cd" class="text-danger"></span>
+                    <label>Approval Levels</label>
+                    <select asp-for="ApprovalLevels" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                    </select>
+                    <span asp-validation-for="ApprovalLevels" class="text-danger"></span>
                 </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Perc_Val"></label>
-                <input asp-for="Perc_Val" class="form-control" />
-                <span asp-validation-for="Perc_Val" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Abbriviation"></label>
-                <input asp-for="Abbriviation" class="form-control" />
-                <span asp-validation-for="Abbriviation" class="text-danger"></span>
-                </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="SDes"></label>
-                <input asp-for="SDes" class="form-control" />
-                <span asp-validation-for="SDes" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="form-group">
-                <label asp-for="Description"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div>
-                <div class="custom-control custom-checkbox">
-                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="OT">
-                <label asp-for="OT" class="custom-control-label font-weight-normal">OT Pay Comp.</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="OtCd">
-                <label asp-for="OtCd" class="custom-control-label font-weight-normal">Used for OT calculation</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="JobCosting">
-                <label asp-for="JobCosting" class="custom-control-label font-weight-normal">Job Cost Comp.</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="LoanTyp">
-                <label asp-for="LoanTyp" class="custom-control-label font-weight-normal">Loan Comp.</label>
-                </div>
-                </div> *@
             </form>
         </div>
         <div class="modal-footer">
@@ -115,3 +64,10 @@
         </div>
     </div>
 </div>
+<script>
+    var approvalLevelJson = '@jsonString';
+    var approvalLevelsValues = approvalLevelJson ? approvalLevelJson.replace(/&quot;/g, '"') : null;
+    bindEmployeeDropdown('', '', '', '', function () {
+        $('#ApprovalLevels').selectpicker('val', JSON.parse(approvalLevelsValues));
+    });
+</script>

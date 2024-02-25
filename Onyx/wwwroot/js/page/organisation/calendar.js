@@ -88,7 +88,7 @@ function bindEmployeeDropdown(departments, designations, branches, locations, ca
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })
-        $("#Attendees").append(html);
+        $("#Attendees").html(html);
         $('.select-picker').selectpicker('refresh');
         callback();
     });

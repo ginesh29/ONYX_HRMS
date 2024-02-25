@@ -7,8 +7,8 @@
             <button class="btn btn-info" onclick="showBranchModal('')">New Branch</button>
         </div>
         <table class="table table-sm" id="BranchesDataTable">
-            <thead class="thead-dark">
-                <tr>
+            <thead>
+                <tr class="thead-dark">
                     <th>No.</th>
                     <th>Code</th>
                     <th>Image</th>
@@ -22,5 +22,5 @@
 </div>
 <div id="BranchModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
-    <script src="~/js/page/branch.js" asp-append-version="true"></script>
+    <script src="~/js/page/settings/branch.js" asp-append-version="true"></script>
 }

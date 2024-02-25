@@ -33,7 +33,9 @@
                                     }
                                     @if (item.value.Contains("Official"))
                                     {
-                                        <partial name="_OfficialDetail" />
+                                        <div style="min-height:400px">
+                                            <partial name="_OfficialDetail" />
+                                        </div>
                                     }
 
                                     @if (item.value.Contains("Education"))
@@ -55,5 +57,5 @@
 </div>
 @section scripts {
     <script src="~/plugins/bs-stepper/js/bs-stepper.min.js"></script>
-    <script src="~/js/page/employee-profile.js" asp-append-version="true"></script>
+    <script src="~/js/page/employee/employee-profile.js" asp-append-version="true"></script>
 }

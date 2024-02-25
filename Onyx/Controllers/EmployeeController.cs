@@ -28,36 +28,23 @@ namespace Onyx.Controllers
         }
         public IActionResult Profiles()
         {
-            //var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-            //int pageNumber = page ?? 1;
-            //int pageSize = 9;
-            //IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return View();
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations, string term)
         {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, departments, designations, branches, locations);
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, 0, 0, departments, designations, branches, locations);
             if (!string.IsNullOrEmpty(term))
                 employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             return Json(employees);
         }
-        public IActionResult FetchEmployees()
+        public IActionResult FetchEmployees(int? page)
         {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-            CommonResponse result = new()
-            {
-                Data = employees,
-            };
-            return Json(result);
+            int pageNumber = page ?? 1;
+            int pageSize = 9;
+            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, page, pageSize);
+            var pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
+            return PartialView("_EmployeesList", pagedEmployees);
         }
-        //public IActionResult FetchEmployees(int? page)
-        //{
-        //    var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
-        //    int pageNumber = page ?? 1;
-        //    int pageSize = 9;
-        //    IPagedList<Employee_GetRow_Result> pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
-        //    return PartialView("_EmployeesList", pagedEmployees);
-        //}
         public IActionResult Profile(string Cd)
         {
             var employee = _userEmployeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
@@ -141,7 +128,7 @@ namespace Onyx.Controllers
             return View("ProfileUpsert", employee);
         }
         [HttpPost]
-        public async Task<IActionResult> SavePesonalDetail(Employee_Find_Result model)
+        public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ConfirmPassword = model.ConfirmPassword.Encrypt();

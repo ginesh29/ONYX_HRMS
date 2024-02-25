@@ -1,5 +1,7 @@
 ﻿@using X.PagedList
-@model IPagedList<Employee_GetRow_Result>
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model PagedList<Employee_GetRow_Result>
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
 }
@@ -43,4 +45,22 @@
             </div>
         </div>
     }
+</div>
+<div class="d-flex justify-content-between">
+    <div> Showing @((Model.PageNumber - 1) * Model.PageSize + 1) to @(Model.PageNumber * Model.PageSize) of @Model.TotalItemCount entries</div>
+    <div>
+        @Html.PagedListPager(Model, page => Url.Action("FetchEmployees", new { page }), new PagedListRenderOptions
+   {
+       DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+       DisplayLinkToLastPage = PagedListDisplayMode.Never,
+       DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+       DisplayLinkToNextPage = PagedListDisplayMode.Always,
+       DisplayLinkToIndividualPages = true,
+       MaximumPageNumbersToDisplay = 5,
+       LinkToPreviousPageFormat = "Previous",
+       LinkToNextPageFormat = "Next",
+       LiElementClasses = new string[] { "page-item" },
+       PageClasses = new string[] { "page-link" }
+   })
+    </div>
 </div>

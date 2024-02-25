@@ -25,13 +25,13 @@
     }
 );
 function showApprovalProcessModal(processIdCd, applTypCd, branchCd, deptCd) {
-    var url = `/Organisation/GetApprovalProcess?processIdCd=${processIdCd}&applTypCd=${applTypCd}&branchCd=${branchCd}&deptCd=${deptCd}`;
+    var url = `/Organisation/GetApprovalProcess?processId=${processIdCd}&applTypCd=${applTypCd}&branchCd=${branchCd}&deptCd=${deptCd}`;
     $('#ApprovalProcessModal').load(url, function () {
         parseDynamicForm();
         $("#ApprovalProcessModal").modal("show");
     });
 }
-function deleteApprovalProcess(cd) {
+function deleteApprovalProcess(processIdCd, applTyp, branchCd, deptCd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -42,7 +42,7 @@ function deleteApprovalProcess(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Organisation/DeleteApprovalProcess?cd=${cd}`, function (response) {
+            deleteAjax(`/Organisation/DeleteApprovalProcess?processId=${processIdCd}&applTyp=${applTyp}&branchCd=${branchCd}&deptCd=${deptCd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
@@ -50,7 +50,7 @@ function deleteApprovalProcess(cd) {
     });
 }
 function saveApprovalProcess(btn) {
-    var frm = $("#ApprovalProcess-frm");
+    var frm = $("#approval-process-frm");
     if (frm.valid()) {
         loadingButton(btn);
         postAjax("/Organisation/SaveApprovalProcess", frm.serialize(), function (response) {
@@ -67,14 +67,27 @@ function saveApprovalProcess(btn) {
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('Image-Preview');
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#ImageFile").val().split("\\").pop();
-    $("#Image-Preview").removeClass("d-none");
-    $("#image-file-label").text(filename);
-};
+function onChangeType(e) {
+    $("#ApplTypCd").empty();
+    getAjax(`/Organisation/FetchDocTypeByType?proccessId=${e.value}`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.value}'>${item.text}</option>`
+        })
+        $("#ApplTypCd").html(html);
+        $("#ApplTypCd").attr("title", "-- Select --");
+        $('.select-picker').selectpicker('refresh');
+    });
+}
+function bindEmployeeDropdown(departments, designations, branches, locations, callback) {
+    $("#ApprovalLevels").empty();
+    getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+        })
+        $("#ApprovalLevels").html(html);
+        $('.select-picker').selectpicker('refresh');
+        callback();
+    });
+}

@@ -1,8 +1,4 @@
-﻿@using X.PagedList
-@using X.PagedList.Mvc.Core
-@using X.PagedList.Web.Common
-@model IPagedList<Employee_GetRow_Result>
-@{
+﻿@{
     ViewData["Title"] = "Employee Profiles";
 }
 <div class="card">
@@ -10,52 +6,9 @@
         <div class="mb-3">
             <button class="btn btn-info" onclick="showBankModal('')">New Employee</button>
         </div>
-        <table id="tileViewTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Country</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>30</td>
-                    <td>USA</td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>25</td>
-                    <td>Canada</td>
-                </tr>
-                <!-- Add more rows as needed -->
-            </tbody>
-        </table>
-        <div class="tile-container">
-            <!-- Tiles will be appended here -->
-        </div>
+        <div id="EmployeeTableContainer"></div>
     </div>
 </div>
-<style>
-    .tile-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-
-    .tile {
-        width: calc(33.33% - 20px); /* 33.33% width for each tile with margin */
-        height: 150px;
-        border: 1px solid #ccc;
-        margin-bottom: 20px; /* Adjust spacing between rows */
-        padding: 10px;
-        background-color: #f9f9f9;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        box-sizing: border-box; /* Include padding and border in width calculation */
-    }
-</style>
 @section scripts {
-    <script src="~/js/page/employee-list.js" asp-append-version="true"></script>
+    <script src="~/js/page/employee/employee-list.js" asp-append-version="true"></script>
 }
