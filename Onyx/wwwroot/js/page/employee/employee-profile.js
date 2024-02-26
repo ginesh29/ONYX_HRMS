@@ -2,10 +2,6 @@
     linear: false,
     animation: true
 });
-$('.step-trigger:not(.disabled)').click(function () {
-    var stepIndex = $(this).closest('.step').index();
-    stepper.to(stepIndex + 1);
-});
 function previewAvatar(event) {
     var reader = new FileReader();
     reader.onload = function () {
@@ -60,6 +56,7 @@ function GoToNextPrev(btn, back) {
             var activeStepIndex = $('.step.active').index();
             if (activeStepIndex <= 1) {
                 saveBasicDetail(btn);
+                $("#official-detail-trigger").removeClass("disabled");
             }
             else
                 stepper.next();
@@ -83,6 +80,79 @@ function saveBasicDetail(btn) {
             }
             else {
                 showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+var empCd = $("#Cd").val();
+window["datatable"] = $('#EducationsDataTable').DataTable(
+    {
+        ajax: `/Employee/FetchEducations?empCd=${empCd}`,
+        ordering: false,
+        columns: [
+            {
+                data: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            { data: "qualification" },
+            { data: "university" },
+            { data: "country" },
+            { data: "passingYear" },
+            { data: "marksGrade" },
+            {
+                data: function (row) {
+                    return `<button type="button" class="btn btn-sm btn-info" onclick="showEducationModal('${row.srNo}')">
+                                <i class="fas fa-pen"></i>
+                            </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteEducation('${row.srNo}')">
+                                <i class="fa fa-trash"></i>
+                            </button>`
+                }, "width": "60px"
+            }
+        ],
+    }
+);
+function showEducationModal(srNo) {
+    var url = `/Employee/GetEducation?empCd=${encodeURI(empCd)}&srNo=${srNo}`;
+    $('#EducationModal').html("");
+    $('#EducationModal').load(url, function () {
+        parseDynamicForm();
+        $("#EmpCd").val(empCd);
+        $("#EducationModal").modal("show");
+    });
+}
+function deleteEducation(srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/DeleteEducation?empCd=${encodeURI(empCd) }&srNo=${srNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+            });
+        }
+    });
+}
+function saveEducation(btn) {
+    var frm = $("#education-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Employee/SaveEducation", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EducationModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#EducationModal").modal("hide");
             }
             unloadingButton(btn);
         });

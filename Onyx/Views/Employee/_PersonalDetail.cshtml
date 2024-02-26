@@ -11,8 +11,6 @@
 }
 <div class="row">
     <div class="col-md-6" style="border-right:1px solid #ced4da;padding-right:15px">
-        <input asp-for="Imagefile" type="hidden" />
-        <input asp-for="ImageSign" type="hidden" />
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
@@ -31,6 +29,7 @@
                 <div class="form-group">
                     <label asp-for="Imagefile"></label><br />
                     <div class="btn-file-edit-container mb-0">
+                        <input asp-for="Imagefile" type="hidden" />
                         <img style="height:100px;max-width:100%;" src="@avatarImage" class="img-thumbnail" id="avatar-preview">
                         <input type="file" asp-for="AvatarFile" class="d-none" onchange="previewAvatar(event)">
                         <button class="btn btn-sm btn-info btn-circle btn-file-edit" id="btn-upload-file" type="button" onclick="editAvatar()"><i class="fa fa-pen"></i></button>
@@ -226,7 +225,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="SingatureFile"></label>
+                    <label asp-for="ImageSign"></label>
                     <div class="custom-file">
                         <input type="hidden" asp-for="ImageSign" />
                         <input asp-for="SignatureFile" class="custom-file-input" onchange="previewSignature(event)">

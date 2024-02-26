@@ -44,6 +44,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }
+        #region Employee
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
@@ -183,5 +184,58 @@ namespace Onyx.Services
             string result = connection.QueryFirstOrDefault(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        #region Qualification
+        public IEnumerable<EmpQualification_GetRow_Result> GetEmpQualifications(string empCd, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpQualification_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_SrNo", 0);
+            var connection = new SqlConnection(connectionString);
+            var qualifications = connection.Query<EmpQualification_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return qualifications;
+        }
+        public void DeleteEmpQualification(string empCd, int srNo)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpQualification_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_SrNo", srNo);
+            var connection = new SqlConnection(connectionString);
+            connection.Query<EmpQualification_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse SaveEmpQualification(EmpQualificationModel model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var parameters = new DynamicParameters();
+            var procedureName = "EmpQualification_Update";
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_QualCd", model.QualCd);
+            parameters.Add("v_Univ", model.University);
+            parameters.Add("v_Country", model.CountryCd);
+            parameters.Add("v_PassYr", model.PassingYear);
+            parameters.Add("v_Markgr", model.MarksGrade);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public int GetEmpQualification_SrNo(string empCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var parameters = new DynamicParameters();
+            var procedureName = "EmpQualification_SrNo_GetRow";
+            parameters.Add("v_EmpCd", empCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        #endregion
+        #endregion
     }
 }

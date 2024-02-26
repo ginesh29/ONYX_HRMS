@@ -1,18 +1,16 @@
-﻿@* @model Employee_GetRow_Result *@
-@* <div class="row">
-    <div class="col-md-2">
-        <div class="form-group">
-            <label asp-for="p"></label>
-            <input asp-for="Cd" class="form-control" placeholder="First Name">
-            <span asp-validation-for="Cd" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label asp-for="Salute"></label>
-            <select asp-for="Salute" class="form-control select-picker" asp-items="ViewBag.SalutationItems">
-            </select>
-            <span asp-validation-for="Salute" class="text-danger"></span>
-        </div>
-    </div>
-</div> *@
+﻿<div class="mb-3">
+    <button type="button" class="btn btn-info" onclick="showEducationModal('')">New Education</button>
+</div>
+<table class="table table-sm" id="EducationsDataTable">
+    <thead class="thead-dark">
+        <tr>
+            <th>No.</th>
+            <th>Qualification</th>
+            <th>University</th>
+            <th>Country</th>
+            <th>Passing Year</th>
+            <th>Marks/Grade</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>

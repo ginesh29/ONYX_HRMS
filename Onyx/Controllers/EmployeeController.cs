@@ -50,6 +50,7 @@ namespace Onyx.Controllers
             var employee = _userEmployeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
             if (employee != null)
             {
+                employee.Code = employee.Cd?.Trim();
                 employee.Cd = employee.Cd?.Trim();
                 employee.Salute = employee.Salute?.Trim();
                 employee.Marital = employee.Marital?.Trim();
@@ -216,5 +217,69 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        #region Education
+        public IActionResult Educations()
+        {
+            return View();
+        }
+        public IActionResult FetchEducations(string empCd)
+        {
+            var educations = _userEmployeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = educations,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEducation(string empCd, int srNo)
+        {
+            var education = _userEmployeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == srNo);
+            var model = new EmpQualificationModel();
+            if (education != null)
+                model = new EmpQualificationModel
+                {
+                    Country = education.Country?.Trim(),
+                    CountryCd = education.CountryCd?.Trim(),
+                    MarksGrade = education.MarksGrade,
+                    PassingYear = education.PassingYear?.Trim(),
+                    Qualification = education.Qualification?.Trim(),
+                    QualCd = education.QualCd?.Trim(),
+                    SrNo = srNo,
+                    University = education.University,
+                };
+            else
+                model.SrNo = _userEmployeeService.GetEmpQualification_SrNo(empCd);
+            ViewBag.QualificationItems = _settingService.GetCodeGroupItems("HQUAL").Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.PassingYearItems = _commonService.GetYears(1900);
+            ViewBag.CountryItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Text = m.ShortDesc,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_EducationModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveEducation(EmpQualificationModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _userEmployeeService.SaveEmpQualification(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteEducation(string empCd, int srNo)
+        {
+            _userEmployeeService.DeleteEmpQualification(empCd, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }

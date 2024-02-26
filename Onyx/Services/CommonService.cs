@@ -235,6 +235,13 @@ namespace Onyx.Services
             };
             return calculationTypes;
         }
+        public IEnumerable<SelectListItem> GetYears(int startYear)
+        {
+            var years = new List<SelectListItem>();
+            for (int yrcnt = startYear; yrcnt < DateTime.Now.Year; yrcnt++)
+                years.Add(new SelectListItem { Text = yrcnt.ToString(), Value = yrcnt.ToString() });
+            return years;
+        }
         public IEnumerable<GetSysCodes_Result> GetEarnDedTypes(string type)
         {
             var procedureName = "CompanyEarnDed_Loan_GetRow";
