@@ -281,5 +281,72 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Experience
+        public IActionResult Experiences()
+        {
+            return View();
+        }
+        public IActionResult FetchExperiences(string empCd)
+        {
+            var experiences = _userEmployeeService.GetEmpExperiences(empCd);
+            CommonResponse result = new()
+            {
+                Data = experiences,
+            };
+            return Json(result);
+        }
+        public IActionResult GetExperience(string empCd, int srNo)
+        {
+            var experience = _userEmployeeService.GetEmpExperiences(empCd).FirstOrDefault(m => m.Srno == srNo);
+            var model = new EmpExperienceModel();
+            if (experience != null)
+                model = new EmpExperienceModel
+                {
+                    Country = experience.Country?.Trim(),
+                    CountryCd = experience.CountryCd?.Trim(),
+                    Designation = experience.Designation?.Trim(),
+                    Desg = experience.Desg?.Trim(),
+                    CompanyReference = experience.CompanyReference,
+                    CompanyName = experience.CompanyName,
+                    EndingDate = experience.EndingDate,
+                    DateRange = $"{Convert.ToDateTime(experience.StartingDate).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(experience.EndingDate).ToString(CommonSetting.DateFormat)}",
+                    Narration = experience.Narration,
+                    StartingDate = experience.StartingDate,
+                    Srno = experience.Srno,
+                };
+            else
+                model.Srno = _userEmployeeService.GetEmpExperience_SrNo(empCd);
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Text = m.SDes,
+                Value = m.Cd.Trim(),
+            });
+            ViewBag.CountryItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Text = m.ShortDesc,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_ExperienceModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveExperience(EmpExperienceModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _userEmployeeService.SaveEmpExperience(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteExperience(string empCd, int srNo)
+        {
+            _userEmployeeService.DeleteEmpExperience(empCd, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }

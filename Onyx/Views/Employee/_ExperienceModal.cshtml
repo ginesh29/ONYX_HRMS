@@ -1,0 +1,66 @@
+﻿@model EmpExperienceModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.EmpCd) ? "Edit" : "Add") Experience</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="experience-frm">
+                <input type="hidden" asp-for="EmpCd" />
+                <input type="hidden" asp-for="Srno" value="@Model.Srno" />
+                <input type="hidden" asp-for="StartingDate" />
+                <input type="hidden" asp-for="EndingDate" />
+                <div class="form-group">
+                    <label asp-for="CompanyName"></label>
+                    <input asp-for="CompanyName" class="form-control" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Desg"></label>
+                            <select asp-for="Desg" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
+                            </select>
+                            <span asp-validation-for="Desg" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CountryCd"></label>
+                            <select asp-for="CountryCd" class="form-control select-picker" asp-items="ViewBag.CountryItems">
+                            </select>
+                            <span asp-validation-for="CountryCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DateRange"></label>
+                            <input asp-for="DateRange" class="form-control daterangepicker-input" />
+                            <span asp-validation-for="DateRange" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CompanyReference"></label>
+                            <input asp-for="CompanyReference" class="form-control" />
+                            <span asp-validation-for="CompanyReference" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Narration"></label>
+                    <textarea asp-for="Narration" class="form-control"></textarea>
+                    <span asp-validation-for="Narration" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveExperience(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

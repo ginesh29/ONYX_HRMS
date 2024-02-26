@@ -236,6 +236,60 @@ namespace Onyx.Services
             return result;
         }
         #endregion
+
+        #region Experience
+        public IEnumerable<EmpExperience_GetRow_Result> GetEmpExperiences(string empCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpExperience_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_SrNo", 0);
+            var connection = new SqlConnection(connectionString);
+            var qualifications = connection.Query<EmpExperience_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return qualifications;
+        }
+        public void DeleteEmpExperience(string empCd, int srNo)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpExperience_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_SrNo", srNo);
+            var connection = new SqlConnection(connectionString);
+            connection.Query<EmpQualification_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse SaveEmpExperience(EmpExperienceModel model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var parameters = new DynamicParameters();
+            var procedureName = "EmpExperience_Update";
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_SrNo", model.Srno);
+            parameters.Add("v_Stdt", model.StartingDate);
+            parameters.Add("v_Enddt", model.EndingDate);
+            parameters.Add("v_Desg", model.Desg);
+            parameters.Add("v_Coname", model.CompanyName);
+            parameters.Add("v_Country", model.CountryCd);
+            parameters.Add("v_Coref", model.CompanyReference);
+            parameters.Add("v_Narr", model.Narration);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public int GetEmpExperience_SrNo(string empCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var parameters = new DynamicParameters();
+            var procedureName = "EmpExperience_SrNo_GetRow";
+            parameters.Add("v_EmpCd", empCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        #endregion
         #endregion
     }
 }
