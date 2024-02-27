@@ -150,11 +150,6 @@ namespace Onyx.Services
             parameters.Add("v_LS", model.LSValue ? "Y" : "N");
             parameters.Add("v_LT", model.LTValue ? "Y" : "N");
             parameters.Add("v_Active", model.ActiveValue ? "Y" : "N");
-            //parameters.Add("v_OTEligible", model.OTEligible);
-            //parameters.Add("v_TradeCd", model.TradeCd);
-            //parameters.Add("v_ApprCd", model.ApprCd);
-            //parameters.Add("v_ShiftCd", model.ShiftCd);
-            //parameters.Add("v_LeaveOB", model.LeaveOB);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -287,6 +282,88 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", empCd);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        #endregion
+
+        #region Document
+        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd)
+        {
+            var procedureName = "EmpDocuments_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_DocTyp", string.Empty);
+            parameters.Add("v_SrNo", 0);
+            parameters.Add("v_Typ", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpDocuments_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse SaveDocument(EmpDocumentModel model)
+        {
+            var procedureName = "EmpDocuments_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_DocTyp", model.DocTypCd);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteDocument(string empCd, string docType, int SrNo)
+        {
+            var procedureName = "EmpDocuments_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SrNo", SrNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpDocImages_GetRow_Result> GetDocumentFiles(string empCd, string docTypCd)
+        {
+            var procedureName = "EmpDocImages_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_DocTyp", docTypCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpDocImages_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveDocumentFile(EmpDocImageModel model)
+        {
+            var procedureName = "EmpDocImages_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmployeeCode);
+            parameters.Add("v_DocTyp", model.DocumentTypeCd);
+            parameters.Add("v_SlNo", model.SlNo);
+            parameters.Add("v_ImageFile", model.ImageFile);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public CommonResponse DeleteDocumentFile(string empCd, string docTypCd, int srNo)
+        {
+            var procedureName = "EmpDocImages_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_DocTyp", docTypCd);
+            parameters.Add("v_SrNo", srNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
         #endregion

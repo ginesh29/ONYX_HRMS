@@ -1,0 +1,17 @@
+﻿namespace Onyx.Models.StoredProcedure
+{
+    public class EmpDocImages_GetRow_Result
+    {
+        public string EmployeeCode { get; set; }
+        public string EmployeeName { get; set; }
+        public string DocumentTypeCd { get; set; }
+        public string DocumentType { get; set; }
+        public string ImageFile { get; set; }
+        public string EntryBy { get; set; }
+        public DateTime? EntryDate { get; set; }
+        public string EditedBy { get; set; }
+        public DateTime? EditDate { get; set; }
+        public int SlNo { get; set; }
+        public string DocTypSDes_New { get; set; }
+    }
+}

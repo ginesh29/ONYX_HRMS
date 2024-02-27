@@ -1,8 +1,4 @@
-﻿var stepper = new Stepper(document.querySelector('#stepper'), {
-    linear: false,
-    animation: true
-});
-function previewAvatar(event) {
+﻿function previewAvatar(event) {
     var reader = new FileReader();
     reader.onload = function () {
         var output = document.getElementById('avatar-preview')
@@ -80,6 +76,10 @@ $('.step[data-target="#experience-detail-part"] .step-trigger').on('click', func
     e.preventDefault();
     bindExperienceDataTable();
 });
+$('.step[data-target="#documents-part"] .step-trigger').on('click', function (e) {
+    e.preventDefault();
+    bindDocumentDataTable();
+});
 function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
     if (frm.valid()) {
@@ -98,6 +98,7 @@ function saveBasicDetail(btn) {
     }
 }
 var empCd = $("#Cd").val();
+empCd = empCd ? empCd : "";
 function bindEducationDataTable() {
     if (!$.fn.DataTable.isDataTable('#EducationsDataTable'))
         window["datatable"] = $('#EducationsDataTable').DataTable(
@@ -265,4 +266,187 @@ function saveExperience(btn) {
             unloadingButton(btn);
         });
     }
+}
+function bindDocumentDataTable() {
+    if (!$.fn.DataTable.isDataTable('#DocumentsDataTable'))
+        window["datatable"] = $('#DocumentsDataTable').DataTable(
+            {
+                ajax: `/Employee/FetchDocuments?empCd=${encodeURI(empCd)}`,
+                ordering: false,
+                columns: [
+                    {
+                        data: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    { data: "docTypSDes" },
+                    { data: "docNo", width: "100px" },
+                    {
+                        data: function (row) {
+                            return row.issueDt && moment(row.issueDt).format('DD/MM/YYYY');
+                        },
+                    },
+                    { data: "issuePlace" },
+                    {
+                        data: function (row) {
+                            return row.expDt && moment(row.expDt).format('DD/MM/YYYY');
+                        }, width: "100px"
+                    },
+                    {
+                        data: function (row) {
+                            return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                                <i class="fas fa-pen"></i>
+                            </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                                <i class="fa fa-trash"></i>
+                            </button>`
+                        }, "width": "80px"
+                    }
+                ],
+            }
+        );
+}
+function showDocumentModal(empCd,docTypeCd, srNo) {
+    var url = `/Employee/GetDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+    $('#DocumentModal').load(url, function () {
+        parseDynamicForm();
+        $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
+        $("#DocumentModal").modal("show");
+    });
+}
+function deleteDocument(empCd,docTypeCd, srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/DeleteDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+            });
+        }
+    });
+}
+function saveDocument(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Employee/SaveDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function filesPreview(input) {
+    $("#Files-Preview").html("");
+    if (input.files) {
+        var filesCount = input.files.length;
+        for (i = 0; i < filesCount; i++) {
+            var ext = input.files[i].name.split('.').pop().toLowerCase();
+            if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
+                    var html = `<div class="btn-file-edit-container"><img style="height:100px;max-width:100%" src='${src}' class="img-thumbnail mb-3"></div>`;
+                    $("#Files-Preview").append(html);
+                }
+                reader.readAsDataURL(input.files[i]);
+                $("#doc-file-label").text(`${filesCount} files Chosen`);
+            }
+            else
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
+        }
+    }
+};
+function deleteDocumentFile(curr, divCd, docType, srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/DeleteDocumentFile?empCd=${encodeURI(empCd)}&docTypCd=${docType}&slNo=${srNo}`, function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $(curr).closest(".btn-file-edit-container").remove();
+                }
+                else
+                    showErrorToastr(response.message);
+            });
+        }
+    });
+}
+function editDoc(curr) {
+    var srno = $(curr).attr("data-srno");
+    $(`#doc-file-${srno}`).click();
+}
+function filesEditPreview(input, id) {
+    var ext = input.target.files[0].name.split('.').pop().toLowerCase();
+    if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var src = reader.result.includes("image") ? reader.result : "/images/pdf-icon.png";
+            $(`#file-${id}`).attr("src", src)
+        };
+        reader.readAsDataURL(input.target.files[0]);
+        $(`#btn-file-delete-${id},#btn-upload-file-${id}`).addClass("d-none");
+        $(`#btn-upload-${id}`).removeClass("d-none");
+        $("#File_SrNo").val(id);
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
+};
+function saveEditFile() {
+    var docTypCd = $("#DocTypCd").val();
+    var empCd = $("#EmpCd").val();
+    var srNo = $("#File_SrNo").val();
+    var file = $(`#doc-file-${srNo}`)[0].files[0];
+    var formData = new FormData();
+    formData.append('docTypCd', docTypCd);
+    formData.append('empCd', empCd);
+    formData.append('srNo', srNo);
+    formData.append('file', file);
+    $.ajax({
+        url: "/Employee/UpdateDocumentFile",
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (response.success) {
+                $(`#btn-file-delete-${srNo},#btn-upload-file-${srNo}`).removeClass("d-none");
+                $(`#btn-upload-${srNo}`).addClass("d-none");
+                showSuccessToastr(response.message);
+            }
+        },
+    });
+}
+
+function bindEmployeeDropdown(callback) {
+    $("#EmpCd").empty();
+    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+        })
+        $("#EmpCd").html(html);
+        $('.select-picker').selectpicker('refresh');
+        callback();
+    });
 }

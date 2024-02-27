@@ -289,15 +289,18 @@ function downloadFile(foldername, filename) {
     $.ajax({
         url: `/Home/DownloadFile?foldername=${foldername}&filename=${filename}`,
         type: 'GET',
+        xhrFields: {
+            responseType: 'blob' // important to handle as blob
+        },
         success: function (data) {
-            var blob = new Blob([data], { type: 'application/octet-stream' });
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            window.URL.revokeObjectURL(link.href);
-            document.body.removeChild(link);
+            var anchor = document.createElement('a');
+            var url = window.URL.createObjectURL(data);
+            anchor.href = url;
+            anchor.download = filename;
+            document.body.appendChild(anchor);
+            anchor.click();
+            window.URL.revokeObjectURL(url); // Release the object URL
+            document.body.removeChild(anchor);
         },
         error: function () {
             showErrorToastr('File not found.');

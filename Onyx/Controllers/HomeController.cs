@@ -50,7 +50,7 @@ namespace Onyx.Controllers
         }
         public IActionResult DownloadFile(string folderName, string filename)
         {
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{folderName}", filename);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{_loggedInUser.CompanyCd}/{folderName}", filename);
             if (System.IO.File.Exists(filePath))
                 return PhysicalFile(filePath, "application/octet-stream", filename);
             else

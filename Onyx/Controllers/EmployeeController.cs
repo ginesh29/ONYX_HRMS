@@ -348,5 +348,121 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Document
+        public IActionResult Documents()
+        {
+            return View("DocumentCotainer");
+        }
+        public IActionResult FetchDocuments(string empCd="")
+        {
+            var documents = _userEmployeeService.GetDocuments(empCd);
+            CommonResponse result = new()
+            {
+                Data = documents,
+            };
+            return Json(result);
+        }
+        public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
+        {
+            var document = _userEmployeeService.GetDocuments(empCd).FirstOrDefault(m => m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var model = new EmpDocumentModel();
+            if (document != null)
+                model = new EmpDocumentModel
+                {
+                    EmpCd = empCd,
+                    DocNo = document.DocNo,
+                    DocTypSDes = document.DocTypSDes,
+                    DocTypCd = document.DocTypCd.Trim(),
+                    ExpDt = document.ExpDt,
+                    IssueDt = document.IssueDt,
+                    SrNo = document.SrNo,
+                    IssuePlace = document.IssuePlace,
+                    DocsPaths = _userEmployeeService.GetDocumentFiles(empCd, document.DocTypCd)
+                };
+            else
+                model.SrNo = _commonService.GetNext_SrNo("EmpDocuments", "srNo");
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems("HDTYP").Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_DocumentModal", model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SaveDocument(EmpDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _userEmployeeService.SaveDocument(model);
+            if (result.Success)
+            {
+                if (model.DocFiles?.Count() > 0)
+                {
+                    var totalFiles = _userEmployeeService.GetDocumentFiles(model.EmpCd, model.DocTypCd).Count();
+                    string uploadedFilePath = string.Empty;
+                    foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
+                    {
+                        if (item != null)
+                        {
+                            var filePath = await _fileHelper.UploadFile(item.value, "emp-doc", _loggedInUser.CompanyCd);
+                            uploadedFilePath = filePath;
+                            _userEmployeeService.SaveDocumentFile(new EmpDocImageModel
+                            {
+                                EmployeeCode = model.EmpCd,
+                                EntryBy = _loggedInUser.UserAbbr,
+                                DocumentTypeCd = model.DocTypCd,
+                                ImageFile = uploadedFilePath,
+                                SlNo = item.i + 1 + totalFiles,
+                            });
+                        }
+                    }
+                }
+            }
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDocument(string empCd, string docTypeCd, int srNo)
+        {
+            _userEmployeeService.DeleteDocument(empCd, docTypeCd, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        public IActionResult FetchDocumentFiles(string empCd, string docTypeCd)
+        {
+            var files = _userEmployeeService.GetDocumentFiles(empCd, docTypeCd);
+            return PartialView("_DocFilesList", files);
+        }
+        [HttpDelete]
+        public IActionResult DeleteDocumentFile(string empCd, string docTypCd, int slNo)
+        {
+            var documentFile = _userEmployeeService.GetDocumentFiles(empCd, docTypCd).FirstOrDefault(m => m.SlNo == slNo);
+            _fileHelper.RemoveFile(documentFile.ImageFile, "emp-doc");
+            var result = _userEmployeeService.DeleteDocumentFile(empCd, docTypCd, slNo);
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateDocumentFile(string empCd, string docTypCd, int SrNo, IFormFile file)
+        {
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "emp-doc", _loggedInUser.CompanyCd);
+            _userEmployeeService.SaveDocumentFile(new EmpDocImageModel
+            {
+                EntryBy = _loggedInUser.UserAbbr,
+                DocumentTypeCd = docTypCd,
+                ImageFile = uploadedFilePath,
+                SlNo = SrNo,
+                EmployeeCode = empCd,
+            });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }
