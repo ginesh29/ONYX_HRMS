@@ -80,6 +80,10 @@ $('.step[data-target="#documents-part"] .step-trigger').on('click', function (e)
     e.preventDefault();
     bindDocumentDataTable();
 });
+$('.step[data-target="#components-part"] .step-trigger').on('click', function (e) {
+    e.preventDefault();
+    bindComponentDataTable();
+});
 function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
     if (frm.valid()) {
@@ -97,13 +101,13 @@ function saveBasicDetail(btn) {
         });
     }
 }
-var empCd = $("#Cd").val();
-empCd = empCd ? empCd : "";
+var empCode = $("#Cd").val();
+var visibleEmpName = !empCode ? true : false;
 function bindEducationDataTable() {
     if (!$.fn.DataTable.isDataTable('#EducationsDataTable'))
         window["datatable"] = $('#EducationsDataTable').DataTable(
             {
-                ajax: `/Employee/FetchEducations?empCd=${empCd}`,
+                ajax: `/Employee/FetchEducations?empCd=${empCode}`,
                 ordering: false,
                 columns: [
                     {
@@ -130,11 +134,11 @@ function bindEducationDataTable() {
         );
 }
 function showEducationModal(srNo) {
-    var url = `/Employee/GetEducation?empCd=${encodeURI(empCd)}&srNo=${srNo}`;
+    var url = `/Employee/GetEducation?empCd=${encodeURI(empCode)}&srNo=${srNo}`;
     $('#EducationModal').html("");
     $('#EducationModal').load(url, function () {
         parseDynamicForm();
-        $("#EmpCd").val(empCd);
+        $("#EmpCd").val(empCode);
         $("#EducationModal").modal("show");
     });
 }
@@ -149,7 +153,7 @@ function deleteEducation(srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Employee/DeleteEducation?empCd=${encodeURI(empCd)}&srNo=${srNo}`, function (response) {
+            deleteAjax(`/Employee/DeleteEducation?empCd=${encodeURI(empCode)}&srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
@@ -174,12 +178,11 @@ function saveEducation(btn) {
         });
     }
 }
-
 function bindExperienceDataTable() {
     if (!$.fn.DataTable.isDataTable('#ExperiencesDataTable'))
         window["datatable"] = $('#ExperiencesDataTable').DataTable(
             {
-                ajax: `/Employee/FetchExperiences?empCd=${empCd}`,
+                ajax: `/Employee/FetchExperiences?empCd=${empCode}`,
                 ordering: false,
                 columns: [
                     {
@@ -211,10 +214,10 @@ function bindExperienceDataTable() {
         );
 }
 function showExperienceModal(srNo) {
-    var url = `/Employee/GetExperience?empCd=${encodeURI(empCd)}&srNo=${srNo}`;
+    var url = `/Employee/GetExperience?empCd=${encodeURI(empCode)}&srNo=${srNo}`;
     $('#ExperienceModal').load(url, function () {
         parseDynamicForm();
-        $("#EmpCd").val(empCd);
+        $("#EmpCd").val(empCode);
         $('#DateRange').daterangepicker({
             autoUpdateInput: false
         });
@@ -242,7 +245,7 @@ function deleteExperience(srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Employee/DeleteExperience?empCd=${encodeURI(empCd)}&srNo=${srNo}`, function (response) {
+            deleteAjax(`/Employee/DeleteExperience?empCd=${encodeURI(empCode)}&srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
@@ -268,16 +271,25 @@ function saveExperience(btn) {
     }
 }
 function bindDocumentDataTable() {
+    empCode = empCode ? empCode : "";
     if (!$.fn.DataTable.isDataTable('#DocumentsDataTable'))
         window["datatable"] = $('#DocumentsDataTable').DataTable(
             {
-                ajax: `/Employee/FetchDocuments?empCd=${encodeURI(empCd)}`,
+                ajax: `/Employee/FetchDocuments?empCd=${encodeURI(empCode)}`,
                 ordering: false,
+                "columnDefs": [
+                    { "visible": visibleEmpName, "targets": 1 }
+                ],
                 columns: [
                     {
                         data: function (data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
+                    },
+                    {
+                        data: function (row) {
+                            return `${row.empName}(${row.empCd.trim()})`;
+                        },
                     },
                     { data: "docTypSDes" },
                     { data: "docNo", width: "100px" },
@@ -294,9 +306,9 @@ function bindDocumentDataTable() {
                     },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                            return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                            </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
                             </button>`
                         }, "width": "80px"
@@ -305,15 +317,18 @@ function bindDocumentDataTable() {
             }
         );
 }
-function showDocumentModal(empCd,docTypeCd, srNo) {
-    var url = `/Employee/GetDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+function showDocumentModal(empCd, docTypeCd, srNo) {
+    empCd = empCd ? empCd : empCode;
+    var url = `/Employee/GetDocument?empCd=${encodeURI(empCode)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
     $('#DocumentModal').load(url, function () {
         parseDynamicForm();
         $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
+        if (!visibleEmpName)
+            $("#EmpCd").closest(".form-group").addClass("d-none");
         $("#DocumentModal").modal("show");
     });
 }
-function deleteDocument(empCd,docTypeCd, srNo) {
+function deleteDocument(empCd, docTypeCd, srNo) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -437,7 +452,6 @@ function saveEditFile() {
         },
     });
 }
-
 function bindEmployeeDropdown(callback) {
     $("#EmpCd").empty();
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
@@ -448,5 +462,121 @@ function bindEmployeeDropdown(callback) {
         $("#EmpCd").html(html);
         $('.select-picker').selectpicker('refresh');
         callback();
+    });
+}
+function bindComponentDataTable() {
+    empCode = empCode ? empCode : "";
+    if (!$.fn.DataTable.isDataTable('#ComponentsDataTable'))
+        window["datatable"] = $('#ComponentsDataTable').DataTable(
+            {
+                ajax: `/Employee/FetchComponents?empCd=${encodeURI(empCode)}`,
+                ordering: false,
+                "columnDefs": [
+                    { "visible": visibleEmpName, "targets": 1 }
+                ],
+                columns: [
+                    {
+                        data: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: function (row) {
+                            return `${row.emp}(${row.empCd.trim()})`;
+                        },
+                    },
+                    { data: "type" },
+                    { data: "description" },
+                    { data: "currency" },
+                    { data: "amt" },
+                    { data: "percVal" },
+                    {
+                        data: function (row) {
+                            return row.effDt && moment(row.effDt).format('DD/MM/YYYY');
+                        }, width: "100px"
+                    },
+                    {
+                        data: function (row) {
+                            return `<button type="button" class="btn btn-sm btn-info" onclick="showComponentModal('${row.edCd}')">
+                                <i class="fas fa-pen"></i>
+                            </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
+                                <i class="fa fa-trash"></i>
+                            </button>`
+                        }, "width": "80px"
+                    }
+                ],
+            }
+        );
+}
+function showComponentModal(empCd, edCd, edTyp, srNo) {
+    empCode = empCode ? empCode : empCd;
+    var url = `/Employee/GetComponent?empCd=${encodeURI(empCode)}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`;
+    $('#ComponentModal').load(url, function () {
+        parseDynamicForm();
+        changePercentageAmt();
+        $("#ComponentModal").modal("show");
+    });
+}
+function deleteComponent(empCd, edCd, edTyp, srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/DeleteComponent?empCd=${empCd}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+            });
+        }
+    });
+}
+function saveComponent(btn) {
+    var frm = $("#component-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Employee/SaveComponent", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#ComponentModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#ComponentModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function changePercentageAmt() {
+    var val = $("#PercAmt_Cd").val();
+    if (val)
+        if (val == "A") {
+            $("#Perc_Val").removeClass("percentage-input").addClass("decimal-input");
+            $('.decimal-input').attr("placeholder", "0.00");
+            $('.decimal-input').inputmask(decimalMaskOptions);
+        }
+        else {
+            $("#Perc_Val").removeClass("decimal-input").addClass("percentage-input");
+            $('.percentage-input').attr("placeholder", "0.00 %");
+            $('.percentage-input').inputmask(percentageMaskOptions);
+        }
+}
+
+function onChangeType(e) {
+    $("#EdCd").empty();
+    getAjax(`/Employee/FetchComponentClassItems?type=${e.value}`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.value}'>${item.text}</option>`
+        })
+        $("#EdCd").html(html);
+        $("#EdCd").attr("title", "-- Select --");
+        $('.select-picker').selectpicker('refresh');
     });
 }

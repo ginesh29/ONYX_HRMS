@@ -9,21 +9,21 @@ namespace Onyx.ViewComponents
     public class UserMenuViewComponent : ViewComponent
     {
         private readonly AuthService _authService;
-        private readonly UserEmployeeService _userEmployeeService;
+        private readonly EmployeeService _employeeService;
         private readonly CommonService _commonService;
         private readonly CompanyService _companyService;
         private readonly LoggedInUserModel _loggedInUser;
-        public UserMenuViewComponent(AuthService authService, UserEmployeeService userEmployeeService, CommonService commonService, CompanyService companyService)
+        public UserMenuViewComponent(AuthService authService, EmployeeService employeeService, CommonService commonService, CompanyService companyService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
-            _userEmployeeService = userEmployeeService;
+            _employeeService = employeeService;
             _commonService = commonService;
             _companyService = companyService;
         }
         public IViewComponentResult Invoke()
         {
-            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _userEmployeeService.FindEmployee(_loggedInUser.LoginId, _loggedInUser.CompanyCd) : null;
+            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.LoginId, _loggedInUser.CompanyCd) : null;
             var month = Convert.ToInt32(_commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));

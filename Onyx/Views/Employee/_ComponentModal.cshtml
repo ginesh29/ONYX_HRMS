@@ -1,0 +1,75 @@
+﻿@model EmpEarnDedModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.EdCd) ? "Edit" : "Add") Component</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="component-frm">
+                <input type="hidden" asp-for="SrNo" />
+                <input type="hidden" asp-for="CurrCd" />
+                <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
+                    <label asp-for="EmpCd"></label>
+                    <select asp-for="EmpCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
+                    </select>
+                    <span asp-validation-for="EmpCd" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.EdCd) ? "disabled-container" : "")">
+                            <label asp-for="EdTyp"></label>
+                            <select asp-for="EdTyp" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EdCd) ? "disabled" : "")" asp-items="ViewBag.ComponentClassTypeItems" onchange="onChangeType(this)">
+                            </select>
+                            <span asp-validation-for="EdTyp" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EdCd"></label>
+                            <select asp-for="EdCd" class="form-control select-picker" asp-items="ViewBag.ComponentClassItems">
+                            </select>
+                            <span asp-validation-for="EdCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PercAmt"></label>
+                            <select asp-for="PercAmt" class="form-control select-picker" asp-items="ViewBag.PercentageAmtItems" onchange="changePercentageAmt()">
+                            </select>
+                            <span asp-validation-for="PercAmt" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PercVal"></label>
+                            <input asp-for="PercVal" class="form-control" />
+                            <span asp-validation-for="PercVal" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EffDt"></label>
+                            <input asp-for="EffDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#ExpDt">
+                            <span asp-validation-for="EffDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveComponent(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+<script>
+    bindEmployeeDropdown(function () {
+        $('#EmpCd').selectpicker('val', '@Model.EmpCd');
+    });
+</script>

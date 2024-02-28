@@ -6,45 +6,9 @@ using System.Data;
 
 namespace Onyx.Services
 {
-    public class UserEmployeeService(CommonService commonService)
+    public class EmployeeService(CommonService commonService)
     {
         private readonly CommonService _commonService = commonService;
-        public Validate_User_Result ValidateUser(LoginModel model)
-        {
-            var connectionString = _commonService.GetConnectionString();
-            var procedureName = "Validate_User";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_UserID", model.LoginId);
-            parameters.Add("v_PWD", model.Password.Encrypt());
-            var connection = new SqlConnection(connectionString);
-            var user = connection.QueryFirstOrDefault<Validate_User_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
-        }
-        public Validate_Employee_Result ValidateEmployee(LoginModel model)
-        {
-            var connectionString = _commonService.GetConnectionString();
-            var procedureName = "Validate_Employee";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_EMPID", model.LoginId);
-            parameters.Add("v_PWD", model.Password.Encrypt());
-            var connection = new SqlConnection(connectionString);
-            var employee = connection.QueryFirstOrDefault<Validate_Employee_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return employee;
-        }
-        public UserModel GetUser(string UserCd)
-        {
-            var connectionString = _commonService.GetConnectionString();
-            var procedureName = "Users_GetRow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", UserCd);
-            var connection = new SqlConnection(connectionString);
-            var user = connection.QueryFirstOrDefault<UserModel>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
-        }
-        #region Employee
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
@@ -367,6 +331,70 @@ namespace Onyx.Services
             return result;
         }
         #endregion
+
+        #region Component
+        public IEnumerable<EmpEarnDed_GetRow_Result> GetComponents(string empCd)
+        {
+            var procedureName = "EmpEarnDed_View_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EdCd", string.Empty);
+            parameters.Add("v_EdTyp", string.Empty);
+            parameters.Add("v_Typ", "3");
+            parameters.Add("v_SrNo", 0);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpEarnDed_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponentClasses(string type)
+        {
+            var query = $"Select * from CompanyEarnDed Where Typ = '{type}'";
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<CompanyEarnDed_GetRow_Result>
+                (query);
+            return data;
+        }
+        public CommonResponse SaveComponent(EmpEarnDedModel model)
+        {
+            var procedureName = "EmpEarnDed_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_EdCd", model.EdCd);
+            parameters.Add("v_EdTyp", model.EdTyp);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_Curr", model.CurrCd);
+            parameters.Add("v_PercAmt", model.PercAmt);
+            parameters.Add("v_PercVal", model.PercVal);
+            parameters.Add("v_AmtVal", model.Amt);
+            parameters.Add("v_EffDate", model.EffDt);
+            parameters.Add("v_EndDate", model.EndDt);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteComponent(string empCd, string edCd, string edTyp, int srNo)
+        {
+            var procedureName = "EmpEarnDed_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EdCd", edCd);
+            parameters.Add("v_EdTyp", edTyp);
+            parameters.Add("v_SrNo", srNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+        #region Address
+
+        #endregion
+        #region Bank Account
+
         #endregion
     }
 }

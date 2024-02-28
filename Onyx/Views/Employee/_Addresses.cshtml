@@ -1,0 +1,12 @@
+﻿@{
+    var addresses = (IEnumerable<Codes_Grp_GetRow_Result>)ViewBag.Addrsses;
+}
+<div class="row">
+    @foreach (var item in addresses)
+    {
+        var isLast = addresses.Last() == item;
+        <div class="col-md-3" style="@(!isLast? "border-right:1px solid #ced4da;padding-right:15px":"")">
+            <h4 class="text-primary">@item.ShortDes</h4>
+        </div>
+    }
+</div>

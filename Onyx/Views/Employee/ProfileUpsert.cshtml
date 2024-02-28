@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Employee Profile";
     ViewData["AdditionLinkWithTitle"] = "Employees_/Employee/Profiles";
-    string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Earnings & Deductions", "Addresses" };
+    string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Components", "Addresses" };
 }
 @model Employee_Find_Result
 <link rel="stylesheet" href="~/plugins/bs-stepper/css/bs-stepper.min.css">
@@ -50,16 +50,14 @@
                                         {
                                             <partial name="_Documents" />
                                         }
-                                        @*
-
-                                    else if (item.value.Contains("Earning"))
-                                    {
-                                    <partial name="_EarningAndDeductions" />
-                                    }
-                                    else if (item.value.Contains("Address"))
-                                    {
-                                    <partial name="_Addresses" />
-                                    } *@
+                                        else if (item.value.Contains("Components"))
+                                        {
+                                            <partial name="_Components" />
+                                        }
+                                        else if (item.value.Contains("Address"))
+                                        {
+                                            <partial name="_Addresses" />
+                                        }
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
                                     <button type="button" class="btn btn-primary float-right" onclick="GoToNextPrev(this)">Next &raquo;</button>
@@ -77,6 +75,7 @@
 <div id="EducationModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="ExperienceModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="DocumentModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="ComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="PreviewModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script src="~/plugins/bs-stepper/js/bs-stepper.min.js"></script>

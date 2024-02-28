@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 using System.Data;
-using System.Data.SqlClient;
 using System.Text;
 
 namespace Onyx.Controllers
@@ -16,19 +15,19 @@ namespace Onyx.Controllers
         private readonly OrganisationService _organisationService;
         private readonly CommonService _commonService;
         private readonly SettingService _settingService;
-        private readonly UserEmployeeService _userEmployeeService;
+        private readonly EmployeeService _employeeService;
         private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, UserEmployeeService userEmployeeService, EmailService emailService)
+        public OrganisationController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, EmployeeService employeeService, EmailService emailService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
             _commonService = commonService;
             _settingService = settingService;
-            _userEmployeeService = userEmployeeService;
             _emailService = emailService;
+            _employeeService = employeeService;
             _fileHelper = new FileHelper();
         }
         #region Component
@@ -376,7 +375,7 @@ namespace Onyx.Controllers
             if (result.Success)
             {
                 _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
-                var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
                 var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
                 {
                     RecipientEmail = m.Email,
@@ -486,7 +485,7 @@ namespace Onyx.Controllers
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                var emps = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
                 var recipients = emps.Select(m => new EmailRecipientModel
                 {
                     Cd = m.Cd.Trim(),
@@ -886,7 +885,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            ViewBag.DriverItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.DriverItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Text = $"{m.Name}({m.Cd.Trim()})",
                 Value = m.Cd.Trim(),

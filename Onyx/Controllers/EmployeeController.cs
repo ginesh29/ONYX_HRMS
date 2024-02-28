@@ -10,15 +10,15 @@ namespace Onyx.Controllers
     public class EmployeeController : Controller
     {
         private readonly AuthService _authService;
-        private readonly UserEmployeeService _userEmployeeService;
+        private readonly EmployeeService _employeeService;
         private readonly CommonService _commonService;
         private readonly SettingService _settingService;
         private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public EmployeeController(AuthService authService, UserEmployeeService userEmployeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService)
+        public EmployeeController(AuthService authService, EmployeeService employeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService)
         {
-            _userEmployeeService = userEmployeeService;
+            _employeeService = employeeService;
             _authService = authService;
             _commonService = commonService;
             _settingService = settingService;
@@ -32,7 +32,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations, string term)
         {
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd, departments, designations, branches, locations);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, departments, designations, branches, locations);
             if (!string.IsNullOrEmpty(term))
                 employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             return Json(employees);
@@ -41,13 +41,13 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             int pageSize = 9;
-            var employees = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd);
             var pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return PartialView("_EmployeesList", pagedEmployees);
         }
         public IActionResult Profile(string Cd)
         {
-            var employee = _userEmployeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
+            var employee = _employeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
             if (employee != null)
             {
                 employee.Code = employee.Cd?.Trim();
@@ -86,6 +86,7 @@ namespace Onyx.Controllers
                 ViewBag.SignatureFileExist = signatureFileExist;
                 ViewBag.AvatarPath = avatarImage;
                 ViewBag.SignaturePath = signatureImage;
+                ViewBag.Addrsses = _commonService.GetCodesGroups("HADD");
             }
 
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
@@ -133,7 +134,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _userEmployeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"
@@ -203,13 +204,13 @@ namespace Onyx.Controllers
                 var filePath = await _fileHelper.UploadFile(model.SignatureFile, "emp-sign", _loggedInUser.CompanyCd);
                 model.ImageSign = filePath;
             }
-            var result = _userEmployeeService.SaveEmployee(model, _loggedInUser.CompanyCd);
+            var result = _employeeService.SaveEmployee(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult RemoveAvatar(string Cd)
         {
-            _userEmployeeService.RemoveAvatar(Cd);
+            _employeeService.RemoveAvatar(Cd);
             var result = new CommonResponse
             {
                 Success = true,
@@ -224,7 +225,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEducations(string empCd)
         {
-            var educations = _userEmployeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd);
+            var educations = _employeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = educations,
@@ -233,7 +234,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEducation(string empCd, int srNo)
         {
-            var education = _userEmployeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == srNo);
+            var education = _employeeService.GetEmpQualifications(empCd, _loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == srNo);
             var model = new EmpQualificationModel();
             if (education != null)
                 model = new EmpQualificationModel
@@ -248,7 +249,7 @@ namespace Onyx.Controllers
                     University = education.University,
                 };
             else
-                model.SrNo = _userEmployeeService.GetEmpQualification_SrNo(empCd);
+                model.SrNo = _employeeService.GetEmpQualification_SrNo(empCd);
             ViewBag.QualificationItems = _settingService.GetCodeGroupItems("HQUAL").Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
@@ -266,13 +267,13 @@ namespace Onyx.Controllers
         public IActionResult SaveEducation(EmpQualificationModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
-            var result = _userEmployeeService.SaveEmpQualification(model);
+            var result = _employeeService.SaveEmpQualification(model);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult DeleteEducation(string empCd, int srNo)
         {
-            _userEmployeeService.DeleteEmpQualification(empCd, srNo);
+            _employeeService.DeleteEmpQualification(empCd, srNo);
             var result = new CommonResponse
             {
                 Success = true,
@@ -289,7 +290,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchExperiences(string empCd)
         {
-            var experiences = _userEmployeeService.GetEmpExperiences(empCd);
+            var experiences = _employeeService.GetEmpExperiences(empCd);
             CommonResponse result = new()
             {
                 Data = experiences,
@@ -298,7 +299,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetExperience(string empCd, int srNo)
         {
-            var experience = _userEmployeeService.GetEmpExperiences(empCd).FirstOrDefault(m => m.Srno == srNo);
+            var experience = _employeeService.GetEmpExperiences(empCd).FirstOrDefault(m => m.Srno == srNo);
             var model = new EmpExperienceModel();
             if (experience != null)
                 model = new EmpExperienceModel
@@ -316,7 +317,7 @@ namespace Onyx.Controllers
                     Srno = experience.Srno,
                 };
             else
-                model.Srno = _userEmployeeService.GetEmpExperience_SrNo(empCd);
+                model.Srno = _employeeService.GetEmpExperience_SrNo(empCd);
             ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
             {
                 Text = m.SDes,
@@ -333,13 +334,13 @@ namespace Onyx.Controllers
         public IActionResult SaveExperience(EmpExperienceModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
-            var result = _userEmployeeService.SaveEmpExperience(model);
+            var result = _employeeService.SaveEmpExperience(model);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult DeleteExperience(string empCd, int srNo)
         {
-            _userEmployeeService.DeleteEmpExperience(empCd, srNo);
+            _employeeService.DeleteEmpExperience(empCd, srNo);
             var result = new CommonResponse
             {
                 Success = true,
@@ -352,11 +353,11 @@ namespace Onyx.Controllers
         #region Document
         public IActionResult Documents()
         {
-            return View("DocumentCotainer");
+            return View("DocumentContainer");
         }
-        public IActionResult FetchDocuments(string empCd="")
+        public IActionResult FetchDocuments(string empCd = "")
         {
-            var documents = _userEmployeeService.GetDocuments(empCd);
+            var documents = _employeeService.GetDocuments(empCd);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -365,12 +366,11 @@ namespace Onyx.Controllers
         }
         public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _userEmployeeService.GetDocuments(empCd).FirstOrDefault(m => m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _employeeService.GetDocuments(empCd).FirstOrDefault(m => m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel
                 {
-                    EmpCd = empCd,
                     DocNo = document.DocNo,
                     DocTypSDes = document.DocTypSDes,
                     DocTypCd = document.DocTypCd.Trim(),
@@ -378,10 +378,11 @@ namespace Onyx.Controllers
                     IssueDt = document.IssueDt,
                     SrNo = document.SrNo,
                     IssuePlace = document.IssuePlace,
-                    DocsPaths = _userEmployeeService.GetDocumentFiles(empCd, document.DocTypCd)
+                    DocsPaths = _employeeService.GetDocumentFiles(empCd, document.DocTypCd)
                 };
             else
                 model.SrNo = _commonService.GetNext_SrNo("EmpDocuments", "srNo");
+            model.EmpCd = empCd;
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems("HDTYP").Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
@@ -393,12 +394,12 @@ namespace Onyx.Controllers
         public async Task<IActionResult> SaveDocument(EmpDocumentModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
-            var result = _userEmployeeService.SaveDocument(model);
+            var result = _employeeService.SaveDocument(model);
             if (result.Success)
             {
                 if (model.DocFiles?.Count() > 0)
                 {
-                    var totalFiles = _userEmployeeService.GetDocumentFiles(model.EmpCd, model.DocTypCd).Count();
+                    var totalFiles = _employeeService.GetDocumentFiles(model.EmpCd, model.DocTypCd).Count();
                     string uploadedFilePath = string.Empty;
                     foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
                     {
@@ -406,7 +407,7 @@ namespace Onyx.Controllers
                         {
                             var filePath = await _fileHelper.UploadFile(item.value, "emp-doc", _loggedInUser.CompanyCd);
                             uploadedFilePath = filePath;
-                            _userEmployeeService.SaveDocumentFile(new EmpDocImageModel
+                            _employeeService.SaveDocumentFile(new EmpDocImageModel
                             {
                                 EmployeeCode = model.EmpCd,
                                 EntryBy = _loggedInUser.UserAbbr,
@@ -423,7 +424,7 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteDocument(string empCd, string docTypeCd, int srNo)
         {
-            _userEmployeeService.DeleteDocument(empCd, docTypeCd, srNo);
+            _employeeService.DeleteDocument(empCd, docTypeCd, srNo);
             var result = new CommonResponse
             {
                 Success = true,
@@ -433,22 +434,22 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocumentFiles(string empCd, string docTypeCd)
         {
-            var files = _userEmployeeService.GetDocumentFiles(empCd, docTypeCd);
+            var files = _employeeService.GetDocumentFiles(empCd, docTypeCd);
             return PartialView("_DocFilesList", files);
         }
         [HttpDelete]
         public IActionResult DeleteDocumentFile(string empCd, string docTypCd, int slNo)
         {
-            var documentFile = _userEmployeeService.GetDocumentFiles(empCd, docTypCd).FirstOrDefault(m => m.SlNo == slNo);
+            var documentFile = _employeeService.GetDocumentFiles(empCd, docTypCd).FirstOrDefault(m => m.SlNo == slNo);
             _fileHelper.RemoveFile(documentFile.ImageFile, "emp-doc");
-            var result = _userEmployeeService.DeleteDocumentFile(empCd, docTypCd, slNo);
+            var result = _employeeService.DeleteDocumentFile(empCd, docTypCd, slNo);
             return Json(result);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateDocumentFile(string empCd, string docTypCd, int SrNo, IFormFile file)
         {
             var uploadedFilePath = await _fileHelper.UploadFile(file, "emp-doc", _loggedInUser.CompanyCd);
-            _userEmployeeService.SaveDocumentFile(new EmpDocImageModel
+            _employeeService.SaveDocumentFile(new EmpDocImageModel
             {
                 EntryBy = _loggedInUser.UserAbbr,
                 DocumentTypeCd = docTypCd,
@@ -463,6 +464,98 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        #endregion
+
+        #region Component
+        public IActionResult Components()
+        {
+            return View("ComponentsContainer");
+        }
+        public IActionResult FetchComponents(string empCd = "")
+        {
+            var components = _employeeService.GetComponents(empCd);
+            CommonResponse result = new()
+            {
+                Data = components,
+            };
+            return Json(result);
+        }
+        public IActionResult GetComponent(string empCd, string edCd, string edTyp, int srNo)
+        {
+            var component = _employeeService.GetComponents(empCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
+            var model = new EmpEarnDedModel();
+            if (component != null)
+                model = new EmpEarnDedModel
+                {
+                    Amt = component.Amt,
+                    Basic = component.Basic,
+                    CurrCd = component.CurrCd,
+                    Currency = component.Currency,
+                    Description = component.Description.Trim(),
+                    EdCd = component.EdCd.Trim(),
+                    EdTyp = component.EdTyp.Trim(),
+                    EffDt = component.EffDt,
+                    Emp = component.Emp,
+                    EndDt = component.EndDt,
+                    PercAmt = component.PercAmt,
+                    PercVal = component.PercVal,
+                    SrNo = component.SrNo,
+                    Type = component.Type
+                };
+            model.EmpCd = empCd;
+            ViewBag.ComponentClassTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.ComponentClassItems = _employeeService.GetComponentClasses(model.EdTyp?.Trim()).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.PercentageAmtItems = _commonService.GetPercentageAmtTypes();
+            return PartialView("_ComponentModal", model);
+        }
+        public IActionResult FetchComponentClassItems(string type)
+        {
+            var payCodeItems = _employeeService.GetComponentClasses(type).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            return Json(payCodeItems);
+        }
+        [HttpPost]
+        public IActionResult SaveComponent(EmpEarnDedModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _employeeService.SaveComponent(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteComponent(string empCd, string edCd, string edTyp, int srNo)
+        {
+            _employeeService.DeleteComponent(empCd, edCd, edTyp, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Address
+        //public IActionResult Addresses()
+        //{
+        //    return View();
+        //}
+
+        #endregion
+
+        #region Bank Account
+
         #endregion
     }
 }

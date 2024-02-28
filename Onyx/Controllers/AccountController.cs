@@ -7,17 +7,19 @@ namespace Onyx.Controllers
     public class AccountController : Controller
     {
         private readonly AuthService _authService;
-        private readonly UserEmployeeService _userEmployeeService;
+        private readonly UserService _userEmployeeService;
+        private readonly EmployeeService _employeeService;
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public AccountController(AuthService authService, UserEmployeeService userEmployeeService, CommonService commonService, SettingService settingService)
+        public AccountController(AuthService authService, UserService userEmployeeService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
         {
             _authService = authService;
             _userEmployeeService = userEmployeeService;
             _commonService = commonService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
+            _employeeService = employeeService;
         }
         public IActionResult Login()
         {
@@ -133,7 +135,7 @@ namespace Onyx.Controllers
                 });
                 if (employee != null)
                 {
-                    _userEmployeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
+                    _employeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
                     result.Success = true;
                     result.Message = "Password changed Successfully";
                 }
