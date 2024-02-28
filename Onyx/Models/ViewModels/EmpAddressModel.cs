@@ -39,5 +39,13 @@ namespace Onyx.Models.StoredProcedure
         public DateTime? EntryDate { get; set; }
         public string EditedBy { get; set; }
         public DateTime? EditDate { get; set; }
+        public string Cd { get; set; }
+        public string Mode
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+            }
+        }
     }
 }

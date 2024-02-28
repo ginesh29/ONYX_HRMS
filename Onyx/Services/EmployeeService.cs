@@ -421,6 +421,7 @@ namespace Onyx.Services
             parameters.Add("v_Fax", model.Fax);
             parameters.Add("v_Email", model.Email);
             parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

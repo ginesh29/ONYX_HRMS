@@ -557,6 +557,7 @@ namespace Onyx.Controllers
             if (address != null)
                 model = new EmpAddressModel
                 {
+                    Cd = address.Contact,
                     Contact = address.Contact,
                     City = address.City,
                     Country = address.Country.Trim(),
