@@ -568,9 +568,9 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult GetBankAccount(string empCd, string bankCd, string bankBrCd)
+        public IActionResult GetBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
         {
-            var bankAccount = _employeeService.GetBankAccounts().FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd);
+            var bankAccount = _employeeService.GetBankAccounts().FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd && m.SrNo == srNo);
             var model = new EmpBankAcModel();
             if (bankAccount != null)
                 model = new EmpBankAcModel

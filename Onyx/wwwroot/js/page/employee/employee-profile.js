@@ -319,7 +319,7 @@ function bindDocumentDataTable() {
 }
 function showDocumentModal(empCd, docTypeCd, srNo) {
     empCd = empCd ? empCd : empCode;
-    var url = `/Employee/GetDocument?empCd=${encodeURI(empCode)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+    var url = `/Employee/GetDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
     $('#DocumentModal').load(url, function () {
         parseDynamicForm();
         $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
@@ -497,7 +497,7 @@ function bindComponentDataTable() {
                     },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showComponentModal('${row.edCd}')">
+                            return `<button type="button" class="btn btn-sm btn-info" onclick="showComponentModal('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
@@ -509,8 +509,8 @@ function bindComponentDataTable() {
         );
 }
 function showComponentModal(empCd, edCd, edTyp, srNo) {
-    empCode = empCode ? empCode : empCd;
-    var url = `/Employee/GetComponent?empCd=${encodeURI(empCode)}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`;
+    empCd = empCd ? empCd : empCode;
+    var url = `/Employee/GetComponent?empCd=${encodeURI(empCd)}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`;
     $('#ComponentModal').load(url, function () {
         parseDynamicForm();
         changePercentageAmt();

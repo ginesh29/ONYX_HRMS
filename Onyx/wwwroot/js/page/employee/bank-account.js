@@ -20,7 +20,7 @@
             { data: "routeCd" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBankAccountModal('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showBankAccountModal('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBankAccount('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
@@ -30,14 +30,14 @@
         ],
     }
 );
-function showBankAccountModal(empCd, bankCd, bankBrCd) {
-    var url = `/Employee/GetBankAccount?empCd=${empCd}&bankCd=${bankCd}&bankBrCd=${bankBrCd}`;
+function showBankAccountModal(empCd, bankCd, bankBrCd, srNo) {
+    var url = `/Employee/GetBankAccount?empCd=${encodeURI(empCd)}&bankCd=${bankCd}&bankBrCd=${bankBrCd}&srNo=${srNo}`;
     $('#BankAccountModal').load(url, function () {
         parseDynamicForm();
         $("#BankAccountModal").modal("show");
     });
 }
-function deleteBankAccount(empCd, bankCd, bankBrCd,srNo) {
+function deleteBankAccount(empCd, bankCd, bankBrCd, srNo) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -48,7 +48,7 @@ function deleteBankAccount(empCd, bankCd, bankBrCd,srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Employee/DeleteBankAccount?empCd=${empCd}&bankCd=${bankCd}&bankBrCd=${bankBrCd}&srNo=${srNo}`, function (response) {
+            deleteAjax(`/Employee/DeleteBankAccount?empCd=${encodeURI(empCd)}&bankCd=${bankCd}&bankBrCd=${bankBrCd}&srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
