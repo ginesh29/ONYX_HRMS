@@ -568,7 +568,7 @@ function changePercentageAmt() {
         }
 }
 
-function onChangeType(e) {
+function bindComponentClass(e) {
     $("#EdCd").empty();
     getAjax(`/Employee/FetchComponentClassItems?type=${e.value}`, function (response) {
         var html = ''

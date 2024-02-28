@@ -49,6 +49,17 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public IEnumerable<BankBranch_GetRow_Result> GetBankBranches(string bankCd)
+        {
+            var procedureName = "BankBranch_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Bank", bankCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<BankBranch_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         #endregion
 
         #region User

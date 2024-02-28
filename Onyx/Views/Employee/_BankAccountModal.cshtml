@@ -1,0 +1,91 @@
+﻿@model EmpBankAcModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.BankCd) ? "Edit" : "Add") Bank Account</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="bank-account-frm">
+                <input type="hidden" asp-for="SrNo" />
+                <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
+                    <label asp-for="EmpCd"></label>
+                    <select asp-for="EmpCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
+                    </select>
+                    <span asp-validation-for="EmpCd" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EmployeeAcName"></label>
+                            <input asp-for="EmployeeAcName" class="form-control" />
+                            <span asp-validation-for="EmployeeAcName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EmpAc"></label>
+                            <input asp-for="EmpAc" class="form-control" />
+                            <span asp-validation-for="EmpAc" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BankCd"></label>
+                            <select asp-for="BankCd" class="form-control select-picker" asp-items="ViewBag.BankItems" onchange="bindBankBranch(this)">
+                            </select>
+                            <span asp-validation-for="BankCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BankBrCd"></label>
+                            <select asp-for="BankBrCd" class="form-control select-picker" asp-items="ViewBag.BankBranchItems">
+                            </select>
+                            <span asp-validation-for="BankBrCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="BankGrpCd"></label>
+                            <select asp-for="BankGrpCd" class="form-control select-picker" asp-items="ViewBag.BankGroupItems">
+                            </select>
+                            <span asp-validation-for="BankGrpCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="CurrCd"></label>
+                            <select asp-for="CurrCd" class="form-control select-picker" asp-items="ViewBag.CurrencyItems">
+                            </select>
+                            <span asp-validation-for="CurrCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="RouteCd"></label>
+                            <input asp-for="RouteCd" class="form-control" />
+                            <span asp-validation-for="RouteCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveBankAccount(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+<script>
+    bindEmployeeDropdown(function () {
+        $('#EmpCd').selectpicker('val', '@Model.EmpCd');
+    });
+</script>

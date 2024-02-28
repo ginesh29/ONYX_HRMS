@@ -20,7 +20,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.EdCd) ? "disabled-container" : "")">
                             <label asp-for="EdTyp"></label>
-                            <select asp-for="EdTyp" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EdCd) ? "disabled" : "")" asp-items="ViewBag.ComponentClassTypeItems" onchange="onChangeType(this)">
+                            <select asp-for="EdTyp" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EdCd) ? "disabled" : "")" asp-items="ViewBag.ComponentClassTypeItems" onchange="bindComponentClass(this)">
                             </select>
                             <span asp-validation-for="EdTyp" class="text-danger"></span>
                         </div>

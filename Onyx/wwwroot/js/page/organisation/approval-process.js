@@ -67,7 +67,7 @@ function saveApprovalProcess(btn) {
         });
     }
 }
-function onChangeType(e) {
+function bindDocTypeByType(e) {
     $("#ApplTypCd").empty();
     getAjax(`/Organisation/FetchDocTypeByType?proccessId=${e.value}`, function (response) {
         var html = ''

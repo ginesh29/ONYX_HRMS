@@ -555,7 +555,94 @@ namespace Onyx.Controllers
         #endregion
 
         #region Bank Account
-
+        public IActionResult BankAccounts()
+        {
+            return View();
+        }
+        public IActionResult FetchBankAccounts()
+        {
+            var bankaccounts = _employeeService.GetBankAccounts();
+            CommonResponse result = new()
+            {
+                Data = bankaccounts,
+            };
+            return Json(result);
+        }
+        public IActionResult GetBankAccount(string empCd, string bankCd, string bankBrCd)
+        {
+            var bankAccount = _employeeService.GetBankAccounts().FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd);
+            var model = new EmpBankAcModel();
+            if (bankAccount != null)
+                model = new EmpBankAcModel
+                {
+                    Amt = bankAccount.Amt,
+                    Bank = bankAccount.Bank,
+                    BankBrCd = bankAccount.BankBrCd.Trim(),
+                    BankCd = bankAccount.BankCd.Trim(),
+                    BankGrp = bankAccount.BankGrp,
+                    BankGrpCd = bankAccount.BankGrpCd.Trim(),
+                    Branch = bankAccount.Branch,
+                    CurrCd = bankAccount.CurrCd.Trim(),
+                    Currency = bankAccount.Currency,
+                    EmpAc = bankAccount.EmpAc,
+                    EmpCd = bankAccount.EmpCd.Trim(),
+                    EmployeeAcName = bankAccount.EmployeeAcName,
+                    EmployeeName = bankAccount.EmployeeName,
+                    RouteCd = bankAccount.RouteCd,
+                    SrNo = bankAccount.SrNo,
+                    Typ = bankAccount.Typ
+                };
+            else
+                model.SrNo = _commonService.GetNext_SrNo("EmpBankAc", "SrNo");
+            ViewBag.BankItems = _settingService.GetCodeGroupItems(CodeGroup.Bank).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.BankBranchItems = _settingService.GetBankBranches(model.BankCd).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.BankGroupItems = _settingService.GetCodeGroupItems("BKGRP").Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.CurrencyItems = _settingService.GetCurrencies(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Text = m.MainCurr,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_BankAccountModal", model);
+        }
+        public IActionResult FetchBankBranchItems(string bankCd)
+        {
+            var payCodeItems = _settingService.GetBankBranches(bankCd).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            return Json(payCodeItems);
+        }
+        [HttpPost]
+        public IActionResult SaveBankAccount(EmpBankAcModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _employeeService.SaveBankAccount(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
+        {
+            _employeeService.DeleteBankAccount(empCd, bankCd, bankBrCd, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
     }
 }

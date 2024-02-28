@@ -271,9 +271,9 @@ namespace Onyx.Services
             };
             return beforeAfter;
         }
-        public int GetNext_SrNo(string tableName,string fileldName)
+        public int GetNext_SrNo(string tableName, string fileldName)
         {
-            var query = $"SELECT MAX({fileldName}) + 1 AS NextID FROM {tableName};";
+            var query = $"SELECT Isnull(Max({fileldName}),0)+1 AS NextID FROM {tableName};";
             var connectionString = GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>

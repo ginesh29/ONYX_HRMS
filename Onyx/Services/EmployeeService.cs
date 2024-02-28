@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
@@ -143,6 +143,7 @@ namespace Onyx.Services
             string result = connection.QueryFirstOrDefault(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+
         #region Qualification
         public IEnumerable<EmpQualification_GetRow_Result> GetEmpQualifications(string empCd, string CoCd)
         {
@@ -390,11 +391,56 @@ namespace Onyx.Services
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
+
         #region Address
 
         #endregion
-        #region Bank Account
 
+        #region Bank Account
+        public IEnumerable<EmpBankAc_GetRow_Result> GetBankAccounts()
+        {
+            var procedureName = "EmpBankAc_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpBankAc_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse SaveBankAccount(EmpBankAcModel model)
+        {
+            var procedureName = "EmpBankAc_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_Bank", model.BankCd);
+            parameters.Add("v_Br", model.BankBrCd);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_AcName", model.EmployeeAcName);
+            parameters.Add("v_EmpAc", model.EmpAc);
+            parameters.Add("v_Typ", model.Typ);
+            parameters.Add("v_Curr", model.CurrCd);
+            parameters.Add("v_Amt", model.Amt);
+            parameters.Add("v_BkGrp", model.BankGrpCd);
+            parameters.Add("v_RouteCd", model.RouteCd);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
+        {
+            var procedureName = "EmpBankAc_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_Bank", bankCd);
+            parameters.Add("v_Br", bankBrCd);
+            parameters.Add("v_SrNo", srNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
     }
 }
