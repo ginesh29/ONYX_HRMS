@@ -86,9 +86,7 @@ namespace Onyx.Controllers
                 ViewBag.SignatureFileExist = signatureFileExist;
                 ViewBag.AvatarPath = avatarImage;
                 ViewBag.SignaturePath = signatureImage;
-                ViewBag.Addrsses = _commonService.GetCodesGroups("HADD");
             }
-
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
@@ -547,11 +545,64 @@ namespace Onyx.Controllers
         #endregion
 
         #region Address
-        //public IActionResult Addresses()
-        //{
-        //    return View();
-        //}
-
+        public IActionResult FetchAddresses(string empCd)
+        {
+            var addresses = _employeeService.GetAddresses(empCd);
+            return PartialView("_Addresses", addresses);
+        }
+        public IActionResult GetAddress(string empCd, string type)
+        {
+            var address = _employeeService.GetAddresses(empCd).FirstOrDefault(m => m.AddTyp.Trim() == type);
+            var model = new EmpAddressModel();
+            if (address != null)
+                model = new EmpAddressModel
+                {
+                    Contact = address.Contact,
+                    City = address.City,
+                    Country = address.Country.Trim(),
+                    CountryCd = address.CountryCd.Trim(),
+                    AddTyp = address.AddTyp.Trim(),
+                    AddressLine1 = address.AddressLine1,
+                    AddressLine2 = address.AddressLine2,
+                    AddressLine3 = address.AddressLine3,
+                    Address_Type = address.Address_Type,
+                    EmployeeName = address.EmployeeName,
+                    Fax = address.Fax,
+                    Email = address.Email,
+                    Mobile = address.Mobile,
+                    Phone = address.Phone,
+                };
+            model.EmployeeCode = empCd;
+            ViewBag.AddressTypeItems = _commonService.GetCodesGroups("HADD").Select(m => new SelectListItem
+            {
+                Text = m.Description,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.CountryItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Text = m.ShortDesc,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_AddressModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveAddress(EmpAddressModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _employeeService.SaveAddress(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteAddress(string empCd, string type)
+        {
+            _employeeService.DeleteAddress(empCd, type);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
         #endregion
 
         #region Bank Account

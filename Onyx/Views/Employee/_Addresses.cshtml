@@ -1,12 +1,38 @@
-﻿@{
-    var addresses = (IEnumerable<Codes_Grp_GetRow_Result>)ViewBag.Addrsses;
-}
+﻿@model IEnumerable<EmpAddress_GetRow_Result>
+<div class="mb-3">
+    <button type="button" class="btn btn-info" onclick="showAddressModal('','')">New Address</button>
+</div>
 <div class="row">
-    @foreach (var item in addresses)
+    @foreach (var item in Model)
     {
-        var isLast = addresses.Last() == item;
-        <div class="col-md-3" style="@(!isLast? "border-right:1px solid #ced4da;padding-right:15px":"")">
-            <h4 class="text-primary">@item.ShortDes</h4>
+        <div class="col-md-4">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title d-flex justify-content-between">
+                        @item.Address_Type
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-info btn-sm mr-2" onclick="showAddressModal('@item.EmployeeCode.Trim()','@item.AddTyp')">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteAddress('@item.EmployeeCode.Trim()','@item.AddTyp')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6><span class="text-primary">Contact: </span>@item.Contact</h6>
+                    <h6><span class="text-primary">Address Line1: </span>@item.AddressLine1</h6>
+                    <h6><span class="text-primary">Address Line2: </span>@item.AddressLine2</h6>
+                    <h6><span class="text-primary">Address Line3: </span>@item.AddressLine3</h6>
+                    <h6><span class="text-primary">Email: </span>@item.Email</h6>
+                    <h6><span class="text-primary">Phone: </span>@item.Phone</h6>
+                    <h6><span class="text-primary">Mobile: </span>@item.Mobile</h6>
+                    <h6><span class="text-primary">Fax: </span>@item.Fax</h6>
+                    <h6><span class="text-primary">City: </span>@item.City</h6>
+                    <h6><span class="text-primary">Country: </span>@item.Country</h6>
+                </div>
+            </div>
         </div>
     }
 </div>

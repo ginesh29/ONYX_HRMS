@@ -120,7 +120,9 @@ function formatDate(date) {
         date.getFullYear();
 }
 function reloadPageAfterSometime() {
-    window["datatable"].redraw();
+    setTimeout(function () {
+        location.reload();
+    }, 3000);
 }
 function reloadDatatable() {
     window["datatable"].ajax.reload();

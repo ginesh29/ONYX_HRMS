@@ -393,7 +393,49 @@ namespace Onyx.Services
         #endregion
 
         #region Address
-
+        public IEnumerable<EmpAddress_GetRow_Result> GetAddresses(string empCd)
+        {
+            var procedureName = "EmpAddress_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpAddress_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse SaveAddress(EmpAddressModel model)
+        {
+            var procedureName = "EmpAddress_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmployeeCode);
+            parameters.Add("v_AddTyp", model.AddTyp);
+            parameters.Add("v_Contact", model.Contact);
+            parameters.Add("v_Add1", model.AddressLine1);
+            parameters.Add("v_Add2", model.AddressLine2);
+            parameters.Add("v_Add3", model.AddressLine3);
+            parameters.Add("v_City", model.City);
+            parameters.Add("v_Country", model.CountryCd);
+            parameters.Add("v_Phone", model.Phone);
+            parameters.Add("v_Mobile", model.Mobile);
+            parameters.Add("v_Fax", model.Fax);
+            parameters.Add("v_Email", model.Email);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteAddress(string empCd, string type)
+        {
+            var procedureName = "EmpAddress_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_AddTyp", type);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Bank Account

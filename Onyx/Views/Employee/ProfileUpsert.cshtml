@@ -56,7 +56,7 @@
                                         }
                                         else if (item.value.Contains("Address"))
                                         {
-                                            <partial name="_Addresses" />
+                                            <div id="Addresses"></div>
                                         }
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
@@ -76,6 +76,7 @@
 <div id="ExperienceModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="DocumentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="ComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="AddressModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="PreviewModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script src="~/plugins/bs-stepper/js/bs-stepper.min.js"></script>

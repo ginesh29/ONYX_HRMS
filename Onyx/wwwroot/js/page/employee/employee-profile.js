@@ -50,15 +50,21 @@ function GoToNextPrev(btn, back) {
         var frm = $("#emp-profile-frm");
         if (frm.valid()) {
             var activeStepIndex = $('.step.active').index();
-            if (activeStepIndex <= 1) {
+            $(".step-trigger").removeClass("disabled");
+            if (activeStepIndex == 0 || activeStepIndex == 1) {
                 saveBasicDetail(btn);
                 if (activeStepIndex == 1)
                     bindEducationDataTable();
-                $(".step-trigger").removeClass("disabled");
             }
             else if (activeStepIndex == 2)
                 bindExperienceDataTable();
-            else
+            else if (activeStepIndex == 3)
+                bindDocumentDataTable();
+            else if (activeStepIndex == 4)
+                bindComponentDataTable();
+            else if (activeStepIndex == 5)
+                bindAddresses(empCode);
+            if (activeStepIndex != 0 && activeStepIndex != 1)
                 stepper.next();
         }
     }
@@ -68,6 +74,8 @@ function GoToNextPrev(btn, back) {
 function GotoStep(no) {
     stepper.to(no);
 }
+var empCode = $("#Cd").val();
+var visibleEmpName = !empCode ? true : false;
 $('.step[data-target="#education-detail-part"] .step-trigger').on('click', function (e) {
     e.preventDefault();
     bindEducationDataTable();
@@ -84,6 +92,10 @@ $('.step[data-target="#components-part"] .step-trigger').on('click', function (e
     e.preventDefault();
     bindComponentDataTable();
 });
+$('.step[data-target="#addresses-part"] .step-trigger').on('click', function (e) {
+    e.preventDefault();
+    bindAddresses(empCode);
+});
 function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
     if (frm.valid()) {
@@ -91,7 +103,9 @@ function saveBasicDetail(btn) {
         filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
             if (response.success) {
                 $("#btn-avatar-delete").removeClass("d-none");
-                stepper.next();
+                setTimeout(function () {
+                    stepper.next();
+                }, 1000)
                 showSuccessToastr(response.message);
             }
             else {
@@ -101,8 +115,6 @@ function saveBasicDetail(btn) {
         });
     }
 }
-var empCode = $("#Cd").val();
-var visibleEmpName = !empCode ? true : false;
 function bindEducationDataTable() {
     if (!$.fn.DataTable.isDataTable('#EducationsDataTable'))
         window["datatable"] = $('#EducationsDataTable').DataTable(
@@ -579,4 +591,52 @@ function bindComponentClass(e) {
         $("#EdCd").attr("title", "-- Select --");
         $('.select-picker').selectpicker('refresh');
     });
+}
+
+function showAddressModal(empCd, type) {
+    empCd = empCd ? empCd : empCode;
+    var url = `/Employee/GetAddress?empCd=${encodeURI(empCd)}&type=${type}`;
+    $('#AddressModal').load(url, function () {
+        parseDynamicForm();
+        $("#AddressModal").modal("show");
+    });
+}
+function saveAddress(btn) {
+    var frm = $("#address-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Employee/SaveAddress", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#AddressModal").modal("hide");
+                bindAddresses(empCode);
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#AddressModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function deleteAddress(empCd, type) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Employee/DeleteAddress?empCd=${encodeURI(empCd)}&type=${type}`, function (response) {
+                showSuccessToastr(response.message);
+                bindAddresses(empCode);
+            });
+        }
+    });
+}
+function bindAddresses(empCd) {
+    $('#Addresses').load(`/Employee/FetchAddresses?empCd=${encodeURI(empCd)}`);
 }
