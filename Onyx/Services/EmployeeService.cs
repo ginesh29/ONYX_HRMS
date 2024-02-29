@@ -1,8 +1,11 @@
 ﻿using Dapper;
+using ExcelDataReader;
+using Microsoft.AspNetCore.Http;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Onyx.Services
 {
@@ -522,6 +525,66 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        private bool IsValidDateFormat(string dateString)
+        {
+            // Regular expression to match date in "YYYY-MM-DD" format
+            string pattern = @"^\d{4}-\d{2}-\d{2}$";
+            return Regex.IsMatch(dateString, pattern);
+        }
+        public IEnumerable<EmpCalendarExcelModel> GetCalendarEventsFromExcel(IFormFile file, string CoCd)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<EmpCalendarExcelModel>();
+            reader.Read();
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(reader.GetString(i)))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                bool validEmployee = GetEmployees(CoCd, reader.GetString(0)).Any();
+                string errorMessage = string.Empty;
+                if (!validEmployee)
+                    errorMessage += "Employee Code not valid,";
+                var excelData = new EmpCalendarExcelModel
+                {
+                    IsValid = validEmployee,
+                    ErrorMessage = errorMessage,
+                    EmpCd = reader.GetString(0),
+                    Date = reader.GetDateTime(1),
+                    Title = reader.GetString(2),
+                    Holiday = reader.GetBoolean(3),
+                    Narr = reader.GetString(4),
+                };
+                result.Add(excelData);
+            }
+            return result;
+        }
+        public void ImportExcelData(IEnumerable<EmpCalendarExcelModel> excelData, int startSrNo, string EntryBy)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            string query = excelData.Any() ? $@"INSERT INTO [dbo].[EmpCalendar] 
+                ([SrNo],[EmpCd],[Date],[Title],[Holiday],[Narr],[EntryBy],[EntryDt]) VALUES" : null;
+            if (excelData.Any())
+            {
+                foreach (var item in excelData.Select((value, i) => new { i, value }))
+                {
+                    int holiday = item.value.Holiday ? 1 : 0;
+                    query += $"({startSrNo + item.i},'{item.value.EmpCd}','{item.value.Date:yyyy-MM-dd}','{item.value.Title}',{holiday},'{item.value.Narr}','{EntryBy}','{DateTime.Now:yyyy-MM-dd HH:mm:ss}'),";
+                }
+                query = query.Trim([',']);
+            }
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
         }
         #endregion
     }

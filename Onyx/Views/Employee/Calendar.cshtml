@@ -6,10 +6,38 @@
 <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 <div class="card">
     <div class="card-body">
+        <div class="mb-3">
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#CalendarImportModal">Import</button>
+        </div>
         <div id="calendar"></div>
     </div>
 </div>
 <div id="CalendarEventModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="CalendarImportModal" class="modal fade" role="dialog" tabindex='-1'>
+    <div class="modal-dialog modal-xl">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Import Wizard</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="import-frm">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="custom-file">
+                                <input type="file" id="import-file" name="file" onchange="uploadFile()" class="custom-file-input">
+                                <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
+                            </div>
+                            <a href="/formats/Emp_Calendar_Event_Import_Sample.xlsx">Download Sample File</a>
+                        </div>
+                    </div>
+                    <div id="excel-import-data"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts {
     <script src="~/plugins/fullcalendar/main.js"></script>
     <script src="~/plugins/select2/js/select2.full.min.js"></script>

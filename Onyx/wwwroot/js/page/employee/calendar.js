@@ -26,7 +26,8 @@ var calendar = new Calendar(calendarEl, {
         var dt = moment(info.dateStr).format("MM/DD/YYYY");
         setTimeout(function () {
             $("#Date").val(dt);
-        }, 100)
+            $("#Date").prop("readonly", true);
+        }, 300)
     }
 });
 calendar.render();
@@ -85,5 +86,16 @@ function bindEmployeeDropdown(callback) {
         $("#EmpCd").html(html);
         $('.select-picker').selectpicker('refresh');
         callback();
+    });
+}
+function uploadFile() {
+    var frm = $("#import-frm");
+    filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
+        if (!response.includes("not supported")) {
+            $("#excel-import-data").html(response);
+            calendar.refetchEvents();
+        }
+        else
+            showErrorToastr(response);
     });
 }

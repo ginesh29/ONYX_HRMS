@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExcelDataReader;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -751,6 +752,24 @@ namespace Onyx.Controllers
                 Message = CommonMessage.DELETED
             };
             return Json(result);
+        }
+        public IActionResult ImportCalendarEvents(IFormFile file)
+        {
+            try
+            {
+                var excelData = _employeeService.GetCalendarEventsFromExcel(file, _loggedInUser.CompanyCd);
+                var nextSerialNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
+                var validData = excelData.Where(m => m.IsValid);
+                var invalidData = excelData.Where(m => !m.IsValid);
+                string Message = invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                if (validData.Any())
+                    _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
+                return PartialView("_ExcelData", new { Data = excelData, Message });
+            }
+            catch (Exception ex)
+            {
+                return Json("File not supported. Download again & refill data");
+            }
         }
         #endregion
     }

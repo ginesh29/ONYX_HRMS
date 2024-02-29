@@ -8,7 +8,7 @@
         </div>
         <div class="modal-body">
             <form id="calendar-event-frm">
-                <input type="hidden" asp-for="SrNo" />
+                <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
                 <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
                     <label asp-for="EmpCd"></label>
                     <select asp-for="EmpCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
@@ -19,7 +19,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="Date"></label>
-                            <input asp-for="Date" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#ExpiryDate">
+                            <input asp-for="Date" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#Date">
                             <span asp-validation-for="Date" class="text-danger"></span>
                         </div>
                     </div>
