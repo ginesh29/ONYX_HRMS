@@ -485,5 +485,44 @@ namespace Onyx.Services
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
+
+        #region Calendar Event
+        public IEnumerable<EmpCalendar_GetRow_Result> GetCalendarEvents(string empCd)
+        {
+            var procedureName = "EmpCalendar_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpCalendar_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse SaveCalendarEvent(EmpCalendarModel model)
+        {
+            var procedureName = "EmpCalendar_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("@v_SrNo", model.SrNo);
+            parameters.Add("@v_Empcd", model.EmpCd);
+            parameters.Add("@v_Date", model.Date);
+            parameters.Add("v_Holiday", model.Holiday);
+            parameters.Add("@v_Narr", model.Narr);
+            parameters.Add("@v_Title", model.Title);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteCalendarEvent(int srNo)
+        {
+            var procedureName = "EmpCalendar_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", srNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
     }
 }

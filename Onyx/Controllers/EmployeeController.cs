@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System.Text;
 using X.PagedList;
 
 namespace Onyx.Controllers
@@ -688,6 +689,62 @@ namespace Onyx.Controllers
         public IActionResult DeleteBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
         {
             _employeeService.DeleteBankAccount(empCd, bankCd, bankBrCd, srNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Calendar
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+        public IActionResult FetchCalendarEvents(string empCd = "")
+        {
+            var events = _employeeService.GetCalendarEvents(empCd).Select(m => new CalendarModel
+            {
+                Id = m.SrNo.ToString(),
+                AllDay = true,
+                BackgroundColor = "#f56954",
+                BorderColor = "#f56954",
+                Start = m.Date.ToString("yyyy-MM-ddTHH:mm:ss"),
+                Title = m.Title
+            });
+            return Json(events);
+        }
+        public IActionResult GetCalendarEvent(int srNo, string empCd = "")
+        {
+            var calendarEvent = _employeeService.GetCalendarEvents(empCd).FirstOrDefault(m => m.SrNo == srNo);
+            var model = new EmpCalendarModel();
+            if (calendarEvent != null)
+                model = new EmpCalendarModel
+                {
+                    SrNo = calendarEvent.SrNo,
+                    Title = calendarEvent.Title,
+                    EmpCd = calendarEvent.EmpCd,
+                    Date = calendarEvent.Date,
+                    Holiday = calendarEvent.Holiday,
+                    Narr = calendarEvent.Narr,
+                };
+            else
+                model.SrNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
+            return PartialView("_CalendarEventModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveCalendarEvent(EmpCalendarModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _employeeService.SaveCalendarEvent(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteCalendarEvent(int srNo)
+        {
+            _employeeService.DeleteCalendarEvent(srNo);
             var result = new CommonResponse
             {
                 Success = true,
