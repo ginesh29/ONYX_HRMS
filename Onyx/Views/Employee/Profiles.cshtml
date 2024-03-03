@@ -4,11 +4,15 @@
 <div class="card">
     <div class="card-body">
         <div class="mb-3">
-            <a class="btn btn-info" asp-action="Profile" asp-route-cd="">New Employee</a>
+            <div class="d-flex justify-content-between">
+                <a class="btn btn-info" asp-action="Profile" asp-route-cd="">New Employee</a>
+                <button class="btn btn-outline-info" data-toggle="modal" data-target="#EmployeeFilterModal"><i class="fa fa-filter" aria-hidden="true"></i></button>
+            </div>
         </div>
         <div id="EmployeeTableContainer"></div>
     </div>
 </div>
+<partial name="_EmployeeFilterModal" />
 @section scripts {
     <script src="~/js/page/employee/employee-list.js" asp-append-version="true"></script>
 }

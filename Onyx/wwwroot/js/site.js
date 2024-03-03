@@ -268,7 +268,8 @@ $("#company-dropdown").change(function (e) {
 function initControls() {
     $(".select-picker").attr("data-live-search", true);
     $(".select-picker").attr("title", "-- Select --");
-    $(".select-picker").selectpicker();
+    $(".filter-select-picker").attr("title", "-- All --");
+    $(".select-picker,.filter-select-picker").selectpicker();
     $('.date-input').attr("placeholder", "mm/dd/yyyy");
     $('.date-input').datetimepicker({
         format: 'L'

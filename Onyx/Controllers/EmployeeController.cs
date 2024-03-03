@@ -1,5 +1,6 @@
 ﻿using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -30,22 +31,55 @@ namespace Onyx.Controllers
         }
         public IActionResult Profiles()
         {
+            ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.StatusItems = _commonService.GetStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations, string term)
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, departments, designations, branches, locations);
-            if (!string.IsNullOrEmpty(term))
-                employees = employees.Where(m => m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Department.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Desg.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Branch.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Location.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
+            var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
+            var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
+            var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
+            var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => m.Active == "Y");
+            if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
+                employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
             return Json(employees);
         }
-        public IActionResult FetchEmployees(int? page)
+        public IActionResult FetchEmployees(int? page, EmployeeFilterModel filterModel)
         {
+            filterModel ??= new EmployeeFilterModel();
             int pageNumber = page ?? 1;
             int pageSize = 9;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd);
-            var pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
-            return PartialView("_EmployeesList", pagedEmployees);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, "");
+            var filteredEmployees = employees.Where(e =>
+    (filterModel.Branches == null || !filterModel.Branches.Any() || (e.BranchCd != null && filterModel.Branches.Contains(e.BranchCd.Trim()))) &&
+    (filterModel.Departments == null || !filterModel.Departments.Any() || (e.DepartmentCd != null && filterModel.Departments.Contains(e.DepartmentCd.Trim()))) &&
+    (filterModel.Sponsors == null || !filterModel.Sponsors.Any() || (e.SponsorCd != null && filterModel.Sponsors.Contains(e.SponsorCd.Trim()))) &&
+    (filterModel.Designations == null || !filterModel.Designations.Any() || (e.Desg != null && filterModel.Designations.Contains(e.Desg.Trim())))
+);
+            //filteredEmployees = filteredEmployees.Where(m => m.Active == "Y");
+            var pagedEmployees = filteredEmployees.ToPagedList(pageNumber, pageSize);
+            return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
         public IActionResult Profile(string Cd)
         {

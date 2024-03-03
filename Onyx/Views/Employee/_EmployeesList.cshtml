@@ -1,12 +1,14 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using X.PagedList.Web.Common
-@model PagedList<Employee_GetRow_Result>
+@model dynamic
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+    var data = (PagedList<Employee_GetRow_Result>)Model.Data;
+    var filterModel = (EmployeeFilterModel)Model.FilterModel;
 }
 <div class="row" id="EmployeeGrid">
-    @foreach (var item in Model)
+    @foreach (var item in data)
     {
         var avatarFileExist = item.ImageFilePath.FileExist("emp-photo", companyCd);
         var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImageFilePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImageFilePath}" : "/images/avatar.png";
@@ -47,9 +49,31 @@
     }
 </div>
 <div class="d-flex justify-content-between">
-    <div> Showing @((Model.PageNumber - 1) * Model.PageSize + 1) to @(Model.PageNumber * Model.PageSize) of @Model.TotalItemCount entries</div>
     <div>
-        @Html.PagedListPager(Model, page => Url.Action("FetchEmployees", new { page }), new PagedListRenderOptions
+        @{
+            var startRange = (data.PageNumber - 1) * data.PageSize + 1;
+            var endRange = startRange + (data.Count - 1);
+            var totalItemCount = data.TotalItemCount;
+
+            if (totalItemCount == 0)
+            {
+                startRange = 0;
+                endRange = 0;
+            }
+            else if (data.Count == 1)
+            {
+                endRange = startRange;
+            }
+            else if (data.Count < data.PageSize)
+            {
+                endRange = startRange + (data.Count - 1);
+            }
+        }
+
+        Showing @startRange to @endRange of @totalItemCount entries
+    </div>
+    <div>
+        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new { page, Departments = filterModel.Departments, Designations = filterModel.Designations, Branches = filterModel.Branches, Sponsors = filterModel.Sponsors, EmployeeType = filterModel.EmployeeType, LeaveStatus = filterModel.LeaveStatus, EmployeeStatus = filterModel.EmployeeStatus }), new PagedListRenderOptions
    {
        DisplayLinkToFirstPage = PagedListDisplayMode.Never,
        DisplayLinkToLastPage = PagedListDisplayMode.Never,

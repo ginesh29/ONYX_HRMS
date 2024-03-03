@@ -25,7 +25,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string Cd = "", string departments = "0", string designations = "0", string branches = "0", string locations = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string Cd = "", string departments = "0", string designations = "0", string branches = "0", string locations = "0", string sponsors = "0", string status = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
@@ -37,10 +37,10 @@ namespace Onyx.Services
             parameters.Add("v_RowsCnt", "2");
             parameters.Add("v_Div", branches ?? "0");
             parameters.Add("v_Dept", departments ?? "0");
-            parameters.Add("v_Sponsor", "0");
+            parameters.Add("v_Sponsor", sponsors ?? "0");
             parameters.Add("v_Designation", designations ?? "0");
             parameters.Add("v_Location", locations ?? "0");
-            parameters.Add("v_Status", "0");
+            parameters.Add("v_Status", status ?? "0");
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -525,12 +525,6 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }
-        private bool IsValidDateFormat(string dateString)
-        {
-            // Regular expression to match date in "YYYY-MM-DD" format
-            string pattern = @"^\d{4}-\d{2}-\d{2}$";
-            return Regex.IsMatch(dateString, pattern);
         }
         public IEnumerable<EmpCalendarExcelModel> GetCalendarEventsFromExcel(IFormFile file, string CoCd)
         {
