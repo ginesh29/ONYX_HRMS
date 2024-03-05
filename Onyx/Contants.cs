@@ -40,7 +40,7 @@
         public const string UPDATED = "Updated Successfully";
         public const string DELETED = "Deleted Successfully";
         public const string SELECTROW = "Please select a record for Edit or Delete";
-        public const string EMPTYGRID = "Nothing to Display";
+        public const string EMPTYGRID = "No data available";
         public const string INVALIDUSER = "Invalid Username or Password";
         public const string NOTHING = "Nothing to Display.";
         public const string LYSERVERUPDATED = "Loyalty Server is updated";

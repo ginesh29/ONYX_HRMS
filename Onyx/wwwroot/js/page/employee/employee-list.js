@@ -22,5 +22,6 @@ function filterEmployee(btn) {
 function resetFilter() {
     var frm = $('#employee-filter-frm');
     frm.find("input").val("");
+    frm.find(".filter-select-picker").val('').selectpicker('refresh');
     frm.find(".filter-select-picker").selectpicker('deselectAll');
 }

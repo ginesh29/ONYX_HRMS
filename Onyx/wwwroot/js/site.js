@@ -266,7 +266,7 @@ $("#company-dropdown").change(function (e) {
     });
 })
 function initControls() {
-    $(".select-picker").attr("data-live-search", true);
+    $(".select-picker,.filter-select-picker").attr("data-live-search", true);
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();

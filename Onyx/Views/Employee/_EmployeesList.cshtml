@@ -46,8 +46,12 @@
                 </div>
             </div>
         </div>
-    }
+    }    
 </div>
+@if (data.Count == 0)
+{
+    <span>@CommonMessage.EMPTYGRID</span>
+}
 <div class="d-flex justify-content-between">
     <div>
         @{
