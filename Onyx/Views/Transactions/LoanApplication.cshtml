@@ -1,0 +1,117 @@
+﻿@model EmpLoanModel
+@{
+    ViewData["Title"] = "Loan Application";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-6 form-border-right">
+            <form id="loan-application-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group disabled-container">
+                            <label asp-for="TransNo"></label>
+                            <input asp-for="TransNo" class="form-control disabled" value="@ViewBag.TransactionNextNo" />
+                            <span asp-validation-for="TransNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
+                            <label asp-for="EmployeeCode"></label>
+                            <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                            </select>
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LoanTypeCd"></label>
+                            <select asp-for="LoanTypeCd" class="form-control select-picker" asp-items="ViewBag.LoanTypeItems"></select>
+                            <span asp-validation-for="LoanTypeCd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransDt"></label>
+                            <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
+                            <span asp-validation-for="TransDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Amt"></label>
+                            <input asp-for="Amt" class="form-control decimal-input" />
+                            <span asp-validation-for="Amt" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NoInstReq"></label>
+                            <input asp-for="NoInstReq" class="form-control int-input" />
+                            <span asp-validation-for="NoInstReq" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="GuarantorName"></label>
+                            <input asp-for="GuarantorName" class="form-control" />
+                            <span asp-validation-for="GuarantorName" class=" text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="GuarantorDetails"></label>
+                            <input asp-for="GuarantorDetails" class="form-control" />
+                            <span asp-validation-for="GuarantorDetails" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Purpose"></label>
+                    <textarea asp-for="Purpose" class="form-control"></textarea>
+                    <span asp-validation-for="Purpose" class="text-danger"></span>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-info" onclick="saveLoanApplication(this)">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function bindEmployeeDropdown() {
+            $("#EmployeeCode").empty();
+            getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+                var html = ''
+                $.each(response, function (i, item) {
+                    html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+                })
+                $("#EmployeeCode").html(html);
+                $('.select-picker').selectpicker('refresh');
+            });
+        }
+        function saveLoanApplication(btn) {
+            var frm = $("#loan-application-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveLoanApplication", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+        bindEmployeeDropdown();
+    </script>
+}

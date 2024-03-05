@@ -1,0 +1,89 @@
+﻿@model EmployeeFundModel
+@{
+    ViewData["Title"] = "Fund Request Application";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-6 form-border-right">
+            <form id="fund-request-application-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group disabled-container">
+                            <label asp-for="TransNo"></label>
+                            <input asp-for="TransNo" class="form-control disabled" value="@ViewBag.TransactionNextNo" />
+                            <span asp-validation-for="TransNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
+                            <label asp-for="EmployeeCode"></label>
+                            <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                            </select>
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransDt"></label>
+                            <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
+                            <span asp-validation-for="TransDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Type"></label>
+                            <select asp-for="Type" class="form-control select-picker" asp-items="ViewBag.FundTypeItems"></select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Amount"></label>
+                            <input asp-for="Amount" class="form-control decimal-input" />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-info" onclick="saveFundRequestApplication(this)">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function bindEmployeeDropdown() {
+            $("#EmployeeCode").empty();
+            getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+                var html = ''
+                $.each(response, function (i, item) {
+                    html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+                })
+                $("#EmployeeCode").html(html);
+                $('.select-picker').selectpicker('refresh');
+            });
+        }
+        function saveFundRequestApplication(btn) {
+            var frm = $("#fund-request-application-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveFundRequestApplication", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+        bindEmployeeDropdown();
+    </script>
+}

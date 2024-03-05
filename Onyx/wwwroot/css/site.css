@@ -2,7 +2,10 @@
 .layout-fixed .brand-link {
     width: 265px;
 }
-
+.form-border-right {
+    border-right: 1px solid #ced4da;
+    padding-right: 15px
+}
 .pagination-container .pagination {
     margin-bottom: 0;
 }

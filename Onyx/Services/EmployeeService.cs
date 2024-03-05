@@ -1,11 +1,9 @@
 ﻿using Dapper;
 using ExcelDataReader;
-using Microsoft.AspNetCore.Http;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions;
 
 namespace Onyx.Services
 {

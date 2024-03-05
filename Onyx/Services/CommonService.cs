@@ -138,6 +138,20 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public int SetActivityLogDetail(string ActivityId, string ProcessId, string ActivityAbbr, string Message)
+        {
+            var procedureName = "ActivityLogDetail_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_ActivityId", ActivityId);
+            parameters.Add("v_ProcessId", ProcessId);
+            parameters.Add("v_ActivityAbbr", ActivityAbbr);
+            parameters.Add("v_Mesg", Message);
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            int result = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         public Parameters_GetRow_Result GetJobCardStartAndEndTime(string CoCd, string Cd)
         {
             var connectionString = GetConnectionString();
@@ -235,6 +249,15 @@ namespace Onyx.Services
             };
             return calculationTypes;
         }
+        public IEnumerable<SelectListItem> GetIntLocalTypes()
+        {
+            var calculationTypes = new List<SelectListItem>()
+            {
+                new() {Text="International", Value="I",Selected=true},
+                new() { Text="Local", Value="L"},
+            };
+            return calculationTypes;
+        }
         public IEnumerable<SelectListItem> GetYears(int startYear)
         {
             var years = new List<SelectListItem>();
@@ -270,7 +293,7 @@ namespace Onyx.Services
                 new() { Text="After", Value="A"},
             };
             return beforeAfter;
-        }
+        }        
         public int GetNext_SrNo(string tableName, string fileldName)
         {
             var query = $"SELECT Isnull(Max({fileldName}),0)+1 AS NextID FROM {tableName};";

@@ -15,6 +15,7 @@ builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<EmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
+builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

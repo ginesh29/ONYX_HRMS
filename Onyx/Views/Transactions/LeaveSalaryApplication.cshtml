@@ -1,0 +1,89 @@
+﻿@model EmpLeaveSalaryModel
+@{
+    ViewData["Title"] = "Leave Salary Application";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-6 form-border-right">
+            <form id="leave-salary-application-frm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group disabled-container">
+                            <label asp-for="TransNo"></label>
+                            <input asp-for="TransNo" class="form-control disabled" value="@ViewBag.TransactionNextNo" />
+                            <span asp-validation-for="TransNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
+                            <label asp-for="EmployeeCode"></label>
+                            <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                            </select>
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransDt"></label>
+                            <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
+                            <span asp-validation-for="TransDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LvSalary"></label>
+                            <input asp-for="LvSalary" class="form-control decimal-input" />
+                            <span asp-validation-for="LvSalary" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LvTicket"></label>
+                            <input asp-for="LvTicket" class="form-control decimal-input" />
+                            <span asp-validation-for="LvTicket" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-info" onclick="saveLeaveApplication(this)">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function bindEmployeeDropdown() {
+            $("#EmployeeCode").empty();
+            getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+                var html = ''
+                $.each(response, function (i, item) {
+                    html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+                })
+                $("#EmployeeCode").html(html);
+                $('.select-picker').selectpicker('refresh');
+            });
+        }
+        function saveLeaveApplication(btn) {
+            var frm = $("#leave-salary-application-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveLeaveSalaryApplication", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+        bindEmployeeDropdown();
+    </script>
+}

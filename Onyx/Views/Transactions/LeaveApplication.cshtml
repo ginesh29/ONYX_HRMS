@@ -1,0 +1,128 @@
+﻿@model EmpLeaveModel
+@{
+    ViewData["Title"] = "Leave Application";
+    var IntLocalTypeItems = (List<SelectListItem>)ViewBag.IntLocalTypeItems;
+}
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-6 form-border-right">
+            <form id="Leave-application-frm">
+                <input type="hidden" asp-for="FromDt" />
+                <input type="hidden" asp-for="ToDt" />
+                <input type="hidden" asp-for="LvTaken" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group disabled-container">
+                            <label asp-for="TransNo"></label>
+                            <input asp-for="TransNo" class="form-control disabled" value="@ViewBag.TransactionNextNo" />
+                            <span asp-validation-for="TransNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
+                            <label asp-for="EmployeeCode"></label>
+                            <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                            </select>
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LeaveType"></label>
+                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems"></select>
+                            <span asp-validation-for="LeaveType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransDt"></label>
+                            <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
+                            <span asp-validation-for="TransDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IntLocal"></label>
+                    <div>
+                        @foreach (var item in IntLocalTypeItems)
+                        {
+                            <label class="radio-inline mb-0">
+                                <label class="custom-control custom-radio">
+                                    <input type="radio" asp-for="IntLocal" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="intlocal_@item.Value" value="@item.Value" checked="@item.Selected">
+                                    <label for="intlocal_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
+                                </label>
+                            </label>
+                        }
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DateRange"></label><span class="ml-2" id="lvDays"></span>
+                            <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
+                            <span asp-validation-for="DateRange" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Reason"></label>
+                    <textarea asp-for="Reason" class="form-control"></textarea>
+                    <span asp-validation-for="Reason" class="text-danger"></span>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-info" onclick="saveLeaveApplication(this)">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $('#DateRange').daterangepicker({
+            autoUpdateInput: false
+        });
+        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format('MM/DD/YYYY');
+            var endDate = picker.endDate.format('MM/DD/YYYY');
+            var lvDays = picker.endDate.diff(picker.startDate, 'days');
+            $("#lvDays").text(`(${lvDays} days)`);
+            $("#LvTaken").val(lvDays);
+            $(this).val(startDate + ' - ' + endDate);
+            $("#FromDt").val(startDate);
+            $("#ToDt").val(endDate);
+        });
+        $('#DateRange').on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+        function bindEmployeeDropdown() {
+            $("#EmployeeCode").empty();
+            getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+                var html = ''
+                $.each(response, function (i, item) {
+                    html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+                })
+                $("#EmployeeCode").html(html);
+                $('.select-picker').selectpicker('refresh');
+            });
+        }
+        function saveLeaveApplication(btn) {
+            var frm = $("#Leave-application-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveLeaveApplication", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+        bindEmployeeDropdown();
+    </script>
+}
