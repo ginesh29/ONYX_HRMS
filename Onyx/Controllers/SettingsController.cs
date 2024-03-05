@@ -163,6 +163,8 @@ namespace Onyx.Controllers
                     Name = department.Department,
                     Description = department.Description,
                 };
+            else
+                model.Code = _settingService.GetDepartment_SrNo();
             return PartialView("_DepartmentModal", model);
         }
         [HttpPost]

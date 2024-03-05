@@ -68,7 +68,6 @@ function saveBranch(btn) {
             }
             else {
                 showErrorToastr(response.message);
-                $("#BranchModal").modal("hide");
             }
             unloadingButton(btn);
         });
