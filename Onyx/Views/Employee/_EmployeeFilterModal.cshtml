@@ -13,27 +13,28 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Name"></label>
-                                <input asp-for="Name" type="text" class="form-control" id="Filter-Name" />
+                                <input asp-for="Name" type="text" class="form-control" />
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Branches"></label>
-                                <select class="form-control filter-select-picker" id="Branches-Filter" asp-for="Branches" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.BranchItems"></select>
+                                <select class="form-control filter-select-picker" asp-for="Branches" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.BranchItems"></select>
                             </div>
                         </div>
+
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Departments"></label>
-                                <select asp-for="Departments" class="form-control filter-select-picker" id="Filter-Departments" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.DepartmentItems"></select>
+                                <select asp-for="Departments" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.DepartmentItems"></select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Sponsors"></label>
-                                <select asp-for="Sponsors" class="form-control filter-select-picker" id="Filter-Sponsors" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.SponsorItems"></select>
+                                <select asp-for="Sponsors" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.SponsorItems"></select>
                             </div>
                         </div>
                     </div>
@@ -41,13 +42,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Designations"></label>
-                                <select asp-for="Designations" class="form-control filter-select-picker" id="Filter-Designations" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.DesignationItems"></select>
+                                <select asp-for="Designations" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.DesignationItems"></select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="EmployeeType"></label>
-                                <select asp-for="EmployeeType" type="text" class="form-control filter-select-picker" id="Filter-Status" asp-items="ViewBag.StatusItems"></select>
+                                <label asp-for="EmployeeTypes"></label>
+                                <select asp-for="EmployeeTypes" type="text" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.EmpTypeItems"></select>
                             </div>
                         </div>
                     </div>
@@ -55,19 +56,20 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="LeaveStatus"></label>
-                                <select asp-for="LeaveStatus" class="form-control filter-select-picker" id="Filter-Designations" asp-items="ViewBag.DesignationItems"></select>
+                                <select asp-for="LeaveStatus" class="form-control filter-select-picker" asp-items="ViewBag.LeaveStatusItems"></select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="EmployeeStatus"></label>
-                                <select asp-for="EmployeeStatus" type="text" class="form-control filter-select-picker" id="Filter-Status" asp-items="ViewBag.StatusItems"></select>
+                                <select asp-for="EmployeeStatus" type="text" class="form-control filter-select-picker" asp-items="ViewBag.EmployeeStatusItems"></select>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="resetFilter()">Reset</button>
                 <button class="btn btn-info" onclick="filterEmployee(this)">Search</button>
             </div>
         </div>

@@ -229,7 +229,7 @@ namespace Onyx.Services
             };
             return percentageAmtTypes;
         }
-        public IEnumerable<SelectListItem> GetStatusTypes()
+        public IEnumerable<SelectListItem> GetLeaveStatusTypes()
         {
             var statusTypes = new List<SelectListItem>()
             {
@@ -237,6 +237,16 @@ namespace Onyx.Services
                 new() { Text="Leave requested", Value="LR"},
                 new() {Text="Leave approved", Value="LA"},
                 new() { Text="On Leave", Value="OL"}};
+            return statusTypes;
+        }
+        public IEnumerable<SelectListItem> GetEmployeeStatusTypes()
+        {
+            var statusTypes = new List<SelectListItem>()
+            {
+                new() {Text="Active", Value="Y"},
+                new() { Text="In Active", Value="N"},
+                new() {Text="Resigned", Value="R"}
+            };
             return statusTypes;
         }
         public IEnumerable<SelectListItem> GetCalulationBasisTypes()
@@ -293,7 +303,7 @@ namespace Onyx.Services
                 new() { Text="After", Value="A"},
             };
             return beforeAfter;
-        }        
+        }
         public int GetNext_SrNo(string tableName, string fileldName)
         {
             var query = $"SELECT Isnull(Max({fileldName}),0)+1 AS NextID FROM {tableName};";

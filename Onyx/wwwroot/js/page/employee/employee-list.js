@@ -4,7 +4,7 @@
         $("#page-loader").addClass("d-none");
     });
 }
-var url = `/Employee/FetchEmployees?init=true`;
+var url = `/Employee/FetchEmployees`;
 BindEmployeeGrid(url);
 $(document).on('click', '.pagination a', function (e) {
     e.preventDefault();
@@ -18,4 +18,9 @@ function filterEmployee(btn) {
     BindEmployeeGrid(url);
     unloadingButton(btn);
     $("#EmployeeFilterModal").modal("hide");
+}
+function resetFilter() {
+    var frm = $('#employee-filter-frm');
+    frm.find("input").val("");
+    frm.find(".filter-select-picker").selectpicker('deselectAll');
 }

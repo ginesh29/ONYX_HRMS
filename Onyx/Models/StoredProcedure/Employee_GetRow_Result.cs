@@ -67,6 +67,7 @@ namespace Onyx.Models.StoredProcedure
         public string OTEligible { get; set; }
         public decimal? Leaveperiod { get; set; }
         public string TradeCode { get; set; }
+        public string EmpTyp { get; set; }
         public string EmpType { get; set; }
         public string ApprCd { get; set; }
         public string BasicCurr { get; set; }

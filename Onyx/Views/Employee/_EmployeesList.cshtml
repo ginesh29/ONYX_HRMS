@@ -73,7 +73,7 @@
         Showing @startRange to @endRange of @totalItemCount entries
     </div>
     <div>
-        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new { page, Departments = filterModel.Departments, Designations = filterModel.Designations, Branches = filterModel.Branches, Sponsors = filterModel.Sponsors, EmployeeType = filterModel.EmployeeType, LeaveStatus = filterModel.LeaveStatus, EmployeeStatus = filterModel.EmployeeStatus }), new PagedListRenderOptions
+        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new { page, Departments = filterModel.Departments, Designations = filterModel.Designations, Branches = filterModel.Branches, Sponsors = filterModel.Sponsors, EmployeeType = filterModel.EmployeeTypes, LeaveStatus = filterModel.LeaveStatus, EmployeeStatus = filterModel.EmployeeStatus }), new PagedListRenderOptions
    {
        DisplayLinkToFirstPage = PagedListDisplayMode.Never,
        DisplayLinkToLastPage = PagedListDisplayMode.Never,

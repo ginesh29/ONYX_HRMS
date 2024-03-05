@@ -48,7 +48,13 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.StatusItems = _commonService.GetStatusTypes();
+            ViewBag.EmpTypeItems = _commonService.GetCodesGroups("J_ET").Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            ViewBag.LeaveStatusItems = _commonService.GetLeaveStatusTypes();
+            ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
@@ -66,20 +72,31 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             int pageSize = 9;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd);
-            var filteredEmployees = employees.Where(employee =>
-            (string.IsNullOrEmpty(filterModel.Name) || employee.Name.Contains(filterModel.Name)) ||
-            (filterModel.Branches.Count == 0 || filterModel.Branches.Contains(employee.Branch)) ||
-            (filterModel.Departments.Count == 0 || filterModel.Departments.Contains(employee.Department)) ||
-            (filterModel.Sponsors.Count == 0 || filterModel.Sponsors.Contains(employee.Sponsor)) ||
-            (filterModel.Designations.Count == 0 || filterModel.Designations.Contains(employee.Designation)) 
-            //||
-            //(string.IsNullOrEmpty(filterModel.EmployeeType) || employee.EmployeeType == filterModel.EmployeeType) ||
-            //(string.IsNullOrEmpty(filterModel.LeaveStatus) || employee.LeaveStatus == filterModel.LeaveStatus) ||
-            //(string.IsNullOrEmpty(filterModel.EmployeeStatus) || employee.EmployeeStatus == filterModel.EmployeeStatus)
-        );
-
-            var pagedEmployees = filteredEmployees.ToPagedList(pageNumber, pageSize);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.LeaveStatus);
+            bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null;
+            if (isFilter)
+            {
+                employees = employees.Where(e =>
+                 (!string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Contains(filterModel.Name))
+                 ||
+                 (!string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Contains(filterModel.Name))
+                 ||
+                 (filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim()))
+                 ||
+                 (filterModel.Designations.Count > 0 && filterModel.Designations.Contains(e.Desg?.Trim()))
+                 ||
+                 (filterModel.Branches.Count > 0 && filterModel.Branches.Contains(e.BranchCd?.Trim()))
+                 ||
+                 (filterModel.Sponsors.Count > 0 && filterModel.Sponsors.Contains(e.SponsorCd?.Trim()))
+                 ||
+                 (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
+                 ||
+                 (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
+                );
+            }
+            if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
+                employees = employees.Where(m => m.Active == "Y");
+            var pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
         public IActionResult Profile(string Cd)
@@ -215,7 +232,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
             });
-            ViewBag.StatusItems = _commonService.GetStatusTypes();
+            ViewBag.StatusItems = _commonService.GetLeaveStatusTypes();
             ViewBag.EmpTypeItems = _commonService.GetCodesGroups("J_ET").Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
