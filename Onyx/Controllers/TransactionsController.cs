@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -150,6 +151,88 @@ namespace Onyx.Controllers
                 Message = "Fund request applied successfully"
             };
             return Json(result);
+        }
+        #endregion
+
+        #region Leave Transaction
+        public IActionResult EmpLeaveApprovals()
+        {
+            return View();
+        }
+        public IActionResult FetchEmpLeaveApprovalData()
+        {
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = leaveData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpLeaveApproval(string transNo)
+        {
+            var model = new EmpLeaveApprovalModel();
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            if (leaveData != null)
+            {
+                model = new EmpLeaveApprovalModel()
+                {
+                    TransNo = transNo,
+                    EmpCd = leaveData.EmpCd,
+                    Emp = leaveData.Emp,
+                    Desg = leaveData.Desg,
+                    Branch = leaveData.Branch,
+                    TransDt = leaveData.TransDt,
+                    LvTyp = leaveData.LvTyp,
+                    LvFrom = leaveData.LvFrom,
+                    LvTo = leaveData.LvTo,
+                    LvDateRange = $"{Convert.ToDateTime(leaveData.LvFrom).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(leaveData.LvTo).ToString(CommonSetting.DateFormat)}",
+                    LvDays = (Convert.ToDateTime(leaveData.LvTo) - Convert.ToDateTime(leaveData.LvFrom)).Days,
+                    Reason = leaveData.Reason,
+                    Current_Approval_Level = leaveData.Current_Approval_Level,
+                    ApprDt = DateTime.Now,
+                };
+            }
+            return PartialView("_EmpLeaveApprovalModal", model);
+        }
+        public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model)
+        {
+            model.ApprBy = _loggedInUser.UserAbbr;
+            model.ApprDays = model.LvDays + model.WopLvDays;
+            _transactionService.SaveLeaveApproval(model);
+            var ProcessId = "HRPT11";
+            var ActivityAbbr = "UPD";
+            var Message = $", Leave is accepted With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Leave approved successfully"
+            };
+            return Json(result);
+        }
+        public IActionResult EmpLeaveConfirmReviseCancel()
+        {
+            return View();
+        }
+        public IActionResult FetchEmpLeaveData()
+        {
+            var leaveData = _transactionService.GetEmpLeaveData();
+            CommonResponse result = new()
+            {
+                Data = leaveData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpLeaveConfirm(string transNo, string type)
+        {
+            var leaveData = _transactionService.GetEmpLeaveData(transNo).FirstOrDefault();
+
+            ViewBag.Type = type;
+            return PartialView("_EmpLeaveConfirmModal", leaveData);
+        }
+        public IActionResult EmpDutyResumption()
+        {
+            return View();
         }
         #endregion
     }

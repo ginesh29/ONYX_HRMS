@@ -1,0 +1,68 @@
+﻿@model EmpLeaveApprovalModel
+<div class="modal-dialog" style="max-width:850px">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Leave Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6 form-border-right">
+                    <h5 class="text-primary">Application Details</h5>
+                    <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+                    <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+                    <div><span class="font-weight-bold">Designation: </span>@Model.Desg</div>
+                    <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
+                    <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.TransDt).ToString(CommonSetting.DateFormat)</div>
+                    <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
+                    <div><span class="font-weight-bold">Date Range: </span>@Model.LvDateRange (@Model.LvDays days)</div>
+                    <div><span class="font-weight-bold">Reason: </span>@Model.Reason</div>
+                </div>
+                <div class="col-md-6 pl-3">
+                    <h5 class="text-primary">Approval Details</h5>
+                    <form id="leave-approval-frm">
+                        <input type="hidden" asp-for="TransNo" />
+                        <input type="hidden" asp-for="Current_Approval_Level" />
+                        <input type="hidden" asp-for="ApprDt" />
+                        <input type="hidden" asp-for="Status" />
+                        <div id="approval-div">
+                            <input type="hidden" asp-for="LvFrom" />
+                            <input type="hidden" asp-for="LvTo" />
+                            <input type="hidden" asp-for="LvDays" />
+                            <input type="hidden" asp-for="WopFrom" />
+                            <input type="hidden" asp-for="WopTo" />
+                            <input type="hidden" asp-for="WopLvDays" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="LvDateRange"></label><span id="LvDays-txt">(@Model.LvDays days)</span>
+                                        <input asp-for="LvDateRange" class="form-control" />
+                                        <span asp-validation-for="LvDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="WopDateRange"></label><span id="WopLvDays-txt"></span>
+                                        <input asp-for="WopDateRange" class="form-control" />
+                                        <span asp-validation-for="WopDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Remark"></label>
+                            <textarea asp-for="Remark" class="form-control"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                        <div><span class="font-weight-bold">Total Leave Days: </span> <span id="totalLvDays">@Model.LvDays</span></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLeaveApproval(this)" id="btn-submit">Approve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

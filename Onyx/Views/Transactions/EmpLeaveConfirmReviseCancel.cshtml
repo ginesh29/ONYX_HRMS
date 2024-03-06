@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Employee Leave Confirm/Revise/Cancel";
+}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="EmployeeLeavesDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Employee</th>                   
+                    <th>Date Range</th>
+                    <th>Leave Type</th>
+                    <th>Applied Date</th>
+                    <th>Designation</th>
+                    <th>Branch</th>
+                    <th>Appr./Rej. By</th>
+                    <th>Appr./Rej. Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmployeeLeaveConfirmModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/transactions/leave.js" asp-append-version="true"></script>
+}

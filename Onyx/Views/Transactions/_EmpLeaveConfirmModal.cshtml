@@ -1,0 +1,127 @@
+﻿@model EmpLeave_View_GetRow_Result
+@{
+    var fromDt = Convert.ToDateTime(Model.FromDt).ToString(CommonSetting.DateFormat);
+    var toDt = Convert.ToDateTime(Model.ToDt).ToString(CommonSetting.DateFormat);
+    var lvDays = (Convert.ToDateTime(Model.ToDt) - Convert.ToDateTime(Model.FromDt)).Days;
+}
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Leave Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="leave-approval-frm">
+                <div class="row">
+                    <div class="col-md-6 form-border-right">
+                        <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+                        <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+                        <div><span class="font-weight-bold">Designation: </span>@Model.Designation</div>
+                        <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
+                        <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.AppDt).ToString(CommonSetting.DateFormat)</div>
+                        <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
+                        <div><span class="font-weight-bold">Date Range: </span>@fromDt - @toDt (@lvDays days)</div>
+                        @* <div><span>Reason: </span>@Model.r</div> *@
+                    </div>
+                    <div class="col-md-6 pl-3">
+                        <h5 class="text-primary">Approval Details</h5>
+                    </div>
+                </div>
+                @*  <div class="row">
+                <div class="col-md-6">
+                <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
+                <label asp-for="BankCd"></label>
+                <select asp-for="BankCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled" : "")" asp-items="ViewBag.BankItems">
+                </select>
+                <span asp-validation-for="BankCd" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
+                <label asp-for="BranchCd"></label>
+                <select asp-for="BranchCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BranchCd) ? "disabled" : "")" asp-items="ViewBag.BranchItems">
+                </select>
+                <span asp-validation-for="BranchCd" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Swift"></label>
+                <input asp-for="Swift" class="form-control" />
+                <span asp-validation-for="Swift" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Contact"></label>
+                <input asp-for="Contact" class="form-control" />
+                <span asp-validation-for="Contact" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Phone"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Address1"></label>
+                <input asp-for="Address1" class="form-control" />
+                <span asp-validation-for="Address1" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Address2"></label>
+                <input asp-for="Address2" class="form-control" />
+                <span asp-validation-for="Address2" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Address3"></label>
+                <input asp-for="Address3" class="form-control" />
+                <span asp-validation-for="Address3" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Fax"></label>
+                <input asp-for="Fax" class="form-control" />
+                <span asp-validation-for="Fax" class="text-danger"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                </div>
+                </div>
+                <div class="form-group">
+                <label asp-for="URL"></label>
+                <input asp-for="URL" class="form-control" />
+                <span asp-validation-for="URL" class="text-danger"></span>
+                </div> *@
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveBank(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
