@@ -10,11 +10,10 @@
         Before = 1,
         After = 2
     }
-    public enum SalutationEnum
+    public enum LeaveCofirmTypeEnum
     {
-        Mr,
-        Mrs,
-        Miss,
-        Dr
+        Confirm,
+        Revise,
+        Cancel,
     }
 }

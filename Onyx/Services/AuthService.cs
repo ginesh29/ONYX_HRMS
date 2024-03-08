@@ -15,9 +15,10 @@ namespace Onyx.Services
                 new("Username", model.Username),
                 new("UserAbbr", model.UserAbbr),
                 new("LoginId", model.LoginId),
-                new("UserCd",model.UserCd),
                 new("UserType",model.UserType.ToString()),
-                new("Browser", model.Browser)
+                new("Browser", model.Browser),
+                new("UserCd", model.UserCd),
+                new("UserOrEmployee", model.UserOrEmployee)
             };
             if (!string.IsNullOrEmpty(model.CompanyCd))
             {
@@ -47,6 +48,7 @@ namespace Onyx.Services
                 var claims = auth.Principal.Claims;
                 if (claims.Any())
                 {
+                    user.UserOrEmployee = claims.FirstOrDefault(m => m.Type == "UserOrEmployee")?.Value;
                     user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
                     user.UserAbbr = claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value;
                     user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;

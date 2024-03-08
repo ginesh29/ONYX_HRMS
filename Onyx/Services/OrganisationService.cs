@@ -874,7 +874,7 @@ namespace Onyx.Services
             parameters.Add("v_ApplTyp", applTypCd);
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
-            parameters.Add("v_typ", "0");
+            parameters.Add("v_typ", "1");
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<CompanyProcessApproval_GetRow>

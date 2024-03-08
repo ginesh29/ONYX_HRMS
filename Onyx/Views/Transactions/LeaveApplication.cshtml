@@ -18,14 +18,21 @@
                             <span asp-validation-for="TransNo" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
-                            <label asp-for="EmployeeCode"></label>
-                            <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
-                            </select>
-                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                    @if (ViewBag.EmpCd == null)
+                    {
+                        <div class="col-md-6">
+                            <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
+                                <label asp-for="EmployeeCode"></label>
+                                <select asp-for="EmployeeCode" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                                </select>
+                                <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                            </div>
                         </div>
-                    </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="EmployeeCode" value="@ViewBag.EmpCd" />
+                    }
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -38,7 +45,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="TransDt"></label>
-                            <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
+                            <input asp-for="TransDt" value="@DateTime.Now" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
                             <span asp-validation-for="TransDt" class="text-danger"></span>
                         </div>
                     </div>

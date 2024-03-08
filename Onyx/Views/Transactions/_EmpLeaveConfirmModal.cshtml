@@ -1,10 +1,5 @@
-﻿@model EmpLeave_View_GetRow_Result
-@{
-    var fromDt = Convert.ToDateTime(Model.FromDt).ToString(CommonSetting.DateFormat);
-    var toDt = Convert.ToDateTime(Model.ToDt).ToString(CommonSetting.DateFormat);
-    var lvDays = (Convert.ToDateTime(Model.ToDt) - Convert.ToDateTime(Model.FromDt)).Days;
-}
-<div class="modal-dialog modal-lg">
+﻿@model EmpLeaveConfirmModel
+<div class="modal-dialog" style="max-width:900px">
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
@@ -12,115 +7,91 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-            <form id="leave-approval-frm">
-                <div class="row">
-                    <div class="col-md-6 form-border-right">
-                        <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
-                        <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
-                        <div><span class="font-weight-bold">Designation: </span>@Model.Designation</div>
-                        <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
-                        <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.AppDt).ToString(CommonSetting.DateFormat)</div>
-                        <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
-                        <div><span class="font-weight-bold">Date Range: </span>@fromDt - @toDt (@lvDays days)</div>
-                        @* <div><span>Reason: </span>@Model.r</div> *@
-                    </div>
-                    <div class="col-md-6 pl-3">
-                        <h5 class="text-primary">Approval Details</h5>
-                    </div>
+            <div class="row">
+                <div class="col-md-6 form-border-right">
+                    <h5 class="text-primary">Application Details</h5>
+                    <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+                    <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+                    <div><span class="font-weight-bold">Designation: </span>@Model.Designation</div>
+                    <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
+                    <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.AppDt).ToString(CommonSetting.DateFormat)</div>
+                    <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
+                    <div><span class="font-weight-bold">Date Range: </span>@Model.DateRange (@Model.LvDays days)</div>
+                    <h5 class="text-primary mt-2">Approval Details</h5>
+                    <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.ApprDt).ToString(CommonSetting.DateFormat)</div>
+                    <div><span class="font-weight-bold">With Pay: </span>@Model.WpDateRange (@Model.WpLvDays days)</div>
+                    <div><span class="font-weight-bold">Without Pay: </span>@Model.WopDateRange (@Model.WopLvDays days)</div>
+                    <div><span class="font-weight-bold">Total Leave Days: </span>@Model.ApprDays</div>
+                    <div><span class="font-weight-bold">Approved By: </span>@Model.ApprBy</div>
                 </div>
-                @*  <div class="row">
-                <div class="col-md-6">
-                <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
-                <label asp-for="BankCd"></label>
-                <select asp-for="BankCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled" : "")" asp-items="ViewBag.BankItems">
-                </select>
-                <span asp-validation-for="BankCd" class="text-danger"></span>
+                <div class="col-md-6 pl-3">
+                    <h5 class="text-primary">Confirm/Revise/Cancel</h5>
+                    <form id="leave-confirm-frm">
+                        <input type="hidden" asp-for="TransNo" />
+                        <input type="hidden" asp-for="ApprDt" />
+                        <input type="hidden" asp-for="Branch" />
+                        <div id="approval-div">
+                            <input type="hidden" asp-for="WpFrom" />
+                            <input type="hidden" asp-for="WpTo" />
+                            <input type="hidden" asp-for="LvDays" />
+                            <input type="hidden" asp-for="WopFrom" />
+                            <input type="hidden" asp-for="WopTo" />
+                            <input type="hidden" asp-for="WopLvDays" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Type"></label>
+                                        <select asp-for="Type" class="form-control select-picker" asp-items="Html.GetEnumSelectList<LeaveCofirmTypeEnum>()" onchange="changeType(this)"></select>
+                                        <span asp-validation-for="Type" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row confirm-div d-none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Ticket"></label>
+                                        <input asp-for="Ticket" class="form-control decimal-input" />
+                                        <span asp-validation-for="Ticket" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="LvSalary"></label>
+                                        <input asp-for="LvSalary" class="form-control decimal-input" />
+                                        <span asp-validation-for="LvSalary" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row revise-div d-none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="WpDateRange"></label><span id="LvDays-txt">(@Model.WpLvDays days)</span>
+                                        <input asp-for="WpDateRange" class="form-control" />
+                                        <span asp-validation-for="WpDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="WopDateRange"></label><span id="WopLvDays-txt">(@Model.WopLvDays days)</span>
+                                        <input asp-for="WopDateRange" class="form-control" />
+                                        <span asp-validation-for="WopDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Remark"></label>
+                            <textarea asp-for="Remark" class="form-control"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                        <div><span class="font-weight-bold">Total Leave Days: </span> <span id="totalLvDays">@Model.ApprDays</span></div>
+                    </form>
                 </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group @(!string.IsNullOrEmpty(Model.BankCd) ? "disabled-container" : "")">
-                <label asp-for="BranchCd"></label>
-                <select asp-for="BranchCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.BranchCd) ? "disabled" : "")" asp-items="ViewBag.BranchItems">
-                </select>
-                <span asp-validation-for="BranchCd" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Swift"></label>
-                <input asp-for="Swift" class="form-control" />
-                <span asp-validation-for="Swift" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Contact"></label>
-                <input asp-for="Contact" class="form-control" />
-                <span asp-validation-for="Contact" class="text-danger"></span>
-                </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Phone"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Address1"></label>
-                <input asp-for="Address1" class="form-control" />
-                <span asp-validation-for="Address1" class="text-danger"></span>
-                </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Address2"></label>
-                <input asp-for="Address2" class="form-control" />
-                <span asp-validation-for="Address2" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Address3"></label>
-                <input asp-for="Address3" class="form-control" />
-                <span asp-validation-for="Address3" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Fax"></label>
-                <input asp-for="Fax" class="form-control" />
-                <span asp-validation-for="Fax" class="text-danger"></span>
-                </div>
-                </div>
-                <div class="col-md-6">
-                <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                </div>
-                </div>
-                <div class="form-group">
-                <label asp-for="URL"></label>
-                <input asp-for="URL" class="form-control" />
-                <span asp-validation-for="URL" class="text-danger"></span>
-                </div> *@
-            </form>
+            </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-info" onclick="saveBank(this)">Submit</button>
+            <button type="button" class="btn btn-info" onclick="saveLeaveConfirm(this)">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

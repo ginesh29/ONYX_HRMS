@@ -33,11 +33,11 @@
             {
                 data: function (row) {
                     return `<button data-toggle="tooltip" data-original-title="Approve" class="btn btn-sm btn-info" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
-                                <i class="fa fa-times"></i>
-                            </button>`;
+                                                                        <i class="fas fa-check"></i>
+                                                                    </button>
+                                                                    <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
+                                                                        <i class="fa fa-times"></i>
+                                                                    </button>`;
                 }, "width": "80px"
             }
         ],
@@ -108,6 +108,7 @@ function saveLeaveApproval(btn) {
         postAjax("/Transactions/SaveLeaveApproval", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
+                $("#EmployeeLeaveApprovalModal").modal("hide");
                 reloadDatatable();
             }
             else {
@@ -116,60 +117,4 @@ function saveLeaveApproval(btn) {
             unloadingButton(btn);
         });
     }
-}
-
-window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
-    {
-        ajax: "/Transactions/FetchEmpLeaveData",
-        ordering: false,
-        columns: [
-            {
-                data: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            {
-                data: function (row) {
-                    return `${row.emp}(${row.empCd.trim()})`
-                }
-            },
-            {
-                data: function (row) {
-                    var formattedFromDate = moment(row.fromDt).format('DD/MM/YYYY');
-                    var formattedToDate = moment(row.toDt).format('DD/MM/YYYY');
-                    var lvDays = moment(row.toDt).diff(moment(row.fromDt), 'days');
-                    return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
-                }, width: '200px'
-            },
-            { data: "lvTyp" },
-            {
-                data: function (row) {
-                    return row.toDt && moment(row.toDt).format('DD/MM/YYYY');
-                },
-            },
-            { data: "designation" },
-            { data: "branch" },
-            { data: "apprBy" },
-            {
-                data: function (row) {
-                    return row.appDt && moment(row.appDt).format('DD/MM/YYYY');
-                },
-            },
-            {
-                data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLeaveConfirmModal('${row.transNo.trim()}')">
-                                <i class="fas fa-pen"></i>
-                            </button>`
-                }, "width": "80px"
-            }
-        ],
-    }
-);
-
-function showLeaveConfirmModal(transNo) {
-    var url = `/Transactions/GetEmpLeaveConfirm?transNo=${transNo}`;
-    $('#EmployeeLeaveConfirmModal').load(url, function () {
-        parseDynamicForm();
-        $("#EmployeeLeaveConfirmModal").modal("show");
-    });
 }

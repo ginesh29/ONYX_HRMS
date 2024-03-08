@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Employee Tranfer";
+}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="EmployeeTransferDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Employee</th>
+                    <th>Tran Dt</th>
+                    <th>Dept Fr</th>
+                    <th>Dept To</th>
+                    <th>Loc Fr</th>
+                    <th>Loc To</th>
+                    <th>Narration</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmployeeTransferModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script>
+        window["datatable"] = $('#EmployeeTransferDataTable').DataTable(
+            {
+                ajax: "/Transactions/FetchEmpTransferData",
+                ordering: false,
+                columns: [
+                    {
+                        data: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: function (row) {
+                            return `${row.fname}(${row.empCd.trim()})`
+                        }
+                    },
+                    {
+                        data: function (row) {
+                            return row.transferDt && moment(row.transferDt).format('DD/MM/YYYY');
+                        },
+                    },
+                    { data: "deptFrDes" },
+                    { data: "deptToDes" },
+                    { data: "brFrDes" },
+                    { data: "brToDes" },
+                    { data: "narration" },
+                    // {
+                    //     data: function (row) {
+                    //         return `<button data-toggle="tooltip" data-original-title="Approve" class="btn btn-sm btn-info" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
+                    //                     <i class="fas fa-check"></i>
+                    //                 </button>
+                    //                 <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
+                    //                     <i class="fa fa-times"></i>
+                    //                 </button>`;
+                    //     }, "width": "80px"
+                    // }
+                ],
+            }
+        );
+    </script>
+}

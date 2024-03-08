@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Onyx.Models.StoredProcedure;
+using System.ComponentModel.DataAnnotations;
 
 namespace Onyx.Models.ViewModels
 {
@@ -24,7 +25,7 @@ namespace Onyx.Models.ViewModels
         public string DeptCd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Approval Levels")]
-        public List<string> ApprovalLevels { get; set; }
+        public IEnumerable<CompanyProcessApproval_Detail_GetRow_Result> ApprovalLevels { get; set; }
         public string Cd { get; set; }
         public string Mode
         {

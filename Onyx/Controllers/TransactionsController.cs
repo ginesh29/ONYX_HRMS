@@ -71,6 +71,8 @@ namespace Onyx.Controllers
             });
             ViewBag.IntLocalTypeItems = _commonService.GetIntLocalTypes();
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveTransNo();
+            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+                ViewBag.EmpCd = _loggedInUser.LoginId;
             return View();
         }
         public IActionResult SaveLeaveApplication(EmpLeaveModel model)
@@ -161,7 +163,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaveApprovalData()
         {
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.LoginId, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = leaveData,
@@ -171,7 +173,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLeaveApproval(string transNo)
         {
             var model = new EmpLeaveApprovalModel();
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.LoginId, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
             if (leaveData != null)
             {
                 model = new EmpLeaveApprovalModel()
@@ -196,17 +198,19 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model)
         {
-            model.ApprBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.LoginId;
+            model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             _transactionService.SaveLeaveApproval(model);
             var ProcessId = "HRPT11";
             var ActivityAbbr = "UPD";
-            var Message = $", Leave is accepted With Trans no={model.TransNo}";
+            var action = model.Status == "Y" ? "approved" : "rejected";
+            var Message = $", Leave is {action} With Trans no={model.TransNo}";
             _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
-                Message = "Leave approved successfully"
+                Message = $"Leave {action}"
             };
             return Json(result);
         }
@@ -214,26 +218,92 @@ namespace Onyx.Controllers
         {
             return View();
         }
-        public IActionResult FetchEmpLeaveData()
+        public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model)
         {
-            var leaveData = _transactionService.GetEmpLeaveData();
+            model.ApprBy = _loggedInUser.LoginId;
+            model.ApprDays = model.LvDays + model.WopLvDays;
+            _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
+            var ProcessId = "HRPT12";
+            var ActivityAbbr = "UPD";
+            var action = model.Type == (int)LeaveCofirmTypeEnum.Confirm ? "confirmed" : model.Type == (int)LeaveCofirmTypeEnum.Revise ? "revised" : "canceled";
+            var Message = $", Leave is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Leave {action}"
+            };
+            return Json(result);
+        }
+        public IActionResult FetchEmpLeaveData(string type = "")
+        {
+            var leaveData = _transactionService.GetEmpLeaveData("", type);
             CommonResponse result = new()
             {
                 Data = leaveData,
             };
             return Json(result);
         }
-        public IActionResult GetEmpLeaveConfirm(string transNo, string type)
+        public IActionResult GetEmpLeaveConfirm(string transNo)
         {
+            var model = new EmpLeaveConfirmModel();
             var leaveData = _transactionService.GetEmpLeaveData(transNo).FirstOrDefault();
-
-            ViewBag.Type = type;
-            return PartialView("_EmpLeaveConfirmModal", leaveData);
+            if (leaveData != null)
+            {
+                model = new EmpLeaveConfirmModel()
+                {
+                    TransNo = transNo,
+                    EmpCd = leaveData.EmpCd,
+                    Emp = leaveData.Emp,
+                    Designation = leaveData.Designation,
+                    Branch = leaveData.Branch,
+                    AppDt = leaveData.AppDt,
+                    LvTyp = leaveData.LvTyp,
+                    FromDt = leaveData.FromDt,
+                    ToDt = leaveData.ToDt,
+                    DateRange = $"{Convert.ToDateTime(leaveData.FromDt).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(leaveData.ToDt).ToString(CommonSetting.DateFormat)}",
+                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days,
+                    WpFrom = leaveData.WpFrom,
+                    WpTo = leaveData.WpTo,
+                    WpDateRange = $"{Convert.ToDateTime(leaveData.WpFrom).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(leaveData.WpTo).ToString(CommonSetting.DateFormat)}",
+                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WopFrom = leaveData.WpFrom,
+                    WopTo = leaveData.WpTo,
+                    WopDateRange = $"{Convert.ToDateTime(leaveData.WopFrom).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(leaveData.WopTo).ToString(CommonSetting.DateFormat)}",
+                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    ApprBy = leaveData.ApprBy,
+                    ApprDays = leaveData.ApprDays,
+                    ApprDt = DateTime.Now,
+                };
+                var allowance = _transactionService.GetEmpLeave_Allowances(model, _loggedInUser.CompanyCd);
+                model.Ticket = allowance?.FareAmount;
+                model.LvSalary = allowance?.LvSalary;
+            }
+            return PartialView("_EmpLeaveConfirmModal", model);
         }
+
         public IActionResult EmpDutyResumption()
         {
             return View();
         }
         #endregion
+
+        public IActionResult EmpTransfer()
+        {
+            return View();
+        }
+        public IActionResult FetchEmpTransferData()
+        {
+            var transferData = _transactionService.GetEmpTransferData();
+            CommonResponse result = new()
+            {
+                Data = transferData,
+            };
+            return Json(result);
+        }
+        public IActionResult EmpProvisionAdj()
+        {
+            return View();
+        }
     }
 }

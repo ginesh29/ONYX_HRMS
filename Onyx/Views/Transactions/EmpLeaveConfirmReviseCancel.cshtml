@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Employee Leave Confirm/Revise/Cancel";
 }
+<input type="hidden" id="Type" value="" />
 <div class="card">
     <div class="card-body">
         <table class="table table-sm" id="EmployeeLeavesDataTable">
@@ -23,5 +24,5 @@
 </div>
 <div id="EmployeeLeaveConfirmModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
-    <script src="~/js/page/transactions/leave.js" asp-append-version="true"></script>
+    <script src="~/js/page/transactions/leave-confirm.js" asp-append-version="true"></script>
 }

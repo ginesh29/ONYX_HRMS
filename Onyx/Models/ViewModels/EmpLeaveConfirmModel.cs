@@ -1,6 +1,8 @@
-﻿namespace Onyx.Models.StoredProcedure
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Onyx.Models.StoredProcedure
 {
-    public class EmpLeave_View_GetRow_Result
+    public class EmpLeaveConfirmModel
     {
         public string TransNo { get; set; }
         public DateTime? AppDt { get; set; }
@@ -14,8 +16,12 @@
         public string Substitute { get; set; }
         public DateTime? FromDt { get; set; }
         public string FormatedFromDt { get; set; }
-        public string DateRange { get; set; }
         public DateTime? ToDt { get; set; }
+        public string DateRange { get; set; }
+        [Display(Name = "Date Range(WP)")]
+        public string WpDateRange { get; set; }
+        [Display(Name = "Date Range(WOP)")]
+        public string WopDateRange { get; set; }
         public string FormatedToDt { get; set; }
         public string LvInter { get; set; }
         public DateTime? WpFrom { get; set; }
@@ -32,5 +38,14 @@
         public int? ApprDays { get; set; }
         public string Branch { get; set; }
         public string Designation { get; set; }
+        public int LvDays { get; set; }
+        public int WpLvDays { get; set; }
+        public int WopLvDays { get; set; }
+        public string Remark { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public int Type { get; set; }
+        public decimal? Ticket { get; set; }
+        [Display(Name ="Leave Salary")]
+        public decimal? LvSalary { get; set; }
     }
 }

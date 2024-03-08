@@ -2,6 +2,7 @@
 {
     public class LoggedInUserModel
     {
+        public string UserOrEmployee { get; set; }
         public string UserCd { get; set; }
         public string LoginId { get; set; }
         public string Username { get; set; }

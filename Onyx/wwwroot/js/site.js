@@ -38,6 +38,11 @@ const dataTableDefaultOptions = {
 }
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 const pdfExtensions = ['pdf'];
+const LeaveConfirmTypesEnum = {
+    Confirm: 0,
+    Revise: 1,
+    Cancel: 2
+}
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
@@ -266,7 +271,7 @@ $("#company-dropdown").change(function (e) {
     });
 })
 function initControls() {
-    $(".select-picker,.filter-select-picker").attr("data-live-search", true);
+    $(".select-picker,.filter-select-picker").not("#company-dropdown").attr("data-live-search", true);
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();

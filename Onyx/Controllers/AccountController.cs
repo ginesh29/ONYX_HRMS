@@ -58,6 +58,7 @@ namespace Onyx.Controllers
                         {
                             CompanyCd = model.CoCd,
                             UserCd = validateUser.Cd,
+                            UserOrEmployee = "U",
                             Username = validateUser.UName,
                             UserAbbr = user.Abbr,
                             LoginId = model.LoginId,
@@ -80,6 +81,7 @@ namespace Onyx.Controllers
                         {
                             CompanyCd = model.CoCd,
                             UserCd = employee.UserCd,
+                            UserOrEmployee = "E",
                             Username = user.Username,
                             UserAbbr = user.Abbr,
                             UserType = (int)model.UserType,

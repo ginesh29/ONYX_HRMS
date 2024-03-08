@@ -553,7 +553,7 @@ namespace Onyx.Controllers
                     Dept = approvalProcess?.Dept,
                     ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
                     ProcessId = approvalProcess?.ProcessId,
-                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd).Select(m => m.EmpCd.Trim()).ToList(),
+                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd),
                 };
             ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
@@ -587,7 +587,7 @@ namespace Onyx.Controllers
             _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
             foreach (var item in model.ApprovalLevels.Select((value, i) => new { i, value }))
             {
-                _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value, _loggedInUser.CompanyCd);
+                _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value.EmpCd, _loggedInUser.CompanyCd);
             }
             var result = new CommonResponse
             {

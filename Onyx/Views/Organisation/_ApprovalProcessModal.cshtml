@@ -1,6 +1,6 @@
 ﻿@model CompanyProcessApprovalModel
 @{
-    string jsonString = Model.ApprovalLevels.JsonObjectToString();
+    string jsonString = Model.ApprovalLevels.Select(m => m.EmpCd.Trim()).ToList().JsonObjectToString();
 }
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
@@ -50,6 +50,12 @@
                         </div>
                     </div>
                 </div>
+                <ul>
+                    @foreach (var item in Model.ApprovalLevels)
+                    {
+                        <li>@item.EmpName (@item.EmpCd.Trim())</li>
+                    }
+                </ul>
                 <div class="form-group">
                     <label>Approval Levels</label>
                     <select asp-for="ApprovalLevels" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
