@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Employee Loan Disbursement";
+}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="EmployeeLoanDisburseDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Trans. No.</th>
+                    <th>Employee</th>
+                    <th>Branch</th>
+                    <th>Appl. Date</th>
+                    <th>Loan Type</th>
+                    <th>Amount</th>
+                    <th>Purpose</th>
+                    <th>Narration</th>
+                    <th>Appr. Date</th>
+                    <th>Appr. By</th>
+                    <th>Appr. Amount</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmployeeLoanDisburseModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/transactions/loan-disburse.js" asp-append-version="true"></script>
+}

@@ -118,7 +118,7 @@
             var frm = $("#Leave-application-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                postAjax("/Transactions/SaveLeaveApplication", frm.serialize(), function (response) {
+                postAjax("/SelfService/SaveLeaveApplication", frm.serialize(), function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
                         reloadPageAfterSometime();

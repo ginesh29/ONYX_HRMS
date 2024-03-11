@@ -1,11 +1,11 @@
-﻿@model EmpLoanModel
+﻿@model EmployeeFundModel
 @{
-    ViewData["Title"] = "Loan Application";
+    ViewData["Title"] = "Fund Request Application";
 }
 <div class="card">
     <div class="card-body">
         <div class="col-md-6 form-border-right">
-            <form id="loan-application-frm">
+            <form id="fund-request-application-frm">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group disabled-container">
@@ -26,13 +26,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="LoanTypeCd"></label>
-                            <select asp-for="LoanTypeCd" class="form-control select-picker" asp-items="ViewBag.LoanTypeItems"></select>
-                            <span asp-validation-for="LoanTypeCd" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
                             <label asp-for="TransDt"></label>
                             <input asp-for="TransDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" />
                             <span asp-validation-for="TransDt" class="text-danger"></span>
@@ -42,42 +35,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="Amt"></label>
-                            <input asp-for="Amt" class="form-control decimal-input" />
-                            <span asp-validation-for="Amt" class="text-danger"></span>
+                            <label asp-for="Type"></label>
+                            <select asp-for="Type" class="form-control select-picker" asp-items="ViewBag.FundTypeItems"></select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="NoInstReq"></label>
-                            <input asp-for="NoInstReq" class="form-control int-input" />
-                            <span asp-validation-for="NoInstReq" class="text-danger"></span>
+                            <label asp-for="Amount"></label>
+                            <input asp-for="Amount" class="form-control decimal-input" />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="GuarantorName"></label>
-                            <input asp-for="GuarantorName" class="form-control" />
-                            <span asp-validation-for="GuarantorName" class=" text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="GuarantorDetails"></label>
-                            <input asp-for="GuarantorDetails" class="form-control" />
-                            <span asp-validation-for="GuarantorDetails" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Purpose"></label>
-                    <textarea asp-for="Purpose" class="form-control"></textarea>
-                    <span asp-validation-for="Purpose" class="text-danger"></span>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-info" onclick="saveLoanApplication(this)">Submit</button>
+                    <button type="button" class="btn btn-info" onclick="saveFundRequestApplication(this)">Submit</button>
                 </div>
             </form>
         </div>
@@ -96,11 +68,11 @@
                 $('.select-picker').selectpicker('refresh');
             });
         }
-        function saveLoanApplication(btn) {
-            var frm = $("#loan-application-frm");
+        function saveFundRequestApplication(btn) {
+            var frm = $("#fund-request-application-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                postAjax("/Transactions/SaveLoanApplication", frm.serialize(), function (response) {
+                postAjax("/SelfService/SaveFundRequestApplication", frm.serialize(), function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
                         reloadPageAfterSometime();

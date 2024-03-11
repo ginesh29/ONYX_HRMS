@@ -1,0 +1,105 @@
+﻿window["datatable"] = $('#EmployeeTransferDataTable').DataTable(
+    {
+        ajax: "/Transactions/FetchEmpTransferData",
+        ordering: false,
+        columns: [
+            {
+                data: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {
+                data: function (row) {
+                    return `${row.fname}(${row.empCd.trim()})`
+                }
+            },
+            {
+                data: function (row) {
+                    return row.transferDt && moment(row.transferDt).format('DD/MM/YYYY');
+                },
+            },
+            { data: "deptFrDes" },
+            { data: "deptToDes" },
+            { data: "brFrDes" },
+            { data: "brToDes" },
+            { data: "narration" },
+            {
+                data: function (row) {
+                    return `<button class="btn btn-sm btn-info" onclick="showEmpTransferModal('${row.empCd.trim()}',${row.srNo})">
+                                <i class="fas fa-pencil"></i>
+                            </button>
+                            <button  class="btn btn-sm btn-danger ml-2" onclick="deleteEmpTransfer('${row.empCd.trim()}',${row.srNo})">
+                                <i class="fa fa-trash"></i>
+                            </button>`;
+                }, "width": "80px"
+            }
+        ],
+    }
+);
+
+function bindEmployeeDropdown(callback) {
+    $("#EmpCd").empty();
+    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+        var html = ''
+        $.each(response, function (i, item) {
+            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
+        })
+        $("#EmpCd").html(html);
+        $('.select-picker').selectpicker('refresh');
+        callback();
+    });
+}
+
+function showEmpTransferModal(empCd, srNo) {
+    var url = `/Transactions/GetEmpTransfer?empCd=${empCd}&srNo=${srNo}`;
+    $('#EmployeeTransferModal').load(url, function () {
+        parseDynamicForm();
+        $("#btn-submit").prop("disabled", true);
+        $("#EmployeeTransferModal").modal("show");
+    });
+}
+function deleteEmpTransfer(empCd, srNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Transactions/DeleteEmpTransfer?empCd=${empCd}&srNo=${srNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+            });
+        }
+    });
+}
+function saveEmpTransfer(btn) {
+    var frm = $("#emp-transfer-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveEmpTransfer", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmployeeTransferModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#EmployeeTransferModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+
+function getEmpTransferEmployeeDetail() {
+    var empCd = $("#EmpCd").val();
+    getAjax(`/Transactions/GetEmpTransferDetail?empCd=${empCd}`, function (response) {
+        $('#DeptFrom').selectpicker('val', response.dept && response.dept.trim());
+        $('#LocFrom').selectpicker('val', response.locCd && response.locCd.trim());
+        $('#BrFrom').selectpicker('val', response.div && response.div.trim());
+    })
+}

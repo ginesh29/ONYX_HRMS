@@ -264,31 +264,36 @@ function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, parseInt(window.getComputedStyle(textarea).getPropertyValue("max-height"))) + 'px';
 }
-$("#company-dropdown").change(function (e) {
+$("#company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
         window.location.reload();
     });
 })
 function initControls() {
-    $(".select-picker,.filter-select-picker").not("#company-dropdown").attr("data-live-search", true);
+    $(".select-picker,.filter-select-picker").not("#company-dropdown").attr("data-live-search", true)
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
+
     $('.date-input').attr("placeholder", "mm/dd/yyyy");
     $('.date-input').datetimepicker({
         format: 'L'
     });
+
     $('.decimal-input').attr("placeholder", "0.00");
     $('.decimal-input').inputmask(decimalMaskOptions);
+
     $('.int-input').attr("placeholder", "0");
     $('.int-input').inputmask(intMaskOptions);
+
     $('.percentage-input').attr("placeholder", "0 %");
     $('.percentage-input').inputmask(percentageMaskOptions);
+
     $("textarea.form-control").on("input", function (e) {
         autoResizeTextarea(e.target)
     });
-    setTimeout(function () {
+    setTimeout(function () {        
         $("textarea.form-control").trigger('input');
     }, 200)
     $('[data-toggle="tooltip"]').tooltip();
@@ -315,9 +320,9 @@ function downloadFile(foldername, filename) {
         }
     });
 };
-setTimeout(function () {
+$(function () {
     initControls();
-}, 1000)
+});
 $(document).ajaxComplete(function () {
     initControls();
 });

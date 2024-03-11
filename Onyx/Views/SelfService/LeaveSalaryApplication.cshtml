@@ -1,11 +1,11 @@
-﻿@model EmployeeFundModel
+﻿@model EmpLeaveSalaryModel
 @{
-    ViewData["Title"] = "Fund Request Application";
+    ViewData["Title"] = "Leave Salary Application";
 }
 <div class="card">
     <div class="card-body">
         <div class="col-md-6 form-border-right">
-            <form id="fund-request-application-frm">
+            <form id="leave-salary-application-frm">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group disabled-container">
@@ -35,21 +35,21 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="Type"></label>
-                            <select asp-for="Type" class="form-control select-picker" asp-items="ViewBag.FundTypeItems"></select>
-                            <span asp-validation-for="Type" class="text-danger"></span>
+                            <label asp-for="LvSalary"></label>
+                            <input asp-for="LvSalary" class="form-control decimal-input" />
+                            <span asp-validation-for="LvSalary" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="Amount"></label>
-                            <input asp-for="Amount" class="form-control decimal-input" />
-                            <span asp-validation-for="Amount" class="text-danger"></span>
+                            <label asp-for="LvTicket"></label>
+                            <input asp-for="LvTicket" class="form-control decimal-input" />
+                            <span asp-validation-for="LvTicket" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-info" onclick="saveFundRequestApplication(this)">Submit</button>
+                    <button type="button" class="btn btn-info" onclick="saveLeaveApplication(this)">Submit</button>
                 </div>
             </form>
         </div>
@@ -68,11 +68,11 @@
                 $('.select-picker').selectpicker('refresh');
             });
         }
-        function saveFundRequestApplication(btn) {
-            var frm = $("#fund-request-application-frm");
+        function saveLeaveApplication(btn) {
+            var frm = $("#leave-salary-application-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                postAjax("/Transactions/SaveFundRequestApplication", frm.serialize(), function (response) {
+                postAjax("/SelfService/SaveLeaveSalaryApplication", frm.serialize(), function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
                         reloadPageAfterSometime();
