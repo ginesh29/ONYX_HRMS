@@ -9,8 +9,8 @@
         public string CompanyReference { get; set; }
         public string Designation { get; set; }
         public string Desg { get; set; }
-        public string StartingDate { get; set; }
-        public string EndingDate { get; set; }
+        public DateTime? StartingDate { get; set; }
+        public DateTime? EndingDate { get; set; }
         public string Country { get; set; }
         public string CountryCd { get; set; }
         public string Narration { get; set; }

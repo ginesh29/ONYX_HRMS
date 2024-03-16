@@ -206,8 +206,8 @@ function bindExperienceDataTable() {
                     { data: "designation" },
                     {
                         data: function (row) {
-                            var formattedFromDate = moment(row.startingDate).format('DD/MM/YYYY');
-                            var formattedToDate = moment(row.endingDate).format('DD/MM/YYYY');
+                            var formattedFromDate = moment(row.startingDate).format(CommonSetting.DisplayDateFormat);
+                            var formattedToDate = moment(row.endingDate).format(CommonSetting.DisplayDateFormat);
                             return `${formattedFromDate} - ${formattedToDate}`;
                         }
                     },
@@ -230,12 +230,9 @@ function showExperienceModal(srNo) {
     $('#ExperienceModal').load(url, function () {
         parseDynamicForm();
         $("#EmpCd").val(empCode);
-        $('#DateRange').daterangepicker({
-            autoUpdateInput: false
-        });
         $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format('MM/DD/YYYY');
-            var endDate = picker.endDate.format('MM/DD/YYYY');
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
             $(this).val(startDate + ' - ' + endDate);
             $("#StartingDate").val(startDate);
             $("#EndingDate").val(endDate);
@@ -307,13 +304,13 @@ function bindDocumentDataTable() {
                     { data: "docNo", width: "100px" },
                     {
                         data: function (row) {
-                            return row.issueDt && moment(row.issueDt).format('DD/MM/YYYY');
+                            return row.issueDt && moment(row.issueDt).format(CommonSetting.DisplayDateFormat);
                         },
                     },
                     { data: "issuePlace" },
                     {
                         data: function (row) {
-                            return row.expDt && moment(row.expDt).format('DD/MM/YYYY');
+                            return row.expDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                         }, width: "100px"
                     },
                     {
@@ -504,7 +501,7 @@ function bindComponentDataTable() {
                     { data: "percVal" },
                     {
                         data: function (row) {
-                            return row.effDt && moment(row.effDt).format('DD/MM/YYYY');
+                            return row.effDt && moment(row.effDt).format(CommonSetting.DisplayDateFormat);
                         }, width: "100px"
                     },
                     {

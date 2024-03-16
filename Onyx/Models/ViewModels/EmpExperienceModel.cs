@@ -17,8 +17,8 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Designation")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string Desg { get; set; }
-        public string StartingDate { get; set; }
-        public string EndingDate { get; set; }
+        public DateTime? StartingDate { get; set; }
+        public DateTime? EndingDate { get; set; }
         [Display(Name = "Date Range")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string DateRange { get; set; }

@@ -21,7 +21,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", model.EmployeeCode);
             parameters.Add("v_LoanTyp", model.LoanTypeCd);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now.ToString(CommonSetting.DateFormat));
+            parameters.Add("v_DocDt", DateTime.Now.ToString(CommonSetting.DisplayDateFormat));
             parameters.Add("v_Amt", model.Amt);
             parameters.Add("v_Purpose", model.Purpose);
             parameters.Add("v_Narr", model.Narr);
@@ -115,7 +115,7 @@ namespace Onyx.Services
             parameters.Add("v_ToDt", model.ToDt);
             parameters.Add("v_LvTaken", model.LvTaken);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now.ToString(CommonSetting.DateFormat));
+            parameters.Add("v_DocDt", DateTime.Now.ToString(CommonSetting.DisplayDateFormat));
             parameters.Add("v_Substitute", string.Empty);
             parameters.Add("v_Reason", model.Reason);
             parameters.Add("v_Narr", model.Narr);

@@ -196,7 +196,7 @@ namespace Onyx.Controllers
                     DutyHrs = workingHour.DutyHrs,
                     FromDt = workingHour.FromDt,
                     ToDt = workingHour.ToDt,
-                    DateRange = $"{Convert.ToDateTime(workingHour.FromDt).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(workingHour.ToDt).ToString(CommonSetting.DateFormat)}",
+                    DateRange = ExtensionMethod.GetDateRange(workingHour.FromDt, workingHour.ToDt),
                     HolTypCd = workingHour.HolTypCd.Trim(),
                     HolTypDesc = workingHour.HolTypDesc,
                     Description = workingHour.Narr,
@@ -1230,7 +1230,7 @@ namespace Onyx.Controllers
                     Description = travelFare.Des,
                     FromDate = travelFare.FromDate,
                     ToDate = travelFare.ToDate,
-                    DateRange = $"{Convert.ToDateTime(travelFare.FromDate).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(travelFare.ToDate).ToString(CommonSetting.DateFormat)}",
+                    DateRange = ExtensionMethod.GetDateRange(travelFare.FromDate, travelFare.ToDate),
                     Sector = travelFare.Sector,
                     TravelClass = travelFare.TravelClass
                 };

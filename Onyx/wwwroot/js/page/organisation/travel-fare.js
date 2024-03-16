@@ -10,8 +10,8 @@
             { data: "des" },
             {
                 data: function (row) {
-                    var formattedFromDate = moment(row.fromDate).format('DD/MM/YYYY');
-                    var formattedToDate = moment(row.toDate).format('DD/MM/YYYY');
+                    var formattedFromDate = moment(row.fromDate).format(CommonSetting.DisplayDateFormat);
+                    var formattedToDate = moment(row.toDate).format(CommonSetting.DisplayDateFormat);
                     return `${formattedFromDate} - ${formattedToDate}`;
                 }
             },
@@ -32,13 +32,9 @@ function showTravelFareModal(cd, sectCd, classCd) {
     var url = `/Organisation/GetTravelFare?cd=${cd}&sectCd=${sectCd}&classCd=${classCd}`;
     $('#TravelFareModal').load(url, function () {
         parseDynamicForm();
-        
-        $('#DateRange').daterangepicker({
-            autoUpdateInput: false
-        });
         $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format('MM/DD/YYYY');
-            var endDate = picker.endDate.format('MM/DD/YYYY');
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
             $(this).val(startDate + ' - ' + endDate);
             $("#FromDate").val(startDate);
             $("#ToDate").val(endDate);

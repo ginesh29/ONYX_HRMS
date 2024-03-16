@@ -15,8 +15,8 @@
             },
             {
                 data: function (row) {
-                    var formattedFromDate = moment(row.lvFrom).format('DD/MM/YYYY');
-                    var formattedToDate = moment(row.lvTo).format('DD/MM/YYYY');
+                    var formattedFromDate = moment(row.lvFrom).format(CommonSetting.DisplayDateFormat);
+                    var formattedToDate = moment(row.lvTo).format(CommonSetting.DisplayDateFormat);
                     var lvDays = moment(row.lvTo).diff(moment(row.lvFrom), 'days');
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
@@ -24,7 +24,7 @@
             { data: "lvTyp" },
             {
                 data: function (row) {
-                    return row.transDt && moment(row.transDt).format('DD/MM/YYYY');
+                    return row.transDt && moment(row.transDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             { data: "desg" },
@@ -56,11 +56,12 @@ function showLeaveApprovalModal(transNo, reject) {
             $('#LvDateRange,#WopDateRange').daterangepicker({
                 minDate: startDate,
                 maxDate: endDate,
-                autoUpdateInput: false
+                autoUpdateInput: false,
+                format: CommonSetting.DisplayDateFormat
             });
             $('#LvDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format('MM/DD/YYYY');
-                var endDate = picker.endDate.format('MM/DD/YYYY');
+                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
                 var lvDays = picker.endDate.diff(picker.startDate, 'days');
                 $("#LvDays-txt").text(`(${lvDays} days)`);
                 $("#LvDays").val(lvDays)
@@ -70,8 +71,8 @@ function showLeaveApprovalModal(transNo, reject) {
                 UpdateTotalLeavesDays();
             });
             $('#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format('MM/DD/YYYY');
-                var endDate = picker.endDate.format('MM/DD/YYYY');
+                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
                 var WOPlvDays = picker.endDate.diff(picker.startDate, 'days');
                 $("#WopLvDays-txt").text(`(${WOPlvDays} days)`);
                 $("#WopLvDays").val(WOPlvDays)

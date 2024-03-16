@@ -84,7 +84,7 @@ namespace Onyx.Services
             parameters.Add("v_Abbr", model.Abbr);
             parameters.Add("v_UPWD", model.UPwd);
             parameters.Add("v_UName", model.Username);
-            parameters.Add("v_ExpiryDt", Convert.ToDateTime(model.ExpiryDt).ToString("d"));
+            parameters.Add("v_ExpiryDt", model.ExpiryDt.Value.ToString(CommonSetting.InputDateFormat));
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connection = new SqlConnection(connectionString);

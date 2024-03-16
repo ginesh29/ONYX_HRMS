@@ -222,8 +222,8 @@ namespace Onyx.Services
             var procedureName = "EmpExperience_Update";
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_SrNo", model.Srno);
-            parameters.Add("v_Stdt", model.StartingDate);
-            parameters.Add("v_Enddt", model.EndingDate);
+            parameters.Add("v_Stdt", model.StartingDate.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_Enddt", model.EndingDate.Value.ToString(CommonSetting.InputDateFormat));
             parameters.Add("v_Desg", model.Desg);
             parameters.Add("v_Coname", model.CompanyName);
             parameters.Add("v_Country", model.CountryCd);

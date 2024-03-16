@@ -40,13 +40,13 @@ window["datatable-2"] = $('#VehicleDocumentsDataTable').DataTable(
             { data: "docNo" },
             {
                 data: function (row) {
-                    return row.issueDt && moment(row.issueDt).format('DD/MM/YYYY');
+                    return row.issueDt && moment(row.issueDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             { data: "issuePlace" },
             {
                 data: function (row) {
-                    return row.issueDt && moment(row.expDt).format('DD/MM/YYYY');
+                    return row.issueDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             {

@@ -363,7 +363,7 @@ namespace Onyx.Controllers
                     CompanyReference = experience.CompanyReference,
                     CompanyName = experience.CompanyName,
                     EndingDate = experience.EndingDate,
-                    DateRange = $"{Convert.ToDateTime(experience.StartingDate).ToString(CommonSetting.DateFormat)} - {Convert.ToDateTime(experience.EndingDate).ToString(CommonSetting.DateFormat)}",
+                    DateRange = ExtensionMethod.GetDateRange(experience.StartingDate, experience.EndingDate),
                     Narration = experience.Narration,
                     StartingDate = experience.StartingDate,
                     Srno = experience.Srno,

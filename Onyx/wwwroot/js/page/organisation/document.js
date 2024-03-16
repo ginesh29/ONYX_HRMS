@@ -13,19 +13,19 @@
             { data: "docNo", width: "100px" },
             {
                 data: function (row) {
-                    return row.issueDt && moment(row.issueDt).format('DD/MM/YYYY');
+                    return row.issueDt && moment(row.issueDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             { data: "issuePlace" },
             {
                 data: function (row) {
-                    return row.expDt && moment(row.expDt).format('DD/MM/YYYY');
+                    return row.expDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                 }, width: "100px"
             },
             { data: "refNo" },
             {
                 data: function (row) {
-                    return row.refDt && moment(row.refDt).format('DD/MM/YYYY');
+                    return row.refDt && moment(row.refDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             {

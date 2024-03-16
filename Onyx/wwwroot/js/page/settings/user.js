@@ -14,7 +14,7 @@
             { data: "username" },
             {
                 data: function (row) {
-                    var formattedDate = moment(row.expiryDt).format('DD/MM/YYYY');
+                    var formattedDate = moment(row.expiryDt).format(CommonSetting.DisplayDateFormat);
                     return formattedDate;
                 },
             },

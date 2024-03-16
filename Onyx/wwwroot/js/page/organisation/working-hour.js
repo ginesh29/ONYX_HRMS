@@ -12,8 +12,8 @@
             { data: "narr" },
             {
                 data: function (row) {
-                    var formattedFromDate = moment(row.fromDt).format('DD/MM/YYYY');
-                    var formattedToDate = moment(row.toDt).format('DD/MM/YYYY');
+                    var formattedFromDate = moment(row.fromDt).format(CommonSetting.DisplayDateFormat);
+                    var formattedToDate = moment(row.toDt).format(CommonSetting.DisplayDateFormat);
                     return `${formattedFromDate} - ${formattedToDate}`;
                 }
             },
@@ -36,16 +36,15 @@
 function showWorkingHourModal(cd) {
     var url = `/Organisation/GetWorkingHour?cd=${cd}`;
     $('#WorkingHourModal').load(url, function () {
-        parseDynamicForm();        
-        $('#DateRange').daterangepicker({
-            autoUpdateInput: false
-        });
+        parseDynamicForm();
         $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format('MM/DD/YYYY');
-            var endDate = picker.endDate.format('MM/DD/YYYY');
-            $(this).val(startDate + ' - ' + endDate);
-            $("#FromDt").val(startDate);
-            $("#ToDt").val(endDate);
+            if (picker) {
+                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+                $(this).val(startDate + ' - ' + endDate);
+                $("#FromDt").val(startDate);
+                $("#ToDt").val(endDate);
+            }
         });
         $('#DateRange').on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');

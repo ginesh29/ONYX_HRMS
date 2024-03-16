@@ -2,10 +2,12 @@
 .layout-fixed .brand-link {
     width: 265px;
 }
+
 .form-border-right {
     border-right: 1px solid #ced4da;
     padding-right: 15px
 }
+
 .pagination-container .pagination {
     margin-bottom: 0;
 }
@@ -91,6 +93,14 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     width: 1.5em;
     height: 1.5em;
     padding: 0.3em 0;
+}
+
+.card-body.p-0 .table tbody > tr > td:first-of-type, .card-body.p-0 .table tbody > tr > th:first-of-type, .card-body.p-0 .table tfoot > tr > td:first-of-type, .card-body.p-0 .table tfoot > tr > th:first-of-type, .card-body.p-0 .table thead > tr > td:first-of-type, .card-body.p-0 .table thead > tr > th:first-of-type {
+    padding-left: 0
+}
+
+.card-body.p-0 .table tbody > tr > td:last-of-type, .card-body.p-0 .table tbody > tr > th:last-of-type, .card-body.p-0 .table tfoot > tr > td:last-of-type, .card-body.p-0 .table tfoot > tr > th:last-of-type, .card-body.p-0 .table thead > tr > td:last-of-type, .card-body.p-0 .table thead > tr > th:last-of-type {
+    padding-right: 0
 }
 
 .image-input {

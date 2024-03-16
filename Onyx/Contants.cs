@@ -5,7 +5,9 @@
         public const string MAINCOMPANY = "TELAL";
         public const string DEFAULTSELECT = "-- Select --";
         public const string ALLSELECT = "-- All --";
-        public const string DateFormat = "MM/dd/yyyy";
+        public const string DisplayDateFormat = "dd-MM-yyyy";
+        public const string USDateFormat = "MM-dd-yyyy";
+        public const string InputDateFormat = "yyyy-MM-dd";
     }
     public class SysCode
     {

@@ -17,8 +17,8 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    var formattedFromDate = moment(row.fromDt).format('DD/MM/YYYY');
-                    var formattedToDate = moment(row.toDt).format('DD/MM/YYYY');
+                    var formattedFromDate = moment(row.fromDt).format(CommonSetting.DisplayDateFormat);
+                    var formattedToDate = moment(row.toDt).format(CommonSetting.DisplayDateFormat);
                     var lvDays = moment(row.toDt).diff(moment(row.fromDt), 'days');
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
@@ -26,7 +26,7 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
             { data: "lvTyp" },
             {
                 data: function (row) {
-                    return row.toDt && moment(row.toDt).format('DD/MM/YYYY');
+                    return row.toDt && moment(row.toDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             { data: "designation" },
@@ -34,7 +34,7 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
             { data: "apprBy" },
             {
                 data: function (row) {
-                    return row.appDt && moment(row.appDt).format('DD/MM/YYYY');
+                    return row.appDt && moment(row.appDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             {

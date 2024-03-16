@@ -1,4 +1,7 @@
 ﻿@model WorkingHourModel
+@{
+    var range = ExtensionMethod.GetDateRange(Model.FromDt, Model.ToDt, CommonSetting.DisplayDateFormat);
+}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -46,7 +49,6 @@
                         <div class="form-group">
                             <label asp-for="HolTypCd"></label>
                             <select asp-for="HolTypCd" class="form-control select-picker" asp-items="ViewBag.DayTypeItems">
-                                
                             </select>
                             <span asp-validation-for="HolTypCd" class="text-danger"></span>
                         </div>
@@ -55,7 +57,6 @@
                         <div class="form-group">
                             <label asp-for="RelgTypCd"></label>
                             <select asp-for="RelgTypCd" class="form-control select-picker" asp-items="ViewBag.ReligionItems">
-                                
                             </select>
                             <span asp-validation-for="RelgTypCd" class="text-danger"></span>
                         </div>
@@ -69,3 +70,13 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function () {
+        $("#DateRange").val('@range');
+        $('#DateRange').on('show.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            $('.drp-selected').text(startDate + ' - ' + endDate);
+        });
+    }, 0)
+</script>

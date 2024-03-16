@@ -15,7 +15,7 @@
             },
             {
                 data: function (row) {
-                    return row.transferDt && moment(row.transferDt).format('DD/MM/YYYY');
+                    return row.transferDt && moment(row.transferDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             { data: "deptFrDes" },

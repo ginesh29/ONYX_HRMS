@@ -43,6 +43,10 @@ const LeaveConfirmTypesEnum = {
     Revise: 1,
     Cancel: 2
 }
+const CommonSetting = {
+    DisplayDateFormat: "DD/MM/YYYY",
+    //InputDateFormat: "YYYY/MM/DD"
+}
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
@@ -127,7 +131,7 @@ function formatDate(date) {
 function reloadPageAfterSometime() {
     setTimeout(function () {
         location.reload();
-    }, 3000);
+    }, 1000);
 }
 function reloadDatatable() {
     window["datatable"].ajax.reload();
@@ -276,11 +280,14 @@ function initControls() {
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
 
-    $('.date-input').attr("placeholder", "mm/dd/yyyy");
+    $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').datetimepicker({
-        format: 'L'
+        format: CommonSetting.DisplayDateFormat
     });
-
+    $('.daterangepicker-input').daterangepicker({
+        autoUpdateInput: false,
+        format: CommonSetting.DisplayDateFormat
+    });
     $('.decimal-input').attr("placeholder", "0.00");
     $('.decimal-input').inputmask(decimalMaskOptions);
 
@@ -293,7 +300,7 @@ function initControls() {
     $("textarea.form-control").on("input", function (e) {
         autoResizeTextarea(e.target)
     });
-    setTimeout(function () {        
+    setTimeout(function () {
         $("textarea.form-control").trigger('input');
     }, 200)
     $('[data-toggle="tooltip"]').tooltip();
