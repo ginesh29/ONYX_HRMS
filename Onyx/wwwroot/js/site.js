@@ -43,8 +43,10 @@ const LeaveConfirmTypesEnum = {
     Revise: 1,
     Cancel: 2
 }
+
 const CommonSetting = {
-    DisplayDateFormat: "DD/MM/YYYY",
+    //DisplayDateFormat: "MM/DD/YYYY",
+    DisplayDateFormat: $("#LocalDateFormat").val(),
     //InputDateFormat: "YYYY/MM/DD"
 }
 function loadingButton(btn) {

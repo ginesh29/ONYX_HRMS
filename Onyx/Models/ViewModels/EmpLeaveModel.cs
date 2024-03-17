@@ -27,7 +27,7 @@ namespace Onyx.Models.ViewModels
         public string FormatedToDt { get; set; }
         public decimal? LvTaken { get; set; }
         public string DocRef { get; set; }
-        public DateTime? docDt { get; set; }
+        public string DocDt { get; set; }
         public string SubtituteCode { get; set; }
         public string SubstituteName { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
