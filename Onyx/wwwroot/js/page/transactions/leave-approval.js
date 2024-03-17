@@ -56,12 +56,13 @@ function showLeaveApprovalModal(transNo, reject) {
             $('#LvDateRange,#WopDateRange').daterangepicker({
                 minDate: startDate,
                 maxDate: endDate,
-                autoUpdateInput: false,
-                format: CommonSetting.DisplayDateFormat
+                locale: {
+                    format: CommonSetting.DisplayDateFormat
+                },
             });
-            $('#LvDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            $('#LvDateRange').on('change.daterangepicker', function (ev, picker) {
+                var startDate = $('#LvDateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = $('#LvDateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
                 var lvDays = picker.endDate.diff(picker.startDate, 'days');
                 $("#LvDays-txt").text(`(${lvDays} days)`);
                 $("#LvDays").val(lvDays)
@@ -70,9 +71,14 @@ function showLeaveApprovalModal(transNo, reject) {
                 $("#LvTo").val(endDate);
                 UpdateTotalLeavesDays();
             });
-            $('#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            $('#WopDateRange').daterangepicker({
+                locale: {
+                    format: CommonSetting.DisplayDateFormat
+                },
+            });
+            $('#WopDateRange').on('change.daterangepicker', function (ev, picker) {
+                var startDate = $('#WopDateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = $('#WopDateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
                 var WOPlvDays = picker.endDate.diff(picker.startDate, 'days');
                 $("#WopLvDays-txt").text(`(${WOPlvDays} days)`);
                 $("#WopLvDays").val(WOPlvDays)
@@ -80,10 +86,7 @@ function showLeaveApprovalModal(transNo, reject) {
                 $("#WopFrom").val(startDate);
                 $("#WopTo").val(endDate);
                 UpdateTotalLeavesDays();
-            });
-            $('#LvDateRange,#WopDateRange').on('cancel.daterangepicker', function (ev, picker) {
-                $(this).val('');
-            });
+            });            
             $("#Status").val("Y");
         }
         else {

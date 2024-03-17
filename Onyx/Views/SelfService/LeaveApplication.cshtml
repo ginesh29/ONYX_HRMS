@@ -68,7 +68,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="DateRange"></label><span class="ml-2" id="lvDays"></span>
-                            <input asp-for="DateRange" type="text" class="form-control daterangepicker-input">
+                            <input asp-for="DateRange" type="text" class="form-control">
                             <span asp-validation-for="DateRange" class="text-danger"></span>
                         </div>
                     </div>
@@ -87,18 +87,19 @@
 </div>
 @section scripts {
     <script>
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+        $('#DateRange').daterangepicker({
+            locale: {
+                format: CommonSetting.DisplayDateFormat
+            },
+        });
+        $('#DateRange').on('change.daterangepicker', function (ev, picker) {
+            var startDate = $('#DateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = $('#DateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
             var lvDays = picker.endDate.diff(picker.startDate, 'days');
             $("#lvDays").text(`(${lvDays} days)`);
-            $("#LvTaken").val(lvDays);
-            $(this).val(startDate + ' - ' + endDate);
+            $("#LvTaken").val(lvDays);            
             $("#FromDt").val(startDate);
             $("#ToDt").val(endDate);
-        });
-        $('#DateRange').on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
         });
         function bindEmployeeDropdown() {
             $("#EmployeeCode").empty();

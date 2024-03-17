@@ -105,7 +105,7 @@ namespace Onyx
             var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{CoCd}/{foldername}/{filename}");
             return File.Exists(path);
         }
-        public static string GetDateRange(DateTime? start, DateTime? end, string format = CommonSetting.USDateFormat)
+        public static string GetDateRange(DateTime? start, DateTime? end, string format = CommonSetting.DisplayDateFormat)
         {
             return $"{Convert.ToDateTime(start).ToString(format).Replace("-", "/")} - {Convert.ToDateTime(end).ToString(format).Replace("-", "/")}";
         }

@@ -37,17 +37,21 @@ function showWorkingHourModal(cd) {
     var url = `/Organisation/GetWorkingHour?cd=${cd}`;
     $('#WorkingHourModal').load(url, function () {
         parseDynamicForm();
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            if (picker) {
-                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-                $(this).val(startDate + ' - ' + endDate);
-                $("#FromDt").val(startDate);
-                $("#ToDt").val(endDate);
-            }
+        $('#DateRange').daterangepicker({
+            locale: {
+                format: CommonSetting.DisplayDateFormat
+            },
         });
-        $('#DateRange').on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
+        $('#DateRange').daterangepicker({
+            locale: {
+                format: CommonSetting.DisplayDateFormat
+            },
+        });
+        $('#DateRange').on('change.daterangepicker', function (ev, picker) {
+            var startDate = $('#DateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = $('#DateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
+            $("#FromDt").val(startDate);
+            $("#ToDt").val(endDate);
         });
         $("#WorkingHourModal").modal("show");
     });

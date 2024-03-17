@@ -32,9 +32,14 @@ function showTravelFareModal(cd, sectCd, classCd) {
     var url = `/Organisation/GetTravelFare?cd=${cd}&sectCd=${sectCd}&classCd=${classCd}`;
     $('#TravelFareModal').load(url, function () {
         parseDynamicForm();
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+        $('#DateRange').daterangepicker({
+            locale: {
+                format: CommonSetting.DisplayDateFormat
+            },
+        });
+        $('#DateRange').on('change.daterangepicker', function (ev, picker) {
+            var startDate = $('#DateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = $('#DateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
             $(this).val(startDate + ' - ' + endDate);
             $("#FromDate").val(startDate);
             $("#ToDate").val(endDate);

@@ -284,10 +284,6 @@ function initControls() {
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat
     });
-    $('.daterangepicker-input').daterangepicker({
-        autoUpdateInput: false,
-        format: CommonSetting.DisplayDateFormat
-    });
     $('.decimal-input').attr("placeholder", "0.00");
     $('.decimal-input').inputmask(decimalMaskOptions);
 
