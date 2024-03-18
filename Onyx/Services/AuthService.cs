@@ -14,7 +14,6 @@ namespace Onyx.Services
             {
                 new("Username", model.Username),
                 new("UserAbbr", model.UserAbbr),
-                new("LoginId", model.LoginId),
                 new("UserType",model.UserType.ToString()),
                 new("Browser", model.Browser),
                 new("UserCd", model.UserCd),
@@ -52,7 +51,6 @@ namespace Onyx.Services
                     user.UserCd = claims.FirstOrDefault(m => m.Type == "UserCd")?.Value;
                     user.UserAbbr = claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value;
                     user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
-                    user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
                     user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);
                     user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
                     user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;

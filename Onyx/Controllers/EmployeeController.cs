@@ -48,7 +48,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.EmpTypeItems = _commonService.GetCodesGroups("J_ET").Select(m => new SelectListItem
+            ViewBag.EmpTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
@@ -197,17 +197,17 @@ namespace Onyx.Controllers
                 Text = $"{m.Username}({m.Code.Trim()})"
             });
 
-            ViewBag.PayModeItems = _commonService.GetSysCodes("HPMOD").Select(m => new SelectListItem
+            ViewBag.PayModeItems = _commonService.GetSysCodes(SysCode.PayMode).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = m.SDes
             });
-            ViewBag.PayFrequencyItems = _commonService.GetSysCodes("HPFRQ").Select(m => new SelectListItem
+            ViewBag.PayFrequencyItems = _commonService.GetSysCodes(SysCode.PayFrequency).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = m.SDes
             });
-            ViewBag.PayBankItems = _commonService.GetCodesGroups("BANK").Select(m => new SelectListItem
+            ViewBag.PayBankItems = _commonService.GetCodesGroups(CodeGroup.Bank).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
@@ -233,7 +233,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes
             });
             ViewBag.StatusItems = _commonService.GetLeaveStatusTypes();
-            ViewBag.EmpTypeItems = _commonService.GetCodesGroups("J_ET").Select(m => new SelectListItem
+            ViewBag.EmpTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
@@ -628,7 +628,7 @@ namespace Onyx.Controllers
                     Phone = address.Phone,
                 };
             model.EmployeeCode = empCd;
-            ViewBag.AddressTypeItems = _commonService.GetCodesGroups("HADD").Select(m => new SelectListItem
+            ViewBag.AddressTypeItems = _commonService.GetCodesGroups(CodeGroup.Address).Select(m => new SelectListItem
             {
                 Text = m.Description,
                 Value = m.Code.Trim(),

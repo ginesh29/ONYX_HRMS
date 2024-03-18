@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -13,8 +12,9 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly TransactionService _transactionService;
         private readonly EmployeeService _employeeService;
+        private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
-        public TransactionsController(AuthService authService, CommonService commonService, TransactionService transactionService, SettingService settingService, EmployeeService employeeService)
+        public TransactionsController(AuthService authService, CommonService commonService, TransactionService transactionService, SettingService settingService, EmployeeService employeeService, OrganisationService organisationService)
         {
             _authService = authService;
             _commonService = commonService;
@@ -22,6 +22,7 @@ namespace Onyx.Controllers
             _transactionService = transactionService;
             _settingService = settingService;
             _employeeService = employeeService;
+            _organisationService = organisationService;
         }
 
         #region Leave Transaction
@@ -31,7 +32,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaveApprovalData()
         {
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.LoginId, _loggedInUser.UserOrEmployee);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = leaveData,
@@ -41,7 +42,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLeaveApproval(string transNo)
         {
             var model = new EmpLeaveApprovalModel();
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.LoginId, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
             if (leaveData != null)
             {
                 model = new EmpLeaveApprovalModel()
@@ -64,9 +65,14 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpLeaveApprovalModal", model);
         }
+        public IActionResult GetEmpLeaveDetail(string empCd, DateTime FromDt, DateTime ToDt)
+        {
+            var leaveDetails = _transactionService.GetEmployee_LeaveHistory(empCd, FromDt, ToDt);
+            return PartialView("_EmpLeaveDetailPreviewModal", leaveDetails);
+        }
         public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model)
         {
-            model.ApprBy = _loggedInUser.LoginId;
+            model.ApprBy = _loggedInUser.UserAbbr;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             _transactionService.SaveLeaveApproval(model);
@@ -88,7 +94,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model)
         {
-            model.ApprBy = _loggedInUser.LoginId;
+            model.ApprBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
             var ProcessId = "HRPT12";
@@ -255,7 +261,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaveSalaryApprovalData()
         {
-            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.LoginId, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = leaveData,
@@ -284,7 +290,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLoanApprovalData()
         {
-            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.LoginId, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = loanData,
@@ -323,10 +329,83 @@ namespace Onyx.Controllers
         }
         #endregion
 
+        #region Employee Provision Adjustment
         public IActionResult EmpProvisionAdj()
         {
             return View();
         }
-
+        public IActionResult FetchProvisionAdjData()
+        {
+            var transferData = _transactionService.GetEmpProvisionAdjData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            CommonResponse result = new()
+            {
+                Data = transferData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetProvisionAdj(string transNo)
+        {
+            var empprovisionsadj = _transactionService.GetEmpProvisionAdjData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var model = new EmpprovisionsadjModel();
+            if (empprovisionsadj != null)
+                model = new EmpprovisionsadjModel
+                {
+                    Amt = empprovisionsadj.Amt,
+                    ApprBy = empprovisionsadj.ApprBy,
+                    ApprDt = empprovisionsadj.ApprDt,
+                    Days = empprovisionsadj.Days,
+                    EmpCd = empprovisionsadj.EmpCd,
+                    Narr = empprovisionsadj.Narr,
+                    ProvTyp = empprovisionsadj.ProvTyp,
+                    Purpose = empprovisionsadj.Purpose,
+                    RefDoc = empprovisionsadj.RefDoc,
+                    RefDt = empprovisionsadj.RefDt,
+                    Status = empprovisionsadj.Status,
+                    TransDt = empprovisionsadj.TransDt,
+                    TransNo = empprovisionsadj.TransNo,
+                    CurrentApproval = empprovisionsadj.CurrentApproval,
+                    CurrentApprovalLevel = empprovisionsadj.CurrentApprovalLevel,
+                    Name = empprovisionsadj.Name,
+                    Prov = empprovisionsadj.Prov
+                };
+            else
+            {
+                model.TransNo = _transactionService.GetEmpProvisionAdjSrNo();
+                model.TransDt = DateTime.Now;
+            }
+            ViewBag.ProvisionTypeItems = _organisationService.GetCompanyProvisions().Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            return PartialView("_EmpProvisionAdjModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveEmpProvisionAdj(EmpprovisionsadjModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _transactionService.SaveEmpProvisionAdj(model);
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult ApproveEmpProvisionAdj(EmpprovisionsadjModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var result = _transactionService.SetEmpprovisionsadjAppr(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteEmpProvisionAdj(string transNo)
+        {
+            _transactionService.DeleteEmpProvisionAdj(transNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }

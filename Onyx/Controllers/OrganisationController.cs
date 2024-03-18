@@ -257,6 +257,7 @@ namespace Onyx.Controllers
             if (overtimeRate != null)
                 model = new OvertimeRateModel
                 {
+                    Cd = overtimeRate.Type,
                     HolTyp = overtimeRate.HolTyp,
                     HolTypCd = overtimeRate.HolTypCd.Trim(),
                     HrsApply = overtimeRate.HrsApply,
@@ -450,7 +451,7 @@ namespace Onyx.Controllers
                 Value = m.ParameterCd.Trim(),
                 Text = m.Val
             });
-            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
+            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups(CodeGroup.HDocType).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.ShortDes

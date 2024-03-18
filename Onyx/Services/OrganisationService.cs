@@ -811,8 +811,8 @@ namespace Onyx.Services
             parameters.Add("v_SectCd", model.SectCd);
             parameters.Add("v_Class", model.ClassCd);
             parameters.Add("v_SrNo", model.SrNo);
-            parameters.Add("v_FromDt", model.FromDate);
-            parameters.Add("v_ToDt", model.ToDate);
+            parameters.Add("v_FromDt", model.FromDate.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_ToDt", model.ToDate.Value.ToString(CommonSetting.InputDateFormat));
             parameters.Add("v_SDes", model.SDes);
             parameters.Add("v_Fare", model.Fare);
             parameters.Add("v_Des", model.Description);
@@ -986,7 +986,7 @@ namespace Onyx.Services
         }
         public IEnumerable<SelectListItem> GetDocumentTypeByType(string proccessId, string CoCd)
         {
-            IEnumerable<SelectListItem> result = new List<SelectListItem>();
+            IEnumerable<SelectListItem> result = [];
             if (proccessId == "HRPSS2" || proccessId == "HRPSS3")
             {
                 var leaveTypes = GetLeaveTypes(CoCd).Select(m => new SelectListItem
@@ -1007,7 +1007,7 @@ namespace Onyx.Services
             }
             else if (proccessId == "HRPT6")
             {
-                var empProgressions = _commonService.GetSysCodes("HREP").Select(m => new SelectListItem
+                var empProgressions = _commonService.GetSysCodes(SysCode.EmpProgression).Select(m => new SelectListItem
                 {
                     Value = m.Cd.Trim(),
                     Text = m.SDes
@@ -1025,7 +1025,7 @@ namespace Onyx.Services
             }
             else if (proccessId == "HRPT8")
             {
-                var docTypes = _commonService.GetCodesGroups("HDTYP").Select(m => new SelectListItem
+                var docTypes = _commonService.GetCodesGroups(CodeGroup.HDocType).Select(m => new SelectListItem
                 {
                     Value = m.Code.Trim(),
                     Text = m.ShortDes

@@ -33,11 +33,12 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Pay Code")]
         public string PayCode { get; set; }
+        public string Cd { get; set; }
         public string Mode
         {
             get
             {
-                return !string.IsNullOrEmpty(Type) ? "U" : "I";
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
             }
         }
     }

@@ -174,6 +174,30 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public Employee_LeaveHistory_Detail GetEmployee_LeaveHistory(string empCd, DateTime FromDt, DateTime ToDt)
+        {
+            var procedureName = "Employee_LeaveHistory";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_FromDt", FromDt);
+            parameters.Add("v_ToDt", ToDt);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var empLeaveDetail = multiResult.ReadFirstOrDefault<Employee_LeaveDetail>();
+            var previousleavehistory = multiResult.Read<PreviousLeaveHistory>();
+            var incomeDetails = multiResult.Read<IncomeDetails>();
+            var outstanding = multiResult.ReadFirstOrDefault<OutstandingDetail>();
+            var leaveApprovalDetail = multiResult.ReadFirstOrDefault<LeaveApprovalDetails>();
+            return new Employee_LeaveHistory_Detail
+            {
+                EmpLeaveDetail = empLeaveDetail,
+                IncomeDetails = incomeDetails,
+                LeaveApprovalDetails = leaveApprovalDetail,
+                OutstandingDetail = outstanding,
+                PreviousLeaveHistory = previousleavehistory
+            };
+        }
         public EmpLeave_Allowances_Result GetEmpLeave_Allowances(EmpLeaveConfirmModel model, string CoCd)
         {
             var procedureName = "EmpLeave_Allowances";
@@ -371,6 +395,76 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
+        }
+        #endregion
+
+        #region Emp Provision Adjustment
+        public IEnumerable<Empprovisionsadj_GetRow_Result> GetEmpProvisionAdjData(string empCd, string empUser)
+        {
+            var procedureName = "Empprovisionsadj_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Param", string.Empty);
+            parameters.Add("v_Typ", "6");
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EmpUser", empUser);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<Empprovisionsadj_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public string GetEmpProvisionAdjSrNo()
+        {
+            var procedureName = "Empprovisionsadj_TransNo";
+            var parameters = new DynamicParameters();
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<string>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse SaveEmpProvisionAdj(EmpprovisionsadjModel model)
+        {
+            var procedureName = "Empprovisionsadj_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_TransDt", model.TransDt);
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_ProvTyp", model.ProvTyp);
+            parameters.Add("v_Days", model.Days);
+            parameters.Add("v_Amt", model.Amt);
+            parameters.Add("v_Purpose", model.Purpose);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        public CommonResponse SetEmpprovisionsadjAppr(EmpprovisionsadjModel model)
+        {
+            var procedureName = "EmpprovisionsadjAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.CurrentApprovalLevel);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            parameters.Add("v_ApprDt", model.ApprDt);
+            parameters.Add("v_Status", model.Status);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public void DeleteEmpProvisionAdj(string transNo)
+        {
+            var procedureName = "Empprovisionsadj_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", transNo);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
     }

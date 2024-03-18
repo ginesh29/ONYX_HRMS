@@ -32,13 +32,16 @@
             { data: "reason" },
             {
                 data: function (row) {
-                    return `<button data-toggle="tooltip" data-original-title="Approve" class="btn btn-sm btn-info" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
-                                                                        <i class="fas fa-check"></i>
-                                                                    </button>
-                                                                    <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
-                                                                        <i class="fa fa-times"></i>
-                                                                    </button>`;
-                }, "width": "80px"
+                    return `<button data-toggle="tooltip" data-original-title="View" class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.lvFrom}','${row.lvTo}')">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-original-title="Approve" class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
+                                <i class="fa fa-times"></i>
+                            </button>`;
+                }, "width": "120px"
             }
         ],
     }
@@ -46,6 +49,12 @@
 var isAdmin = $("#IsAdmin").val() == 1;
 if (isAdmin)
     window["datatable"].column(8).visible(false);
+function showLeaveDetailModal(empCd, fromDt, toDt) {
+    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
+    $('#EmployeeLeaveDetailModal').load(url, function () {
+        $("#EmployeeLeaveDetailModal").modal("show");
+    });
+}
 function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
     $('#EmployeeLeaveApprovalModal').load(url, function () {
@@ -54,6 +63,8 @@ function showLeaveApprovalModal(transNo, reject) {
             var startDate = $("#LvFrom").val();
             var endDate = $("#LvTo").val();
             $('#LvDateRange,#WopDateRange').daterangepicker({
+                autoUpdateInput: false,
+               /* autoApply: true,*/
                 minDate: startDate,
                 maxDate: endDate,
                 locale: {
@@ -86,7 +97,7 @@ function showLeaveApprovalModal(transNo, reject) {
                 $("#WopFrom").val(startDate);
                 $("#WopTo").val(endDate);
                 UpdateTotalLeavesDays();
-            });            
+            });
             $("#Status").val("Y");
         }
         else {

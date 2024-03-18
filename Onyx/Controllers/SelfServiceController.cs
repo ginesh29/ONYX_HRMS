@@ -72,7 +72,7 @@ namespace Onyx.Controllers
             ViewBag.IntLocalTypeItems = _commonService.GetIntLocalTypes();
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveTransNo();
             if (!_loggedInUser.UserAbbr.Contains("Admin"))
-                ViewBag.EmpCd = _loggedInUser.LoginId;
+                ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
         public IActionResult SaveLeaveApplication(EmpLeaveModel model)

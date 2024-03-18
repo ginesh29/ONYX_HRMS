@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.StoredProcedure
+namespace Onyx.Models.ViewModels
 {
     public class EmpBankAcModel
     {
-        [Display(Name ="Employee")]
+        [Display(Name = "Employee")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        public string EmpCd { get; set; }        
-        public string EmployeeName { get; set; }        
+        public string EmpCd { get; set; }
+        public string EmployeeName { get; set; }
         public decimal SrNo { get; set; }
         [Display(Name = "Account Name")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

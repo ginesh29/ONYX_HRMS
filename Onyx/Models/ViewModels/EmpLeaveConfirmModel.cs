@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.StoredProcedure
+namespace Onyx.Models.ViewModels
 {
     public class EmpLeaveConfirmModel
     {
@@ -45,7 +45,7 @@ namespace Onyx.Models.StoredProcedure
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public int Type { get; set; }
         public decimal? Ticket { get; set; }
-        [Display(Name ="Leave Salary")]
+        [Display(Name = "Leave Salary")]
         public decimal? LvSalary { get; set; }
     }
 }

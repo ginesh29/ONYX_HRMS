@@ -13,7 +13,9 @@
         public const string DayType = "HOTC2";
         public const string Religion = "HOTC1";
         public const string OtTpe = "HCOTT";
-
+        public const string PayMode = "HPMOD";
+        public const string PayFrequency = "HPFRQ";
+        public const string EmpProgression = "HREP";
     }
     public class CodeGroup
     {
@@ -33,6 +35,9 @@
         public const string MaritalStatus = "HMS";
         public const string Religion = "HRELG";
         public const string Sponsor = "ESPON";
+        public const string EmpType = "J_ET";
+        public const string HDocType = "HDTYP";
+        public const string Address = "HADD";
     }
     public class CommonMessage
     {

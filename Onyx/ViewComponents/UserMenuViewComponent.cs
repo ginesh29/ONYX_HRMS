@@ -23,7 +23,7 @@ namespace Onyx.ViewComponents
         }
         public IViewComponentResult Invoke()
         {
-            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.LoginId, _loggedInUser.CompanyCd) : null;
+            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.UserAbbr, _loggedInUser.CompanyCd) : null;
             var month = Convert.ToInt32(_commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetJobCardStartAndEndTime(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));

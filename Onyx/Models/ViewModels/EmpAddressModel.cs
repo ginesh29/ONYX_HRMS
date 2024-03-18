@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Onyx.Models.StoredProcedure
+namespace Onyx.Models.ViewModels
 {
     public class EmpAddressModel
     {
         public string EmployeeCode { get; set; }
         public string EmployeeName { get; set; }
         public string Address_Type { get; set; }
-        [Display(Name ="Address Type")]
+        [Display(Name = "Address Type")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string AddTyp { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

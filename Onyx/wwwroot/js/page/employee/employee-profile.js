@@ -235,13 +235,10 @@ function showExperienceModal(srNo) {
                 format: CommonSetting.DisplayDateFormat
             },
         });
-        $('#DateRange').on('change.daterangepicker', function (ev, picker) {
-            var startDate = $('#DateRange').data('daterangepicker').startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = $('#DateRange').data('daterangepicker').endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(startDate + ' - ' + endDate);
-            $("#StartingDate").val(startDate);
-            $("#EndingDate").val(endDate);
-        });
+        var startDate = $("#StartingDate").val();
+        var endDate = $("#EndingDate").val();
+        if (!startDate && !endDate && startDate == endDate)
+            $('#DateRange').val("");
         $("#ExperienceModal").modal("show");
     });
 }

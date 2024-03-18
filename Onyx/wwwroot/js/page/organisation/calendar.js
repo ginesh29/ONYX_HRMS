@@ -22,7 +22,7 @@ var calendar = new Calendar(calendarEl, {
     },
     dateClick: function (info) {
         showCalendarEventModal('');
-        var dt = moment(info.dateStr).format("MM/DD/YYYY");
+        var dt = moment(info.dateStr).format(CommonSetting.DisplayDateFormat);
         setTimeout(function () {
             $("#Date").val(dt);
         }, 100)

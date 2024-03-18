@@ -45,9 +45,8 @@ const LeaveConfirmTypesEnum = {
 }
 
 const CommonSetting = {
-    //DisplayDateFormat: "MM/DD/YYYY",
     DisplayDateFormat: $("#LocalDateFormat").val(),
-    //InputDateFormat: "YYYY/MM/DD"
+    InputDateFormat: "YYYY-MM-DD"
 }
 function loadingButton(btn) {
     var $this = $(btn);
@@ -114,16 +113,11 @@ var deleteAjax = function (url, callback) {
     })
 }
 function setActiveMenu() {
-    var activeurl = window.location.pathname;
-    var el = $('a[href="' + activeurl + '"]');
+    var activeUrl = window.location.pathname;
+    var el = $('a[href="' + activeUrl + '"]');
     el.addClass('active');
-
-    var el2 = el.parent('li').parent('ul').parent();
-    el2.find(".nav-link").eq(0).addClass('active');
-    el2.addClass('menu-open');
-
-    el2.find(".nav-link").eq(0).parent('li').parent('ul').parent().find(".nav-link:not(.home-link)").eq(0).addClass('active');
-    el.parent('li').parent('ul').parent('li').parent('ul').parent().addClass('menu-open');
+    var el2 = el.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
+    el2.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
 }
 function formatDate(date) {
     return (date.getMonth() + 1).toString().padStart(2, '0') + '/' +
@@ -276,12 +270,18 @@ $("#company-dropdown").on('change', function (e) {
         window.location.reload();
     });
 })
+function printDiv(divContainer) {
+    divContainer = divContainer ? divContainer : "print-container";
+    $(`#${divContainer}`).print();
+}
 function initControls() {
     $(".select-picker,.filter-select-picker").not("#company-dropdown").attr("data-live-search", true)
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
-
+    $(".select-picker,.filter-select-picker").on('show.bs.select', function () {
+        $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
+    });
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat

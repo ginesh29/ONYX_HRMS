@@ -61,7 +61,6 @@ namespace Onyx.Controllers
                             UserOrEmployee = "U",
                             Username = validateUser.UName,
                             UserAbbr = user.Abbr,
-                            LoginId = model.LoginId,
                             UserType = (int)model.UserType,
                             Browser = model.Browser
                         };
@@ -83,9 +82,8 @@ namespace Onyx.Controllers
                             UserCd = employee.UserCd,
                             UserOrEmployee = "E",
                             Username = user.Username,
-                            UserAbbr = user.Abbr,
+                            UserAbbr = model.LoginId,
                             UserType = (int)model.UserType,
-                            LoginId = model.LoginId,
                             Browser = model.Browser
                         };
                         await _authService.SignInUserAsync(u, model.RememberMe);
@@ -114,7 +112,7 @@ namespace Onyx.Controllers
             {
                 var user = _userEmployeeService.ValidateUser(new LoginModel
                 {
-                    LoginId = _loggedInUser.LoginId,
+                    LoginId = _loggedInUser.UserAbbr,
                     Password = model.OldPassword
                 });
                 if (user != null)
@@ -132,12 +130,12 @@ namespace Onyx.Controllers
             {
                 var employee = _userEmployeeService.ValidateEmployee(new LoginModel
                 {
-                    LoginId = _loggedInUser.LoginId,
+                    LoginId = _loggedInUser.UserAbbr,
                     Password = model.OldPassword
                 });
                 if (employee != null)
                 {
-                    _employeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.LoginId, model.ConfirmPassword);
+                    _employeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, model.ConfirmPassword);
                     result.Success = true;
                     result.Message = "Password changed Successfully";
                 }

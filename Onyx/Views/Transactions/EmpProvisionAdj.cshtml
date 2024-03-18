@@ -1,3 +1,30 @@
 ﻿@{
-    ViewData["Title"] = "Provision Adj.";
+    ViewData["Title"] = "Employee Provision Adjustment";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showEmpProvisionAdjModal('')">New Provision Adj.</button>
+        </div>
+        <table class="table table-sm" id="EmployeeProvisionAdjDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Trans. No.</th>
+                    <th>Employee</th>
+                    <th>Tran Dt</th>
+                    <th>Prov. Typ</th>
+                    <th>Days</th>
+                    <th>Amount</th>
+                    <th>Purpose</th>
+                    <th>Narration</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmpProvisionAdjModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/transactions/emp-provision-adj.js" asp-append-version="true"></script>
 }

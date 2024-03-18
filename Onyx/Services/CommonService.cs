@@ -65,7 +65,6 @@ namespace Onyx.Services
             var connectionString = GetConnectionString();
             string insertQuery = PermissionIdsWithActions != null ? "INSERT INTO UserPermission(UserCd,MenuId,uAdd,uEdit,uDelete,uView,uPrint) VALUES" : null;
 
-            string MenuId = string.Empty;
             if (PermissionIdsWithActions != null)
             {
                 var permissions = GetPermissionModels(PermissionIdsWithActions);
