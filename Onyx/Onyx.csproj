@@ -6,10 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Views\Transactions\_EmpProvisionAdjModal.cshtml~RF1b5caf3.TMP" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.28" />
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="MailKit" Version="4.3.0" />

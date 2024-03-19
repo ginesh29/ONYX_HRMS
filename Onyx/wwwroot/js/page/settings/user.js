@@ -31,6 +31,13 @@
         ],
     }
 );
+function findParentNode(treeInstance, childNodeId) {
+
+}
+
+function expandParentNode(treeInstance, childNodeId) {
+
+}
 function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
@@ -56,6 +63,7 @@ function showUserModal(cd) {
                 $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
                 $(`#permission_checkbox_View_${item}`).prop("checked", true);
                 $(`#permission_checkbox_Print_${item}`).prop("checked", true);
+                expandAllParents($('#tree-view'), item);
             });
             $.each(uncheckedNodes, function (i, item) {
                 $(`#permission_checkbox_Add_${item}`).prop("checked", false);
@@ -64,9 +72,17 @@ function showUserModal(cd) {
                 $(`#permission_checkbox_View_${item}`).prop("checked", false);
                 $(`#permission_checkbox_Print_${item}`).prop("checked", false);
             });
+
             $("#MenuIds").val(checkedNodes.toString());
         })
     });
+}
+function expandAllParents(treeInstance, nodeId) {
+    var currentNode = treeInstance.jstree(true).get_node(nodeId);
+    if (currentNode && currentNode.parent !== '#') {
+        treeInstance.jstree('open_node', currentNode.parent);
+        expandAllParents(treeInstance, currentNode.parent);
+    }
 }
 function deleteUser(cd) {
     Swal.fire({

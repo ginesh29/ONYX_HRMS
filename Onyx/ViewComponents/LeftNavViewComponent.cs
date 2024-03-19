@@ -22,8 +22,10 @@ namespace Onyx.ViewComponents
             {
                 var visibleMenuItems = menuItems.Where(m => m.Visible == "Y");
                 var parentIds = visibleMenuItems.Select(m => m.Prnt).Distinct();
-                var menuIds = visibleMenuItems.Select(m => m.MenuId).Distinct();
-                menuItems = menuItems.Where(m => menuIds.Contains(m.MenuId) || parentIds.Contains(m.MenuId));
+                var parentMenuItems = menuItems.Where(m => parentIds.Contains(m.MenuId));
+                var parentIds2 = parentMenuItems.Select(m => m.Prnt).Distinct();
+                var visibleMenuIds = visibleMenuItems.Select(m => m.MenuId).Distinct();
+                menuItems = menuItems.Where(m => visibleMenuIds.Contains(m.MenuId) || parentIds.Contains(m.MenuId) || parentIds2.Contains(m.MenuId));
             }
             return View(menuItems);
         }

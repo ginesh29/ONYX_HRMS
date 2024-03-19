@@ -106,7 +106,16 @@ namespace Onyx.Controllers
                     Username = user.Username,
                     ExpiryDt = user.ExpiryDt,
                 };
-            model.Menus = _settingService.ConvertPermissionToTree(_commonService.GetMenuWithPermissions(cd));
+            var menuItems = _commonService.GetMenuWithPermissions(cd);
+            model.Menus = _settingService.ConvertPermissionToTree(menuItems);
+
+            var visibleMenuItems = menuItems.Where(m => m.Visible == "Y");
+            var parentIds = visibleMenuItems.Select(m => m.Prnt).Distinct();
+            var parentMenuItems = menuItems.Where(m => parentIds.Contains(m.MenuId));
+            var parentIds2 = parentMenuItems.Select(m => m.Prnt).Distinct();
+            var visibleMenuIds = visibleMenuItems.Select(m => m.MenuId).Distinct();
+            menuItems = menuItems.Where(m => visibleMenuIds.Contains(m.MenuId));
+            ViewBag.SelectedMenuItems = menuItems.Select(m => m.MenuId).ToArray();
             ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code);
             return PartialView("_UserModal", model);
         }

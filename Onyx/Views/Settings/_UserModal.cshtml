@@ -1,8 +1,8 @@
 ﻿@using System.Text.Json
 @model UserModel
 @{
-    var menus = Model.Menus.Where(m => m.Visible == "Y").Select(m => m.MenuId).ToArray();
-    string menuArray = JsonSerializer.Serialize(menus);
+    int[] menuItems = ViewBag.SelectedMenuItems;
+    string menuArray = JsonSerializer.Serialize(menuItems);
     string[] actionTypes = { "Add", "Edit", "Delete", "View", "Print" };
     List<GetUserBranches_Result> UserBranchItems = ViewBag.UserBranchItems;
 }
