@@ -61,6 +61,7 @@ namespace Onyx.Controllers
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
                     ApprDt = DateTime.Now,
+                    ApprBy = leaveData.Current_Approval.Trim(),
                 };
             }
             return PartialView("_EmpLeaveApprovalModal", model);
@@ -72,7 +73,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model)
         {
-            model.ApprBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             _transactionService.SaveLeaveApproval(model);
@@ -405,6 +406,13 @@ namespace Onyx.Controllers
                 Message = CommonMessage.DELETED
             };
             return Json(result);
+        }
+        #endregion
+
+        #region Emp Monthly Attendance
+        public IActionResult EmpMonthlyAttendance()
+        {
+            return View();
         }
         #endregion
     }

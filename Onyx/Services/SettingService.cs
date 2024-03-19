@@ -118,7 +118,10 @@ namespace Onyx.Services
                     parent.Children.Add(item);
                 }
             }
-
+            //var visibleMenuItems = tree.Where(m => m.Visible == "Y");
+            //var parentIds = visibleMenuItems.Select(m => m.Prnt).Distinct();
+            ////var menuIds = tree.Select(m => m.MenuId).Distinct();
+            //tree = tree.Select(m => { m.Visible = parentIds.Contains(m.MenuId) ? "Y" : null; return m; }).ToList();
             return tree;
         }
         #endregion

@@ -1,4 +1,7 @@
 ﻿@model EmpLeaveConfirmModel
+@{
+    var serverDateFormat = ExtensionMethod.GetDateFormat();
+}
 <div class="modal-dialog" style="max-width:900px">
     <!-- Modal content-->
     <div class="modal-content">
@@ -14,11 +17,11 @@
                     <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
                     <div><span class="font-weight-bold">Designation: </span>@Model.Designation</div>
                     <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
-                    <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.AppDt).ToString(ViewData["LocalDateFormat"].ToString())</div>
+                    <div><span class="font-weight-bold">Applied Date: </span>@Convert.ToDateTime(Model.AppDt).ToString(serverDateFormat)</div>
                     <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
                     <div><span class="font-weight-bold">Date Range: </span>@Model.DateRange (@Model.LvDays days)</div>
                     <h5 class="text-primary mt-2">Approval Details</h5>
-                    <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.ApprDt).ToString(ViewData["LocalDateFormat"].ToString())</div>
+                    <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.ApprDt).ToString(serverDateFormat)</div>
                     <div><span class="font-weight-bold">With Pay: </span>@Model.WpDateRange (@Model.WpLvDays days)</div>
                     <div><span class="font-weight-bold">Without Pay: </span>@Model.WopDateRange (@Model.WopLvDays days)</div>
                     <div><span class="font-weight-bold">Total Leave Days: </span>@Model.ApprDays</div>

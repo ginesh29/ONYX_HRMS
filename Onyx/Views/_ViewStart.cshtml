@@ -1,3 +1,5 @@
 ﻿@{
     Layout = "_Layout";
+    ViewData["LocalDateFormat"] = ExtensionMethod.GetDateFormat().ToUpper();
+    ViewData["ServerDateFormat"] = ExtensionMethod.GetDateFormat();
 }

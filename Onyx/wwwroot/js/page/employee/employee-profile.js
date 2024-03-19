@@ -230,15 +230,7 @@ function showExperienceModal(srNo) {
     $('#ExperienceModal').load(url, function () {
         parseDynamicForm();
         $("#EmpCd").val(empCode);
-        $('#DateRange').daterangepicker({
-            locale: {
-                format: CommonSetting.DisplayDateFormat
-            },
-        });
-        var startDate = $("#StartingDate").val();
-        var endDate = $("#EndingDate").val();
-        if (!startDate && !endDate && startDate == endDate)
-            $('#DateRange').val("");
+        $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
         $("#ExperienceModal").modal("show");
     });
 }

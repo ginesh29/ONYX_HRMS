@@ -79,7 +79,7 @@ namespace Onyx.Controllers
                         var u = new LoggedInUserModel
                         {
                             CompanyCd = model.CoCd,
-                            UserCd = employee.UserCd,
+                            UserCd = employee.UserCd.Trim(),
                             UserOrEmployee = "E",
                             Username = user.Username,
                             UserAbbr = model.LoginId,

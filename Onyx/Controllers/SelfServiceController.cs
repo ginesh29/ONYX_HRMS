@@ -30,6 +30,8 @@ namespace Onyx.Controllers
                 Text = m.Sdes.Trim(),
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextLoanTransNo(_loggedInUser.CompanyCd, "EMPLOAN");
+            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+                ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
         [HttpPost]
@@ -109,6 +111,8 @@ namespace Onyx.Controllers
         public IActionResult LeaveSalaryApplication()
         {
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
+            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+                ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
         public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model)
@@ -137,6 +141,8 @@ namespace Onyx.Controllers
                 Text = m.Des.Trim(),
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
+            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+                ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
         public IActionResult SaveFundRequestApplication(EmployeeFundModel model)

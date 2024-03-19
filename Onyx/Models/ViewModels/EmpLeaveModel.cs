@@ -25,7 +25,7 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Date Range")]
         public string DateRange { get; set; }
         public string FormatedToDt { get; set; }
-        public decimal? LvTaken { get; set; }
+        public int LvTaken { get; set; }
         public string DocRef { get; set; }
         public string DocDt { get; set; }
         public string SubtituteCode { get; set; }

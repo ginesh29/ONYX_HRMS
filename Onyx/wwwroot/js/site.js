@@ -48,6 +48,13 @@ const CommonSetting = {
     DisplayDateFormat: $("#LocalDateFormat").val(),
     InputDateFormat: "YYYY-MM-DD"
 }
+const dateRangePickerDefaultOptions = {
+    locale: {
+        format: CommonSetting.DisplayDateFormat
+    },
+    autoUpdateInput: false,
+    autoApply: true
+}
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
