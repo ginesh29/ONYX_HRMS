@@ -28,6 +28,7 @@ namespace Onyx.Models.ViewModels
         public string HolTypCd { get; set; }
         public string EntryBy { get; set; }
         public string Cd { get; set; }
+        public int Days { get; set; }
         public string Mode
         {
             get

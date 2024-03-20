@@ -197,6 +197,7 @@ namespace Onyx.Controllers
                     FromDt = workingHour.FromDt,
                     ToDt = workingHour.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(workingHour.FromDt, workingHour.ToDt),
+                    Days = (Convert.ToDateTime(workingHour.ToDt) - Convert.ToDateTime(workingHour.FromDt)).Days,
                     HolTypCd = workingHour.HolTypCd.Trim(),
                     HolTypDesc = workingHour.HolTypDesc,
                     Description = workingHour.Narr,
@@ -219,6 +220,9 @@ namespace Onyx.Controllers
         public IActionResult SaveWorkingHour(WorkingHourModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            var dateSp = model.DateRange.Split(" - ");
+            model.FromDt = Convert.ToDateTime(dateSp[0]);
+            model.ToDt = Convert.ToDateTime(dateSp[1]);
             var result = _organisationService.SaveWorkingHour(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -1232,6 +1236,7 @@ namespace Onyx.Controllers
                     FromDate = travelFare.FromDate,
                     ToDate = travelFare.ToDate,
                     DateRange = ExtensionMethod.GetDateRange(travelFare.FromDate, travelFare.ToDate),
+                    Days = (Convert.ToDateTime(travelFare.ToDate) - Convert.ToDateTime(travelFare.FromDate)).Days,
                     Sector = travelFare.Sector,
                     TravelClass = travelFare.TravelClass
                 };
@@ -1253,6 +1258,9 @@ namespace Onyx.Controllers
         public IActionResult SaveTravelFare(AirFareModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            var dateSp = model.DateRange.Split(" - ");
+            model.FromDate = Convert.ToDateTime(dateSp[0]);
+            model.ToDate = Convert.ToDateTime(dateSp[1]);
             var result = _organisationService.SaveTravelFare(model);
             return Json(result);
         }

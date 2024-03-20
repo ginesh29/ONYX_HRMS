@@ -7,8 +7,6 @@
     <div class="card-body">
         <div class="col-md-6 form-border-right">
             <form id="Leave-application-frm">
-                <input type="hidden" asp-for="FromDt" />
-                <input type="hidden" asp-for="ToDt" />
                 <input type="hidden" asp-for="LvTaken" />
                 <div class="row">
                     <div class="col-md-6">
@@ -67,7 +65,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="DateRange"></label><span class="ml-2" id="lvDays"></span>
+                            <label asp-for="DateRange"></label><span class="ml-2" id="Days"></span>
                             <input asp-for="DateRange" type="text" class="form-control">
                             <span asp-validation-for="DateRange" class="text-danger"></span>
                         </div>
@@ -88,16 +86,7 @@
 @section scripts {
     <script>
         $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(`${startDate} - ${endDate}`);
-            var lvDays = picker.endDate.diff(picker.startDate, 'days');
-            $("#lvDays").text(`(${lvDays} days)`);
-            $("#LvTaken").val(lvDays);
-            $("#FromDt").val(startDate);
-            $("#ToDt").val(endDate);
-        });
+        
         function bindEmployeeDropdown() {
             $("#EmployeeCode").empty();
             getAjax(`/Employee/FetchEmployeeItems`, function (response) {

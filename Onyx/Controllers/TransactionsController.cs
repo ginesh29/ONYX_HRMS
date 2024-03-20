@@ -76,6 +76,13 @@ namespace Onyx.Controllers
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
+            var lvDateSp = model.LvDateRange.Split(" - ");
+            model.LvFrom = Convert.ToDateTime(lvDateSp[0]);
+            model.LvTo = Convert.ToDateTime(lvDateSp[1]);
+            var wopDateSp = model.WopDateRange.Split(" - ");
+            model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
+            model.WopTo = Convert.ToDateTime(wopDateSp[1]);
+
             _transactionService.SaveLeaveApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";

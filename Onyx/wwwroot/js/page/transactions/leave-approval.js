@@ -65,27 +65,14 @@ function showLeaveApprovalModal(transNo, reject) {
             var dateRangePickerOptions = dateRangePickerDefaultOptions;
             dateRangePickerOptions.minDate = startDate;
             dateRangePickerOptions.maxDate = endDate;
-            $('#LvDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions);           
-            $('#LvDateRange').on('apply.daterangepicker', function (ev, picker) {
+            $('#LvDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions);
+            $('#LvDateRange,#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
                 var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
                 var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-                var lvDays = picker.endDate.diff(picker.startDate, 'days');
-                $("#LvDays-txt").text(`(${lvDays} days)`);
-                $("#LvDays").val(lvDays)
+                var days = picker.endDate.diff(picker.startDate, 'days');
+                $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
+                $(`#${ev.target.id}Days`).val(days)
                 $(this).val(`${startDate} - ${endDate}`);
-                $("#LvFrom").val(startDate);
-                $("#LvTo").val(endDate);
-                UpdateTotalLeavesDays();
-            });
-            $('#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-                var WOPlvDays = picker.endDate.diff(picker.startDate, 'days');
-                $("#WopLvDays-txt").text(`(${WOPlvDays} days)`);
-                $("#WopLvDays").val(WOPlvDays)
-                $(this).val(`${startDate} - ${endDate}`);
-                $("#WopFrom").val(startDate);
-                $("#WopTo").val(endDate);
                 UpdateTotalLeavesDays();
             });
             $("#Status").val("Y");
@@ -102,8 +89,8 @@ function showLeaveApprovalModal(transNo, reject) {
 }
 
 function UpdateTotalLeavesDays() {
-    var lvDays = $("#LvDays").val();
-    var WoplvDays = $("#WopLvDays").val();
+    var lvDays = $("#LvDateRangeDays").val();
+    var WoplvDays = $("#WopDateRangeDays").val();
     $("#totalLvDays").text(Number(lvDays) + Number(WoplvDays));
 }
 function saveLeaveApproval(btn) {

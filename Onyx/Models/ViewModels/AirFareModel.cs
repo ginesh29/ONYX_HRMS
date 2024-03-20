@@ -33,6 +33,7 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Travel Class")]
         public string ClassCd { get; set; }
         public string EntryBy { get; set; }
+        public int Days { get; set; }
         public string Mode
         {
             get

@@ -10,8 +10,6 @@
             <form id="travel-fare-frm">
                 <input type="hidden" asp-for="Cd" />
                 <input type="hidden" asp-for="SrNo" />
-                <input type="hidden" asp-for="FromDate" />
-                <input type="hidden" asp-for="ToDate" />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -42,7 +40,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="DateRange"></label>
+                            <label asp-for="DateRange"></label><span class="ml-2" id="Days">@Model.Days</span>
                             <input asp-for="DateRange" type="text" class="form-control">
                             <span asp-validation-for="DateRange" class="text-danger"></span>
                         </div>

@@ -33,13 +33,6 @@ function showTravelFareModal(cd, sectCd, classCd) {
     $('#TravelFareModal').load(url, function () {
         parseDynamicForm();
         $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(`${startDate} - ${endDate}`);
-            $("#FromDate").val(startDate);
-            $("#ToDate").val(endDate);
-        });
         $("#TravelFareModal").modal("show");
     });
 }

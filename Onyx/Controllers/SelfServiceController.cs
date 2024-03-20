@@ -82,6 +82,9 @@ namespace Onyx.Controllers
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
             if (maxLeave >= model.LvTaken)
             {
+                var dateSp = model.DateRange.Split(" - ");
+                model.FromDt = Convert.ToDateTime(dateSp[0]);
+                model.ToDt = Convert.ToDateTime(dateSp[1]);
                 _transactionService.SaveLeave(model);
                 var ActivityAbbr = "INS";
                 var Message = $", Leave is applied With Trans no={model.TransNo}";

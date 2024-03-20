@@ -306,6 +306,13 @@ function initControls() {
         $("textarea.form-control").trigger('input');
     }, 200)
     $('[data-toggle="tooltip"]').tooltip();
+    $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+        var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+        $(this).val(`${startDate} - ${endDate}`);
+        var days = picker.endDate.diff(picker.startDate, 'days');
+        $("#Days").text(`(${days} days)`);
+    });
 }
 function downloadFile(foldername, filename) {
     $.ajax({

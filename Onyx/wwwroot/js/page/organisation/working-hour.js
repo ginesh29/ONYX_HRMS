@@ -38,13 +38,6 @@ function showWorkingHourModal(cd) {
     $('#WorkingHourModal').load(url, function () {
         parseDynamicForm();
         $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);        
-        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(`${startDate} - ${endDate}`);
-            $("#FromDt").val(startDate);
-            $("#ToDt").val(endDate);
-        });
         $("#WorkingHourModal").modal("show");
     });
 }

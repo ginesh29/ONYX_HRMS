@@ -56,6 +56,8 @@ function showLeaveConfirmModal(transNo) {
         $('#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
             var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
             var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            var days = picker.endDate.diff(picker.startDate, 'days');
+            $(`#${ev.target.id}Days`).text(`(${days} days)`);
             $(this).val(`${startDate} - ${endDate}`);
         });
         $("#EmployeeLeaveConfirmModal").modal("show");

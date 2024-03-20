@@ -90,13 +90,16 @@
                         var drpLength = $("#login-company-dropdown option").length
                         if (drpLength == 1)
                             loginWithCompany();
-                        else{
+                        else {
                             $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
                             $("#btn-login").attr("onclick", "loginWithCompany(this)");
-                        }                            
+                        }
                     });
                     unloadingButton(btn);
                 }
+                else
+                    showErrorToastr(response.message);
+                unloadingButton(btn);
             });
         }
     }

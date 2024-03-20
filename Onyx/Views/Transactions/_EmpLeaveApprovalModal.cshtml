@@ -30,24 +30,20 @@
                         <input type="hidden" asp-for="ApprBy" />
                         <input type="hidden" asp-for="Status" />
                         <div id="approval-div">
-                            <input type="hidden" asp-for="LvFrom" />
-                            <input type="hidden" asp-for="LvTo" />
-                            <input type="hidden" asp-for="LvDays" />
-                            <input type="hidden" asp-for="WopFrom" />
-                            <input type="hidden" asp-for="WopTo" />
-                            <input type="hidden" asp-for="WopLvDays" />
+                            <input type="hidden" asp-for="LvDays" id="LvDateRangeDays" />
+                            <input type="hidden" asp-for="WopLvDays" id="WopDateRangeDays" />
                             <input type="hidden" asp-for="Current_Approval_Level" />
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="LvDateRange"></label><span id="LvDays-txt">(@Model.LvDays days)</span>
+                                        <label asp-for="LvDateRange"></label><span id="LvDateRangeDays-txt">(@Model.LvDays days)</span>
                                         <input asp-for="LvDateRange" class="form-control" />
                                         <span asp-validation-for="LvDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="WopDateRange"></label><span id="WopLvDays-txt"></span>
+                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt"></span>
                                         <input asp-for="WopDateRange" class="form-control" />
                                         <span asp-validation-for="WopDateRange" class="text-danger"></span>
                                     </div>
