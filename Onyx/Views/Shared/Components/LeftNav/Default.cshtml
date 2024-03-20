@@ -29,7 +29,7 @@
                         {
                             var subchildren = Model.Where(m => m.Prnt == child.MenuId);
                             <li class="nav-item">
-                                <a href="@child.Frm?processId=@item.ProcessId" class="nav-link">
+                                <a href="@child.Frm?processId=@child.ProcessId" class="nav-link">
                                     <i class="nav-icon fa fa-minus" style="font-size: 0.5rem;"></i>
                                     <p>
                                         @child.Caption
@@ -46,7 +46,7 @@
                                         @foreach (var subchild in subchildren)
                                         {
                                             <li class="nav-item">
-                                                <a href="@subchild.Frm?processId=@item.ProcessId" class="nav-link">
+                                                <a href="@subchild.Frm?processId=@subchild.ProcessId" class="nav-link">
                                                     <i class="nav-icon far fa-circle" style="font-size: 0.5rem;"></i>
                                                     <p>@subchild.Caption</p>
                                                 </a>

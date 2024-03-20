@@ -71,17 +71,16 @@ namespace Onyx.Controllers
             var leaveDetails = _transactionService.GetEmployee_LeaveHistory(empCd, FromDt, ToDt);
             return PartialView("_EmpLeaveDetailPreviewModal", leaveDetails);
         }
-        public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model)
+        public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model, string processId)
         {
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             _transactionService.SaveLeaveApproval(model);
-            var ProcessId = "HRPT11";
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -93,7 +92,7 @@ namespace Onyx.Controllers
         {
             return View();
         }
-        public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model)
+        public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model, string processId)
         {
             model.ApprBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
@@ -101,11 +100,10 @@ namespace Onyx.Controllers
                 _transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
             else
                 _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
-            var ProcessId = "HRPT12";
             var ActivityAbbr = "UPD";
             var action = model.Type == (int)LeaveCofirmTypeEnum.Confirm ? "confirmed" : model.Type == (int)LeaveCofirmTypeEnum.Revise ? "revised" : "canceled";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -198,7 +196,7 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpDutyResumptionModal", model);
         }
-        public IActionResult SaveDutyResumption(EmpDutyResumptionModel model)
+        public IActionResult SaveDutyResumption(EmpDutyResumptionModel model, string processId)
         {
             model.ApprBy = _loggedInUser.UserAbbr;
             model.EntryBy = _loggedInUser.UserAbbr;
@@ -231,10 +229,9 @@ namespace Onyx.Controllers
                 model.ToDt = Convert.ToDateTime(dateSp[1]);
                 _transactionService.SaveLeaveProvision(model, "LT");
             }
-            var ProcessId = "HRPT12";
             var ActivityAbbr = "UPD";
             var Message = $", Duty Resumption With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -370,16 +367,15 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpLeaveSalaryApprovalModal", model);
         }
-        public IActionResult SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model)
+        public IActionResult SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model, string processId)
         {
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             model.EntryBy = _loggedInUser.UserAbbr;
             _transactionService.SaveLeaveSalaryApproval(model);
-            var ProcessId = "HRPT11";
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave Salary is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -421,15 +417,14 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpLeaveSalaryDisburseModal", model);
         }
-        public IActionResult SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model)
+        public IActionResult SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model, string processId)
         {
             model.ApprBy = _loggedInUser.UserAbbr;
             _transactionService.SaveLeaveSalaryDisburse(model, _loggedInUser.CompanyCd);
-            var ProcessId = "HRPT11";
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "disbursed" : "canceled";
             var Message = $", Leave Salary/Ticket is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,

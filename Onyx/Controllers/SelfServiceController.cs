@@ -35,7 +35,7 @@ namespace Onyx.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SaveLoanApplication(EmpLoanModel model)
+        public IActionResult SaveLoanApplication(EmpLoanModel model, string processId)
         {
             var LoanDue = _transactionService.GetEmpLoan_Due(model.EmployeeCode, model.TransDt);
             if (LoanDue <= 0)
@@ -44,10 +44,9 @@ namespace Onyx.Controllers
                 var result = _transactionService.SaveLoan(model);
                 if (result.Success)
                 {
-                    var ProcessId = "HRPSS1";
                     var ActivityAbbr = "INS";
                     var Message = $", Loan is applied With Trans no={model.TransNo}";
-                    _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+                    _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
                 }
                 return Json(result);
             }
@@ -77,17 +76,16 @@ namespace Onyx.Controllers
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
-        public IActionResult SaveLeaveApplication(EmpLeaveModel model)
+        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
             if (maxLeave >= model.LvTaken)
             {
                 _transactionService.SaveLeave(model);
-                var ProcessId = "HRPSS2";
                 var ActivityAbbr = "INS";
                 var Message = $", Leave is applied With Trans no={model.TransNo}";
-                _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+                _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
                 var result = new CommonResponse
                 {
                     Success = true,
@@ -115,14 +113,13 @@ namespace Onyx.Controllers
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
-        public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model)
+        public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             _transactionService.SaveLeaveSalary(model);
-            var ProcessId = "HRPSS3";
             var ActivityAbbr = "INS";
             var Message = $", Leave Salary is applied With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -145,14 +142,13 @@ namespace Onyx.Controllers
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
-        public IActionResult SaveFundRequestApplication(EmployeeFundModel model)
+        public IActionResult SaveFundRequestApplication(EmployeeFundModel model, string processId)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             _transactionService.SaveFundRequest(model);
-            var ProcessId = "HRPSS4";
             var ActivityAbbr = "INS";
             var Message = $", Fund request is applied With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,

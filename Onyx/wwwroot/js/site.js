@@ -98,6 +98,8 @@ function getAjax(url, callback) {
     $.get(url, callback);
 }
 function postAjax(url, formdata, callback) {
+    var processId = $("#ProcessId").val();
+    url = `${url}?processId=${processId}`;
     $.post(url, formdata, callback);
 }
 function filePostAjax(url, formData, callback) {

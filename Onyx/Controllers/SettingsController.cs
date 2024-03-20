@@ -54,6 +54,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveBranch(BranchModel model)
         {
+
             model.EntryBy = _loggedInUser.UserAbbr;
             model.CoCd = _loggedInUser.CompanyCd;
             if (model.ImageFile != null)

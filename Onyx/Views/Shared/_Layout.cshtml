@@ -1,6 +1,7 @@
 ﻿@{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value.Contains("Admin");
+    var processId = Context.Request.Query["processId"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -76,6 +77,7 @@
                     <input type="hidden" id="LocalDateFormat" value="@ViewData["LocalDateFormat"]" />
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />
+                    <input type="hidden" id="ProcessId" value="@processId" />
                     @RenderBody()
                 </div>
             </section>
