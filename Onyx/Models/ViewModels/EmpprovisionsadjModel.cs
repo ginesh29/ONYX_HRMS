@@ -42,5 +42,6 @@ namespace Onyx.Models.ViewModels
         public string Prov { get; set; }
         public int CurrentApprovalLevel { get; set; }
         public string CurrentApproval { get; set; }
+        public string Remarks { get; set; }
     }
 }

@@ -4,6 +4,7 @@
     {
         public string AppCd { get; set; }
         public int MenuId { get; set; }
+        public string ProcessId { get; set; }
         public int Prnt { get; set; }
         public string Caption { get; set; }
         public int MenuOrder { get; set; }

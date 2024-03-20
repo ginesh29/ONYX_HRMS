@@ -298,7 +298,24 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public IEnumerable<EmpLeaveSalaryTicket_View_Getrow_Result> GetEmpLeaveSalaryConfirmData()
+        public void SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLeaveSalaryAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.ApprLvl);
+            parameters.Add("v_LvApprBy", model.ApprBy);
+            parameters.Add("v_LvApprDt", model.TransDt);
+            parameters.Add("v_Status", model.Status);
+            parameters.Add("v_LvSalary", model.LvSalary);
+            parameters.Add("v_LvTicket", model.LvTicket);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connection = new SqlConnection(connectionString);
+            connection.Query<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpLeaveSalaryTicket_View_Getrow_Result> GetEmpLeaveSalaryDisburseData()
         {
             var procedureName = "EmpLeaveSalaryTicket_View_Getrow";
             var parameters = new DynamicParameters();
@@ -310,6 +327,24 @@ namespace Onyx.Services
             var data = connection.Query<EmpLeaveSalaryTicket_View_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public void SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLeaveSalaryTicket_Confirm_Revise_Cancel_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", model.Status);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_CancelBy", model.ApprBy);
+            parameters.Add("v_CancelDt", DateTime.Now);
+            parameters.Add("v_Remarks", model.Remarks);
+            parameters.Add("v_LvFare", model.LvTicket);
+            parameters.Add("v_LvSalary", model.LvSalary);
+            parameters.Add("v_Disburse", "Y");
+            var connection = new SqlConnection(connectionString);
+            connection.Query<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
 

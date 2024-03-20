@@ -269,16 +269,90 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult GetEmpLeaveSalaryApproval(string transNo)
+        {
+            var model = new EmpLeaveSalaryApprovalModel();
+            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            if (leaveData != null)
+            {
+                model = new EmpLeaveSalaryApprovalModel()
+                {
+                    TransNo = transNo,
+                    TransDt = leaveData.TransDt,
+                    EmployeeCode = leaveData.EmpCd.Trim(),
+                    Emp = leaveData.Emp.Trim(),
+                    LvSalary = leaveData.LvSalary,
+                    LvTicket = leaveData.LvTicket,
+                    ApprLvl = leaveData.Current_Approval_Level,
+                    ApprBy = leaveData.Current_Approval.Trim(),
+                };
+            }
+            return PartialView("_EmpLeaveSalaryApprovalModal", model);
+        }
+        public IActionResult SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model)
+        {
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveLeaveSalaryApproval(model);
+            var ProcessId = "HRPT11";
+            var ActivityAbbr = "UPD";
+            var action = model.Status == "Y" ? "approved" : "rejected";
+            var Message = $", Leave Salary is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Leave Salary/Ticket {action}"
+            };
+            return Json(result);
+        }
         public IActionResult EmpLeaveSalaryDisburse()
         {
             return View();
         }
         public IActionResult FetchEmpLeaveSalaryConfirmData()
         {
-            var leaveData = _transactionService.GetEmpLeaveSalaryConfirmData();
+            var leaveData = _transactionService.GetEmpLeaveSalaryDisburseData();
             CommonResponse result = new()
             {
                 Data = leaveData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpLeaveSalaryDisburse(string transNo)
+        {
+            var model = new EmpLeaveSalaryDisburseModel();
+            var leaveData = _transactionService.GetEmpLeaveSalaryDisburseData().FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            if (leaveData != null)
+            {
+                model = new EmpLeaveSalaryDisburseModel()
+                {
+                    TransNo = transNo,
+                    AppDt = leaveData.AppDt,
+                    ApprDt = leaveData.ApprDt,
+                    Div = leaveData.Div,
+                    EmpCd = leaveData.EmpCd,
+                    Emp = leaveData.Emp.Trim(),
+                    LvSalary = leaveData.LvSalary,
+                    LvTicket = leaveData.LvTicket,
+                    ApprBy = leaveData.ApprBy,
+                };
+            }
+            return PartialView("_EmpLeaveSalaryDisburseModal", model);
+        }
+        public IActionResult SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model)
+        {
+            model.ApprBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveLeaveSalaryDisburse(model, _loggedInUser.CompanyCd);
+            var ProcessId = "HRPT11";
+            var ActivityAbbr = "UPD";
+            var action = model.Status == "Y" ? "disbursed" : "canceled";
+            var Message = $", Leave Salary/Ticket is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Leave Salary/Ticket {action}"
             };
             return Json(result);
         }

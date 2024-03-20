@@ -3,10 +3,11 @@
 }
 <div class="card">
     <div class="card-body">
-        <table class="table table-sm" id="EmployeeLeavesSalaryConfirmDataTable">
+        <table class="table table-sm" id="EmployeeLeavesSalaryDisburseDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>
+                    <th>Trans. No.</th>
                     <th>Employee</th>
                     <th>Branch</th>
                     <th>Leave Salary</th>
@@ -17,7 +18,7 @@
         </table>
     </div>
 </div>
-<div id="EmployeeLeaveSalaryConfirmModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="EmployeeLeaveSalaryDisburseModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
-    <script src="~/js/page/transactions/leave-salary-confirm.js" asp-append-version="true"></script>
+    <script src="~/js/page/transactions/leave-salary-disburse.js" asp-append-version="true"></script>
 }

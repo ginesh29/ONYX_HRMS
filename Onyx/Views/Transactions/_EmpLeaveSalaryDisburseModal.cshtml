@@ -1,0 +1,53 @@
+﻿@model EmpLeaveSalaryDisburseModel
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+}
+<div class="modal-dialog model-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Leave Salary Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h5 class="text-primary">Application Details</h5>
+            <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+            <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+            <div><span class="font-weight-bold">Application Date: </span>@Model.AppDt.Value.ToString(dateFormat)</div>
+            <div><span class="font-weight-bold">Leave Salary: </span>@Model.LvSalary</div>
+            <div><span class="font-weight-bold">Leave Ticket: </span>@Model.LvTicket</div>
+            <div><span class="font-weight-bold">Approved Date: </span>@Model.ApprDt.Value.ToString(dateFormat)</div>
+            <div><span class="font-weight-bold">Approved By: </span>@Model.ApprBy</div>
+
+            <form id="leave-salary-disburse-frm">
+                <input type="hidden" asp-for="TransNo" />
+                <input type="hidden" asp-for="Status" />
+                <div class="row" id="approval-div">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LvSalary"></label>
+                            <input asp-for="LvSalary" class="form-control" />
+                            <span asp-validation-for="LvSalary" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="LvTicket"></label>
+                            <input asp-for="LvTicket" class="form-control" />
+                            <span asp-validation-for="LvTicket" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Remarks"></label>
+                    <textarea asp-for="Remarks" class="form-control"></textarea>
+                    <span asp-validation-for="Remarks" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLeaveSalaryApproval(this)" id="btn-submit">Approve</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 ﻿@model EmpLeaveApprovalModel
 @{
-    ViewData["ServerDateFormat"] = ExtensionMethod.GetDateFormat();
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <div class="modal-dialog" style="max-width:850px">
     <!-- Modal content-->
@@ -17,7 +17,7 @@
                     <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
                     <div><span class="font-weight-bold">Designation: </span>@Model.Desg</div>
                     <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
-                    <div><span class="font-weight-bold">Applied Date: </span>@Model.TransDt.Value.ToString(ViewData["ServerDateFormat"].ToString())</div>
+                    <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
                     <div><span class="font-weight-bold">Date Range: </span>@Model.LvDateRange (@Model.LvDays days)</div>
                     <div><span class="font-weight-bold">Reason: </span>@Model.Reason</div>
