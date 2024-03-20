@@ -120,16 +120,11 @@ var deleteAjax = function (url, callback) {
     })
 }
 function setActiveMenu() {
-    var activeUrl = window.location.pathname;
+    var activeUrl = `${window.location.pathname}${window.location.search}`;
     var el = $('a[href="' + activeUrl + '"]');
     el.addClass('active');
     var el2 = el.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
     el2.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
-}
-function formatDate(date) {
-    return (date.getMonth() + 1).toString().padStart(2, '0') + '/' +
-        date.getDate().toString().padStart(2, '0') + '/' +
-        date.getFullYear();
 }
 function reloadPageAfterSometime() {
     setTimeout(function () {
@@ -289,7 +284,7 @@ function initControls() {
     $(".select-picker,.filter-select-picker").on('show.bs.select', function () {
         $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
     });
-    $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat.toLowerCase());
+    $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat
     });

@@ -84,43 +84,45 @@
         var frm = $("#login-frm");
         if (frm.valid()) {
             loadingButton(btn);
-            var returnUrl = $("#returnUrl").val();
-            postAjax(`/account/login?returnUrl=${returnUrl}`, frm.serialize(), function (response) {
+            postAjax(`/account/login`, frm.serialize(), function (response) {
                 if (response.success) {
-                    bindCompanyDropdown();
-                    if (response.redirectUrl) {
-                        showSuccessToastr(response.message)
-                        setTimeout(function () {
-                            window.location.href = response.redirectUrl;
-                        }, 1000)
-                    }
+                    bindCompanyDropdown(function () {
+                        var drpLength = $("#login-company-dropdown option").length
+                        if (drpLength == 1)
+                            loginWithCompany();
+                        else{
+                            $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
+                            $("#btn-login").attr("onclick", "loginWithCompany(this)");
+                        }                            
+                    });
+                    unloadingButton(btn);
                 }
-                else
-                    showErrorToastr(response.message)
             });
-            unloadingButton(btn);
         }
     }
-    function bindCompanyDropdown() {
+    function loginWithCompany(btn) {
+        loadingButton(btn);
+        var returnUrl = $("#returnUrl").val();
+        returnUrl = returnUrl ? returnUrl : "/";
+        var companyCd = $("#login-company-dropdown").val();
+
+        postAjax(`/account/LoginWithCompany`, { CoCd: companyCd }, function (response) {
+            showSuccessToastr(response.message)
+            setTimeout(function () {
+                window.location.href = returnUrl;
+            }, 1000)
+        });
+    }
+    function bindCompanyDropdown(callback) {
         getAjax("/home/FetchCompanies", function (response) {
             var drpHtml = "";
-            if (response.data.length > 1) {
-                drpHtml += "";
-                $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
-            }
-            else
-                setTimeout(function () {
-                    loginUser(null);
-                }, 2000);
             $.each(response.data, function (i, company) {
                 drpHtml += `<option value="${company.value}">${company.text}</option>`;
             });
             $("#login-company-dropdown").html(drpHtml);
             $("#login-frm input").prop("disabled", true);
+            callback();
         });
-    }
-    function changeCompany() {
-        $("#btn-login").click();
     }
     $('#Password').keypress(function (e) {
         if (e.keyCode === 13) {

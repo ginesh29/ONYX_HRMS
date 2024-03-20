@@ -26,74 +26,71 @@ namespace Onyx.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model, string returnUrl)
+        public async Task<IActionResult> Login(LoginModel model)
         {
-            if (!string.IsNullOrEmpty(model.CoCd) && model.CoCd != "0")
+            var result = new CommonResponse { Success = false };
+            if (model.UserType == UserTypeEnum.User)
             {
-                await _authService.UpdateClaim("CompanyCd", model.CoCd);
-                _commonService.SetActivityLogHead(new ActivityLogModel
+                var validateUser = _userEmployeeService.ValidateUser(model);
+                if (validateUser != null)
                 {
-                    Browser = _loggedInUser.Browser,
-                    CoCd = model.CoCd,
-                    UserCd = _loggedInUser.UserCd
-                });
-                var result = new CommonResponse
-                {
-                    Success = true,
-                    Message = "Login Successfully",
-                    RedirectUrl = returnUrl ?? "/"
-                };
-                return Json(result);
+                    var user = _userEmployeeService.GetUser(validateUser.Cd);
+                    var u = new LoggedInUserModel
+                    {
+                        CompanyCd = model.CoCd,
+                        UserCd = validateUser.Cd,
+                        UserOrEmployee = "U",
+                        Username = validateUser.UName,
+                        UserAbbr = user.Abbr,
+                        UserType = (int)model.UserType,
+                        Browser = model.Browser
+                    };
+                    await _authService.SignInUserAsync(u, model.RememberMe);
+                    result.Success = true;
+                }
+                else
+                    result.Message = CommonMessage.INVALIDUSER;
             }
             else
             {
-                var result = new CommonResponse { Success = false };
-                if (model.UserType == UserTypeEnum.User)
+                var employee = _userEmployeeService.ValidateEmployee(model);
+                if (employee != null)
                 {
-                    var validateUser = _userEmployeeService.ValidateUser(model);
-                    if (validateUser != null)
+                    var user = _userEmployeeService.GetUser(employee.UserCd);
+                    var u = new LoggedInUserModel
                     {
-                        var user = _userEmployeeService.GetUser(validateUser.Cd);
-                        var u = new LoggedInUserModel
-                        {
-                            CompanyCd = model.CoCd,
-                            UserCd = validateUser.Cd,
-                            UserOrEmployee = "U",
-                            Username = validateUser.UName,
-                            UserAbbr = user.Abbr,
-                            UserType = (int)model.UserType,
-                            Browser = model.Browser
-                        };
-                        await _authService.SignInUserAsync(u, model.RememberMe);
-                        result.Success = true;
-                    }
-                    else
-                        result.Message = CommonMessage.INVALIDUSER;
+                        CompanyCd = model.CoCd,
+                        UserCd = employee.UserCd.Trim(),
+                        UserOrEmployee = "E",
+                        Username = user.Username,
+                        UserAbbr = model.LoginId,
+                        UserType = (int)model.UserType,
+                        Browser = model.Browser
+                    };
+                    await _authService.SignInUserAsync(u, model.RememberMe);
+                    result.Success = true;
                 }
                 else
-                {
-                    var employee = _userEmployeeService.ValidateEmployee(model);
-                    if (employee != null)
-                    {
-                        var user = _userEmployeeService.GetUser(employee.UserCd);
-                        var u = new LoggedInUserModel
-                        {
-                            CompanyCd = model.CoCd,
-                            UserCd = employee.UserCd.Trim(),
-                            UserOrEmployee = "E",
-                            Username = user.Username,
-                            UserAbbr = model.LoginId,
-                            UserType = (int)model.UserType,
-                            Browser = model.Browser
-                        };
-                        await _authService.SignInUserAsync(u, model.RememberMe);
-                        result.Success = true;
-                    }
-                    else
-                        result.Message = CommonMessage.INVALIDUSER;
-                }
-                return Json(result);
+                    result.Message = CommonMessage.INVALIDUSER;
             }
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> LoginWithCompany(string CoCd)
+        {
+            await _authService.UpdateClaim("CompanyCd", CoCd);
+            _commonService.SetActivityLogHead(new ActivityLogModel
+            {
+                Browser = _loggedInUser.Browser,
+                CoCd = CoCd,
+                UserCd = _loggedInUser.UserCd
+            });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Login Successfully",
+            };
+            return Json(result);
         }
         public async Task<IActionResult> LogOut()
         {
