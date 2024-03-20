@@ -1,4 +1,4 @@
-﻿@model EmpLeaveConfirmModel
+﻿@model EmpDutyResumptionModel
 @{
     var serverDateFormat = ExtensionMethod.GetDateFormat();
 }
@@ -6,7 +6,7 @@
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
-            <h4 class="modal-title">Leave Confirm/Revise/Cancel</h4>
+            <h4 class="modal-title">Duty Resumption</h4>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
@@ -29,11 +29,11 @@
                 </div>
                 <div class="col-md-6 pl-3">
                     <h5 class="text-primary">Confirm/Revise/Cancel</h5>
-                    <form id="leave-confirm-frm">
+                    <form id="leave-duty-resumption-frm">
                         <input type="hidden" asp-for="TransNo" />
                         <input type="hidden" asp-for="ApprDt" />
-                        <input type="hidden" asp-for="Branch" />
-                        <div id="approval-div">
+                        <input type="hidden" asp-for="EmpCd" />
+                        <div>
                             <input type="hidden" asp-for="FromDt" />
                             <input type="hidden" asp-for="ToDt" />
                             <input type="hidden" asp-for="WpFrom" />
@@ -43,32 +43,6 @@
                             <input type="hidden" asp-for="WopTo" />
                             <input type="hidden" asp-for="WopLvDays" />
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="Type"></label>
-                                        <select asp-for="Type" class="form-control select-picker" asp-items="Html.GetEnumSelectList<LeaveCofirmTypeEnum>()" onchange="changeType(this)"></select>
-                                        <span asp-validation-for="Type" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row confirm-div d-none">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="Ticket"></label>
-                                        <input asp-for="Ticket" class="form-control decimal-input" />
-                                        <span asp-validation-for="Ticket" class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="LvSalary"></label>
-                                        <input asp-for="LvSalary" class="form-control decimal-input" />
-                                        <span asp-validation-for="LvSalary" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row revise-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="WpDateRange"></label><span id="WpDays-txt">(@Model.WpLvDays days)</span>
@@ -84,6 +58,38 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="GraduityDateRange"></label><span id="GTDays-txt"></span>
+                                        <input asp-for="GraduityDateRange" class="form-control" />
+                                        <span asp-validation-for="GraduityDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="LvSalaryDateRange"></label><span id="WopLvDays-txt">(@Model.WopLvDays days)</span>
+                                        <input asp-for="LvSalaryDateRange" class="form-control" />
+                                        <span asp-validation-for="LvSalaryDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="LvTicketDateRange"></label><span id="GTDays-txt"></span>
+                                        <input asp-for="LvTicketDateRange" class="form-control" />
+                                        <span asp-validation-for="LvTicketDateRange" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="JoinDt"></label>
+                                        <input asp-for="JoinDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker">
+                                        <span asp-validation-for="JoinDt" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Remark"></label>
@@ -96,7 +102,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-info" onclick="saveLeaveConfirm(this)">Submit</button>
+            <button type="button" class="btn btn-info" onclick="saveDutyResumption(this)">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

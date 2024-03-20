@@ -97,7 +97,10 @@ namespace Onyx.Controllers
         {
             model.ApprBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
-            _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
+            if (model.Type == (int)LeaveCofirmTypeEnum.Revise)
+                _transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
+            else
+                _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
             var ProcessId = "HRPT12";
             var ActivityAbbr = "UPD";
             var action = model.Type == (int)LeaveCofirmTypeEnum.Confirm ? "confirmed" : model.Type == (int)LeaveCofirmTypeEnum.Revise ? "revised" : "canceled";
@@ -160,6 +163,84 @@ namespace Onyx.Controllers
         public IActionResult EmpDutyResumption()
         {
             return View();
+        }
+        public IActionResult GetDutyResumption(string transNo)
+        {
+            var model = new EmpDutyResumptionModel();
+            var leaveData = _transactionService.GetEmpLeaveData(transNo, "D").FirstOrDefault();
+            if (leaveData != null)
+            {
+                model = new EmpDutyResumptionModel()
+                {
+                    TransNo = transNo,
+                    EmpCd = leaveData.EmpCd.Trim(),
+                    Emp = leaveData.Emp,
+                    Designation = leaveData.Designation,
+                    Branch = leaveData.Branch,
+                    AppDt = leaveData.AppDt,
+                    LvTyp = leaveData.LvTyp,
+                    FromDt = leaveData.FromDt,
+                    ToDt = leaveData.ToDt,
+                    DateRange = ExtensionMethod.GetDateRange(leaveData.FromDt, leaveData.ToDt),
+                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days,
+                    WpFrom = leaveData.WpFrom,
+                    WpTo = leaveData.WpTo,
+                    WpDateRange = ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo),
+                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WopFrom = leaveData.WpFrom,
+                    WopTo = leaveData.WpTo,
+                    WopDateRange = ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo),
+                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    ApprBy = leaveData.ApprBy,
+                    ApprDays = leaveData.ApprDays,
+                    ApprDt = DateTime.Now,
+                };
+            }
+            return PartialView("_EmpDutyResumptionModal", model);
+        }
+        public IActionResult SaveDutyResumption(EmpDutyResumptionModel model)
+        {
+            model.ApprBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprDays = model.LvDays + model.WopLvDays;
+            var wpDateSp = model.WpDateRange.Split(" - ");
+            model.WpFrom = Convert.ToDateTime(wpDateSp[0]);
+            model.WpTo = Convert.ToDateTime(wpDateSp[1]);
+            var wopDateSp = model.WopDateRange.Split(" - ");
+            model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
+            model.WopTo = Convert.ToDateTime(wopDateSp[1]);
+            _transactionService.SaveDutyResumption(model, _loggedInUser.CompanyCd);
+            if (!string.IsNullOrEmpty(model.GraduityDateRange))
+            {
+                var dateSp = model.GraduityDateRange.Split(" - ");
+                model.FromDt = Convert.ToDateTime(dateSp[0]);
+                model.ToDt = Convert.ToDateTime(dateSp[1]);
+                _transactionService.SaveLeaveProvision(model, "GT");
+            }
+            if (!string.IsNullOrEmpty(model.LvSalaryDateRange))
+            {
+                var dateSp = model.LvSalaryDateRange.Split(" - ");
+                model.FromDt = Convert.ToDateTime(dateSp[0]);
+                model.ToDt = Convert.ToDateTime(dateSp[1]);
+                _transactionService.SaveLeaveProvision(model, "LS");
+            }
+            if (!string.IsNullOrEmpty(model.LvTicketDateRange))
+            {
+                var dateSp = model.LvTicketDateRange.Split(" - ");
+                model.FromDt = Convert.ToDateTime(dateSp[0]);
+                model.ToDt = Convert.ToDateTime(dateSp[1]);
+                _transactionService.SaveLeaveProvision(model, "LT");
+            }
+            var ProcessId = "HRPT12";
+            var ActivityAbbr = "UPD";
+            var Message = $", Duty Resumption With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", ProcessId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Duty Resumption successfully"
+            };
+            return Json(result);
         }
         #endregion
 

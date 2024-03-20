@@ -47,11 +47,17 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
         ],
     }
 );
-
 function showLeaveConfirmModal(transNo) {
-    var url = `/Transactions/GetEmpLeaveConfirm?transNo=${transNo}`;
+    var action = !type ? "GetEmpLeaveConfirm" : "GetDutyResumption";
+    var url = `/Transactions/${action}?transNo=${transNo}`;
     $('#EmployeeLeaveConfirmModal').load(url, function () {
         parseDynamicForm();
+        $('#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions);
+        $('#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            $(this).val(`${startDate} - ${endDate}`);
+        });
         $("#EmployeeLeaveConfirmModal").modal("show");
     });
 }
@@ -73,6 +79,23 @@ function saveLeaveConfirm(btn) {
     if (frm.valid()) {
         loadingButton(btn);
         postAjax("/Transactions/SaveLeaveConfirm", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmployeeLeaveConfirmModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function saveDutyResumption(btn) {
+    var frm = $("#leave-duty-resumption-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveDutyResumption", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmployeeLeaveConfirmModal").modal("hide");

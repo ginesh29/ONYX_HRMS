@@ -256,6 +256,67 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public CommonResponse SaveLeaveRevise(EmpLeaveConfirmModel model, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLeave_Revise_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", model.LvTyp);
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_CancelBy", model.ApprBy);
+            parameters.Add("v_CancelDt", model.ApprDt);
+            parameters.Add("v_Remarks", model.Remark);
+            parameters.Add("v_WP_FromDt", model.WpFrom);
+            parameters.Add("v_WP_ToDt", model.WpTo);
+            parameters.Add("v_WOP_FromDt", model.WopFrom);
+            parameters.Add("v_WOP_ToDt", model.WopTo);
+            parameters.Add("v_From_Dt", model.FromDt);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_To_Dt", model.ToDt);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>
+               (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse SaveDutyResumption(EmpDutyResumptionModel model, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLeave_Resumption_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_JoinDt", model.JoinDt);
+            parameters.Add("v_Status", "J");
+            parameters.Add("v_WP_FromDt", model.WpFrom);
+            parameters.Add("v_WP_ToDt", model.WpTo);
+            parameters.Add("v_WOP_FromDt", model.WopFrom);
+            parameters.Add("v_WOP_ToDt", model.WopTo);
+            parameters.Add("v_ToDt", model.JoinDt);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>
+               (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse SaveLeaveProvision(EmpDutyResumptionModel model, string provType)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLeaveProvisions_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_FromDt", model.FromDt);
+            parameters.Add("v_ProvTyp", provType);
+            parameters.Add("v_ToDt", model.ToDt);
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_WP_WOP_Flg", "1");
+            parameters.Add("v_Prov_Flg", "1");
+            parameters.Add("v_Narr", string.Empty);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>
+               (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         #endregion
 
         #region Leave Salary Application

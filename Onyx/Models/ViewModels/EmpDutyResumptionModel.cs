@@ -2,7 +2,7 @@
 
 namespace Onyx.Models.ViewModels
 {
-    public class EmpLeaveConfirmModel
+    public class EmpDutyResumptionModel
     {
         public string TransNo { get; set; }
         public DateTime? AppDt { get; set; }
@@ -22,6 +22,9 @@ namespace Onyx.Models.ViewModels
         public string WpDateRange { get; set; }
         [Display(Name = "Date Range(WOP)")]
         public string WopDateRange { get; set; }
+        public string GraduityDateRange { get; set; }
+        public string LvSalaryDateRange { get; set; }
+        public string LvTicketDateRange { get; set; }
         public string FormatedToDt { get; set; }
         public string LvInter { get; set; }
         public DateTime? WpFrom { get; set; }
@@ -47,5 +50,8 @@ namespace Onyx.Models.ViewModels
         public decimal? Ticket { get; set; }
         [Display(Name = "Leave Salary")]
         public decimal? LvSalary { get; set; }
+        public DateTime? JoinDt { get; set; }
+        public string Status { get; set; }
+        public string EntryBy { get; set; }
     }
 }
