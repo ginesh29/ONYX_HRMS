@@ -346,7 +346,8 @@ namespace Onyx.Controllers
                     Title = calendarEvent.Title,
                     Holiday = calendarEvent.Holiday,
                     EmailSubject = calendarEvent.EmailSubject,
-                    Attendees = calendarEvent.Attendees.Length != 0 ? [.. calendarEvent.Attendees.Split(',')] : null,
+                    Invite = calendarEvent.Invite,
+                    Attendees = calendarEvent.Invite ? [.. calendarEvent.Attendees.Split(',')] : null,
                 };
             else
                 model.Cd = _organisationService.GetCalendarEvent_SrNo();
@@ -379,23 +380,26 @@ namespace Onyx.Controllers
             var result = _organisationService.SaveCalendarEvent(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
-                _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
-                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
-                var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
+                if (model.Invite)
                 {
-                    RecipientEmail = m.Email,
-                    RecipientName = m.Name
-                });
-                if (recipients.Any())
-                {
-                    foreach (var recipient in recipients)
+                    _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
+                    var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                    var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
                     {
-                        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
-                        StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
-                        mainEmailTemplateHtml.Replace("@YEAR", DateTime.Now.Year.ToString());
-                        mainEmailTemplateHtml.Replace("@NAME", recipient.RecipientName);
-                        mainEmailTemplateHtml.Replace("@EMAILTEXT", model.MessageBody);
-                        _emailService.SendEmail(recipient, model.EmailSubject, mainEmailTemplateHtml.ToString());
+                        RecipientEmail = m.Email,
+                        RecipientName = m.Name
+                    });
+                    if (recipients.Any())
+                    {
+                        foreach (var recipient in recipients)
+                        {
+                            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/EmailTemplates/main-template.html");
+                            StringBuilder mainEmailTemplateHtml = new(System.IO.File.ReadAllText(templatePath));
+                            mainEmailTemplateHtml.Replace("@YEAR", DateTime.Now.Year.ToString());
+                            mainEmailTemplateHtml.Replace("@NAME", recipient.RecipientName);
+                            mainEmailTemplateHtml.Replace("@EMAILTEXT", model.MessageBody);
+                            _emailService.SendEmail(recipient, model.EmailSubject, mainEmailTemplateHtml.ToString());
+                        }
                     }
                 }
             }
@@ -404,12 +408,7 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteCalendarEvent(string cd)
         {
-            _organisationService.DeleteCalendarEvent(cd);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = CommonMessage.DELETED
-            };
+            var result = _organisationService.DeleteCalendarEvent(cd);
             return Json(result);
         }
         #endregion
@@ -589,6 +588,7 @@ namespace Onyx.Controllers
         {
             if (model.Mode == "I")
                 _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
+
             _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
             foreach (var item in model.ApprovalLevels.Select((value, i) => new { i, value }))
             {
@@ -1107,6 +1107,7 @@ namespace Onyx.Controllers
                     PayFact = leaveType.PayFact,
                     ServicePrd = leaveType.ServicePrd == "Y",
                     SDes = leaveType.SDes,
+                    Active = leaveType.Active,
                 };
             return PartialView("_LeaveTypeModal", model);
         }

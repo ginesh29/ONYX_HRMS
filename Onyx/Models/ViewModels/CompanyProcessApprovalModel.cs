@@ -16,11 +16,9 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Doc. Type")]
         public string ApplTypCd { get; set; }
         public string Branch { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Branch")]
         public string BranchCd { get; set; }
         public string Dept { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Department")]
         public string DeptCd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]

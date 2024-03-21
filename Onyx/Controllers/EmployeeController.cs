@@ -154,7 +154,7 @@ namespace Onyx.Controllers
             ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
-                Text = m.ShortDesc
+                Text = m.Nationality
             });
             ViewBag.ReligionItems = _commonService.GetCodesGroups(CodeGroup.Religion).Select(m => new SelectListItem
             {
@@ -310,7 +310,7 @@ namespace Onyx.Controllers
             ViewBag.PassingYearItems = _commonService.GetYears(1900);
             ViewBag.CountryItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
-                Text = m.ShortDesc,
+                Text = m.Description,
                 Value = m.Code.Trim(),
             });
             return PartialView("_EducationModal", model);
@@ -377,7 +377,7 @@ namespace Onyx.Controllers
             });
             ViewBag.CountryItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
-                Text = m.ShortDesc,
+                Text = m.Description,
                 Value = m.Code.Trim(),
             });
             return PartialView("_ExperienceModal", model);
@@ -386,6 +386,9 @@ namespace Onyx.Controllers
         public IActionResult SaveExperience(EmpExperienceModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            var dateSp = model.DateRange.Split(" - ");
+            model.StartingDate = Convert.ToDateTime(dateSp[0]);
+            model.EndingDate = Convert.ToDateTime(dateSp[1]);
             var result = _employeeService.SaveEmpExperience(model);
             return Json(result);
         }

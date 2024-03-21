@@ -1,0 +1,62 @@
+﻿@using Onyx.Models
+@model AttendanceModel
+<form id="attendance-frm">
+    <input type="hidden" asp-for="FilterModel.Branch" />
+    <input type="hidden" asp-for="FilterModel.Department" />
+    <input type="hidden" asp-for="FilterModel.EmpCd" />
+    <input type="hidden" asp-for="FilterModel.MonthYear" />
+    <input type="hidden" asp-for="FilterModel.WorkingHrDay" />
+    <table class="table table-sm" id="EmpMonthlyAttendanceTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>No.</th>
+                <th width="500">Employee</th>
+                <th>No Of Days</th>
+                <th>Paid</th>
+                <th>Unpaid</th>
+                <th>Payable</th>
+                <th>NHrs</th>
+                <th>W.OT</th>
+                <th>H.OT</th>
+                <th>Loan Recovery</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.AttendanceData.Select((value, i) => new { i, value }))
+        {
+            <tr>
+                <td>@(item.i + 1)</td>
+                <td>@item.value.EmpName (@item.value.Cd)</td>
+                <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /><input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden" /></td>
+                <td>@item.value.P_HDays</td>
+                <td><input asp-for="@Model.AttendanceData[item.i].Up_HDays" type="text" class="form-control form-control-sm int-input" onkeyup="updateNHrs(this,'@Model.AttendanceData[item.i].W_days','@Model.AttendanceData[item.i].P_HDays','@item.i')" /></td>
+                <td><input asp-for="@Model.AttendanceData[item.i].Payable" type="text" class="form-control form-control-sm int-input disabled" /></td>
+                <td><input asp-for="@Model.AttendanceData[item.i].NHrs" type="text" class="form-control form-control-sm int-input disabled" /></td>
+                <td><input asp-for="@Model.AttendanceData[item.i].W_OT" type="text" class="form-control form-control-sm int-input" /></td>
+                <td><input asp-for="@Model.AttendanceData[item.i].H_OT" type="text" class="form-control form-control-sm int-input" /></td>
+                <td>@item.value.LoanDed</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="deleteBranch('${row.cd}')">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+        @if (!Model.AttendanceData.Any())
+        {
+            <tfoot>
+                <tr>
+                    <td>@CommonMessage.EMPTYGRID</td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+    @if (Model.AttendanceData.Any())
+    {
+        <hr />
+        <div class="body-footer">
+            <button class="btn btn-info" type="button" onclick="updateAttendance(this)">Update</button>
+            <button class="btn btn-danger float-right" type="button" onclick="deleteAttendance(this)">Delete all</button>
+        </div>
+    }
+</form>

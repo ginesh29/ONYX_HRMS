@@ -42,6 +42,10 @@ function showCalendarEventModal(cd) {
             var locations = $("#Location_Filter").val();
             bindEmployeeDropdown(departments, designations, branches, locations);
         })
+        showHideInvite();
+        $("#Invite").change(function () {
+            showHideInvite();
+        })
         $("#CalendarEventModal").modal("show");
     });
 }
@@ -57,8 +61,12 @@ function deleteCalendarEvent(cd) {
     }).then((result) => {
         if (result.isConfirmed) {
             deleteAjax(`/organisation/DeleteCalendarEvent?cd=${cd}`, function (response) {
-                showSuccessToastr(response.message);
-                calendar.refetchEvents();
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    calendar.refetchEvents();
+                }
+                else
+                    showErrorToastr(response.message);
             });
         }
     });
@@ -90,6 +98,19 @@ function bindEmployeeDropdown(departments, designations, branches, locations, ca
         })
         $("#Attendees").html(html);
         $('.select-picker').selectpicker('refresh');
-        callback();
+        if (callback) callback();
     });
+}
+
+function showHideInvite() {
+    $("#invite-div").addClass("d-none");
+    var invite = $("#Invite").is(":checked");
+    if (invite)
+        $("#invite-div").removeClass("d-none");
+    else {
+        var el = $("#invite-div");
+        el.find("textarea").val("");
+        el.find("input").val("");
+        el.find(".select-picker").selectpicker('val', '');
+    }
 }

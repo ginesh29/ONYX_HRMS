@@ -10,6 +10,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Date { get; set; }
         public bool Holiday { get; set; }
+        public bool Invite { get; set; }
         [Display(Name = "Email Message Body")]
         public string MessageBody { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

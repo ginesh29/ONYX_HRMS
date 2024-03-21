@@ -1,8 +1,9 @@
 ﻿@model dynamic
 @{
     var excelData = (IEnumerable<EmpCalendarExcelModel>)Model.Data;
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
-<table class="table table-sm" id="ExecelData">
+<table class="table table-sm mt-3" id="ExecelData">
     <thead class="thead-dark">
         <tr>
             <th>Employee Code</th>
@@ -29,7 +30,7 @@
                     }
                 </span>
             </td>
-            <td>@item.Date.ToString(ViewData["LocalDateFormat"].ToString())</td>
+            <td>@item.Date.ToString(dateFormat)</td>
             <td>@item.Title</td>
             <td>@(item.Holiday ? "Y" : "N")</td>
             <td>@item.Narr</td>

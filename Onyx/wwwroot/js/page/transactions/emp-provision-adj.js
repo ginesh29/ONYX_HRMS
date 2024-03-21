@@ -47,7 +47,7 @@ function bindEmployeeDropdown(callback) {
         })
         $("#EmpCd").html(html);
         $('.select-picker').selectpicker('refresh');
-        callback();
+        if (callback) callback();
     });
 }
 

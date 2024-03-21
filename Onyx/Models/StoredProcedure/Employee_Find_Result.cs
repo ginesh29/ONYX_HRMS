@@ -52,7 +52,6 @@ namespace Onyx.Models.StoredProcedure
         [Display(Name = "Date of Joining")]
         public DateTime? Doj { get; set; }
         [Display(Name = "Reporting To")]
-        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string RepTo { get; set; }
         [Display(Name = "Father Name")]
         public string Father { get; set; }

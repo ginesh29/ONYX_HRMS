@@ -36,6 +36,7 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Max. Accrual")]
         public int AccrLmt { get; set; }
         public bool ServicePrd { get; set; }
+        public bool Active { get; set; }
         public string Mode
         {
             get

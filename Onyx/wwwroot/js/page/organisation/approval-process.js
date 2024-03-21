@@ -88,6 +88,6 @@ function bindEmployeeDropdown(departments, designations, branches, locations, ca
         })
         $("#ApprovalLevels").html(html);
         $('.select-picker').selectpicker('refresh');
-        callback();
+        if (callback) callback();
     });
 }

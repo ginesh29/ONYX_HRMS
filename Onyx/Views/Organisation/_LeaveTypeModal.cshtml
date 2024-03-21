@@ -45,8 +45,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="PayFact"></label>
-                            <select asp-for="PayFact" class="form-control select-picker">
-                                
+                            <select asp-for="PayFact" class="form-control select-picker">                                
                                 <option value="1.00">1</option>
                                 <option value="0.50">0.5</option>
                                 <option value="0.00">0</option>
@@ -93,6 +92,10 @@
                             <span asp-validation-for="EnCashMinLmt" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active">
+                    <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
                 </div>
             </form>
         </div>

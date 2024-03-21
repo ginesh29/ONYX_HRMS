@@ -160,6 +160,17 @@ function exportExcel(table, filePrefix) {
     var filename = `${filePrefix}.xlsx`;
     XLSX.writeFile(wb, filename);
 }
+function exportTableToExcel(tableId, filePrefix) {
+    var table = document.getElementById(tableId);
+    var inputElements = $(table).find('tbody input');
+    inputElements.each(function () {
+        $(this).parent().text($(this).val());
+    });
+    var ws = XLSX.utils.table_to_sheet(table);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, `${filePrefix}.xlsx`);
+}
 function setBrowserInfo() {
     const userAgent = navigator.userAgent;
     let browserName = "Unknown";
@@ -289,6 +300,10 @@ function initControls() {
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat
+    });
+    $('.month-year-input').attr("placeholder", "mm/yyyy");
+    $('.month-year-input').datetimepicker({
+        format: 'MM/YYYY'
     });
     $('.decimal-input').attr("placeholder", "0.00");
     $('.decimal-input').inputmask(decimalMaskOptions);

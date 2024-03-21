@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Onyx.Models;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -569,7 +571,78 @@ namespace Onyx.Controllers
         #region Emp Monthly Attendance
         public IActionResult EmpMonthlyAttendance()
         {
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new
+            SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            ViewBag.WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
             return View();
+        }
+        public IActionResult FetchEmpMonthlyAttendance(AttendanceFilterModel model)
+        {
+            var spYearMonth = model.MonthYear.Split("/");
+            model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+            var attendanceData = _transactionService.GetEmpAttendanceData(model, _loggedInUser.CompanyCd);
+            var attendanceModel = new AttendanceModel
+            {
+                AttendanceData = attendanceData.ToList(),
+                FilterModel = model
+            };
+            return PartialView("_EmpMonthlyAttendanceData", attendanceModel);
+        }
+        [HttpPost]
+        public IActionResult SaveEmpMonthlyAttendance(AttendanceModel model)
+        {
+            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
+            foreach (var item in model.AttendanceData)
+                _transactionService.UpdateEmpMonthlyAttendance(item, model.FilterModel);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
+            };
+            return Json(result);
+        }
+        public IActionResult ImportAttendance(IFormFile file)
+        {
+            try
+            {
+                var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
+                var validData = excelData.Where(m => m.IsValid);
+                var invalidData = excelData.Where(m => !m.IsValid);
+                string Message = invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                //if (validData.Any())
+                //    _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
+                return PartialView("_ExcelData", new { Data = excelData, Message });
+            }
+            catch (Exception ex)
+            {
+                return Json("File not supported. Download again & refill data");
+            }
+        }
+        [HttpDelete]
+        public IActionResult DeleteEmpMonthlyAttendance(AttendanceFilterModel model)
+        {
+            var spYearMonth = model.MonthYear.Split("/");
+            model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+            _transactionService.DeleteEmpAttendance(model.EmpCd, model.MonthYear, model.Branch);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
         }
         #endregion
     }

@@ -229,6 +229,7 @@ namespace Onyx.Services
             parameters.Add("v_Date", model.Date);
             parameters.Add("v_Title", model.Title);
             parameters.Add("v_Holiday", model.Holiday);
+            parameters.Add("v_Invite", model.Invite);
             parameters.Add("v_EmailSubject", model.EmailSubject);
             parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_EntryBy", model.EntryBy);
@@ -238,14 +239,15 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public void DeleteCalendarEvent(string Cd)
+        public CommonResponse DeleteCalendarEvent(string Cd)
         {
             var procedureName = "CompanyCalendar_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         public void SaveCalendarEventAttendees(string EventCd, List<string> EmpIds)
         {
@@ -733,6 +735,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", Cocd);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
+            parameters.Add("v_Active", model.Active);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -902,8 +905,8 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_ProcessId", model.ProcessIdCd);
             parameters.Add("v_ApplTyp", model.ApplTypCd);
-            parameters.Add("v_Div", model.BranchCd);
-            parameters.Add("v_Dept", model.DeptCd);
+            parameters.Add("v_Div", model.BranchCd ?? "0");
+            parameters.Add("v_Dept", model.DeptCd ?? "0");
             parameters.Add("v_CoCd", CoCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
@@ -916,8 +919,8 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", model.ProcessIdCd);
             parameters.Add("v_ApplTyp", model.ApplTypCd);
-            parameters.Add("v_Div", model.BranchCd);
-            parameters.Add("v_Dept", model.DeptCd);
+            parameters.Add("v_Div", model.BranchCd ?? "0");
+            parameters.Add("v_Dept", model.DeptCd ?? "0");
             parameters.Add("v_SrNo", srNo);
             parameters.Add("v_EmpCd", empCd);
             var connectionString = _commonService.GetConnectionString();

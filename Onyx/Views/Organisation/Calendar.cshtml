@@ -2,8 +2,6 @@
     ViewData["Title"] = "Calendar";
 }
 <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
-<link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
-<link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 <div class="card">
     <div class="card-body">
         <div id="calendar"></div>
@@ -12,6 +10,5 @@
 <div id="CalendarEventModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script src="~/plugins/fullcalendar/main.js"></script>
-    <script src="~/plugins/select2/js/select2.full.min.js"></script>
     <script src="~/js/page/organisation/calendar.js" asp-append-version="true"></script>
 }

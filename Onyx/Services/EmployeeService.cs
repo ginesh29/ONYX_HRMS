@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Http;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
@@ -222,8 +223,8 @@ namespace Onyx.Services
             var procedureName = "EmpExperience_Update";
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_SrNo", model.Srno);
-            parameters.Add("v_Stdt", model.StartingDate.Value.ToString(CommonSetting.InputDateFormat));
-            parameters.Add("v_Enddt", model.EndingDate.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_Stdt", model.StartingDate);
+            parameters.Add("v_Enddt", model.EndingDate);
             parameters.Add("v_Desg", model.Desg);
             parameters.Add("v_Coname", model.CompanyName);
             parameters.Add("v_Country", model.CountryCd);
@@ -524,6 +525,7 @@ namespace Onyx.Services
             using var reader = ExcelReaderFactory.CreateReader(stream);
             var result = new List<EmpCalendarExcelModel>();
             reader.Read();
+            var dateFormat = ExtensionMethod.GetDateFormat();
             while (reader.Read())
             {
                 bool isEmptyRow = true;
@@ -539,12 +541,15 @@ namespace Onyx.Services
                     continue;
                 bool validEmployee = GetEmployees(CoCd, reader.GetString(0)).Any();
                 string errorMessage = string.Empty;
+                DateTime parsedDate;
                 if (!validEmployee)
-                    errorMessage += "Employee Code not valid,";
+                    errorMessage += "EmpCd is not valid,";
+                if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                    errorMessage += "Date is not valid,";
                 var excelData = new EmpCalendarExcelModel
                 {
                     IsValid = validEmployee,
-                    ErrorMessage = errorMessage,
+                    ErrorMessage = errorMessage.Trim(','),
                     EmpCd = reader.GetString(0),
                     Date = reader.GetDateTime(1),
                     Title = reader.GetString(2),

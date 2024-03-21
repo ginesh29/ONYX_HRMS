@@ -19,5 +19,6 @@
         public decimal PayFact { get; set; }
         public int AccrLmt { get; set; }
         public string ServicePrd { get; set; }
+        public bool Active { get; set; }
     }
 }

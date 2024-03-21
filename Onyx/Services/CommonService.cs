@@ -151,7 +151,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public Parameters_GetRow_Result GetJobCardStartAndEndTime(string CoCd, string Cd)
+        public Parameters_GetRow_Result GetParameterByType(string CoCd, string Cd)
         {
             var connectionString = GetConnectionString();
             var procedureName = "Parameters_GetRow";

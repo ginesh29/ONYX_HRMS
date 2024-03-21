@@ -3,12 +3,14 @@ using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
 using Onyx.Models.StoredProcedure;
+using ExcelDataReader;
 
 namespace Onyx.Services
 {
-    public class TransactionService(CommonService commonService)
+    public class TransactionService(CommonService commonService, EmployeeService employeeService)
     {
         private readonly CommonService _commonService = commonService;
+        private readonly EmployeeService _employeeService = employeeService;
 
         #region Loan Application
         public CommonResponse SaveLoan(EmpLoanModel model)
@@ -561,6 +563,112 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+
+        #region Emp Monthly Attendance
+        public IEnumerable<EmpAttendance_Getrow_Result> GetEmpAttendanceData(AttendanceFilterModel model, string CoCd)
+        {
+            var procedureName = "EmpAttendance_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmpCd ?? string.Empty);
+            parameters.Add("v_DivCd", model.Branch ?? string.Empty);
+            parameters.Add("v_DeptCd", model.Department ?? string.Empty);
+            parameters.Add("v_Prd", model.MonthYear);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpAttendance_Getrow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public CommonResponse UpdateEmpMonthlyAttendance(EmpAttendance_Getrow_Result model, AttendanceFilterModel filterModel)
+        {
+            var procedureName = "EmpAttendance_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.Cd);
+            parameters.Add("v_Prd", filterModel.MonthYear);
+            parameters.Add("v_Div", filterModel.Branch);
+            parameters.Add("v_Dept", filterModel.Department);
+            parameters.Add("v_NHrs", model.NHrs);
+            parameters.Add("v_W_OT", model.W_OT);
+            parameters.Add("v_H_OT", model.H_OT);
+            parameters.Add("v_W_Days", model.W_days);
+            parameters.Add("v_P_HDays", model.P_HDays);
+            parameters.Add("v_Up_HDays", model.Up_HDays);
+            parameters.Add("v_EntryBy", filterModel.EntryBy);
+            parameters.Add("v_TrnInd", "S");
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<CommonResponse>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+
+        }
+        public void DeleteEmpAttendance(string empCd, string period, string branch)
+        {
+            var procedureName = "EmpAttendance_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd ?? string.Empty);
+            parameters.Add("v_Prd", period);
+            parameters.Add("v_Div", branch);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpCalendarExcelModel> GetAttendanceFromExcel(IFormFile file, string CoCd)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<EmpCalendarExcelModel>();
+            reader.Read();
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(reader.GetString(i)))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                bool validEmployee = _employeeService.GetEmployees(CoCd, reader.GetString(0)).Any();
+                string errorMessage = string.Empty;
+                if (!validEmployee)
+                    errorMessage += "Employee Code not valid,";
+                var excelData = new EmpCalendarExcelModel
+                {
+                    IsValid = validEmployee,
+                    ErrorMessage = errorMessage,
+                    EmpCd = reader.GetString(0),
+                    Date = reader.GetDateTime(1),
+                    Title = reader.GetString(2),
+                    Holiday = reader.GetBoolean(3),
+                    Narr = reader.GetString(4),
+                };
+                result.Add(excelData);
+            }
+            return result;
+        }
+        public void ImportExcelData(IEnumerable<EmpCalendarExcelModel> excelData, int startSrNo, string EntryBy)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            string query = excelData.Any() ? $@"INSERT INTO [dbo].[EmpCalendar] 
+                ([SrNo],[EmpCd],[Date],[Title],[Holiday],[Narr],[EntryBy],[EntryDt]) VALUES" : null;
+            if (excelData.Any())
+            {
+                foreach (var item in excelData.Select((value, i) => new { i, value }))
+                {
+                    int holiday = item.value.Holiday ? 1 : 0;
+                    query += $"({startSrNo + item.i},'{item.value.EmpCd}','{item.value.Date:yyyy-MM-dd}','{item.value.Title}',{holiday},'{item.value.Narr}','{EntryBy}','{DateTime.Now:yyyy-MM-dd HH:mm:ss}'),";
+                }
+                query = query.Trim([',']);
+            }
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
         }
         #endregion
     }

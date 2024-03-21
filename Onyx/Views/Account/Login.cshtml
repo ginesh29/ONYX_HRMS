@@ -124,7 +124,7 @@
             });
             $("#login-company-dropdown").html(drpHtml);
             $("#login-frm input").prop("disabled", true);
-            callback();
+            if (callback) callback();
         });
     }
     $('#Password').keypress(function (e) {
