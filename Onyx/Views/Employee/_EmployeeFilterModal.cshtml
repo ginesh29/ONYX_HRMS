@@ -9,32 +9,17 @@
             </div>
             <div class="modal-body">
                 <form id="employee-filter-frm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Name"></label>
-                                <input asp-for="Name" type="text" class="form-control" />
-                            </div>
-                        </div>
+                    <div class="row">                       
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Branches"></label>
                                 <select class="form-control filter-select-picker" asp-for="Branches" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.BranchItems"></select>
                             </div>
                         </div>
-
-                    </div>
-                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Departments"></label>
                                 <select asp-for="Departments" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.DepartmentItems"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Sponsors"></label>
-                                <select asp-for="Sponsors" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.SponsorItems"></select>
                             </div>
                         </div>
                     </div>
@@ -47,8 +32,22 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label asp-for="Sponsors"></label>
+                                <select asp-for="Sponsors" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.SponsorItems"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label asp-for="EmployeeTypes"></label>
                                 <select asp-for="EmployeeTypes" type="text" class="form-control filter-select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" asp-items="ViewBag.EmpTypeItems"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="EmployeeStatus"></label>
+                                <select asp-for="EmployeeStatus" type="text" class="form-control filter-select-picker" asp-items="ViewBag.EmployeeStatusItems"></select>
                             </div>
                         </div>
                     </div>
@@ -57,12 +56,6 @@
                             <div class="form-group">
                                 <label asp-for="LeaveStatus"></label>
                                 <select asp-for="LeaveStatus" class="form-control filter-select-picker" asp-items="ViewBag.LeaveStatusItems"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="EmployeeStatus"></label>
-                                <select asp-for="EmployeeStatus" type="text" class="form-control filter-select-picker" asp-items="ViewBag.EmployeeStatusItems"></select>
                             </div>
                         </div>
                     </div>

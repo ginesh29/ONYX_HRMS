@@ -17,12 +17,11 @@ namespace Onyx.Models.ViewModels
         public DateTime? LvFrom { get; set; }
         public string FormatedFromDt { get; set; }
         public DateTime? LvTo { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Date Range(WP)")]
-        public string LvDateRange { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public string WpDateRange { get; set; }
         [Display(Name = "Date Range(WOP)")]
         public string WopDateRange { get; set; }
+        public string LvDateRange { get; set; }
         public string FormatedToDt { get; set; }
         public string LvInter { get; set; }
         public DateTime? WpFrom { get; set; }
@@ -45,6 +44,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Remark { get; set; }
         public int LvDays { get; set; }
+        public int WpDays { get; set; }
         public int WopLvDays { get; set; }
         public string Status { get; set; }
         public string EntryBy { get; set; }

@@ -6,6 +6,7 @@
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var data = (PagedList<Employee_GetRow_Result>)Model.Data;
     var filterModel = (EmployeeFilterModel)Model.FilterModel;
+    int[] entries = { 9, 25, 50, 100 };
 }
 <div class="row" id="EmployeeGrid">
     @foreach (var item in data)
@@ -46,38 +47,48 @@
                 </div>
             </div>
         </div>
-    }    
+    }
 </div>
 @if (data.Count == 0)
 {
     <span>@CommonMessage.EMPTYGRID</span>
 }
-<div class="d-flex justify-content-between">
-    <div>
-        @{
-            var startRange = (data.PageNumber - 1) * data.PageSize + 1;
-            var endRange = startRange + (data.Count - 1);
-            var totalItemCount = data.TotalItemCount;
+<div class="d-flex align-items-center">
+    @{
+        var startRange = (data.PageNumber - 1) * data.PageSize + 1;
+        var endRange = startRange + (data.Count - 1);
+        var totalItemCount = data.TotalItemCount;
 
-            if (totalItemCount == 0)
-            {
-                startRange = 0;
-                endRange = 0;
-            }
-            else if (data.Count == 1)
-            {
-                endRange = startRange;
-            }
-            else if (data.Count < data.PageSize)
-            {
-                endRange = startRange + (data.Count - 1);
-            }
+        if (totalItemCount == 0)
+        {
+            startRange = 0;
+            endRange = 0;
         }
-
+        else if (data.Count == 1)
+        {
+            endRange = startRange;
+        }
+        else if (data.Count < data.PageSize)
+        {
+            endRange = startRange + (data.Count - 1);
+        }
+    }
+    <div class="mr-auto">
         Showing @startRange to @endRange of @totalItemCount entries
     </div>
+    <div class="d-flex align-items-center">
+        <div>
+            <select id="PageSize" name="pageSize" class="form-control form-control-sm" onchange="changeShowEntries(this)">
+                @foreach (var item in entries)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+        </div>
+        <div class="ml-2 mr-5">entries per page</div>
+    </div>
     <div>
-        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new { page, Departments = filterModel.Departments, Designations = filterModel.Designations, Branches = filterModel.Branches, Sponsors = filterModel.Sponsors, EmployeeType = filterModel.EmployeeTypes, LeaveStatus = filterModel.LeaveStatus, EmployeeStatus = filterModel.EmployeeStatus }), new PagedListRenderOptions
+        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new { page, pageSize = data.PageSize, Departments = filterModel.Departments, Designations = filterModel.Designations, Branches = filterModel.Branches, Sponsors = filterModel.Sponsors, EmployeeType = filterModel.EmployeeTypes, LeaveStatus = filterModel.LeaveStatus, EmployeeStatus = filterModel.EmployeeStatus }), new PagedListRenderOptions
    {
        DisplayLinkToFirstPage = PagedListDisplayMode.Never,
        DisplayLinkToLastPage = PagedListDisplayMode.Never,
@@ -92,3 +103,6 @@
    })
     </div>
 </div>
+<script>
+    $("#PageSize").val('@data.PageSize');
+</script>

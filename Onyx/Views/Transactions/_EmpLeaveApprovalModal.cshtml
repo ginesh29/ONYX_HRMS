@@ -29,22 +29,25 @@
                         <input type="hidden" asp-for="ApprDt" />
                         <input type="hidden" asp-for="ApprBy" />
                         <input type="hidden" asp-for="Status" />
+                        <input type="hidden" asp-for="LvFrom" />
+                        <input type="hidden" asp-for="LvTo" />
                         <div id="approval-div">
-                            <input type="hidden" asp-for="LvDays" id="LvDateRangeDays" />
+                            <input type="hidden" asp-for="WpDays" id="WpDateRangeDays" />
                             <input type="hidden" asp-for="WopLvDays" id="WopDateRangeDays" />
+                            <input type="hidden" asp-for="LvDays" id="TotalLvDays" />
                             <input type="hidden" asp-for="Current_Approval_Level" />
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="LvDateRange"></label><span id="LvDateRangeDays-txt">(@Model.LvDays days)</span>
-                                        <input asp-for="LvDateRange" class="form-control" />
-                                        <span asp-validation-for="LvDateRange" class="text-danger"></span>
+                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt"></span>
+                                        <input asp-for="WpDateRange" class="form-control either-or" />
+                                        <span asp-validation-for="WpDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt"></span>
-                                        <input asp-for="WopDateRange" class="form-control" />
+                                        <input asp-for="WopDateRange" class="form-control either-or" />
                                         <span asp-validation-for="WopDateRange" class="text-danger"></span>
                                     </div>
                                 </div>

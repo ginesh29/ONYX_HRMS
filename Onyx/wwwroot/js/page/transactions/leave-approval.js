@@ -17,7 +17,7 @@
                 data: function (row) {
                     var formattedFromDate = moment(row.lvFrom).format(CommonSetting.DisplayDateFormat);
                     var formattedToDate = moment(row.lvTo).format(CommonSetting.DisplayDateFormat);
-                    var lvDays = moment(row.lvTo).diff(moment(row.lvFrom), 'days');
+                    var lvDays = moment(row.lvTo).diff(moment(row.lvFrom), 'days') + 1;
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
             },
@@ -60,16 +60,28 @@ function showLeaveApprovalModal(transNo, reject) {
     $('#EmployeeLeaveApprovalModal').load(url, function () {
         parseDynamicForm();
         if (!reject) {
+            $('#WpDateRange').rules("add", {
+                eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
+                messages: {
+                    eitherOrRequired: "Please enter Date Range(WP)"
+                }
+            });
+            $('#WopDateRange').rules("add", {
+                eitherOrRequired: ['#WpDateRange', '#WopDateRange'],
+                messages: {
+                    eitherOrRequired: "Please enter Date Range(WOP)"
+                }
+            });
             var startDate = $("#LvFrom").val();
             var endDate = $("#LvTo").val();
             var dateRangePickerOptions = dateRangePickerDefaultOptions;
             dateRangePickerOptions.minDate = startDate;
             dateRangePickerOptions.maxDate = endDate;
-            $('#LvDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions);
-            $('#LvDateRange,#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
+            $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions);
+            $('#WpDateRange,#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
                 var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
                 var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-                var days = picker.endDate.diff(picker.startDate, 'days');
+                var days = picker.endDate.diff(picker.startDate, 'days') + 1;
                 $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
                 $(`#${ev.target.id}Days`).val(days)
                 $(this).val(`${startDate} - ${endDate}`);
@@ -89,9 +101,11 @@ function showLeaveApprovalModal(transNo, reject) {
 }
 
 function UpdateTotalLeavesDays() {
-    var lvDays = $("#LvDateRangeDays").val();
+    var lvDays = $("#WpDateRangeDays").val();
     var WoplvDays = $("#WopDateRangeDays").val();
-    $("#totalLvDays").text(Number(lvDays) + Number(WoplvDays));
+    var totalLvDays = Number(lvDays) + Number(WoplvDays);
+    $("#totalLvDays").text(totalLvDays);
+    $("#TotalLvDays").val(totalLvDays)
 }
 function saveLeaveApproval(btn) {
     var frm = $("#leave-approval-frm");

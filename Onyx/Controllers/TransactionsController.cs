@@ -58,8 +58,8 @@ namespace Onyx.Controllers
                     LvTyp = leaveData.LvTyp,
                     LvFrom = leaveData.LvFrom,
                     LvTo = leaveData.LvTo,
+                    LvDays = (Convert.ToDateTime(leaveData.LvTo) - Convert.ToDateTime(leaveData.LvFrom)).Days + 1,
                     LvDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
-                    LvDays = (Convert.ToDateTime(leaveData.LvTo) - Convert.ToDateTime(leaveData.LvFrom)).Days,
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
                     ApprDt = DateTime.Now,
@@ -78,13 +78,21 @@ namespace Onyx.Controllers
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
-            var lvDateSp = model.LvDateRange.Split(" - ");
-            model.LvFrom = Convert.ToDateTime(lvDateSp[0]);
-            model.LvTo = Convert.ToDateTime(lvDateSp[1]);
-            var wopDateSp = model.WopDateRange.Split(" - ");
-            model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
-            model.WopTo = Convert.ToDateTime(wopDateSp[1]);
-
+            if (model.Status == "Y")
+            {
+                if (!string.IsNullOrEmpty(model.WpDateRange))
+                {
+                    var wpDateSp = model.WpDateRange.Split(" - ");
+                    model.WpFrom = Convert.ToDateTime(wpDateSp[0]);
+                    model.WpTo = Convert.ToDateTime(wpDateSp[1]);
+                }
+                if (!string.IsNullOrEmpty(model.WopDateRange))
+                {
+                    var wopDateSp = model.WopDateRange.Split(" - ");
+                    model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
+                    model.WopTo = Convert.ToDateTime(wopDateSp[1]);
+                }
+            }
             _transactionService.SaveLeaveApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
@@ -106,7 +114,24 @@ namespace Onyx.Controllers
             model.ApprBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
             if (model.Type == (int)LeaveCofirmTypeEnum.Revise)
+            {
+                var dateSp = model.DateRange.Split(" - ");
+                model.FromDt = Convert.ToDateTime(dateSp[0]);
+                model.ToDt = Convert.ToDateTime(dateSp[1]);
+                if (!string.IsNullOrEmpty(model.WpDateRange))
+                {
+                    var wpDateSp = model.WpDateRange.Split(" - ");
+                    model.WpFrom = Convert.ToDateTime(wpDateSp[0]);
+                    model.WpTo = Convert.ToDateTime(wpDateSp[1]);
+                }
+                if (!string.IsNullOrEmpty(model.WopDateRange))
+                {
+                    var wopDateSp = model.WopDateRange.Split(" - ");
+                    model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
+                    model.WopTo = Convert.ToDateTime(wopDateSp[1]);
+                }
                 _transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
+            }
             else
                 _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
             var ActivityAbbr = "UPD";
@@ -147,15 +172,15 @@ namespace Onyx.Controllers
                     FromDt = leaveData.FromDt,
                     ToDt = leaveData.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(leaveData.FromDt, leaveData.ToDt),
-                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days,
+                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days + 1,
                     WpFrom = leaveData.WpFrom,
                     WpTo = leaveData.WpTo,
-                    WpDateRange = ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo),
-                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WpDateRange = leaveData.WpFrom != null && leaveData.WpFrom != null ? ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo) : null,
+                    WpLvDays = leaveData.WpFrom != null && leaveData.WpFrom != null ? (Convert.ToDateTime(leaveData.WpTo) - Convert.ToDateTime(leaveData.WpFrom)).Days + 1 : 0,
                     WopFrom = leaveData.WpFrom,
                     WopTo = leaveData.WpTo,
-                    WopDateRange = ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo),
-                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WopDateRange = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo) : null,
+                    WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1 : 0,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
                     ApprDt = DateTime.Now,
@@ -189,15 +214,15 @@ namespace Onyx.Controllers
                     FromDt = leaveData.FromDt,
                     ToDt = leaveData.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(leaveData.FromDt, leaveData.ToDt),
-                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days,
+                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days + 1,
                     WpFrom = leaveData.WpFrom,
                     WpTo = leaveData.WpTo,
                     WpDateRange = ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo),
-                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1,
                     WopFrom = leaveData.WpFrom,
                     WopTo = leaveData.WpTo,
                     WopDateRange = ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo),
-                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days,
+                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
                     ApprDt = DateTime.Now,

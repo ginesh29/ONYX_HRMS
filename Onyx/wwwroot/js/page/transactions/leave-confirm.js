@@ -19,7 +19,7 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
                 data: function (row) {
                     var formattedFromDate = moment(row.fromDt).format(CommonSetting.DisplayDateFormat);
                     var formattedToDate = moment(row.toDt).format(CommonSetting.DisplayDateFormat);
-                    var lvDays = moment(row.toDt).diff(moment(row.fromDt), 'days');
+                    var lvDays = moment(row.toDt).diff(moment(row.fromDt), 'days') + 1;
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
             },
@@ -52,13 +52,25 @@ function showLeaveConfirmModal(transNo) {
     var url = `/Transactions/${action}?transNo=${transNo}`;
     $('#EmployeeLeaveConfirmModal').load(url, function () {
         parseDynamicForm();
-        $('#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions);
-        $('#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
+        $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions);
+        $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
             var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
             var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            var days = picker.endDate.diff(picker.startDate, 'days');
+            var days = picker.endDate.diff(picker.startDate, 'days') + 1;
             $(`#${ev.target.id}Days`).text(`(${days} days)`);
             $(this).val(`${startDate} - ${endDate}`);
+        });
+        $('#WpDateRange').rules("add", {
+            eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
+            messages: {
+                eitherOrRequired: "Please enter Date Range(WP)"
+            }
+        });
+        $('#WopDateRange').rules("add", {
+            eitherOrRequired: ['#WpDateRange', '#WopDateRange'],
+            messages: {
+                eitherOrRequired: "Please enter Date Range(WOP)"
+            }
         });
         $("#EmployeeLeaveConfirmModal").modal("show");
     });

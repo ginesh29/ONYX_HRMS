@@ -325,7 +325,7 @@ function initControls() {
         var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
         var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
         $(this).val(`${startDate} - ${endDate}`);
-        var days = picker.endDate.diff(picker.startDate, 'days');
+        var days = picker.endDate.diff(picker.startDate, 'days') + 1;
         $("#Days").text(`(${days} days)`);
     });
 }

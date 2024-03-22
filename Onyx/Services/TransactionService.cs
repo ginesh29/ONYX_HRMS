@@ -227,8 +227,8 @@ namespace Onyx.Services
             parameters.Add("v_LvApprBy", model.ApprBy);
             parameters.Add("v_LvApprDt", model.ApprDt);
             parameters.Add("v_Status", model.Status);
-            parameters.Add("v_WP_FromDt", model.LvFrom);
-            parameters.Add("v_WP_ToDt", model.LvTo);
+            parameters.Add("v_WP_FromDt", model.WpFrom);
+            parameters.Add("v_WP_ToDt", model.WpTo);
             parameters.Add("v_WOP_FromDt", model.WopFrom);
             parameters.Add("v_WOP_ToDt", model.WopTo);
             parameters.Add("v_Narr", model.Remark);
@@ -273,8 +273,8 @@ namespace Onyx.Services
             parameters.Add("v_WOP_FromDt", model.WopFrom);
             parameters.Add("v_WOP_ToDt", model.WopTo);
             parameters.Add("v_From_Dt", model.FromDt);
-            parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_To_Dt", model.ToDt);
+            parameters.Add("v_CoCd", CoCd);            
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);

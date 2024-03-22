@@ -68,10 +68,10 @@ namespace Onyx.Controllers
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
             return Json(employees);
         }
-        public IActionResult FetchEmployees(int? page, EmployeeFilterModel filterModel)
+        public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
             int pageNumber = page ?? 1;
-            int pageSize = 9;
+            var size = pageSize ?? 9;
             var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.LeaveStatus);
             bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null;
             if (isFilter)
@@ -96,7 +96,7 @@ namespace Onyx.Controllers
             }
             if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
                 employees = employees.Where(m => m.Active == "Y");
-            var pagedEmployees = employees.ToPagedList(pageNumber, pageSize);
+            var pagedEmployees = employees.ToPagedList(pageNumber, size);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
         public IActionResult Profile(string Cd)
@@ -232,7 +232,12 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
             });
-            ViewBag.StatusItems = _commonService.GetLeaveStatusTypes();
+            ViewBag.StatusItems = _commonService.GetSysCodes("HSTAT").Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+
             ViewBag.EmpTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),

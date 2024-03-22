@@ -38,9 +38,9 @@
                             <input type="hidden" asp-for="ToDt" />
                             <input type="hidden" asp-for="WpFrom" />
                             <input type="hidden" asp-for="WpTo" />
-                            <input type="hidden" asp-for="LvDays" />
                             <input type="hidden" asp-for="WopFrom" />
                             <input type="hidden" asp-for="WopTo" />
+                            <input type="hidden" asp-for="LvDays" />
                             <input type="hidden" asp-for="WopLvDays" />
                             <div class="row">
                                 <div class="col-md-6">
@@ -50,24 +50,14 @@
                                         <span asp-validation-for="Type" class="text-danger"></span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row confirm-div d-none">
-                                <div class="col-md-6">
+                                <div class="col-md-6 revise-div d-none">
                                     <div class="form-group">
-                                        <label asp-for="Ticket"></label>
-                                        <input asp-for="Ticket" class="form-control decimal-input" />
-                                        <span asp-validation-for="Ticket" class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="LvSalary"></label>
-                                        <input asp-for="LvSalary" class="form-control decimal-input" />
-                                        <span asp-validation-for="LvSalary" class="text-danger"></span>
+                                        <label asp-for="DateRange"></label><span id="DateRangeDays">(@Model.LvDays days)</span>
+                                        <input asp-for="DateRange" class="form-control" />
+                                        <span asp-validation-for="DateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row revise-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -84,13 +74,31 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row revise-div confirm-div d-none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Ticket"></label>
+                                        <input asp-for="Ticket" class="form-control decimal-input" />
+                                        <span asp-validation-for="Ticket" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="LvSalary"></label>
+                                        <input asp-for="LvSalary" class="form-control decimal-input" />
+                                        <span asp-validation-for="LvSalary" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Remark"></label>
                             <textarea asp-for="Remark" class="form-control"></textarea>
                             <span asp-validation-for="Remark" class="text-danger"></span>
                         </div>
-                        <div><span class="font-weight-bold">Total Leave Days: </span> <span id="totalLvDays">@Model.ApprDays</span></div>
+                        <div class="row revise-div confirm-div d-none">
+                            <span class="font-weight-bold">Total Leave Days: </span> <span id="totalLvDays">@Model.ApprDays</span>
+                        </div>
                     </form>
                 </div>
             </div>
