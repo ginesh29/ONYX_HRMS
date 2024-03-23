@@ -8,6 +8,7 @@
         </div>
         <div class="modal-body">
             <form id="document-frm">
+                <input type="hidden" asp-for="Cd" />
                 <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
                     <label asp-for="EmpCd"></label>
                     <select asp-for="EmpCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">

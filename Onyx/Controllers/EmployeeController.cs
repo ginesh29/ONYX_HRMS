@@ -431,6 +431,7 @@ namespace Onyx.Controllers
             if (document != null)
                 model = new EmpDocumentModel
                 {
+                    Cd = document.EmpCd,
                     DocNo = document.DocNo,
                     DocTypSDes = document.DocTypSDes,
                     DocTypCd = document.DocTypCd.Trim(),

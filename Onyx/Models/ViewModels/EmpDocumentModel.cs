@@ -38,5 +38,13 @@ namespace Onyx.Models.ViewModels
         public decimal SrNo { get; set; }
         public IEnumerable<IFormFile> DocFiles { get; set; }
         public IEnumerable<EmpDocImages_GetRow_Result> DocsPaths { get; set; }
+        public string Cd { get; set; }
+        public string Mode
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+            }
+        }
     }
 }

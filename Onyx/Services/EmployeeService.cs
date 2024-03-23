@@ -270,10 +270,14 @@ namespace Onyx.Services
             parameters.Add("v_DocTyp", model.DocTypCd);
             parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_OthRefNo", string.Empty);
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
             parameters.Add("v_ExpDt", model.ExpDt);
             parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Mode", model.Mode);
+            parameters.Add("v_Sponsor1", "0");
+            parameters.Add("v_Sponsor2", "0");
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
