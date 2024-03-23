@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
+using System.Data.SqlTypes;
+using System.Transactions;
 
 namespace Onyx.Services
 {
@@ -901,16 +903,27 @@ namespace Onyx.Services
         }
         public void SaveApprovalProcess(CompanyProcessApprovalModel model, string CoCd)
         {
+
             var procedureName = "CompanyProcessApproval_Update";
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
             var parameters = new DynamicParameters();
             parameters.Add("v_ProcessId", model.ProcessIdCd);
             parameters.Add("v_ApplTyp", model.ApplTypCd);
-            parameters.Add("v_Div", model.BranchCd ?? "0");
-            parameters.Add("v_Dept", model.DeptCd ?? "0");
+            parameters.Add("v_Div", "0");
+            parameters.Add("v_Dept", "0");
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            connection.Open();
+            using SqlTransaction transaction = connection.BeginTransaction();
+            try
+            {
+                connection.Query(procedureName, parameters, transaction: transaction, commandType: CommandType.StoredProcedure);
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+            }
         }
         public void SaveApprovalProcess_Detail(CompanyProcessApprovalModel model, int srNo, string empCd, string CoCd)
         {

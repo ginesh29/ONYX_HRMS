@@ -17,8 +17,8 @@ namespace Onyx.Models.ViewModels
         public string ApplTypCd { get; set; }
         public string Branch { get; set; }
         [Display(Name = "Branch")]
-        public string BranchCd { get; set; }
-        public string Dept { get; set; }
+        public string BranchCd { get; set; } = "0";
+        public string Dept { get; set; } = "0";
         [Display(Name = "Department")]
         public string DeptCd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]

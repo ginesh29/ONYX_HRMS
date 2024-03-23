@@ -545,10 +545,9 @@ namespace Onyx.Services
                     continue;
                 bool validEmployee = GetEmployees(CoCd, reader.GetString(0)).Any();
                 string errorMessage = string.Empty;
-                DateTime parsedDate;
                 if (!validEmployee)
                     errorMessage += "EmpCd is not valid,";
-                if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
                     errorMessage += "Date is not valid,";
                 var excelData = new EmpCalendarExcelModel
                 {

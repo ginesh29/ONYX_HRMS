@@ -588,7 +588,6 @@ namespace Onyx.Controllers
         {
             if (model.Mode == "I")
                 _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
-
             _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
             foreach (var item in model.ApprovalLevels.Select((value, i) => new { i, value }))
             {
