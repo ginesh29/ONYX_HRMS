@@ -58,7 +58,7 @@ namespace Onyx.Controllers
                     LvTyp = leaveData.LvTyp,
                     LvFrom = leaveData.LvFrom,
                     LvTo = leaveData.LvTo,
-                    LvDays = (Convert.ToDateTime(leaveData.LvTo) - Convert.ToDateTime(leaveData.LvFrom)).Days + 1,
+                    LvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.LvFrom, leaveData.LvTo),
                     LvDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
@@ -93,11 +93,11 @@ namespace Onyx.Controllers
                     model.WopTo = Convert.ToDateTime(wopDateSp[1]);
                 }
             }
-            _transactionService.SaveLeaveApproval(model);
+            //_transactionService.SaveLeaveApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            //_commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -172,15 +172,15 @@ namespace Onyx.Controllers
                     FromDt = leaveData.FromDt,
                     ToDt = leaveData.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(leaveData.FromDt, leaveData.ToDt),
-                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days + 1,
+                    LvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.FromDt, leaveData.ToDt),
                     WpFrom = leaveData.WpFrom,
                     WpTo = leaveData.WpTo,
                     WpDateRange = leaveData.WpFrom != null && leaveData.WpFrom != null ? ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo) : null,
-                    WpLvDays = leaveData.WpFrom != null && leaveData.WpFrom != null ? (Convert.ToDateTime(leaveData.WpTo) - Convert.ToDateTime(leaveData.WpFrom)).Days + 1 : 0,
+                    WpLvDays = leaveData.WpFrom != null && leaveData.WpFrom != null ? ExtensionMethod.GetDaysBetweenDateRange(leaveData.WpFrom, leaveData.WpTo) : 0,
                     WopFrom = leaveData.WpFrom,
                     WopTo = leaveData.WpTo,
                     WopDateRange = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo) : null,
-                    WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1 : 0,
+                    WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo) : 0,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
                     ApprDt = DateTime.Now,
@@ -214,15 +214,15 @@ namespace Onyx.Controllers
                     FromDt = leaveData.FromDt,
                     ToDt = leaveData.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(leaveData.FromDt, leaveData.ToDt),
-                    LvDays = (Convert.ToDateTime(leaveData.ToDt) - Convert.ToDateTime(leaveData.FromDt)).Days + 1,
+                    LvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.FromDt, leaveData.ToDt),
                     WpFrom = leaveData.WpFrom,
                     WpTo = leaveData.WpTo,
                     WpDateRange = ExtensionMethod.GetDateRange(leaveData.WpFrom, leaveData.WpTo),
-                    WpLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1,
+                    WpLvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.WpFrom, leaveData.WpTo),
                     WopFrom = leaveData.WpFrom,
                     WopTo = leaveData.WpTo,
                     WopDateRange = ExtensionMethod.GetDateRange(leaveData.WopFrom, leaveData.WopTo),
-                    WopLvDays = (Convert.ToDateTime(leaveData.WopTo) - Convert.ToDateTime(leaveData.WopFrom)).Days + 1,
+                    WopLvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo),
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
                     ApprDt = DateTime.Now,

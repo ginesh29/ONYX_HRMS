@@ -117,5 +117,9 @@ namespace Onyx
             string shortDateFormat = dateFormat.ShortDatePattern;
             return shortDateFormat;
         }
+        public static int GetDaysBetweenDateRange(DateTime? startDate, DateTime? endDate)
+        {
+            return (Convert.ToDateTime(endDate) - Convert.ToDateTime(startDate)).Days + 1;
+        }
     }
 }

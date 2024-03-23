@@ -19,7 +19,7 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
                 data: function (row) {
                     var formattedFromDate = moment(row.fromDt).format(CommonSetting.DisplayDateFormat);
                     var formattedToDate = moment(row.toDt).format(CommonSetting.DisplayDateFormat);
-                    var lvDays = moment(row.toDt).diff(moment(row.fromDt), 'days') + 1;
+                    var lvDays = getDaysBetweenDateRange(moment(row.fromDt), moment(row.toDt));
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
             },
@@ -56,7 +56,7 @@ function showLeaveConfirmModal(transNo) {
         $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
             var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
             var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            var days = picker.endDate.diff(picker.startDate, 'days') + 1;
+            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
             $(`#${ev.target.id}Days`).text(`(${days} days)`);
             $(this).val(`${startDate} - ${endDate}`);
         });

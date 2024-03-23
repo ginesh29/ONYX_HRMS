@@ -36,21 +36,20 @@
                             <input type="hidden" asp-for="WopLvDays" id="WopDateRangeDays" />
                             <input type="hidden" asp-for="LvDays" id="TotalLvDays" />
                             <input type="hidden" asp-for="Current_Approval_Level" />
-                            <div class="row">
+                            <div class="row form-group">
                                 <div class="col-md-6">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt"></span>
                                         <input asp-for="WpDateRange" class="form-control either-or" />
-                                        <span asp-validation-for="WpDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt"></span>
                                         <input asp-for="WopDateRange" class="form-control either-or" />
-                                        <span asp-validation-for="WopDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
+                                <span class="text-danger ml-2" id="errorContainer"></span>
                             </div>
                         </div>
                         <div class="form-group">

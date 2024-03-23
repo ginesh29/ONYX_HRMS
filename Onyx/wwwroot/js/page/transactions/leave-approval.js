@@ -1,4 +1,5 @@
-﻿window["datatable"] = $('#EmployeeLeavesApprovalDataTable').DataTable(
+﻿
+window["datatable"] = $('#EmployeeLeavesApprovalDataTable').DataTable(
     {
         ajax: "/Transactions/FetchEmpLeaveApprovalData",
         ordering: false,
@@ -17,7 +18,7 @@
                 data: function (row) {
                     var formattedFromDate = moment(row.lvFrom).format(CommonSetting.DisplayDateFormat);
                     var formattedToDate = moment(row.lvTo).format(CommonSetting.DisplayDateFormat);
-                    var lvDays = moment(row.lvTo).diff(moment(row.lvFrom), 'days') + 1;
+                    var lvDays = getDaysBetweenDateRange(moment(row.lvFrom), moment(row.lvTo));
                     return `${formattedFromDate} - ${formattedToDate}<br/>(${lvDays} days)`;
                 }, width: '200px'
             },
@@ -32,13 +33,13 @@
             { data: "reason" },
             {
                 data: function (row) {
-                    return `<button data-toggle="tooltip" data-original-title="View" class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.lvFrom}','${row.lvTo}')">
+                    return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.lvFrom}','${row.lvTo}')">
                                 <i class="fas fa-search"></i>
                             </button>
-                            <button data-toggle="tooltip" data-original-title="Approve" class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
+                            <button class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button data-toggle="tooltip" data-original-title="Reject" class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
+                            <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
                                 <i class="fa fa-times"></i>
                             </button>`;
                 }, "width": "120px"
@@ -54,6 +55,27 @@ function showLeaveDetailModal(empCd, fromDt, toDt) {
     $('#EmployeeLeaveDetailModal').load(url, function () {
         $("#EmployeeLeaveDetailModal").modal("show");
     });
+}
+function initDateRangePicker() {
+    var start = $("#LvFrom").val();
+    var end = $("#LvTo").val();
+    var dateRangePickerOptions = dateRangePickerDefaultOptions;
+    dateRangePickerOptions.minDate = start;
+    dateRangePickerOptions.maxDate = end;
+    $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions)
+        .on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+            $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
+            $(`#${ev.target.id}Days`).val(days);
+            $(this).val(`${startDate} - ${endDate}`);
+            UpdateTotalLeavesDays();
+        }).on('change.daterangepicker', function (ev, picker) {
+            $(`#${ev.target.id}Days-txt`).text("");
+            $(`#${ev.target.id}Days`).val("");
+            initDateRangePicker();
+        });
 }
 function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
@@ -72,21 +94,8 @@ function showLeaveApprovalModal(transNo, reject) {
                     eitherOrRequired: "Please enter Date Range(WOP)"
                 }
             });
-            var startDate = $("#LvFrom").val();
-            var endDate = $("#LvTo").val();
-            var dateRangePickerOptions = dateRangePickerDefaultOptions;
-            dateRangePickerOptions.minDate = startDate;
-            dateRangePickerOptions.maxDate = endDate;
-            $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions);
-            $('#WpDateRange,#WopDateRange').on('apply.daterangepicker', function (ev, picker) {
-                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-                var days = picker.endDate.diff(picker.startDate, 'days') + 1;
-                $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
-                $(`#${ev.target.id}Days`).val(days)
-                $(this).val(`${startDate} - ${endDate}`);
-                UpdateTotalLeavesDays();
-            });
+            initDateRangePicker();
+
             $("#Status").val("Y");
         }
         else {
@@ -105,11 +114,29 @@ function UpdateTotalLeavesDays() {
     var WoplvDays = $("#WopDateRangeDays").val();
     var totalLvDays = Number(lvDays) + Number(WoplvDays);
     $("#totalLvDays").text(totalLvDays);
-    $("#TotalLvDays").val(totalLvDays)
+}
+function ValidateDateRange() {
+    var isValid = false;
+    var WpDateRangeDays = $("#WpDateRangeDays").val();
+    var WopDateRangeDays = $("#WopDateRangeDays").val();
+    var totalLvDays = $("#TotalLvDays").val();
+    var calculatedTotalLvDays = Number(WpDateRangeDays) + Number(WopDateRangeDays);
+    var WpDateRange = $("#WpDateRange").val();
+    var WopDateRange = $("#WopDateRange").val();
+    if (checkRangesOverlap(WpDateRange, WopDateRange))
+        $("#errorContainer").text("Date Range (WP) & (WOP) is ovelaped");
+    else if (totalLvDays != calculatedTotalLvDays)
+        $("#errorContainer").text("Total Leaves not matched with Date Range (WP) & (WOP)");
+    else {
+        isValid = true;
+        $("#errorContainer").text("");
+    }
+    return isValid;
 }
 function saveLeaveApproval(btn) {
     var frm = $("#leave-approval-frm");
-    if (frm.valid()) {
+
+    if (frm.valid() && ValidateDateRange()) {
         loadingButton(btn);
         postAjax("/Transactions/SaveLeaveApproval", frm.serialize(), function (response) {
             if (response.success) {
@@ -122,5 +149,11 @@ function saveLeaveApproval(btn) {
             }
             unloadingButton(btn);
         });
+    }
+    else {
+        var WpDateRange = $("#WpDateRange").val();
+        var WopDateRange = $("#WopDateRange").val();
+        if (!WpDateRange && !WopDateRange)
+            $("#errorContainer").text("Please enter Date Range(either WP or WOP) otherwise both ");
     }
 }

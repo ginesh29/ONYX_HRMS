@@ -279,6 +279,22 @@ function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, parseInt(window.getComputedStyle(textarea).getPropertyValue("max-height"))) + 'px';
 }
+function getDaysBetweenDateRange(startDate, endDate) {
+    return endDate.diff(startDate, 'days') + 1;
+}
+function checkRangesOverlap(dateRange1, dateRange2) {
+    var spDateRange1 = dateRange1.split(" - ");
+    var start1 = moment(spDateRange1[0], 'YYYY-MM-DD');
+    var end1 = moment(spDateRange1[1], 'YYYY-MM-DD');
+    var spDateRange2 = dateRange2.split(" - ");
+    var start2 = moment(spDateRange2[0], 'YYYY-MM-DD');
+    var end2 = moment(spDateRange2[1], 'YYYY-MM-DD');
+    if ((start1.isBefore(end2) || start1.isSame(end2)) &&
+        (end1.isAfter(start2) || end1.isSame(start2))) {
+        return true;
+    }
+    return false;
+}
 $("#company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
@@ -301,33 +317,33 @@ function initControls() {
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat
     });
-    $('.month-year-input').attr("placeholder", "mm/yyyy");
-    $('.month-year-input').datetimepicker({
-        format: 'MM/YYYY'
-    });
-    $('.decimal-input').attr("placeholder", "0.00");
-    $('.decimal-input').inputmask(decimalMaskOptions);
+$('.month-year-input').attr("placeholder", "mm/yyyy");
+$('.month-year-input').datetimepicker({
+    format: 'MM/YYYY'
+});
+$('.decimal-input').attr("placeholder", "0.00");
+$('.decimal-input').inputmask(decimalMaskOptions);
 
-    $('.int-input').attr("placeholder", "0");
-    $('.int-input').inputmask(intMaskOptions);
+$('.int-input').attr("placeholder", "0");
+$('.int-input').inputmask(intMaskOptions);
 
-    $('.percentage-input').attr("placeholder", "0 %");
-    $('.percentage-input').inputmask(percentageMaskOptions);
+$('.percentage-input').attr("placeholder", "0 %");
+$('.percentage-input').inputmask(percentageMaskOptions);
 
-    $("textarea.form-control").on("input", function (e) {
-        autoResizeTextarea(e.target)
-    });
-    setTimeout(function () {
-        $("textarea.form-control").trigger('input');
-    }, 200)
-    $('[data-toggle="tooltip"]').tooltip();
-    $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-        var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-        $(this).val(`${startDate} - ${endDate}`);
-        var days = picker.endDate.diff(picker.startDate, 'days') + 1;
-        $("#Days").text(`(${days} days)`);
-    });
+$("textarea.form-control").on("input", function (e) {
+    autoResizeTextarea(e.target)
+});
+setTimeout(function () {
+    $("textarea.form-control").trigger('input');
+}, 200)
+$('[data-toggle="tooltip"]').tooltip();
+$('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+    var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+    var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+    $(this).val(`${startDate} - ${endDate}`);
+    var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+    $("#Days").text(`(${days} days)`);
+});
 }
 function downloadFile(foldername, filename) {
     $.ajax({

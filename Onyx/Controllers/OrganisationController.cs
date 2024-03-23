@@ -197,7 +197,7 @@ namespace Onyx.Controllers
                     FromDt = workingHour.FromDt,
                     ToDt = workingHour.ToDt,
                     DateRange = ExtensionMethod.GetDateRange(workingHour.FromDt, workingHour.ToDt),
-                    Days = (Convert.ToDateTime(workingHour.ToDt) - Convert.ToDateTime(workingHour.FromDt)).Days + 1,
+                    Days = ExtensionMethod.GetDaysBetweenDateRange(workingHour.FromDt, workingHour.ToDt),
                     HolTypCd = workingHour.HolTypCd.Trim(),
                     HolTypDesc = workingHour.HolTypDesc,
                     Description = workingHour.Narr,
@@ -1237,7 +1237,7 @@ namespace Onyx.Controllers
                     FromDate = travelFare.FromDate,
                     ToDate = travelFare.ToDate,
                     DateRange = ExtensionMethod.GetDateRange(travelFare.FromDate, travelFare.ToDate),
-                    Days = (Convert.ToDateTime(travelFare.ToDate) - Convert.ToDateTime(travelFare.FromDate)).Days + 1,
+                    Days = ExtensionMethod.GetDaysBetweenDateRange(travelFare.FromDate, travelFare.ToDate),
                     Sector = travelFare.Sector,
                     TravelClass = travelFare.TravelClass
                 };
