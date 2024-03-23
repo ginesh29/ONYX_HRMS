@@ -13,10 +13,11 @@ namespace Onyx.Controllers
         private readonly EmployeeService _employeeService;
         private readonly CommonService _commonService;
         private readonly SettingService _settingService;
+        private readonly UserService _userService;
         private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public EmployeeController(AuthService authService, EmployeeService employeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService)
+        public EmployeeController(AuthService authService, EmployeeService employeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService, UserService userService)
         {
             _employeeService = employeeService;
             _authService = authService;
@@ -24,6 +25,7 @@ namespace Onyx.Controllers
             _settingService = settingService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
+            _userService = userService;
             _fileHelper = new FileHelper();
         }
         public IActionResult Profiles()
@@ -191,7 +193,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"
             });
-            ViewBag.UserItems = _settingService.GetUsers().Select(m => new SelectListItem
+            ViewBag.UserItems = _userService.GetUsers(string.Empty).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = $"{m.Username}({m.Code.Trim()})"
@@ -245,6 +247,11 @@ namespace Onyx.Controllers
             });
             ViewBag.CalulationBasisTypeItems = _commonService.GetCalulationBasisTypes();
             return View("ProfileUpsert", employee ?? new Employee_Find_Result());
+        }
+        public IActionResult GetUserPwd(string empCd)
+        {
+            var pwd = _userService.GetUsers(empCd).FirstOrDefault().UPwd.Decrypt();
+            return Json(pwd);
         }
         [HttpPost]
         public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)

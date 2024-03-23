@@ -63,17 +63,6 @@ namespace Onyx.Services
         #endregion
 
         #region User
-        public IEnumerable<Users_GetRow_Result> GetUsers()
-        {
-            var procedureName = "Users_GetRow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<Users_GetRow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
         public CommonResponse SaveUser(UserModel model)
         {
             var connectionString = _commonService.GetConnectionString();
@@ -84,7 +73,7 @@ namespace Onyx.Services
             parameters.Add("v_Abbr", model.Abbr);
             parameters.Add("v_UPWD", model.UPwd);
             parameters.Add("v_UName", model.Username);
-            parameters.Add("v_ExpiryDt", model.ExpiryDt.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_ExpiryDt", model.ExpiryDt);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connection = new SqlConnection(connectionString);

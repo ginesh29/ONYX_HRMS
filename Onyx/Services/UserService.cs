@@ -33,14 +33,14 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public UserModel GetUser(string UserCd)
+        public IEnumerable<Users_GetRow_Result> GetUsers(string UserCd = "")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Users_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);
             var connection = new SqlConnection(connectionString);
-            var user = connection.QueryFirstOrDefault<UserModel>
+            var user = connection.Query<Users_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }

@@ -7,16 +7,16 @@ namespace Onyx.Controllers
     public class AccountController : Controller
     {
         private readonly AuthService _authService;
-        private readonly UserService _userEmployeeService;
+        private readonly UserService _userService;
         private readonly EmployeeService _employeeService;
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public AccountController(AuthService authService, UserService userEmployeeService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
+        public AccountController(AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
         {
             _authService = authService;
-            _userEmployeeService = userEmployeeService;
             _commonService = commonService;
+            _userService = userService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
             _employeeService = employeeService;
@@ -31,10 +31,10 @@ namespace Onyx.Controllers
             var result = new CommonResponse { Success = false };
             if (model.UserType == UserTypeEnum.User)
             {
-                var validateUser = _userEmployeeService.ValidateUser(model);
+                var validateUser = _userService.ValidateUser(model);
                 if (validateUser != null)
                 {
-                    var user = _userEmployeeService.GetUser(validateUser.Cd);
+                    var user = _userService.GetUsers(validateUser.Cd).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = model.CoCd,
@@ -53,10 +53,10 @@ namespace Onyx.Controllers
             }
             else
             {
-                var employee = _userEmployeeService.ValidateEmployee(model);
+                var employee = _userService.ValidateEmployee(model);
                 if (employee != null)
                 {
-                    var user = _userEmployeeService.GetUser(employee.UserCd);
+                    var user = _userService.GetUsers(employee.Cd).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = model.CoCd,
@@ -107,16 +107,25 @@ namespace Onyx.Controllers
             var result = new CommonResponse { Success = false };
             if (_loggedInUser.UserType == (int)UserTypeEnum.User)
             {
-                var user = _userEmployeeService.ValidateUser(new LoginModel
+                var user = _userService.ValidateUser(new LoginModel
                 {
                     LoginId = _loggedInUser.UserAbbr,
                     Password = model.OldPassword
                 });
                 if (user != null)
                 {
-                    var userFromDb = _userEmployeeService.GetUser(_loggedInUser.UserCd);
+                    var userFromDb = _userService.GetUsers(_loggedInUser.UserCd).FirstOrDefault();
                     userFromDb.UPwd = model.ConfirmPassword.Encrypt();
-                    _settingService.SaveUser(userFromDb);
+                    _settingService.SaveUser(new UserModel
+                    {
+                        Code = userFromDb.Code,
+                        LoginId = userFromDb.LoginId,
+                        Abbr = userFromDb.Abbr,
+                        UPwd = userFromDb.UPwd,
+                        Username = userFromDb.Username,
+                        ExpiryDt = userFromDb.ExpiryDt,
+                        EntryBy = userFromDb.EntryBy,
+                    });
                     result.Success = true;
                     result.Message = "Password changed Successfully";
                 }
@@ -125,8 +134,9 @@ namespace Onyx.Controllers
             }
             else
             {
-                var employee = _userEmployeeService.ValidateEmployee(new LoginModel
+                var employee = _userService.ValidateEmployee(new LoginModel
                 {
+
                     LoginId = _loggedInUser.UserAbbr,
                     Password = model.OldPassword
                 });

@@ -816,8 +816,8 @@ namespace Onyx.Services
             parameters.Add("v_SectCd", model.SectCd);
             parameters.Add("v_Class", model.ClassCd);
             parameters.Add("v_SrNo", model.SrNo);
-            parameters.Add("v_FromDt", model.FromDate.Value.ToString(CommonSetting.InputDateFormat));
-            parameters.Add("v_ToDt", model.ToDate.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_FromDt", model.FromDate);
+            parameters.Add("v_ToDt", model.ToDate);
             parameters.Add("v_SDes", model.SDes);
             parameters.Add("v_Fare", model.Fare);
             parameters.Add("v_Des", model.Description);

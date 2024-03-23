@@ -200,7 +200,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="UserCd"></label>
-                    <select asp-for="UserCd" class="form-control select-picker" asp-items="ViewBag.UserItems">
+                    <select asp-for="UserCd" class="form-control select-picker" asp-items="ViewBag.UserItems" onchange="getUserDetail(this)">
                     </select>
                     <span asp-validation-for="UserCd" class="text-danger"></span>
                 </div>

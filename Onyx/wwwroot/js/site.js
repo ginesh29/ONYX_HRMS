@@ -319,6 +319,7 @@ function initControls() {
         locale: {
             format: CommonSetting.DisplayDateFormat
         },
+        timepicker: false,
         autoUpdateInput: false,
         autoApply: true,
         singleDatePicker: true,
@@ -326,8 +327,11 @@ function initControls() {
     }).on('apply.daterangepicker', function (ev, picker) {
         var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
         $(this).val(startDate);
-    });
-    
+    });    
+    $('.date-input').each(function (i, item) {
+        var date = $(this).val().replace(" 00:00:00", "");
+        $(this).val(date);;
+    })
     $('.month-year-input').attr("placeholder", "mm/yyyy");
     $('.month-year-input').datetimepicker({
         viewMode: 'months',
@@ -338,7 +342,6 @@ function initControls() {
         if (!target.closest('.bootstrap-datetimepicker-widget').length && !target.is('.month-year-input'))
             $('.month-year-input').datetimepicker('hide');
     });
-
     $('.decimal-input').attr("placeholder", "0.00");
     $('.decimal-input').inputmask(decimalMaskOptions);
 

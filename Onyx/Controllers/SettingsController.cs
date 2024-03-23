@@ -11,16 +11,18 @@ namespace Onyx.Controllers
     {
         private readonly AuthService _authService;
         private readonly SettingService _settingService;
+        private readonly UserService _userService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public SettingsController(AuthService authService, SettingService settingService, CommonService commonService)
+        public SettingsController(AuthService authService, SettingService settingService, CommonService commonService, UserService userService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
             _commonService = commonService;
             _fileHelper = new FileHelper();
+            _userService = userService;
         }
         #region Branch
         public IActionResult Branches()
@@ -85,7 +87,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchUsers()
         {
-            var users = _settingService.GetUsers();
+            var users = _userService.GetUsers(string.Empty);
             CommonResponse result = new()
             {
                 Data = users,
@@ -94,7 +96,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetUser(string cd)
         {
-            var user = _settingService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
+            var user = _userService.GetUsers().FirstOrDefault(m => m.Code.Trim() == cd);
             var model = new UserModel();
             if (user != null)
                 model = new UserModel

@@ -96,23 +96,35 @@ $('.step[data-target="#addresses-part"] .step-trigger').on('click', function (e)
     e.preventDefault();
     bindAddresses(empCode);
 });
+function getUserDetail(e) {
+    getAjax(`/Employee/GetUserPwd?empCd=${e.value}`, function (response) {
+        $("#Pwd").val(response);
+        $("#ConfirmPassword").val(response)
+    })
+}
+var prevJson = null;
+setTimeout(function () {
+    prevJson = $("#emp-profile-frm").serialize();
+}, 500);
+
 function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
+    var newJson = frm.serialize();
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
-            if (response.success) {
-                $("#btn-avatar-delete").removeClass("d-none");
-                setTimeout(function () {
+        if (prevJson !== newJson) {
+            filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
+                if (response.success) {
+                    $("#btn-avatar-delete").removeClass("d-none");
                     stepper.next();
-                }, 1000)
-                showSuccessToastr(response.message);
-            }
-            else {
-                showErrorToastr(response.message);
-            }
-            unloadingButton(btn);
-        });
+                }
+                else
+                    showErrorToastr(response.message);
+            });
+        }
+        else
+            stepper.next();
+        unloadingButton(btn);
     }
 }
 function bindEducationDataTable() {

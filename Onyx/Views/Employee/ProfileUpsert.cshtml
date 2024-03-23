@@ -28,7 +28,6 @@
                             @foreach (var item in sections.Select((value, i) => new { i, value }))
                             {
                                 <div id="@item.value.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.value.ConvertToSlug()-part-trigger">
-
                                     <div style="min-height:400px">
                                         @if (item.value.Contains("Personal"))
                                         {
