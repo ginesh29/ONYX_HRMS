@@ -52,6 +52,7 @@ const dateRangePickerDefaultOptions = {
     locale: {
         format: CommonSetting.DisplayDateFormat
     },
+    showDropdowns: true,
     autoUpdateInput: false,
     autoApply: true
 }
@@ -314,11 +315,22 @@ function initControls() {
         $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
     });
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
-    $('.date-input').datetimepicker({
-        format: CommonSetting.DisplayDateFormat
+    $('.date-input').daterangepicker({
+        locale: {
+            format: CommonSetting.DisplayDateFormat
+        },
+        autoApply: true,
+        singleDatePicker: true,
+        showDropdowns: true,
     });
     $('.month-year-input').attr("placeholder", "mm/yyyy");
+    $(document).on('click', function (e) {
+        var target = $(e.target);
+        if (!target.closest('.bootstrap-datetimepicker-widget').length && !target.is('.month-year-input'))
+            $('.month-year-input').datetimepicker('hide');
+    });
     $('.month-year-input').datetimepicker({
+        viewMode: 'months',
         format: 'MM/YYYY'
     });
     $('.decimal-input').attr("placeholder", "0.00");

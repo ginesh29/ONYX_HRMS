@@ -46,7 +46,6 @@
                                     <div class="form-group">
                                         <label asp-for="ModelCd"></label>
                                         <select asp-for="ModelCd" class="form-control select-picker" asp-items="ViewBag.YearModelItems">
-                                            
                                         </select>
                                         <span asp-validation-for="ModelCd" class="text-danger"></span>
                                     </div>
@@ -59,7 +58,7 @@
                                         <input asp-for="SDes" class="form-control" />
                                         <span asp-validation-for="SDes" class="text-danger"></span>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Description"></label>
@@ -70,7 +69,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="PurDt"></label>
-                                        <input asp-for="PurDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#PurDt" />
+                                        <input asp-for="PurDt" class="form-control  date-input" type="text" />
                                         <span asp-validation-for="PurDt" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -87,7 +86,6 @@
                                     <div class="form-group">
                                         <label asp-for="DriverCd"></label>
                                         <select asp-for="DriverCd" class="form-control select-picker" asp-items="ViewBag.DriverItems">
-                                            
                                         </select>
                                         <span asp-validation-for="DriverCd" class="text-danger"></span>
                                     </div>
@@ -96,7 +94,6 @@
                                     <div class="form-group">
                                         <label asp-for="PlateColorCd"></label>
                                         <select asp-for="PlateColorCd" class="form-control select-picker" asp-items="ViewBag.PlateColorItems">
-                                            
                                         </select>
                                         <span asp-validation-for="PlateColorCd" class="text-danger"></span>
                                     </div>
@@ -107,7 +104,6 @@
                                     <div class="form-group">
                                         <label asp-for="BranchCd"></label>
                                         <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
-                                            
                                         </select>
                                         <span asp-validation-for="BranchCd" class="text-danger"></span>
                                     </div>
@@ -116,7 +112,6 @@
                                     <div class="form-group">
                                         <label asp-for="LocationCd"></label>
                                         <select asp-for="LocationCd" class="form-control select-picker" asp-items="ViewBag.LocationItems">
-                                            
                                         </select>
                                         <span asp-validation-for="LocationCd" class="text-danger"></span>
                                     </div>
@@ -127,7 +122,6 @@
                                     <div class="form-group">
                                         <label asp-for="StateCd"></label>
                                         <select asp-for="StateCd" class="form-control select-picker" asp-items="ViewBag.StateItems">
-                                            
                                         </select>
                                         <span asp-validation-for="StateCd" class="text-danger"></span>
                                     </div>
@@ -136,7 +130,6 @@
                                     <div class="form-group">
                                         <label asp-for="OwnerCd"></label>
                                         <select asp-for="OwnerCd" class="form-control select-picker" asp-items="ViewBag.OwnerItems">
-                                            
                                         </select>
                                         <span asp-validation-for="OwnerCd" class="text-danger"></span>
                                     </div>
@@ -177,7 +170,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="RegnFrmDt"></label>
-                                        <input asp-for="RegnFrmDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#RegnFrmDt" />
+                                        <input asp-for="RegnFrmDt" class="form-control date-input" type="text" />
                                         <span asp-validation-for="RegnFrmDt" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -186,7 +179,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="RegnExpDt"></label>
-                                        <input asp-for="RegnExpDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#RegnExpDt" />
+                                        <input asp-for="RegnExpDt" class="form-control date-input" type="text" />
                                         <span asp-validation-for="RegnExpDt" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -243,14 +236,14 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="InsFrmDt"></label>
-                                        <input asp-for="InsFrmDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#IssueDt" />
+                                        <input asp-for="InsFrmDt" class="form-control date-input" type="text" />
                                         <span asp-validation-for="InsFrmDt" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="InsExpDt"></label>
-                                        <input asp-for="InsExpDt" class="form-control datetimepicker-input date-input" type="text" data-toggle="datetimepicker" data-target="#InsExpDt" />
+                                        <input asp-for="InsExpDt" class="form-control date-input" type="text" />
                                         <span asp-validation-for="InsExpDt" class="text-danger"></span>
                                     </div>
                                 </div>
