@@ -58,7 +58,23 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row revise-div d-none">
+                            <div class="row form-group revise-div d-none">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt"></span>
+                                        <input asp-for="WpDateRange" class="form-control either-or" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt"></span>
+                                        <input asp-for="WopDateRange" class="form-control either-or" />
+                                    </div>
+                                </div>
+                                <span class="text-danger ml-2" id="errorContainer"></span>
+                            </div>
+
+                            @* <div class="row revise-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="WpDateRange"></label><span id="WpDateRangeDays">(@Model.WpLvDays days)</span>
@@ -73,7 +89,7 @@
                                         <span asp-validation-for="WopDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> *@
                             <div class="row revise-div confirm-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">

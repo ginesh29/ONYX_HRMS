@@ -93,11 +93,11 @@ namespace Onyx.Controllers
                     model.WopTo = Convert.ToDateTime(wopDateSp[1]);
                 }
             }
-            //_transactionService.SaveLeaveApproval(model);
+            _transactionService.SaveLeaveApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            //_commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -130,7 +130,7 @@ namespace Onyx.Controllers
                     model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
                     model.WopTo = Convert.ToDateTime(wopDateSp[1]);
                 }
-                _transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
+                //_transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
             }
             else
                 _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);

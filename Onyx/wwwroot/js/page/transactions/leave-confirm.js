@@ -52,14 +52,19 @@ function showLeaveConfirmModal(transNo) {
     var url = `/Transactions/${action}?transNo=${transNo}`;
     $('#EmployeeLeaveConfirmModal').load(url, function () {
         parseDynamicForm();
-        $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions);
-        $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
-            $(`#${ev.target.id}Days`).text(`(${days} days)`);
-            $(this).val(`${startDate} - ${endDate}`);
-        });
+        var start = $("#FromDt").val();
+        var end = $("#ToDt").val();
+        var dateRangePickerOptions = dateRangePickerDefaultOptions;
+        dateRangePickerOptions.minDate = start;
+        dateRangePickerOptions.maxDate = end;
+        $('#DateRange,#WpDateRange,#WopDateRange,#GraduityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions)
+            .on('apply.daterangepicker', function (ev, picker) {
+                var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+                var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+                var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+                $(`#${ev.target.id}Days`).text(`(${days} days)`);
+                $(this).val(`${startDate} - ${endDate}`);
+            });
         $('#WpDateRange').rules("add", {
             eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
             messages: {
@@ -72,8 +77,33 @@ function showLeaveConfirmModal(transNo) {
                 eitherOrRequired: "Please enter Date Range(WOP)"
             }
         });
+        $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+            $('#WpDateRange,#WopDateRange').val("");
+            $('#WpDateRange,#WopDateRange').data("daterangepicker").setStartDate(moment());
+            $('#WpDateRange,#WopDateRange').data("daterangepicker").setEndDate(moment());
+            $('#WpDateRange,#WopDateRange').data('daterangepicker').minDate = picker.startDate;
+            $('#WpDateRange,#WopDateRange').data('daterangepicker').maxDate = picker.endDate;
+        });
         $("#EmployeeLeaveConfirmModal").modal("show");
     });
+}
+function ValidateDateRange() {
+    var isValid = false;
+    var WpDateRangeDays = $("#WpDateRangeDays").val();
+    var WopDateRangeDays = $("#WopDateRangeDays").val();
+    var totalLvDays = $("#TotalLvDays").val();
+    var calculatedTotalLvDays = Number(WpDateRangeDays) + Number(WopDateRangeDays);
+    var WpDateRange = $("#WpDateRange").val();
+    var WopDateRange = $("#WopDateRange").val();
+    if (checkRangesOverlap(WpDateRange, WopDateRange))
+        $("#errorContainer").text("Date Range (WP) & (WOP) is ovelaped");
+    else if (totalLvDays != calculatedTotalLvDays)
+        $("#errorContainer").text("Total Leaves not matched with Date Range (WP) & (WOP)");
+    else {
+        isValid = true;
+        $("#errorContainer").text("");
+    }
+    return isValid;
 }
 
 function changeType(e) {
@@ -90,7 +120,7 @@ function changeType(e) {
 }
 function saveLeaveConfirm(btn) {
     var frm = $("#leave-confirm-frm");
-    if (frm.valid()) {
+    if (frm.valid() && ValidateDateRange()) {
         loadingButton(btn);
         postAjax("/Transactions/SaveLeaveConfirm", frm.serialize(), function (response) {
             if (response.success) {
@@ -103,6 +133,12 @@ function saveLeaveConfirm(btn) {
             }
             unloadingButton(btn);
         });
+    }
+    else {
+        var WpDateRange = $("#WpDateRange").val();
+        var WopDateRange = $("#WopDateRange").val();
+        if (!WpDateRange && !WopDateRange)
+            $("#errorContainer").text("Please enter Date Range(either WP or WOP) otherwise both");
     }
 }
 function saveDutyResumption(btn) {

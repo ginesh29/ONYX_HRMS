@@ -317,33 +317,39 @@ function initControls() {
     $('.date-input').datetimepicker({
         format: CommonSetting.DisplayDateFormat
     });
-$('.month-year-input').attr("placeholder", "mm/yyyy");
-$('.month-year-input').datetimepicker({
-    format: 'MM/YYYY'
-});
-$('.decimal-input').attr("placeholder", "0.00");
-$('.decimal-input').inputmask(decimalMaskOptions);
+    $('.month-year-input').attr("placeholder", "mm/yyyy");
+    $('.month-year-input').datetimepicker({
+        format: 'MM/YYYY'
+    });
+    $('.decimal-input').attr("placeholder", "0.00");
+    $('.decimal-input').inputmask(decimalMaskOptions);
 
-$('.int-input').attr("placeholder", "0");
-$('.int-input').inputmask(intMaskOptions);
+    $('.int-input').attr("placeholder", "0");
+    $('.int-input').inputmask(intMaskOptions);
 
-$('.percentage-input').attr("placeholder", "0 %");
-$('.percentage-input').inputmask(percentageMaskOptions);
+    $('.percentage-input').attr("placeholder", "0 %");
+    $('.percentage-input').inputmask(percentageMaskOptions);
 
-$("textarea.form-control").on("input", function (e) {
-    autoResizeTextarea(e.target)
-});
-setTimeout(function () {
-    $("textarea.form-control").trigger('input');
-}, 200)
-$('[data-toggle="tooltip"]').tooltip();
-$('#DateRange').on('apply.daterangepicker', function (ev, picker) {
-    var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-    var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-    $(this).val(`${startDate} - ${endDate}`);
-    var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
-    $("#Days").text(`(${days} days)`);
-});
+    $("textarea.form-control").on("input", function (e) {
+        autoResizeTextarea(e.target)
+    });
+    setTimeout(function () {
+        $("textarea.form-control").trigger('input');
+    }, 200)
+    $('[data-toggle="tooltip"]').tooltip();
+    $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+        var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+        $(this).val(`${startDate} - ${endDate}`);
+        var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+        $("#Days").text(`(${days} days)`);
+    }).on('change.daterangepicker', function (ev, picker) {
+        $(this).val("");
+        $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
+        $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
+        $(`#${ev.target.id}Days-txt`).text("");
+        $(`#Days`).text("");
+    });
 }
 function downloadFile(foldername, filename) {
     $.ajax({

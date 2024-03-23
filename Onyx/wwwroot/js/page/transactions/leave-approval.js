@@ -56,27 +56,6 @@ function showLeaveDetailModal(empCd, fromDt, toDt) {
         $("#EmployeeLeaveDetailModal").modal("show");
     });
 }
-function initDateRangePicker() {
-    var start = $("#LvFrom").val();
-    var end = $("#LvTo").val();
-    var dateRangePickerOptions = dateRangePickerDefaultOptions;
-    dateRangePickerOptions.minDate = start;
-    dateRangePickerOptions.maxDate = end;
-    $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions)
-        .on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
-            $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
-            $(`#${ev.target.id}Days`).val(days);
-            $(this).val(`${startDate} - ${endDate}`);
-            UpdateTotalLeavesDays();
-        }).on('change.daterangepicker', function (ev, picker) {
-            $(`#${ev.target.id}Days-txt`).text("");
-            $(`#${ev.target.id}Days`).val("");
-            initDateRangePicker();
-        });
-}
 function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
     $('#EmployeeLeaveApprovalModal').load(url, function () {
@@ -94,8 +73,28 @@ function showLeaveApprovalModal(transNo, reject) {
                     eitherOrRequired: "Please enter Date Range(WOP)"
                 }
             });
-            initDateRangePicker();
+            var start = $("#LvFrom").val();
+            var end = $("#LvTo").val();
+            var dateRangePickerOptions = dateRangePickerDefaultOptions;
+            dateRangePickerOptions.minDate = start;
+            dateRangePickerOptions.maxDate = end;
+            $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions)
+                .on('apply.daterangepicker', function (ev, picker) {
+                    var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+                    var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+                    var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+                    $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
+                    $(`#${ev.target.id}Days`).val(days);
+                    $(this).val(`${startDate} - ${endDate}`);
+                    UpdateTotalLeavesDays();
+                }).on('change.daterangepicker', function (ev, picker) {
+                    $(this).val("");
+                    $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
+                    $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
+                    $(`#${ev.target.id}Days-txt`).text("");
+                    $(`#${ev.target.id}Days`).val("");
 
+                });
             $("#Status").val("Y");
         }
         else {
@@ -135,7 +134,6 @@ function ValidateDateRange() {
 }
 function saveLeaveApproval(btn) {
     var frm = $("#leave-approval-frm");
-
     if (frm.valid() && ValidateDateRange()) {
         loadingButton(btn);
         postAjax("/Transactions/SaveLeaveApproval", frm.serialize(), function (response) {
@@ -154,6 +152,6 @@ function saveLeaveApproval(btn) {
         var WpDateRange = $("#WpDateRange").val();
         var WopDateRange = $("#WopDateRange").val();
         if (!WpDateRange && !WopDateRange)
-            $("#errorContainer").text("Please enter Date Range(either WP or WOP) otherwise both ");
+            $("#errorContainer").text("Please enter Date Range(either WP or WOP) otherwise both");
     }
 }
