@@ -319,7 +319,6 @@ function initControls() {
         locale: {
             format: CommonSetting.DisplayDateFormat
         },
-        timepicker: false,
         autoUpdateInput: false,
         autoApply: true,
         singleDatePicker: true,
