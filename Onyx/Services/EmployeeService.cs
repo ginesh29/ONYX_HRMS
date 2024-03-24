@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using ExcelDataReader;
-using Microsoft.AspNetCore.Http;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
@@ -543,12 +542,12 @@ namespace Onyx.Services
                 }
                 if (isEmptyRow)
                     continue;
-                bool validEmployee = GetEmployees(CoCd, reader.GetString(0)).Any();
+                bool validEmployee = GetEmployees(CoCd).Any(m => m.Cd == Convert.ToString(reader.GetValue(0)));
                 string errorMessage = string.Empty;
                 if (!validEmployee)
                     errorMessage += "EmpCd is not valid,";
-                if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
-                    errorMessage += "Date is not valid,";
+                //if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
+                //    errorMessage += "Date is not valid,";
                 var excelData = new EmpCalendarExcelModel
                 {
                     IsValid = validEmployee,

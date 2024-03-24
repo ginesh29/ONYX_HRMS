@@ -829,7 +829,8 @@ namespace Onyx.Controllers
                 var nextSerialNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
-                string Message = invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                string Message = invalidData.Count() == 0 && validData.Count() == 0 ? "No record found to import"
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
                 if (validData.Any())
                     _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
                 return PartialView("_ExcelData", new { Data = excelData, Message });

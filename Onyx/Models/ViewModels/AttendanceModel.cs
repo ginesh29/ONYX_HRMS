@@ -1,7 +1,6 @@
 ﻿using Onyx.Models.StoredProcedure;
-using Onyx.Models.ViewModels;
 
-namespace Onyx.Models
+namespace Onyx.Models.ViewModels
 {
     public class AttendanceModel
     {

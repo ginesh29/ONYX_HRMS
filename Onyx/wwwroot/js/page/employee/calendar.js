@@ -93,9 +93,11 @@ function uploadFile() {
     filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
         if (!response.includes("not supported")) {
             $("#excel-import-data").html(response);
+            $("#excel-import-data").empty();
             calendar.refetchEvents();
         }
         else
             showErrorToastr(response);
+        $("#import-file").val("");
     });
 }

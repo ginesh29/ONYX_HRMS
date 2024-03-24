@@ -274,7 +274,7 @@ namespace Onyx.Services
             parameters.Add("v_WOP_ToDt", model.WopTo);
             parameters.Add("v_From_Dt", model.FromDt);
             parameters.Add("v_To_Dt", model.ToDt);
-            parameters.Add("v_CoCd", CoCd);            
+            parameters.Add("v_CoCd", CoCd);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -603,7 +603,6 @@ namespace Onyx.Services
             var data = connection.QueryFirstOrDefault<CommonResponse>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
-
         }
         public void DeleteEmpAttendance(string empCd, string period, string branch)
         {
@@ -616,18 +615,18 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public IEnumerable<EmpCalendarExcelModel> GetAttendanceFromExcel(IFormFile file, string CoCd)
+        public IEnumerable<EmpAttendance_Getrow_Result> GetAttendanceFromExcel(IFormFile file, string CoCd)
         {
             using var stream = file.OpenReadStream();
             using var reader = ExcelReaderFactory.CreateReader(stream);
-            var result = new List<EmpCalendarExcelModel>();
+            var result = new List<EmpAttendance_Getrow_Result>();
             reader.Read();
             while (reader.Read())
             {
                 bool isEmptyRow = true;
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(reader.GetString(i)))
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(Convert.ToString(reader.GetValue(i))))
                     {
                         isEmptyRow = false;
                         break;
@@ -635,40 +634,34 @@ namespace Onyx.Services
                 }
                 if (isEmptyRow)
                     continue;
-                bool validEmployee = _employeeService.GetEmployees(CoCd, reader.GetString(0)).Any();
+                bool validEmployee = _employeeService.GetEmployees(CoCd).Any(m => m.Cd == Convert.ToString(reader.GetValue(0)));
                 string errorMessage = string.Empty;
                 if (!validEmployee)
                     errorMessage += "Employee Code not valid,";
-                var excelData = new EmpCalendarExcelModel
+                var excelData = new EmpAttendance_Getrow_Result
                 {
                     IsValid = validEmployee,
                     ErrorMessage = errorMessage,
-                    EmpCd = reader.GetString(0),
-                    Date = reader.GetDateTime(1),
-                    Title = reader.GetString(2),
-                    Holiday = reader.GetBoolean(3),
-                    Narr = reader.GetString(4),
+                    Cd = Convert.ToString(reader.GetValue(0)),
+                    W_days = Convert.ToInt32(reader.GetValue(1)),
+                    P_HDays = Convert.ToInt32(reader.GetValue(2)),
+                    Up_HDays = Convert.ToInt32(reader.GetValue(3)),
+                    W_OT = Convert.ToInt32(reader.GetValue(4)),
+                    H_OT = Convert.ToInt32(reader.GetValue(5))
                 };
                 result.Add(excelData);
             }
             return result;
         }
-        public void ImportExcelData(IEnumerable<EmpCalendarExcelModel> excelData, int startSrNo, string EntryBy)
+        public void ImportAttendanceExcelData(IEnumerable<EmpAttendance_Getrow_Result> excelData, AttendanceFilterModel filterModel)
         {
-            var connectionString = _commonService.GetConnectionString();
-            string query = excelData.Any() ? $@"INSERT INTO [dbo].[EmpCalendar] 
-                ([SrNo],[EmpCd],[Date],[Title],[Holiday],[Narr],[EntryBy],[EntryDt]) VALUES" : null;
-            if (excelData.Any())
+            foreach (var item in excelData)
             {
-                foreach (var item in excelData.Select((value, i) => new { i, value }))
-                {
-                    int holiday = item.value.Holiday ? 1 : 0;
-                    query += $"({startSrNo + item.i},'{item.value.EmpCd}','{item.value.Date:yyyy-MM-dd}','{item.value.Title}',{holiday},'{item.value.Narr}','{EntryBy}','{DateTime.Now:yyyy-MM-dd HH:mm:ss}'),";
-                }
-                query = query.Trim([',']);
+                var spYearMonth = filterModel.MonthYear.Split("/");
+                filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+                item.NHrs = Convert.ToInt32((item.W_days - item.Up_HDays - item.P_HDays) * float.Parse(filterModel.WorkingHrDay));
+                UpdateEmpMonthlyAttendance(item, filterModel);
             }
-            var connection = new SqlConnection(connectionString);
-            connection.Execute(query);
         }
         #endregion
     }

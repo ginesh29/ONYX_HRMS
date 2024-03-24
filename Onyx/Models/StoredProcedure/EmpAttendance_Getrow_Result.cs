@@ -2,7 +2,7 @@
 {
     public class EmpAttendance_Getrow_Result
     {
-        public int Cd { get; set; }
+        public string Cd { get; set; }
         public string EmpName { get; set; }
         public int Period { get; set; }
         public int W_days { get; set; }
@@ -16,5 +16,8 @@
         public int C_OT { get; set; }
         public double Payable { get; set; }
         public double LoanDed { get; set; }
+        public string EmpCd { get; set; }
+        public bool IsValid { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

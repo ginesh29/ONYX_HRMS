@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Models;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -638,17 +637,19 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult ImportAttendance(IFormFile file)
+        public IActionResult ImportAttendance(IFormFile file, AttendanceFilterModel filterModel)
         {
             try
             {
+                filterModel.EntryBy = _loggedInUser.UserAbbr;
                 var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
-                string Message = invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
-                //if (validData.Any())
-                //    _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
-                return PartialView("_ExcelData", new { Data = excelData, Message });
+                string Message = invalidData.Count() == 0 && validData.Count() == 0 ? "No record found to import"
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                if (validData.Any())
+                    _transactionService.ImportAttendanceExcelData(validData, filterModel);
+                return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
             }
             catch (Exception ex)
             {

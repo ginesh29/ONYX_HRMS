@@ -55,9 +55,9 @@
                     </div>
                     <a href="/formats/Emp_Attendance_Import_Sample.xlsx">Download Sample File</a>
                 </div>
-                <div id="excel-import-data"></div>
             </div>
         </form>
+        <div id="excel-import-data"></div>
         <div id="EmpMonthlyAttendanceData"></div>
     </div>
 </div>
@@ -70,6 +70,8 @@
             if (frm.valid()) {
                 loadingButton(btn);
                 postAjax(`/Transactions/FetchEmpMonthlyAttendance`, frm.serialize(), function (response) {
+                    $("#btn-excel").addClass("d-none");
+                    $("#import-file").val("");
                     $("#EmpMonthlyAttendanceData").html(response);
                     $("#btn-clear").removeClass("d-none");
                     $("#btn-excel").addClass("d-none");
@@ -78,6 +80,8 @@
                     unloadingButton(btn);
                 });
             }
+            else
+                showErrorToastr("Please provide highlighted field");
         }
         function clearSearch(btn) {
             var frm = $("#emp-monthly-attendance-filter-frm");
@@ -87,6 +91,8 @@
             $("#MonthYear").val('@ViewBag.currentMonthYear');
             $("#WorkingHrDay").val('@ViewBag.WorkingHrDay');
             $("#EmpMonthlyAttendanceData").empty();
+            $("#excel-import-data").empty();
+            $("#btn-excel").addClass("d-none");
         }
         function updateAttendance(btn) {
             var frm = $("#attendance-frm");
@@ -137,14 +143,24 @@
         });
         function uploadFile() {
             var frm = $("#emp-monthly-attendance-filter-frm");
-            filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
-                if (!response.includes("not supported")) {
-                    $("#excel-import-data").html(response);
-                    //calendar.refetchEvents();
-                }
-                else
-                    showErrorToastr(response);
-            });
+            if (frm.valid()) {
+                filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
+                    $("#import-file").val("");
+                    if (!response.includes("not supported")) {
+                        $("#EmpMonthlyAttendanceData").empty();
+                        var tableRowCnt = $("#ExecelData tbody tr").length;
+                        if (tableRowCnt == 0)
+                            $("#excel-import-data").html(response);
+                        $("#excel-import-data").empty();
+                        $("#btn-excel").addClass("d-none");
+                    }
+                    else
+                        showErrorToastr(response);
+                });
+            }
+            else
+                showErrorToastr("Please provide highlighted field");
+            $("#import-file").val("");
         }
     </script>
 }
