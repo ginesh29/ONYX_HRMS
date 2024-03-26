@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -477,6 +478,45 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = loanData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpLoanApproval(string transNo, string empCd)
+        {
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == empCd);
+            loanDetails.Mobile = empDetail.MobNo?.Trim();
+            loanDetails.Salary = Convert.ToInt32(empDetail.Total);
+            ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
+            ViewBag.RecPrdItems = _commonService.GetSysCodes(SysCode.RecPrd).Select(m => new
+           SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
+            ViewBag.ChargeTypeItems = _commonService.GetChargesTypes();
+            return PartialView("_EmpLoanApprovalModal", loanDetails);
+        }
+        public IActionResult SaveLoanApproval(EmpLoan_GetRow_Result model, string processId)
+        {
+            model.LoanApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
+            model.EntryBy = _loggedInUser.UserAbbr;
+            if (model.LoanStatus == "A")
+                model.Reco_Prd = model.Reco_Prd[4..];
+            _transactionService.SaveLoanApproval(model);
+            var ActivityAbbr = "UPD";
+            var action = model.LoanStatus == "A" ? "approved" : "rejected";
+            var Message = $", Loan is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Loan {action} successfully"
             };
             return Json(result);
         }

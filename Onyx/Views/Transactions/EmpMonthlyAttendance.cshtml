@@ -148,10 +148,10 @@
                     $("#import-file").val("");
                     if (!response.includes("not supported")) {
                         $("#EmpMonthlyAttendanceData").empty();
+                        $("#excel-import-data").html(response);
                         var tableRowCnt = $("#ExecelData tbody tr").length;
                         if (tableRowCnt == 0)
-                            $("#excel-import-data").html(response);
-                        $("#excel-import-data").empty();
+                            $("#excel-import-data").empty();
                         $("#btn-excel").addClass("d-none");
                     }
                     else

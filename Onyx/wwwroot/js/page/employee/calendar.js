@@ -26,8 +26,7 @@ var calendar = new Calendar(calendarEl, {
         var dt = moment(info.dateStr).format(CommonSetting.DisplayDateFormat);
         setTimeout(function () {
             $("#Date").val(dt);
-            $("#Date").prop("readonly", true);
-        }, 300)
+        }, 500)
     }
 });
 calendar.render();
@@ -36,7 +35,6 @@ function showCalendarEventModal(srNo) {
     var url = `/Employee/GetCalendarEvent?srNo=${srNo}`;
     $('#CalendarEventModal').load(url, function () {
         parseDynamicForm();
-        $("#Date").prop("readonly", true);
         $("#CalendarEventModal").modal("show");
     });
 }
@@ -93,7 +91,9 @@ function uploadFile() {
     filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
         if (!response.includes("not supported")) {
             $("#excel-import-data").html(response);
-            $("#excel-import-data").empty();
+            var tableRowCnt = $("#ExecelData tbody tr").length;
+            if (tableRowCnt == 0)
+                $("#excel-import-data").empty();
             calendar.refetchEvents();
         }
         else

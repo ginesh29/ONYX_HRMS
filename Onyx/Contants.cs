@@ -16,6 +16,8 @@
         public const string PayMode = "HPMOD";
         public const string PayFrequency = "HPFRQ";
         public const string EmpProgression = "HREP";
+        public const string RecMode = "HLREC";
+        public const string RecPrd = "HLRI";
     }
     public class CodeGroup
     {

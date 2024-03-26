@@ -23,16 +23,17 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string status = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string userCd = "", string status = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Param", "");
+            parameters.Add("v_Param", ""); 
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_RowsCnt", "2");
             parameters.Add("v_Status", status ?? "0");
+            //parameters.Add("v_Usercd", userCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -275,8 +276,8 @@ namespace Onyx.Services
             parameters.Add("v_ExpDt", model.ExpDt);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            parameters.Add("v_Sponsor1", "0");
-            parameters.Add("v_Sponsor2", "0");
+            //parameters.Add("v_Sponsor1", "0");
+            //parameters.Add("v_Sponsor2", "0");
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -542,21 +543,31 @@ namespace Onyx.Services
                 }
                 if (isEmptyRow)
                     continue;
-                bool validEmployee = GetEmployees(CoCd).Any(m => m.Cd == Convert.ToString(reader.GetValue(0)));
-                string errorMessage = string.Empty;
+                var empCd = Convert.ToString(reader.GetValue(0));
+                var title = Convert.ToString(reader.GetValue(2));
+                var narration = Convert.ToString(reader.GetValue(4));
+                bool validEmployee = GetEmployees(CoCd).Any(m => m.Cd == empCd);
+                string errorMessage = "<ul class='text-left'>";
                 if (!validEmployee)
-                    errorMessage += "EmpCd is not valid,";
-                //if (!DateTime.TryParseExact(reader.GetDateTime(1).ToString(), dateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
-                //    errorMessage += "Date is not valid,";
+                    errorMessage += "<li>Employee Code is empty or not valid</li>";
+                if (!DateTime.TryParse(Convert.ToString(reader.GetValue(1)), out DateTime date))
+                    errorMessage += "<li>Date is empty or not valid</li>";
+                if (string.IsNullOrEmpty(title))
+                    errorMessage += "<li>Title is empty</li>";
+                if (!bool.TryParse(Convert.ToString(reader.GetValue(3)), out bool holiday))
+                    errorMessage += "<li>Holiday is empty or not valid</li>";
+                if (string.IsNullOrEmpty(narration))
+                    errorMessage += "<li>Narration is empty</li>";
+                errorMessage += "</ul>";
                 var excelData = new EmpCalendarExcelModel
                 {
                     IsValid = validEmployee,
-                    ErrorMessage = errorMessage.Trim(','),
-                    EmpCd = reader.GetString(0),
-                    Date = reader.GetDateTime(1),
-                    Title = reader.GetString(2),
-                    Holiday = reader.GetBoolean(3),
-                    Narr = reader.GetString(4),
+                    ErrorMessage = errorMessage,
+                    EmpCd = empCd,
+                    Date = date,
+                    Title = title,
+                    Holiday = holiday,
+                    Narr = narration,
                 };
                 result.Add(excelData);
             }

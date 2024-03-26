@@ -405,7 +405,7 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public void DeleteBank(string bankCd, string branchCd)
+        public CommonResponse DeleteBank(string bankCd, string branchCd)
         {
             var procedureName = "Bank_Delete";
             var parameters = new DynamicParameters();
@@ -413,7 +413,8 @@ namespace Onyx.Services
             parameters.Add("v_BranchCd", branchCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
         #endregion
 

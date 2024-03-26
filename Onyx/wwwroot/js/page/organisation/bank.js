@@ -8,7 +8,7 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "bank" },            
+            { data: "bank" },
             { data: "branch" },
             { data: "swift" },
             { data: "address1" },
@@ -21,9 +21,9 @@
             { data: "url" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBankModal('${row.bankCd.trim()}','${row.branchCd.trim() }')">
+                    return `<button class="btn btn-sm btn-info" onclick="showBankModal('${row.bankCd.trim()}','${row.branchCd.trim()}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBank('${row.bankCd.trim()}','${row.branchCd.trim() }')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBank('${row.bankCd.trim()}','${row.branchCd.trim()}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -32,7 +32,7 @@
     }
 );
 function showBankModal(bankCd, branchCd) {
-    var url = `/Organisation/GetBank?bankCd=${bankCd }&branchCd=${branchCd}`;
+    var url = `/Organisation/GetBank?bankCd=${bankCd}&branchCd=${branchCd}`;
     $('#BankModal').load(url, function () {
         parseDynamicForm();
         $("#BankModal").modal("show");
@@ -50,8 +50,12 @@ function deleteBank(bankCd, branchCd) {
     }).then((result) => {
         if (result.isConfirmed) {
             deleteAjax(`/Organisation/DeleteBank?bankCd=${bankCd}&branchCd=${branchCd}`, function (response) {
-                showSuccessToastr(response.message);
-                reloadDatatable();
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    reloadDatatable();
+                }
+                else
+                    showErrorToastr(response.message);
             });
         }
     });

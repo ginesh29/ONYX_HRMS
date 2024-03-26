@@ -32,16 +32,53 @@
                 },
             },
             { data: "purpose" },
-            //{
-            //    data: function (row) {
-            //        return `<button class="btn btn-sm btn-info" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
-            //                                                            <i class="fas fa-check"></i>
-            //                                                        </button>
-            //                                                        <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
-            //                                                            <i class="fa fa-times"></i>
-            //                                                        </button>`;
-            //    }, "width": "80px"
-            //}
+            {
+                data: function (row) {
+                    return `<button class="btn btn-sm btn-info" onclick="showLoanApprovalModal('${row.transNo.trim()}','${row.employeeCode.trim()}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger ml-2" onclick="showLoanApprovalModal('${row.transNo.trim()}','${row.employeeCode.trim()}',true)">
+                                <i class="fa fa-times"></i>
+                            </button>`;
+                }, "width": "80px"
+            }
         ],
     }
 );
+
+function showLoanApprovalModal(transNo, empCd, reject) {
+    var url = `/Transactions/GetEmpLoanApproval?transNo=${transNo}&empCd=${empCd}`;
+    $('#EmployeeLoanApprovalModal').load(url, function () {
+        parseDynamicForm();
+        if (!reject) {
+            $("#LoanStatus").val("A");
+        }
+        else {
+            $("#approval-div").addClass("d-none");
+            $("#approval-div input").val("");
+            $("#btn-submit").text("Reject");
+            $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
+            $("#LoanStatus").val("R");
+        }
+        $("#EmployeeLoanApprovalModal").modal("show");
+    });
+}
+
+function saveLoanApproval(btn) {
+    var frm = $("#loan-approval-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveLoanApproval", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmployeeLoanApprovalModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
+
+}

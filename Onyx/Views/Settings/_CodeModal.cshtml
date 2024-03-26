@@ -9,6 +9,7 @@
         <div class="modal-body">
             <form id="code-frm">
                 <input type="hidden" asp-for="Cd" />
+                <input type="hidden" asp-for="Type" />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
@@ -20,8 +21,7 @@
                     <div class="col-md-6">
                         <div class="form-group disabled-container">
                             <label asp-for="Type"></label>
-                            <select asp-for="Type" class="form-control disabled" asp-items="@ViewBag.CodeGroupsItems">
-                            </select>
+                            <input asp-for="Type" class="form-control disabled" />
                             <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
                     </div>

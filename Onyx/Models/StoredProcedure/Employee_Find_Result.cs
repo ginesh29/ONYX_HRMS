@@ -16,7 +16,6 @@ namespace Onyx.Models.StoredProcedure
         public string Fname { get; set; }
         [Display(Name = "Middle Name")]
         public string Mname { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Last Name")]
         public string Lname { get; set; }
         [Display(Name = "Gender")]
@@ -50,6 +49,7 @@ namespace Onyx.Models.StoredProcedure
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Dob { get; set; }
         [Display(Name = "Date of Joining")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Doj { get; set; }
         [Display(Name = "Reporting To")]
         public string RepTo { get; set; }
@@ -59,8 +59,10 @@ namespace Onyx.Models.StoredProcedure
         public string Mother { get; set; }
         [Display(Name = "Spouse Name")]
         public string Spouse { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Probation { get; set; }
         [Display(Name = "Confirmation")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? Confrm { get; set; }
         public DateTime? Leaving { get; set; }
         [Display(Name = "Basic Currency")]

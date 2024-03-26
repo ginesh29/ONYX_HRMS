@@ -43,7 +43,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="BankBrCd"></label>
-                            <select asp-for="BankBrCd" class="form-control select-picker" asp-items="ViewBag.BankBranchItems">
+                            <select asp-for="BankBrCd" class="form-control select-picker" asp-items="ViewBag.BankBranchItems" data-actions-box="true">
                             </select>
                             <span asp-validation-for="BankBrCd" class="text-danger"></span>
                         </div>
@@ -53,7 +53,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="BankGrpCd"></label>
-                            <select asp-for="BankGrpCd" class="form-control select-picker" asp-items="ViewBag.BankGroupItems">
+                            <select asp-for="BankGrpCd" class="form-control select-picker" asp-items="ViewBag.BankGroupItems" data-actions-box="true">
                             </select>
                             <span asp-validation-for="BankGrpCd" class="text-danger"></span>
                         </div>
@@ -76,6 +76,7 @@
                         </div>
                     </div>
                 </div>
+                
             </form>
         </div>
         <div class="modal-footer">
@@ -85,7 +86,8 @@
     </div>
 </div>
 <script>
-    bindEmployeeDropdown(function () {
-        $('#EmpCd').selectpicker('val', '@Model.EmpCd');
-    });
+    bindEmployeeDropdown(1, 50);
+    // bindEmployeeDropdown(function () {
+    //     $('#EmpCd').selectpicker('val', '@Model.EmpCd');
+    // });
 </script>

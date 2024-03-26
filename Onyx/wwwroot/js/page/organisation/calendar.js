@@ -34,7 +34,6 @@ function showCalendarEventModal(cd) {
     var url = `/organisation/GetCalendarEvent?cd=${cd}`;
     $('#CalendarEventModal').load(url, function () {
         parseDynamicForm();
-        $("#Date").prop("readonly", true);
         $("#Dept_Filter,#Designation_Filter,#Branch_Filter,#Location_Filter").on('change', function () {
             var departments = $("#Dept_Filter").val();
             var designations = $("#Designation_Filter").val();

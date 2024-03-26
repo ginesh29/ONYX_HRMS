@@ -101,6 +101,50 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string EmpCd, string UserOrEmp, string CoCd)
+        {
+            var procedureName = "EmpLoan_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Param", transNo);
+            parameters.Add("v_Typ", "2");
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_EmpCd", EmpCd);
+            parameters.Add("v_EmpUser", UserOrEmp);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<EmpLoan_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveLoanApproval(EmpLoan_GetRow_Result model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLoanAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
+            parameters.Add("v_ApprAmt", model.ApprAmt ?? 0);
+            parameters.Add("v_LoanApprBy", model.LoanApprBy);
+            parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now);
+            parameters.Add("v_Status", model.LoanStatus);
+            parameters.Add("v_ChgsPerc", model.ChgsPerc);
+            parameters.Add("v_ChgsAmt", model.ChgsPerc);
+            parameters.Add("v_RecoMode", model.RecoMode);
+            parameters.Add("v_DedStartDt", model.DedStartDt ?? Convert.ToDateTime("01/01/1900"));
+            parameters.Add("v_RecoPrd", model.Reco_Prd ?? "0");
+            parameters.Add("v_NoInst", model.NoInst ?? 0);
+            parameters.Add("v_Guarantor", model.Guarantor);
+            parameters.Add("v_GuarantorDetails", model.GuarantorDetails);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_EntryDt", model.EntryDt);
+            parameters.Add("v_EditBy", model.EntryBy);
+            parameters.Add("v_EditDt", DateTime.Now);
+            parameters.Add("v_ChgsTyp", model.ChgsTyp);
+            var connection = new SqlConnection(connectionString);
+            connection.QueryFirstOrDefault<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Leave Application
@@ -634,20 +678,32 @@ namespace Onyx.Services
                 }
                 if (isEmptyRow)
                     continue;
-                bool validEmployee = _employeeService.GetEmployees(CoCd).Any(m => m.Cd == Convert.ToString(reader.GetValue(0)));
-                string errorMessage = string.Empty;
+                var empCd = Convert.ToString(reader.GetValue(0));
+                bool validEmployee = _employeeService.GetEmployees(CoCd).Any(m => m.Cd == empCd);
+                string errorMessage = "<ul class='text-left'>";
                 if (!validEmployee)
-                    errorMessage += "Employee Code not valid,";
+                    errorMessage += "<li>Employee Code is empty or not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int W_days))
+                    errorMessage += "<li>No of Days is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int P_HDays))
+                    errorMessage += "<li>No of Paid Days is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int Up_HDays))
+                    errorMessage += "<li>No of Unpaid Days is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int W_OT))
+                    errorMessage += "<li>W.OT is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int H_OT))
+                    errorMessage += "<li>H.OT is not valid</li>";
+                errorMessage += "</ul>";
                 var excelData = new EmpAttendance_Getrow_Result
                 {
                     IsValid = validEmployee,
                     ErrorMessage = errorMessage,
-                    Cd = Convert.ToString(reader.GetValue(0)),
-                    W_days = Convert.ToInt32(reader.GetValue(1)),
-                    P_HDays = Convert.ToInt32(reader.GetValue(2)),
-                    Up_HDays = Convert.ToInt32(reader.GetValue(3)),
-                    W_OT = Convert.ToInt32(reader.GetValue(4)),
-                    H_OT = Convert.ToInt32(reader.GetValue(5))
+                    Cd = empCd,
+                    W_days = W_days,
+                    P_HDays = P_HDays,
+                    Up_HDays = Up_HDays,
+                    W_OT = W_OT,
+                    H_OT = H_OT
                 };
                 result.Add(excelData);
             }

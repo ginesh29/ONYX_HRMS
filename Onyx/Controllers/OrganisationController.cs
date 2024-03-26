@@ -447,8 +447,7 @@ namespace Onyx.Controllers
                     EmailSubject = notification.EmailSubject,
                     Attendees = notification.Attendees != null ? [.. notification.Attendees.Split(',')] : null,
                 };
-            else
-                model.SrNo = _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
+
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.ParameterCd.Trim(),
@@ -485,11 +484,15 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveNotification(NotificationModel model)
         {
+            if (model.Mode == "I")
+                model.SrNo = _organisationService.GetNotification_SrNo(_loggedInUser.CompanyCd, model.ProcessId, model.DocTyp);
             var result = _organisationService.SaveNotificationMaster(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd);
+                if (model.Attendees != null)
+                    emps = emps.Where(m => model.Attendees.Contains(m.Cd.Trim()));
                 var recipients = emps.Select(m => new EmailRecipientModel
                 {
                     Cd = m.Cd.Trim(),
@@ -668,12 +671,7 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteBank(string bankCd, string branchCd)
         {
-            _organisationService.DeleteBank(bankCd, branchCd);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = CommonMessage.DELETED
-            };
+            var result = _organisationService.DeleteBank(bankCd, branchCd);
             return Json(result);
         }
         #endregion

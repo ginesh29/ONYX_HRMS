@@ -23,7 +23,6 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Expiry Date")]
         public DateTime? ExpDt { get; set; }
         public string FormatedExpDt { get; set; }
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Ref. No")]
         public string RefNo { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

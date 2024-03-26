@@ -25,7 +25,6 @@ namespace Onyx.Models.ViewModels
         public decimal? Amt { get; set; }
         public string BankGrp { get; set; }
         [Display(Name = "Bank Group")]
-        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string BankGrpCd { get; set; }
         [Display(Name = "Bank")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]

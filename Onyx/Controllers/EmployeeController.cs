@@ -59,7 +59,7 @@ namespace Onyx.Controllers
             ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(int? pageNumber, int pageSize, string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
@@ -68,6 +68,8 @@ namespace Onyx.Controllers
             var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
+            int page = pageNumber ?? 1;
+            //employees = employees.ToPagedList(page, pageSize);
             return Json(employees);
         }
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
@@ -439,6 +441,7 @@ namespace Onyx.Controllers
                 model = new EmpDocumentModel
                 {
                     Cd = document.EmpCd,
+                    EmpCd = document.EmpCd,
                     DocNo = document.DocNo,
                     DocTypSDes = document.DocTypSDes,
                     DocTypCd = document.DocTypCd.Trim(),
@@ -829,7 +832,7 @@ namespace Onyx.Controllers
                 var nextSerialNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
-                string Message = invalidData.Count() == 0 && validData.Count() == 0 ? "No record found to import"
+                string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
                     : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
                 if (validData.Any())
                     _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);

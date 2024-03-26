@@ -267,6 +267,15 @@ namespace Onyx.Services
             };
             return calculationTypes;
         }
+        public IEnumerable<SelectListItem> GetChargeTypes()
+        {
+            var chargeTypes = new List<SelectListItem>()
+            {
+                new() {Text= "Fixed Rate", Value="FR"},
+                new() { Text= "Reduce Balance", Value="RB"},
+            };
+            return chargeTypes;
+        }
         public IEnumerable<SelectListItem> GetYears(int startYear)
         {
             var years = new List<SelectListItem>();

@@ -311,9 +311,9 @@ function initControls() {
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
-    $(".select-picker,.filter-select-picker").on('show.bs.select', function () {
-        $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
-    });
+    //$(".select-picker,.filter-select-picker").on('show.bs.select', function () {
+    //    $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
+    //});
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').daterangepicker({
         locale: {

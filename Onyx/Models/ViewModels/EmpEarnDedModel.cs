@@ -1,4 +1,6 @@
-﻿namespace Onyx.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Onyx.Models.ViewModels
 {
     public class EmpEarnDedModel
     {
@@ -8,6 +10,7 @@
         public string Description { get; set; }
         public string Currency { get; set; }
         public decimal? Amt { get; set; }
+        [Display(Name = "Val")]
         public decimal? PercVal { get; set; }
         public decimal? Basic { get; set; }
         public DateTime? EffDt { get; set; }
@@ -17,6 +20,7 @@
         public string EdCd { get; set; }
         public string EdTyp { get; set; }
         public string CurrCd { get; set; }
+        [Display(Name = "Perc/Amt")]
         public string PercAmt { get; set; }
         public int SrNo { get; set; }
         public string ComponentClass { get; set; }

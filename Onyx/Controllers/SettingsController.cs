@@ -202,7 +202,12 @@ namespace Onyx.Controllers
         #region Code
         public IActionResult Codes()
         {
-            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m => new SelectListItem { Value = m.Cd, Text = m.ShortDes });
+            ViewBag.CodeGroupsItems = _settingService.GetCodeGroups(_loggedInUser.CompanyCd).Select(m =>
+            new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.ShortDes
+            });
             return View();
         }
         public IActionResult FetchCodesByType(string type)
