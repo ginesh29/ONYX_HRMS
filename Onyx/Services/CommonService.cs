@@ -321,5 +321,17 @@ namespace Onyx.Services
                 (query);
             return data;
         }
+        public IEnumerable<GetSysCodes_Result> GetPayCodesByType(string payType)
+        {
+            var procedureName = "CompanyEarnDed_AllTypes_GetRow";
+            var connectionString = GetConnectionString();
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", payType);
+            parameters.Add("v_TrnTyp", "V");
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetSysCodes_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
     }
 }

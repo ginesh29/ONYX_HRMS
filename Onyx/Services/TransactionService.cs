@@ -741,7 +741,7 @@ namespace Onyx.Services
                     continue;
                 var empCd = Convert.ToString(reader.GetValue(0));
                 bool validEmployee = _employeeService.GetEmployees(CoCd, empCd).Any();
-                string errorMessage = "<ul class='text-left'>";
+                string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";
                 if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int W_days))
@@ -778,6 +778,121 @@ namespace Onyx.Services
                 filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
                 item.NHrs = Convert.ToInt32((item.W_days - item.Up_HDays - item.P_HDays) * float.Parse(filterModel.WorkingHrDay));
                 UpdateEmpMonthlyAttendance(item, filterModel);
+            }
+        }
+        #endregion
+
+        #region Variable PayDed Components
+        public IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> GetVariablePayDedComponents(VariablePayDedComponentFilterModel model)
+        {
+            var procedureName = "EmpTrans_VarCompFixAmt_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("DivCd", model.Branch);
+            parameters.Add("CCCd", "0");
+            parameters.Add("DeptCd", model.Department ?? string.Empty);
+            parameters.Add("v_EdCd", model.PayType);
+            parameters.Add("v_EdTyp", model.PayCode);
+            parameters.Add("v_FromDt", model.FromDt);
+            parameters.Add("v_ToDt", model.ToDt);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpTrans_VarCompFixAmt_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void DeleteEmpTrans(string empCd, string PayCode, string PayType, string Branch)
+        {
+            var procedureName = "EmpTrans_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EdCd", PayCode);
+            parameters.Add("v_EdTyp", PayType);
+            parameters.Add("v_Div", Branch);
+            parameters.Add("v_DocRef", string.Empty);
+            parameters.Add("v_Empcd", empCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void EmpTrans_Update(EmpTrans_VarCompFixAmt_GetRow_Result model, VariablePayDedComponentFilterModel filterModel)
+        {
+            var narr = $"Variable Pay Component {model.Curr}: {model.Amt}";
+            var procedureName = "EmpTrans_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.Cd.Trim());
+            parameters.Add("v_EdCd", filterModel.PayCode);
+            parameters.Add("v_EdTyp", filterModel.PayType);
+            parameters.Add("v_DocRef", string.Empty);
+            parameters.Add("v_Curr", model.Curr);
+            parameters.Add("v_ExRate", 1);
+            parameters.Add("v_Amt", model.Amt);
+            parameters.Add("v_Narr", narr);
+            parameters.Add("v_EntryBy", filterModel.EntryBy);
+            parameters.Add("v_SrNo", model.srNo);
+            parameters.Add("v_FromDt", filterModel.FromDt);
+            parameters.Add("v_ToDt", filterModel.ToDt);
+            parameters.Add("v_TrnInd", "M");
+            parameters.Add("v_EmpDiv", filterModel.Branch);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> GetVariablePayComponentFromExcel(IFormFile file, string CoCd)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<EmpTrans_VarCompFixAmt_GetRow_Result>();
+            reader.Read();
+            int cnt = 1;
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(Convert.ToString(reader.GetValue(i))))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                var empCd = Convert.ToString(reader.GetValue(0));
+                bool validEmployee = _employeeService.GetEmployees(CoCd, empCd).Any();
+                string errorMessage = "<ul class='text-left ml-0'>";
+                if (!validEmployee)
+                    errorMessage += "<li>Employee Code is empty or not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int amt))
+                    errorMessage += "<li>Amount is not valid</li>";
+                errorMessage += "</ul>";
+                var excelData = new EmpTrans_VarCompFixAmt_GetRow_Result
+                {
+                    IsValid = validEmployee,
+                    ErrorMessage = errorMessage,
+                    Cd = empCd,
+                    Amt = amt,
+                    srNo = cnt
+                };
+                result.Add(excelData);
+                cnt++;
+            }
+            return result;
+        }
+        public void ImportVariablePayComponentExcelData(IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> excelData, VariablePayDedComponentFilterModel filterModel, string CoCd)
+        {
+            foreach (var item in excelData)
+            {
+                if (!string.IsNullOrEmpty(filterModel.MonthYear))
+                {
+                    var spYearMonth = filterModel.MonthYear.Split("/");
+                    int month = Convert.ToInt32(spYearMonth[0]);
+                    int year = Convert.ToInt32(spYearMonth[1]);
+                    int lastDayOfMonth = DateTime.DaysInMonth(year, month);
+                    filterModel.FromDt = new DateTime(year, month, 1);
+                    filterModel.ToDt = new DateTime(year, month, lastDayOfMonth);
+                }
+                var employeeDetail = _employeeService.FindEmployee(item.Cd, CoCd); item.Curr = employeeDetail.BasicCurr.Trim();
+
+                EmpTrans_Update(item, filterModel);
             }
         }
         #endregion

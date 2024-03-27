@@ -358,6 +358,7 @@ namespace Onyx.Services
                 (query);
             return data;
         }
+
         public CommonResponse SaveComponent(EmpEarnDedModel model)
         {
             var procedureName = "EmpEarnDed_Update";
@@ -547,7 +548,7 @@ namespace Onyx.Services
                 var title = Convert.ToString(reader.GetValue(2));
                 var narration = Convert.ToString(reader.GetValue(4));
                 bool validEmployee = GetEmployees(CoCd, empCd).Any();
-                string errorMessage = "<ul class='text-left'>";
+                string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";
                 if (!DateTime.TryParse(Convert.ToString(reader.GetValue(1)), out DateTime date))

@@ -794,69 +794,82 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
+            ViewBag.PayTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
             var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
             ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
-            ViewBag.WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
             return View();
         }
-        //public IActionResult FetchEmpMonthlyAttendance(AttendanceFilterModel model)
-        //{
-        //    var spYearMonth = model.MonthYear.Split("/");
-        //    model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
-        //    var attendanceData = _transactionService.GetEmpAttendanceData(model, _loggedInUser.CompanyCd);
-        //    var attendanceModel = new AttendanceModel
-        //    {
-        //        AttendanceData = attendanceData.ToList(),
-        //        FilterModel = model
-        //    };
-        //    return PartialView("_EmpMonthlyAttendanceData", attendanceModel);
-        //}
-        //[HttpPost]
-        //public IActionResult SaveEmpMonthlyAttendance(AttendanceModel model)
-        //{
-        //    model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
-        //    foreach (var item in model.AttendanceData)
-        //        _transactionService.UpdateEmpMonthlyAttendance(item, model.FilterModel);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = CommonMessage.UPDATED
-        //    };
-        //    return Json(result);
-        //}
-        //public IActionResult ImportAttendance(IFormFile file, AttendanceFilterModel filterModel)
-        //{
-        //    try
-        //    {
-        //        filterModel.EntryBy = _loggedInUser.UserAbbr;
-        //        var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
-        //        var validData = excelData.Where(m => m.IsValid);
-        //        var invalidData = excelData.Where(m => !m.IsValid);
-        //        string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
-        //            : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
-        //        if (validData.Any())
-        //            _transactionService.ImportAttendanceExcelData(validData, filterModel);
-        //        return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json("File not supported. Download again & refill data");
-        //    }
-        //}
-        //[HttpDelete]
-        //public IActionResult DeleteEmpMonthlyAttendance(AttendanceFilterModel model)
-        //{
-        //    var spYearMonth = model.MonthYear.Split("/");
-        //    model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
-        //    _transactionService.DeleteEmpAttendance(model.EmpCd, model.MonthYear, model.Branch);
-        //    var result = new CommonResponse
-        //    {
-        //        Success = true,
-        //        Message = CommonMessage.DELETED
-        //    };
-        //    return Json(result);
-        //}
+        public IActionResult FetchEmpVariablePayDedComponents(VariablePayDedComponentFilterModel model)
+        {
+            if (!string.IsNullOrEmpty(model.MonthYear))
+            {
+                var spYearMonth = model.MonthYear.Split("/");
+                int month = Convert.ToInt32(spYearMonth[0]);
+                int year = Convert.ToInt32(spYearMonth[1]);
+                int lastDayOfMonth = DateTime.DaysInMonth(year, month);
+                model.FromDt = new DateTime(year, month, 1);
+                model.ToDt = new DateTime(year, month, lastDayOfMonth);
+            }
+            var variablecomponentsData = _transactionService.GetVariablePayDedComponents(model);
+            var variableComponentModel = new VariablePayDedComponentModel
+            {
+                VariableComponentsData = variablecomponentsData.ToList(),
+                FilterModel = model
+            };
+            return PartialView("_EmpVariablePayDedComponents", variableComponentModel);
+        }
+        [HttpPost]
+        public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
+        {
+            _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
+            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;            
+            foreach (var item in model.VariableComponentsData)
+            {
+                var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
+                item.Curr = employeeDetail.BasicCurr.Trim();
+                _transactionService.EmpTrans_Update(item, model.FilterModel);
+            }
+
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
+            };
+            return Json(result);
+        }
+        public IActionResult ImportEmpVariablePayDedComponent(IFormFile file, VariablePayDedComponentFilterModel filterModel)
+        {
+            try
+            {
+                filterModel.EntryBy = _loggedInUser.UserAbbr;
+                var excelData = _transactionService.GetVariablePayComponentFromExcel(file, _loggedInUser.CompanyCd);
+                var validData = excelData.Where(m => m.IsValid);
+                var invalidData = excelData.Where(m => !m.IsValid);
+                string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                if (validData.Any())
+                    _transactionService.ImportVariablePayComponentExcelData(validData, filterModel, _loggedInUser.CompanyCd);
+                return PartialView("_VariablePayDedComponentsExcelData", new { Data = excelData, Message });
+            }
+            catch (Exception ex)
+            {
+                return Json("File not supported. Download again & refill data");
+            }
+        }
+        public IActionResult FetchPayCodeItems(string type)
+        {
+            var payCodeItems = _commonService.GetPayCodesByType(type).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            return Json(payCodeItems);
+        }
         #endregion
     }
 }
