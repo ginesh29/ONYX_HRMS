@@ -1,6 +1,6 @@
 ﻿@model EmpLoan_GetRow_Result
 @{
-    var dateFormat = ExtensionMethod.GetDateFormat();
+    var dateFormat = ExtensionMethod.GetDateFormat();    
 }
 <div class="modal-dialog" style="max-width:850px">
     <!-- Modal content-->
@@ -28,7 +28,7 @@
                 <div class="col-md-6 pl-3">
                     <h5 class="text-primary">Approval Details</h5>
                     <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.LoanApprDt).ToString(dateFormat)</div>
-                    <div><span class="font-weight-bold">Deduct. Start Date</span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Deduct. Start Date: </span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt</div>
                     <div><span class="font-weight-bold">Recovery Mode: </span>@Model.Reco_Mode</div>
                     <div><span class="font-weight-bold">Recovery Period: </span>@Model.Reco_Prd</div>

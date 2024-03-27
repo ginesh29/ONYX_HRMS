@@ -489,6 +489,11 @@ namespace Onyx.Controllers
             var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim()).FirstOrDefault();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
             loanDetails.Salary = Convert.ToInt32(empDetail.Total);
+            loanDetails.ApprAmt = loanDetails.Amt;
+            loanDetails.NoInst = loanDetails.NoInstReq;
+            loanDetails.LoanApprDt = DateTime.Now.Date;
+            loanDetails.ChgsPerc = loanDetails.ChgsPerc ?? 0;
+            loanDetails.Balance = _transactionService.GetEmpLoan_Due(loanDetails.EmployeeCode.Trim(), loanDetails.LoanApprDt);
             ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
@@ -576,9 +581,42 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult EmpLoanClosing()
+        public IActionResult GetEmpLoanAdjustment(string transNo, string status)
         {
-            return View();
+            var loanDetails = _transactionService.GetEmpLoanAdjustmentData(_loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            ViewBag.EmpLoanAdjDetail = _transactionService.GetEmpLoanAdjDetail(transNo, status, _loggedInUser.CompanyCd);
+            //var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
+            //loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
+            //loanDetails.EmpBranchCd = empDetail.Div.Trim();
+            //ViewBag.PaymentModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new
+            //SelectListItem
+            //{
+            //    Value = m.Cd.Trim(),
+            //    Text = $"{m.SDes}"
+            //});
+            //ViewBag.LoanStatusItems = _commonService.GetLoanStatus();
+            return PartialView("_EmpLoanAdjustmentModal", loanDetails);
+        }
+        public IActionResult SaveEmpLoanAdj(IEnumerable<EmpLoanDetail_GetRow_Result> empLoanAdjDetail, string transNo, string type, string empCd, string processId)
+        {
+            foreach (var item in empLoanAdjDetail)
+            {
+                item.TransNo = transNo;
+                item.EmpCd = empCd;
+                item.Typ = type;
+                item.EntryBy = _loggedInUser.UserAbbr;
+                _transactionService.SaveEmpLoanAdj(item);
+            }
+            var ActivityAbbr = "UPD";
+            var action = type == "D" ? "adjusted" : "closed";
+            var Message = $", Loan is {action} With Trans no={transNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Loan {action} successfully"
+            };
+            return Json(result);
         }
         #endregion
 
@@ -739,6 +777,86 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        #endregion
+
+        #region Variable PayDed Components
+        public IActionResult VariablePayDedComponents()
+        {
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new
+            SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            ViewBag.WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
+            return View();
+        }
+        //public IActionResult FetchEmpMonthlyAttendance(AttendanceFilterModel model)
+        //{
+        //    var spYearMonth = model.MonthYear.Split("/");
+        //    model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+        //    var attendanceData = _transactionService.GetEmpAttendanceData(model, _loggedInUser.CompanyCd);
+        //    var attendanceModel = new AttendanceModel
+        //    {
+        //        AttendanceData = attendanceData.ToList(),
+        //        FilterModel = model
+        //    };
+        //    return PartialView("_EmpMonthlyAttendanceData", attendanceModel);
+        //}
+        //[HttpPost]
+        //public IActionResult SaveEmpMonthlyAttendance(AttendanceModel model)
+        //{
+        //    model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
+        //    foreach (var item in model.AttendanceData)
+        //        _transactionService.UpdateEmpMonthlyAttendance(item, model.FilterModel);
+        //    var result = new CommonResponse
+        //    {
+        //        Success = true,
+        //        Message = CommonMessage.UPDATED
+        //    };
+        //    return Json(result);
+        //}
+        //public IActionResult ImportAttendance(IFormFile file, AttendanceFilterModel filterModel)
+        //{
+        //    try
+        //    {
+        //        filterModel.EntryBy = _loggedInUser.UserAbbr;
+        //        var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
+        //        var validData = excelData.Where(m => m.IsValid);
+        //        var invalidData = excelData.Where(m => !m.IsValid);
+        //        string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
+        //            : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+        //        if (validData.Any())
+        //            _transactionService.ImportAttendanceExcelData(validData, filterModel);
+        //        return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json("File not supported. Download again & refill data");
+        //    }
+        //}
+        //[HttpDelete]
+        //public IActionResult DeleteEmpMonthlyAttendance(AttendanceFilterModel model)
+        //{
+        //    var spYearMonth = model.MonthYear.Split("/");
+        //    model.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+        //    _transactionService.DeleteEmpAttendance(model.EmpCd, model.MonthYear, model.Branch);
+        //    var result = new CommonResponse
+        //    {
+        //        Success = true,
+        //        Message = CommonMessage.DELETED
+        //    };
+        //    return Json(result);
+        //}
         #endregion
     }
 }

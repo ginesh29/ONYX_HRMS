@@ -75,7 +75,7 @@ namespace Onyx.Models.StoredProcedure
         public string CompanyEmail { get; set; }
         public string CompanyLogo { get; set; }
         public string LoanTypeCd { get; set; }
-        public decimal? Balance { get; set; }
+        public int? Balance { get; set; }
         public decimal DetailSrno { get; set; }
         [Display(Name = "Guarantor Details")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

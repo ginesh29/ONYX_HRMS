@@ -22,7 +22,7 @@
                     <div><span class="font-weight-bold">Ref Date: </span>@Model.DocRef</div>
                     <div><span class="font-weight-bold">No of Installments Req.: </span>@Model.NoInstReq</div>
                     <div><span class="font-weight-bold">Purpose: </span>@Model.Purpose</div>
-                    <div><span class="font-weight-bold">Previous Loan Balance: </span>@Model.Balance</div>
+                    <div><span class="font-weight-bold">Previous Loan Balance: </span><span class="text-danger">@(Model.Balance > 0 ? Model.Balance.ToString() : "Nil")</span></div>
                     <div><span class="font-weight-bold">Branch: </span>@Model.EmpBranch</div>
                     <div><span class="font-weight-bold">Salary: </span>@Model.Salary</div>
                     <div><span class="font-weight-bold">Mob No.: </span>@Model.Mobile</div>
@@ -98,7 +98,7 @@
                                         <span asp-validation-for="ChgsPerc" class="text-danger"></span>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Guarantor"></label>

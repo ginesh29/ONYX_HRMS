@@ -101,6 +101,53 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<EmpLoanDetail_GetRow_Result> GetEmpLoanAdjDetail(string transNo, string status, string CoCd)
+        {
+            var procedureName = "EmpLoanDetail_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", transNo);
+            parameters.Add("v_Typ", status);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpLoanDetail_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveEmpLoanAdj(EmpLoanDetail_GetRow_Result model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLoanDetail_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_EdCd", model.EdCd);
+            parameters.Add("v_EdTyp", model.EdTyp);
+            parameters.Add("v_Typ", model.Typ);
+            parameters.Add("v_RecoTyp", model.RecoTyp);
+            parameters.Add("v_AmtVal", model.AmtVal);
+            parameters.Add("v_ChgsAmt", model.ChgsAmt);
+            parameters.Add("v_EffDate", model.EffDate);
+            parameters.Add("v_EndDate", model.EndDate);
+            parameters.Add("v_EditBy", model.EntryBy);
+            parameters.Add("v_EditDt", DateTime.Now);
+            var connection = new SqlConnection(connectionString);
+            connection.QueryFirstOrDefault<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public int GetEmpLoan_Due(string empCd, DateTime EffDt)
+        {
+            var procedureName = "EmpLoan_Due";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_Prd", EffDt);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string EmpCd, string UserOrEmp, string CoCd)
         {
             var procedureName = "EmpLoan_GetRow";

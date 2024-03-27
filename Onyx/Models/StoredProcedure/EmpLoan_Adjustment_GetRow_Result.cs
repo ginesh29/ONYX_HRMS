@@ -30,5 +30,6 @@
         public string RecoMode { get; set; }
         public string Purpose { get; set; }
         public string Narr { get; set; }
+        public string EntryBy { get; set; }
     }
 }

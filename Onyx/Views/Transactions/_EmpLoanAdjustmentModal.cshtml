@@ -1,0 +1,79 @@
+﻿@model EmpLoan_Adjustment_GetRow_Result
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+    List<EmpLoanDetail_GetRow_Result> empLoanAdjDetail = ViewBag.EmpLoanAdjDetail;
+}
+<div class="modal-dialog" style="max-width:850px">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Loan Adjustment</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6 form-border-right">
+                    <h5 class="text-primary">Application Details</h5>
+                    <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+                    <div><span class="font-weight-bold">Employee: </span>@($"{Model.EmpName}({Model.EmpCd.Trim()})")</div>
+                    <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Loan Type: </span>@Model.LoanTyp</div>
+                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt</div>
+                    <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.LoanApprDt).ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Deduct. Start Date: </span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt</div>
+                    <div><span class="font-weight-bold">Recovery Mode: </span>@Model.RecoMode</div>
+                    <div><span class="font-weight-bold">Recovery Period: </span>@Model.RecoPrd</div>
+                    <div><span class="font-weight-bold">No of Installments: </span>@Model.NoInst</div>
+                    <div><span class="font-weight-bold">Charges Type: </span>@Model.ChgsTyp</div>
+                    <div><span class="font-weight-bold">Interest Rate: </span>@Model.ChgsPerc%</div>
+                    <div><span class="font-weight-bold">Loan Balance: </span></div>
+                </div>
+                <div class="col-md-6 pl-3">
+                    <form id="loan-adj-frm">
+                        <input type="hidden" asp-for="LoanStatus" />
+                        <h5 class="text-primary">Adjustment</h5>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Ded. Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in empLoanAdjDetail.Select((value, i) => new { i, value }))
+                            {
+                                <tr>
+                                    <th>
+                                        @(item.i + 1)
+                                        <input asp-for="@empLoanAdjDetail[item.i].SrNo" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].EmpCd" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].EdCd" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].EdTyp" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].RecoTyp" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].AmtVal" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].ChgsAmt" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].EndDate" type="hidden" />
+                                        <input asp-for="@empLoanAdjDetail[item.i].EffDate" type="hidden" />
+                                    </th>
+                                    <th>@Convert.ToDateTime(item.value.EffDate).ToString(dateFormat)</th>
+                                    <th>@item.value.AmtVal</th>
+                                </tr>
+                            }
+                        </table>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox">
+                            <label class="custom-control-label font-weight-normal">Closed</label>
+                        </div>
+                        <div><span class="font-weight-bold">Balance Amt: </span></div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLoanAdjust(this,'@Model.TransNo','@Model.EmpCd')" id="btn-submit">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
