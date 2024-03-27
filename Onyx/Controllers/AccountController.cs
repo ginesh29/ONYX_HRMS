@@ -56,7 +56,7 @@ namespace Onyx.Controllers
                 var employee = _userService.ValidateEmployee(model);
                 if (employee != null)
                 {
-                    var user = _userService.GetUsers(employee.Cd).FirstOrDefault();
+                    var user = _userService.GetUsers(employee.UserCd.Trim()).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = model.CoCd,

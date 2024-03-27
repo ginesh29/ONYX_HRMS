@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class SelfServiceController : Controller
     {
         private readonly AuthService _authService;

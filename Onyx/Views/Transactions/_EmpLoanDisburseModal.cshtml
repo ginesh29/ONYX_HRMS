@@ -1,0 +1,70 @@
+﻿@model EmpLoan_GetRow_Result
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+}
+<div class="modal-dialog" style="max-width:850px">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Loan Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6 form-border-right">
+                    <h5 class="text-primary">Application Details</h5>
+                    <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+                    <div><span class="font-weight-bold">Employee: </span>@($"{Model.EmpName}({Model.EmployeeCode.Trim()})")</div>
+                    <div><span class="font-weight-bold">Designation: </span>@Model.Desg</div>
+                    <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Loan Type: </span>@Model.LoanType</div>
+                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt</div>
+                    <div><span class="font-weight-bold">Ref Date: </span>@Model.DocRef</div>
+                    <div><span class="font-weight-bold">No of Installments Req.: </span>@Model.NoInstReq</div>
+                    <div><span class="font-weight-bold">Purpose: </span>@Model.Purpose</div>
+                    <div><span class="font-weight-bold">Previous Loan Balance: </span>@Model.Balance</div>
+                    <div><span class="font-weight-bold">Branch: </span>@Model.EmpBranch</div>
+                </div>
+                <div class="col-md-6 pl-3">
+                    <h5 class="text-primary">Approval Details</h5>
+                    <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.LoanApprDt).ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Deduct. Start Date</span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt</div>
+                    <div><span class="font-weight-bold">Recovery Mode: </span>@Model.Reco_Mode</div>
+                    <div><span class="font-weight-bold">Recovery Period: </span>@Model.Reco_Prd</div>
+                    <div><span class="font-weight-bold">No of Installments: </span>@Model.NoInst</div>
+                    <div><span class="font-weight-bold">Charges Type: </span>@Model.ChgsTyp</div>
+                    <div><span class="font-weight-bold">Interest Rate: </span>@Model.ChgsPerc%</div>
+                    <div><span class="font-weight-bold">Guarantor Name: </span>@Model.Guarantor</div>
+                    <div><span class="font-weight-bold">Guarantor Details: </span>@Model.GuarantorDetails</div>
+                    <div><span class="font-weight-bold">Approved By: </span>@Model.LoanApprBy</div>
+                    <h5 class="text-primary mt-2">Disburse</h5>
+                    <form id="loan-disburse-frm">
+                        <input asp-for="TransNo" type="hidden" />
+                        <input asp-for="EmpBranchCd" type="hidden" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PayMode"></label>
+                                    <select asp-for="PayMode" class="form-control select-picker" asp-items="ViewBag.PaymentModeItems"></select>
+                                    <span asp-validation-for="PayMode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LoanStatus"></label>
+                                    <select asp-for="LoanStatus" class="form-control select-picker" asp-items="ViewBag.LoanStatusItems"></select>
+                                    <span asp-validation-for="LoanStatus" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLoanDisburse(this)" id="btn-submit">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

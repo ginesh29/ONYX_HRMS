@@ -10,6 +10,7 @@ namespace Onyx.Models.StoredProcedure
         public string EmployeeCode { get; set; }
         public string EmpName { get; set; }
         public string EmpBranch { get; set; }
+        public string EmpBranchCd { get; set; }
         public string LoanType { get; set; }
         public string DocRef { get; set; }
         public string DocDt { get; set; }
@@ -30,7 +31,7 @@ namespace Onyx.Models.StoredProcedure
         public string ApplicationStatus { get; set; }
         [Display(Name = "Approved Amount")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        public decimal? ApprAmt { get; set; }
+        public int? ApprAmt { get; set; }
         [Display(Name = "Recovery Mode")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string RecoMode { get; set; }
@@ -44,7 +45,11 @@ namespace Onyx.Models.StoredProcedure
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Guarantor { get; set; }
         public string GuarantorName { get; set; }
+        [Display(Name = "Disburse/Cancel")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string LoanStatus { get; set; }
+        [Display(Name = "Payment Mode")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string PayMode { get; set; }
         [Display(Name = "Charges Type")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]

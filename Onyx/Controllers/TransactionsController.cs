@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -6,6 +7,7 @@ using Onyx.Services;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
         private readonly AuthService _authService;
@@ -281,7 +283,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpTransferData()
         {
-            var transferData = _transactionService.GetEmpTransferData();
+            var transferData = _transactionService.GetEmpTransferData(_loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = transferData,
@@ -290,7 +292,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpTransfer(string empCd, int srNo)
         {
-            var empTransfer = _transactionService.GetEmpTransferData().FirstOrDefault(m => m.SrNo == srNo && m.EmpCd.Trim() == empCd);
+            var empTransfer = _transactionService.GetEmpTransferData(_loggedInUser.UserCd).FirstOrDefault(m => m.SrNo == srNo && m.EmpCd.Trim() == empCd);
             var model = new EmpTransferModel();
             if (empTransfer != null)
                 model = new EmpTransferModel
@@ -481,20 +483,19 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult GetEmpLoanApproval(string transNo, string empCd)
+        public IActionResult GetEmpLoanApproval(string transNo)
         {
             var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == empCd);
+            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim()).FirstOrDefault();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
             loanDetails.Salary = Convert.ToInt32(empDetail.Total);
-            ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new
-            SelectListItem
+            ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}"
             });
-            ViewBag.RecPrdItems = _commonService.GetSysCodes(SysCode.RecPrd).Select(m => new
-           SelectListItem
+            ViewBag.RecPrdItems = _commonService.GetSysCodes(SysCode.RecPrd).Select(m =>
+            new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}"
@@ -530,6 +531,35 @@ namespace Onyx.Controllers
             CommonResponse result = new()
             {
                 Data = loanData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpLoanDisburse(string transNo)
+        {
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
+            loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
+            loanDetails.EmpBranchCd = empDetail.Div.Trim();
+            ViewBag.PaymentModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
+            ViewBag.LoanStatusItems = _commonService.GetLoanStatus();
+            return PartialView("_EmpLoanDisburseModal", loanDetails);
+        }
+        public IActionResult SaveLoanDisburse(EmpLoan_GetRow_Result model, string processId)
+        {
+            _transactionService.SaveEmpLoanDisbursement(model);
+            var ActivityAbbr = "UPD";
+            var action = model.LoanStatus == "D" ? "disbursed" : "canceled";
+            var Message = $", Loan is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Loan {action} successfully"
             };
             return Json(result);
         }
@@ -685,7 +715,7 @@ namespace Onyx.Controllers
                 var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
-                string Message = invalidData.Count() == 0 && validData.Count() == 0 ? "No record found to import"
+                string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
                     : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
                 if (validData.Any())
                     _transactionService.ImportAttendanceExcelData(validData, filterModel);

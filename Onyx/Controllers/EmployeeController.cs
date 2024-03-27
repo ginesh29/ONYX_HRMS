@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -7,6 +8,7 @@ using X.PagedList;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly AuthService _authService;
@@ -59,24 +61,22 @@ namespace Onyx.Controllers
             ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(int? pageNumber, int pageSize, string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(int? pageNumber, int? pageSize, string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
             var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
             var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Where(m => m.Active == "Y");
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
-            int page = pageNumber ?? 1;
-            //employees = employees.ToPagedList(page, pageSize);
             return Json(employees);
         }
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
             int pageNumber = page ?? 1;
             var size = pageSize ?? 9;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.LeaveStatus);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, filterModel.LeaveStatus);
             bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null;
             if (isFilter)
             {
@@ -190,7 +190,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"

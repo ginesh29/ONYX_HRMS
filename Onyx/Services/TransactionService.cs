@@ -145,6 +145,19 @@ namespace Onyx.Services
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public void SaveEmpLoanDisbursement(EmpLoan_GetRow_Result model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpLoan_Disburse_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_LoanStatus", model.LoanStatus);
+            parameters.Add("v_PayMode", model.PayMode);
+            parameters.Add("v_HrDiv", model.EmpBranchCd);
+            var connection = new SqlConnection(connectionString);
+            connection.QueryFirstOrDefault<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Leave Application
@@ -483,12 +496,13 @@ namespace Onyx.Services
         #endregion
 
         #region Emp Transfer
-        public IEnumerable<EmpTransfers_GetRow_Result> GetEmpTransferData()
+        public IEnumerable<EmpTransfers_GetRow_Result> GetEmpTransferData(string userCd)
         {
             var procedureName = "EmpTransfers_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Srno", 0);
             parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_Usercd", userCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpTransfers_GetRow_Result>
@@ -679,7 +693,7 @@ namespace Onyx.Services
                 if (isEmptyRow)
                     continue;
                 var empCd = Convert.ToString(reader.GetValue(0));
-                bool validEmployee = _employeeService.GetEmployees(CoCd).Any(m => m.Cd == empCd);
+                bool validEmployee = _employeeService.GetEmployees(CoCd, empCd).Any();
                 string errorMessage = "<ul class='text-left'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";

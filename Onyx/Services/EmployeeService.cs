@@ -23,12 +23,12 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string userCd = "", string status = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, string userCd = "", string status = "0")
         {
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Param", ""); 
+            parameters.Add("v_Param", empCd);
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_RowsCnt", "2");
@@ -546,7 +546,7 @@ namespace Onyx.Services
                 var empCd = Convert.ToString(reader.GetValue(0));
                 var title = Convert.ToString(reader.GetValue(2));
                 var narration = Convert.ToString(reader.GetValue(4));
-                bool validEmployee = GetEmployees(CoCd).Any(m => m.Cd == empCd);
+                bool validEmployee = GetEmployees(CoCd, empCd).Any();
                 string errorMessage = "<ul class='text-left'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";

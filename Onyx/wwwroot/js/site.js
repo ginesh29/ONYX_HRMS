@@ -311,6 +311,22 @@ function initControls() {
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
+    //$(".select-picker.form-control")
+    //    .on('focus', function () {
+    //        alert()
+    //        $(this).selectpicker('toggle');
+    //    })
+    //    .on('blur', function () {
+    //        $(this).selectpicker('hide');
+    //    });
+    $('#mySelect').on('shown.bs.select', function () {
+        alert()
+        $(this).next().find('.bs-searchbox input').focus(); // Focus on search input after dropdown is shown
+    });
+    //$(".select-picker,.filter-select-picker").focus(function () {
+    //    alert()
+    //    $(this).selectpicker('show');
+    //});
     //$(".select-picker,.filter-select-picker").on('show.bs.select', function () {
     //    $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
     //});
@@ -326,7 +342,7 @@ function initControls() {
     }).on('apply.daterangepicker', function (ev, picker) {
         var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
         $(this).val(startDate);
-    });    
+    });
     $('.date-input').each(function (i, item) {
         var date = $(this).val().replace(" 00:00:00", "");
         $(this).val(date);;

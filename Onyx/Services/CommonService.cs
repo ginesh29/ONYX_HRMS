@@ -267,7 +267,7 @@ namespace Onyx.Services
             };
             return calculationTypes;
         }
-        public IEnumerable<SelectListItem> GetChargeTypes()
+        public IEnumerable<SelectListItem> GetChargesTypes()
         {
             var chargeTypes = new List<SelectListItem>()
             {
@@ -294,21 +294,21 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public IEnumerable<SelectListItem> GetChargesTypes()
-        {
-            var percentageAmtTypes = new List<SelectListItem>()
-            {
-                new() {Text="Fixed Rate", Value="F"},
-                new() { Text="Reducing Balance", Value="R"},
-            };
-            return percentageAmtTypes;
-        }
         public IEnumerable<SelectListItem> GetBeforeAfter()
         {
             var beforeAfter = new List<SelectListItem>()
             {
                 new() {Text="Before", Value="B" ,Selected=true},
                 new() { Text="After", Value="A"},
+            };
+            return beforeAfter;
+        }
+        public IEnumerable<SelectListItem> GetLoanStatus()
+        {
+            var beforeAfter = new List<SelectListItem>()
+            {
+                new() {Text="Disburse", Value="D" },
+                new() { Text="Cancel", Value="C"},
             };
             return beforeAfter;
         }

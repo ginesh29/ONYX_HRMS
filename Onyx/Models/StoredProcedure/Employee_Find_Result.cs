@@ -66,9 +66,11 @@ namespace Onyx.Models.StoredProcedure
         public DateTime? Confrm { get; set; }
         public DateTime? Leaving { get; set; }
         [Display(Name = "Basic Currency")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string BasicCurr { get; set; }
         public decimal? Basic { get; set; }
-        [Display(Name = "Currency")]
+        [Display(Name = "Payment Currency")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string CurrCd { get; set; }
         public string FareEligible { get; set; }
         public bool FareEligibleValue { get; set; }
