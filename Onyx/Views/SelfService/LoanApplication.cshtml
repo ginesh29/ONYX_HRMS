@@ -1,6 +1,7 @@
 ﻿@model EmpLoanModel
 @{
     ViewData["Title"] = "Loan Application";
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <div class="card">
     <div class="card-body">
@@ -41,7 +42,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="TransDt"></label>
-                            <input asp-for="TransDt" class="form-control date-input" type="text"/>
+                            <input asp-for="TransDt" class="form-control date-input" type="text" value="@DateTime.Now.ToString(dateFormat)" />
                             <span asp-validation-for="TransDt" class="text-danger"></span>
                         </div>
                     </div>

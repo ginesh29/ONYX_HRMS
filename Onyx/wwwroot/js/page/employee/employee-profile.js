@@ -1,11 +1,16 @@
 ﻿function previewAvatar(event) {
     var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('avatar-preview')
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    $("#btn-avatar-delete").addClass("d-none");
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    if (imageExtensions.includes(ext)) {
+        reader.onload = function () {
+            var output = document.getElementById('avatar-preview')
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        $("#btn-avatar-delete").addClass("d-none");
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 };
 function editAvatar() {
     $(`#AvatarFile`).click();
@@ -35,15 +40,20 @@ function deleteAvatar(cd) {
 }
 function previewSignature(event) {
     var reader = new FileReader();
-    reader.onload = function () {
-        var output = document.getElementById('signature-preview')
-        output.src = reader.result;
-    };
-    reader.readAsDataURL(event.target.files[0]);
-    var filename = $("#SignatureFile").val().split("\\").pop();
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    if (imageExtensions.includes(ext)) {
+        reader.onload = function () {
+            var output = document.getElementById('signature-preview')
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        var filename = $("#SignatureFile").val().split("\\").pop();
 
-    $("#signature-file-label").text(filename);
-    $("#signature-preview").removeClass("d-none");
+        $("#signature-file-label").text(filename);
+        $("#signature-preview").removeClass("d-none");
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 };
 function GoToNextPrev(btn, back) {
     if (!back) {

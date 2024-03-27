@@ -39,14 +39,14 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="ApprAmt"></label>
-                                        <input asp-for="ApprAmt" type="text" class="form-control int-input" />
+                                        <input asp-for="ApprAmt" type="text" class="form-control int-input" data-max="@Model.Amt" />
                                         <span asp-validation-for="ApprAmt" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="NoInst"></label>
-                                        <input asp-for="NoInst" type="text" class="form-control int-input" />
+                                        <input asp-for="NoInst" type="text" class="form-control int-input" data-max="@Model.NoInstReq" />
                                         <span asp-validation-for="NoInst" class="text-danger"></span>
                                     </div>
                                 </div>

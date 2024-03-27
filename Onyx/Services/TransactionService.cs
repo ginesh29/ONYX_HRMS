@@ -23,7 +23,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", model.EmployeeCode);
             parameters.Add("v_LoanTyp", model.LoanTypeCd);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now);
+            parameters.Add("v_DocDt", DateTime.Now.Date);
             parameters.Add("v_Amt", model.Amt);
             parameters.Add("v_Purpose", model.Purpose);
             parameters.Add("v_Narr", model.Narr);
@@ -172,7 +172,7 @@ namespace Onyx.Services
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
             parameters.Add("v_ApprAmt", model.ApprAmt ?? 0);
             parameters.Add("v_LoanApprBy", model.LoanApprBy);
-            parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now);
+            parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now.Date);
             parameters.Add("v_Status", model.LoanStatus);
             parameters.Add("v_ChgsPerc", model.ChgsPerc);
             parameters.Add("v_ChgsAmt", model.ChgsPerc);
@@ -221,7 +221,7 @@ namespace Onyx.Services
             parameters.Add("v_ToDt", model.ToDt);
             parameters.Add("v_LvTaken", model.LvTaken);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now);
+            parameters.Add("v_DocDt", DateTime.Now.Date);
             parameters.Add("v_Substitute", string.Empty);
             parameters.Add("v_Reason", model.Reason);
             parameters.Add("v_Narr", model.Narr);
@@ -504,7 +504,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_CancelBy", model.ApprBy);
-            parameters.Add("v_CancelDt", DateTime.Now);
+            parameters.Add("v_CancelDt", DateTime.Now.Date);
             parameters.Add("v_Remarks", model.Remarks);
             parameters.Add("v_LvFare", model.LvTicket);
             parameters.Add("v_LvSalary", model.LvSalary);

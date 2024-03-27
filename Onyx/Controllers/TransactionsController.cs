@@ -63,7 +63,7 @@ namespace Onyx.Controllers
                     LvDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
-                    ApprDt = DateTime.Now,
+                    ApprDt = DateTime.Now.Date,
                     ApprBy = leaveData.Current_Approval.Trim(),
                 };
             }
@@ -184,7 +184,7 @@ namespace Onyx.Controllers
                     WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo) : 0,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
-                    ApprDt = DateTime.Now,
+                    ApprDt = DateTime.Now.Date
                 };
                 var allowance = _transactionService.GetEmpLeave_Allowances(model, _loggedInUser.CompanyCd);
                 model.Ticket = allowance?.FareAmount;
@@ -226,7 +226,7 @@ namespace Onyx.Controllers
                     WopLvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo),
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
-                    ApprDt = DateTime.Now,
+                    ApprDt = DateTime.Now.Date
                 };
             }
             return PartialView("_EmpDutyResumptionModal", model);
@@ -321,7 +321,7 @@ namespace Onyx.Controllers
             else
             {
                 model.SrNo = _transactionService.GetEmpTransferSrNo(empCd);
-                model.TransferDt = DateTime.Now;
+                model.TransferDt = DateTime.Now.Date;
             }
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new
             SelectListItem
@@ -662,7 +662,7 @@ namespace Onyx.Controllers
             else
             {
                 model.TransNo = _transactionService.GetEmpProvisionAdjSrNo();
-                model.TransDt = DateTime.Now;
+                model.TransDt = DateTime.Now.Date;
             }
             ViewBag.ProvisionTypeItems = _organisationService.GetCompanyProvisions().Select(m => new
             SelectListItem

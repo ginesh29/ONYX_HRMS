@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Leave Application";
     var IntLocalTypeItems = (List<SelectListItem>)ViewBag.IntLocalTypeItems;
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <div class="card">
     <div class="card-body">
@@ -43,7 +44,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="TransDt"></label>
-                            <input asp-for="TransDt" value="@DateTime.Now" class="form-control date-input" type="text" />
+                            <input asp-for="TransDt" value="@DateTime.Now.ToString(dateFormat)" class="form-control date-input" type="text" />
                             <span asp-validation-for="TransDt" class="text-danger"></span>
                         </div>
                     </div>
@@ -86,7 +87,7 @@
 @section scripts {
     <script>
         $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
-        
+
         function bindEmployeeDropdown() {
             $("#EmployeeCode").empty();
             getAjax(`/Employee/FetchEmployeeItems`, function (response) {

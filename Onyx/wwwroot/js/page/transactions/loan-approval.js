@@ -51,6 +51,22 @@ function showLoanApprovalModal(transNo, reject) {
     $('#EmployeeLoanApprovalModal').load(url, function () {
         parseDynamicForm();
         if (!reject) {
+            var amt = $('#ApprAmt').attr("data-max");
+            var NoInstReq = $('#NoInst').attr("data-max");
+            setTimeout(function () {
+                $('#ApprAmt').rules("add", {
+                    max: amt,
+                    messages: {
+                        max: `Please enter a number less than or equal to ${amt}`
+                    }
+                });
+                $('#NoInst').rules("add", {
+                    max: NoInstReq,
+                    messages: {
+                        max: `Please enter a number less than or equal to ${NoInstReq}`
+                    }
+                });
+            }, 500)
             $("#LoanStatus").val("A");
         }
         else {

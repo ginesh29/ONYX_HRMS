@@ -29,6 +29,7 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Ref. Date")]
         public DateTime? RefDt { get; set; }
         public string FormatedRefDt { get; set; }
+        [Display(Name = "Narration")]
         public string Narr { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Doc. Type")]

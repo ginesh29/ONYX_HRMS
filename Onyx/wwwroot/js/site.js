@@ -54,7 +54,7 @@ const dateRangePickerDefaultOptions = {
     },
     showDropdowns: true,
     autoUpdateInput: false,
-    autoApply: true
+    autoApply: true,
 }
 function loadingButton(btn) {
     var $this = $(btn);
@@ -345,7 +345,7 @@ function initControls() {
     });
     $('.date-input').each(function (i, item) {
         var date = $(this).val().replace(" 00:00:00", "");
-        $(this).val(date);;
+        $(this).val(date);
     })
     $('.month-year-input').attr("placeholder", "mm/yyyy");
     $('.month-year-input').datetimepicker({

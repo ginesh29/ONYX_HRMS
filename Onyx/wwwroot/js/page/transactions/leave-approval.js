@@ -60,7 +60,7 @@ function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
     $('#EmployeeLeaveApprovalModal').load(url, function () {
         parseDynamicForm();
-        if (!reject) {
+        if (!reject) {            
             $('#WpDateRange').rules("add", {
                 eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
                 messages: {
