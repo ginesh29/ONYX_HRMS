@@ -424,9 +424,9 @@ namespace Onyx.Controllers
         {
             return View("DocumentContainer");
         }
-        public IActionResult FetchDocuments(string empCd = "")
+        public IActionResult FetchDocuments(string type, string empCd = "")
         {
-            var documents = _employeeService.GetDocuments(empCd);
+            var documents = _employeeService.GetDocuments(empCd, type);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -435,7 +435,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(empCd).FirstOrDefault(m => m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _employeeService.GetDocuments(string.Empty, null).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel

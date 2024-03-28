@@ -35,6 +35,22 @@ function showLeaveSalaryApprovalModal(transNo, reject) {
     $('#EmployeeLeaveSalaryApprovalModal').load(url, function () {
         parseDynamicForm();
         if (!reject) {
+            var LvSalary = $('#LvSalary').attr("data-max");
+            var LvTicket = $('#LvTicket').attr("data-max");
+            setTimeout(function () {
+                $('#LvSalary').rules("add", {
+                    max: Number(LvSalary),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${LvSalary}`
+                    }
+                });
+                $('#LvTicket').rules("add", {
+                    max: Number(LvTicket),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${LvTicket}`
+                    }
+                });
+            }, 500)
             $("#Status").val("Y");
         }
         else {

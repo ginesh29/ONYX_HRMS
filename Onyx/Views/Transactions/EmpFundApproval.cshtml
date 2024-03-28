@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "Employee Fund Aprroval";
+}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="EmpFundApprovalDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Trans. No.</th>
+                    <th>Employee</th>
+                    <th>Tran Dt</th>
+                    <th>Amount</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmpFundApprovalModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script>
+        window["datatable"] = $('#EmpFundApprovalDataTable').DataTable(
+            {
+                ajax: "/Transactions/FetchEmpFundApprovalData",
+                ordering: false,
+                columns: [
+                    {
+                        data: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    { data: "transNo" },
+                    {
+                        data: function (row) {
+                            return `${row.emp.trim()}(${row.empCd.trim()})`
+                        }
+                    },
+                    {
+                        data: function (row) {
+                            return row.transDt && moment(row.transDt).format(CommonSetting.DisplayDateFormat);
+                        },
+                    },
+                    { data: "amount" },
+                    {
+                        data: function (row) {
+                            return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                            <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}',true)">
+                                        <i class="fa fa-times"></i>
+                                    </button>`;
+                        }, "width": "150px"
+                    }
+                ],
+            }
+        );
+
+        function showFundApprovalModal(transNo, reject) {
+            var url = `/Transactions/GetEmpFundApproval?transNo=${transNo}`;
+            $('#EmpFundApprovalModal').load(url, function () {
+                parseDynamicForm();
+                if (!reject) {
+                    var amt = $('#Amount').attr("data-max");
+                    setTimeout(function () {
+                        $('#Amount').rules("add", {
+                            max: Number(amt),
+                            messages: {
+                                max: `Please enter a number less than or equal to ${amt}`
+                            }
+                        });
+                    }, 500)
+                    $("#Status").val("Y");
+                }
+                else {
+                    $("#approval-div").addClass("d-none");
+                    $("#approval-div input").val("");
+                    $("#btn-submit").text("Reject");
+                    $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
+                    $("#Status").val("R");
+                }
+                $("#EmpFundApprovalModal").modal("show");
+            });
+        }
+
+        function saveFundAppraval(btn) {
+            var frm = $("#fund-approval-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveEmpFundApproval", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        $("#EmpFundApprovalModal").modal("hide");
+                        reloadDatatable();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+    </script>
+}

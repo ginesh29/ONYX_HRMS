@@ -55,13 +55,13 @@ function showLoanApprovalModal(transNo, reject) {
             var NoInstReq = $('#NoInst').attr("data-max");
             setTimeout(function () {
                 $('#ApprAmt').rules("add", {
-                    max: amt,
+                    max: Number(amt),
                     messages: {
                         max: `Please enter a number less than or equal to ${amt}`
                     }
                 });
                 $('#NoInst').rules("add", {
-                    max: NoInstReq,
+                    max: Number(NoInstReq),
                     messages: {
                         max: `Please enter a number less than or equal to ${NoInstReq}`
                     }

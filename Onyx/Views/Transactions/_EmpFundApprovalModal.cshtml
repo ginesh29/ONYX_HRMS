@@ -1,0 +1,50 @@
+﻿@model EmpFund_Approval_GetRow_Result
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+}
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Employee Fund Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h5 class="text-primary">Application Details</h5>
+            <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+            <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+            <div><span class="font-weight-bold">Fund Type: </span>@Model.Typ</div>
+            <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
+            <form id="fund-approval-frm">  
+                <input type="hidden" asp-for="TransNo" />
+                <input type="hidden" asp-for="Current_Approval_Level" />
+                <input type="hidden" asp-for="Current_Approval" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Typ" />
+                <div id="approval-div">
+                    <h5 class="text-primary">Approval Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ApprDate"></label>
+                                <input type="text" asp-for="ApprDate" class="form-control date-input" />
+                                <span asp-validation-for="ApprDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Amount"></label>
+                                <input type="text" asp-for="Amount" class="form-control int-input" data-max="@Model.Amount" />
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveFundAppraval(this)" id="btn-submit">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

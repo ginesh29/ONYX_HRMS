@@ -492,7 +492,7 @@ namespace Onyx.Controllers
             loanDetails.ApprAmt = loanDetails.Amt;
             loanDetails.NoInst = loanDetails.NoInstReq;
             loanDetails.LoanApprDt = DateTime.Now.Date;
-            loanDetails.ChgsPerc = loanDetails.ChgsPerc ?? 0;
+            loanDetails.ChgsPerc ??= 0;
             loanDetails.Balance = _transactionService.GetEmpLoan_Due(loanDetails.EmployeeCode.Trim(), loanDetails.LoanApprDt);
             ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
             {
@@ -827,7 +827,7 @@ namespace Onyx.Controllers
         public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
         {
             _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
-            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;            
+            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
             foreach (var item in model.VariableComponentsData)
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
@@ -869,6 +869,57 @@ namespace Onyx.Controllers
                 Text = m.SDes
             });
             return Json(payCodeItems);
+        }
+        #endregion
+
+        #region Emp Fund
+        public IActionResult EmpFundApproval()
+        {
+            return View();
+        }
+        public IActionResult FetchEmpFundApprovalData()
+        {
+            var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            CommonResponse result = new()
+            {
+                Data = fundData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpFundApproval(string transNo)
+        {
+            var fundDetails = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            fundDetails.ApprDate = DateTime.Now.Date;
+            return PartialView("_EmpFundApprovalModal", fundDetails);
+        }
+        public IActionResult SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model, string processId)
+        {
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveEmpFundApproval(model);
+            var ActivityAbbr = "UPD";
+            var action = model.Status == "A" ? "approved" : "rejected";
+            var Message = $", Fund is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Fund {action} successfully"
+            };
+            return Json(result);
+        }
+        public IActionResult EmpFundDisburse()
+        {
+            return View();
+        }
+        public IActionResult FetchEmpFundDisburseData()
+        {
+            var fundData = _transactionService.GetEmpFundDisburseData(string.Empty, _loggedInUser.UserAbbr);
+            CommonResponse result = new()
+            {
+                Data = fundData,
+            };
+            return Json(result);
         }
         #endregion
     }

@@ -42,7 +42,7 @@ window["datatable"] = $('#EmployeeLeavesApprovalDataTable').DataTable(
                             <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
                                 <i class="fa fa-times"></i>
                             </button>`;
-                }, "width": "120px"
+                }, "width": "150px"
             }
         ],
     }

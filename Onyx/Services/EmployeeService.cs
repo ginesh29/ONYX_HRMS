@@ -248,14 +248,14 @@ namespace Onyx.Services
         #endregion
 
         #region Document
-        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd)
+        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string type)
         {
             var procedureName = "EmpDocuments_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_DocTyp", string.Empty);
             parameters.Add("v_SrNo", 0);
-            parameters.Add("v_Typ", string.Empty);
+            parameters.Add("v_Typ", type ?? "N");
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpDocuments_GetRow_Result>
