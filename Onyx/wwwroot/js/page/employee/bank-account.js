@@ -99,7 +99,7 @@ function bindEmployeeDropdown(pageNumber, pageSize) {
 function bindBankBranch(e) {
     $("#BankBrCd").empty();
     getAjax(`/Employee/FetchBankBranchItems?bankCd=${e.value}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })

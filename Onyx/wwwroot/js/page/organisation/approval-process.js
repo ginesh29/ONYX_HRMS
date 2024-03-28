@@ -70,7 +70,7 @@ function saveApprovalProcess(btn) {
 function bindDocTypeByType(e) {
     $("#ApplTypCd").empty();
     getAjax(`/Organisation/FetchDocTypeByType?proccessId=${e.value}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
@@ -82,7 +82,7 @@ function bindDocTypeByType(e) {
 function bindEmployeeDropdown(departments, designations, branches, locations, callback) {
     $("#ApprovalLevels").empty();
     getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })

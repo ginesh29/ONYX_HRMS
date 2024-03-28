@@ -118,7 +118,7 @@
     }
     function bindCompanyDropdown(callback) {
         getAjax("/home/FetchCompanies", function (response) {
-            var drpHtml = "";
+            var drpHtml = '';
             $.each(response.data, function (i, company) {
                 drpHtml += `<option value="${company.value}">${company.text}</option>`;
             });

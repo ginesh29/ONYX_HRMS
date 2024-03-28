@@ -311,25 +311,20 @@ function initControls() {
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
-    //$(".select-picker.form-control")
-    //    .on('focus', function () {
-    //        alert()
-    //        $(this).selectpicker('toggle');
-    //    })
-    //    .on('blur', function () {
-    //        $(this).selectpicker('hide');
-    //    });
-    $('#mySelect').on('shown.bs.select', function () {
-        alert()
-        $(this).next().find('.bs-searchbox input').focus(); // Focus on search input after dropdown is shown
-    });
-    //$(".select-picker,.filter-select-picker").focus(function () {
-    //    alert()
-    //    $(this).selectpicker('show');
-    //});
-    //$(".select-picker,.filter-select-picker").on('show.bs.select', function () {
-    //    $("ul.dropdown-menu.inner.show").css("margin-bottom", "0");
-    //});
+    $("select.select-picker,select.filter-select-picker").not("[multiple]").each(function () {
+        var curr = this;
+        var val = $(curr).val();
+        if (!$(curr).find(".no-value-option").length && val) {
+            $(curr).prepend('<option value="" class="no-value-option">-- Select --</option>');
+            $(curr).selectpicker('refresh');
+        }
+        $(curr).change(function () {
+            if (!$(curr).find(".no-value-option").length) {
+                $(curr).prepend('<option value="" class="no-value-option">-- Select --</option>');
+                $(curr).selectpicker('refresh');
+            }
+        })
+    })
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
     $('.date-input').daterangepicker({
         locale: {

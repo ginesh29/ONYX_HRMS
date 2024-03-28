@@ -91,7 +91,7 @@ function saveCalendarEvent(btn) {
 function bindEmployeeDropdown(departments, designations, branches, locations, callback) {
     $("#Attendees").empty();
     getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })

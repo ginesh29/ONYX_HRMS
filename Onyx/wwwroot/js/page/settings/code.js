@@ -5,7 +5,6 @@
 function showCodeModal(cd) {
     var typeVal = $("#code-type option:selected").val();
     var url = `/Settings/GetCode?cd=${cd}&type=${typeVal}`;
-    $('#CodeModal').html("");
     $('#CodeModal').load(url, function () {
         parseDynamicForm();
         var typeVal = $("#code-type option:selected").val();
@@ -52,7 +51,6 @@ function saveCode(btn) {
     }
 }
 function setType() {
-    $('#CodeModal').html("");
     var typeText = $("#code-type option:selected").text();
     var typeVal = $("#code-type option:selected").val();
     $("#code-type-text").text(typeText);

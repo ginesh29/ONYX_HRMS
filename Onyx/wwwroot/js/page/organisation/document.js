@@ -86,7 +86,6 @@ function saveDocument(btn) {
     }
 }
 function filesPreview(input) {
-    $("#Files-Preview").html("");
     if (input.files) {
         var filesCount = input.files.length;
         for (i = 0; i < filesCount; i++) {

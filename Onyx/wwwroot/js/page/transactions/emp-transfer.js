@@ -40,7 +40,7 @@
 function bindEmployeeDropdown(callback) {
     $("#EmpCd").empty();
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })

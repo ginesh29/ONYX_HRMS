@@ -29,7 +29,7 @@ function resetFilter() {
 function bindEmployeeDropdown() {
     $("#EmpCd").empty();
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })
@@ -42,6 +42,8 @@ $("#EmpCd").change(function (e) {
     BindEmployeeGrid(url);
 })
 function changeShowEntries(curr) {
-    var url = `/Employee/FetchEmployees?pageSize=${curr.value}`;
+    var frm = $("#employee-filter-frm").serialize();
+    var name = $("#EmpCd").val();
+    var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&pageSize=${curr.value}`;
     BindEmployeeGrid(url);
 }

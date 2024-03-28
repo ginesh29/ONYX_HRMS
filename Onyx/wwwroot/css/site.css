@@ -164,7 +164,9 @@ textarea {
 .dropdown-menu.show {
     overflow: visible !important;
 }
-
+.select-picker.show .dropdown-toggle {
+    border: 1px solid #80bdff !important;
+}
 .bootstrap-select .btn:focus {
     outline: none !important;
 }
@@ -173,13 +175,16 @@ textarea {
     border: 1px solid #a7aaad;
 }
 
-.bootstrap-select .dropdown-toggle,
-.bootstrap-select .dropdown-toggle:active,
-.bootstrap-select .dropdown-toggle:focus {
+.bootstrap-select .dropdown-toggle
+ {
     background: #fff;
     border: 1px solid #ced4da;
     outline: none;
 }
+    .bootstrap-select .dropdown-toggle:active,
+    .bootstrap-select .dropdown-toggle:focus {
+        border: 1px solid #80bdff;
+    }
 
     .bootstrap-select .dropdown-toggle, .bootstrap-select .dropdown-toggle:active, .bootstrap-select .dropdown-toggle:focus {
         background: #fff !important;

@@ -169,7 +169,6 @@ function bindEducationDataTable() {
 }
 function showEducationModal(srNo) {
     var url = `/Employee/GetEducation?empCd=${encodeURI(empCode)}&srNo=${srNo}`;
-    $('#EducationModal').html("");
     $('#EducationModal').load(url, function () {
         parseDynamicForm();
         $("#EmpCd").val(empCode);
@@ -477,7 +476,7 @@ function saveEditFile() {
 function bindEmployeeDropdown(callback) {
     $("#EmpCd").empty();
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
         })
@@ -593,7 +592,7 @@ function changePercentageAmt() {
 function bindComponentClass(e) {
     $("#EdCd").empty();
     getAjax(`/Employee/FetchComponentClassItems?type=${e.value}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })

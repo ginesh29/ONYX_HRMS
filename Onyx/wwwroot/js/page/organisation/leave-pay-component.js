@@ -69,7 +69,7 @@ function saveLeavePayComponent(btn) {
 function onChangePayType(e) {
     $("#PayCd").empty();
     getAjax(`/Organisation/FetchPayCodeItems?payTypCd=${e.value}`, function (response) {
-        var html = ''
+        var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
