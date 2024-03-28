@@ -25,12 +25,12 @@ namespace Onyx.ViewComponents
             var month = Convert.ToInt32(_commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));
-            //var companies = _commonService.GetCompanies().Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
-            //if (companies.Count() == 1)
-            //    companies = companies.Select(m => { m.Selected = true; return m; });
-            //else
-            //    companies = companies.Select(m => { m.Selected = m.Value.Trim() == _loggedInUser.CompanyCd; return m; });
-            //ViewBag.CompanyItems = companies;
+            var companies = _commonService.GetUserCompanies(_loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
+            if (companies.Count() == 1)
+                companies = companies.Select(m => { m.Selected = true; return m; });
+            else
+                companies = companies.Select(m => { m.Selected = m.Value.Trim() == _loggedInUser.CompanyCd; return m; });
+            ViewBag.UserCompanyItems = companies;
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,

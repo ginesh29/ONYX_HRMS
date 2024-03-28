@@ -297,7 +297,7 @@ function checkRangesOverlap(dateRange1, dateRange2) {
     }
     return false;
 }
-$("#company-dropdown").on('change', function (e) {
+$("#user-company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
         window.location.reload();
@@ -308,11 +308,11 @@ function printDiv(divContainer) {
     $(`#${divContainer}`).print();
 }
 function initControls() {
-    $(".select-picker,.filter-select-picker").not("#company-dropdown").attr("data-live-search", true)
+    $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
     $(".select-picker,.filter-select-picker").selectpicker();
-    $("select.select-picker,select.filter-select-picker").not("[multiple]").each(function () {
+    $("select.select-picker,select.filter-select-picker").not("#user-company-dropdown").not("[multiple]").each(function () {
         var curr = this;
         var val = $(curr).val();
         if (!$(curr).find(".no-value-option").length && val) {

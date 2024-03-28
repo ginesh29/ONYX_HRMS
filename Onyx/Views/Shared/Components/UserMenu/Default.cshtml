@@ -2,12 +2,12 @@
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/emp-photo/{companyCd}/{Model.ProfilePic}" : "/images/avatar.png";
-    IEnumerable<SelectListItem> companies = (IEnumerable<SelectListItem>)ViewBag.CompanyItems;
+    IEnumerable<SelectListItem> companies = (IEnumerable<SelectListItem>)ViewBag.UserCompanyItems;
 }
 <ul class="navbar-nav ml-auto">
     <li class="nav-item mr-3">
         <div style="width:200px;">
-            <select class="select-picker" asp-items="@companies" id="company-dropdown">
+            <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
             </select>
         </div>
     </li>
