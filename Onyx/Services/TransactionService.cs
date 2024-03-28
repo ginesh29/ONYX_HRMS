@@ -790,8 +790,8 @@ namespace Onyx.Services
             parameters.Add("DivCd", model.Branch);
             parameters.Add("CCCd", "0");
             parameters.Add("DeptCd", model.Department ?? string.Empty);
-            parameters.Add("v_EdCd", model.PayType);
-            parameters.Add("v_EdTyp", model.PayCode);
+            parameters.Add("v_EdCd", model.PayCode);
+            parameters.Add("v_EdTyp", model.PayType);
             parameters.Add("v_FromDt", model.FromDt);
             parameters.Add("v_ToDt", model.ToDt);
             var connectionString = _commonService.GetConnectionString();
@@ -834,7 +834,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpDiv", filterModel.Branch);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var a = connection.Query<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> GetVariablePayComponentFromExcel(IFormFile file, string CoCd)
         {
