@@ -276,8 +276,8 @@ namespace Onyx.Services
             parameters.Add("v_ExpDt", model.ExpDt);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            //parameters.Add("v_Sponsor1", "0");
-            //parameters.Add("v_Sponsor2", "0");
+            parameters.Add("v_Sponsor1", "0");
+            parameters.Add("v_Sponsor2", "0");
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

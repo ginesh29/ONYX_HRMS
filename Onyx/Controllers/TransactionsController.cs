@@ -914,10 +914,29 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpFundDisburseData()
         {
-            var fundData = _transactionService.GetEmpFundDisburseData(string.Empty, _loggedInUser.UserAbbr);
+            var fundData = _transactionService.GetEmpFundDisburseData(string.Empty);
             CommonResponse result = new()
             {
                 Data = fundData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmpFundDisburse(string transNo)
+        {
+            var fundDetails = _transactionService.GetEmpFundDisburseData(transNo).FirstOrDefault();
+            return PartialView("_EmpFundDisburseModal", fundDetails);
+        }
+        public IActionResult SaveEmpFundDisburse(EmpFund_View_Getrow_Result model, string processId)
+        {
+            _transactionService.SaveEmpFundConfirm(model,_loggedInUser.CompanyCd);
+            var ActivityAbbr = "UPD";
+            var action = model.Status == "0" ? "disbursed" : "canceled";
+            var Message = $", Fund is {action} With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Fund {action} successfully"
             };
             return Json(result);
         }

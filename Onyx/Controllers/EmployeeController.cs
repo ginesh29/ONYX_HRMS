@@ -61,7 +61,7 @@ namespace Onyx.Controllers
             ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(int? pageNumber, int? pageSize, string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];

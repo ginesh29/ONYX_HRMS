@@ -50,7 +50,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="custom-file">
-                        <input type="file" id="import-file" name="file" onchange="uploadFile()" class="custom-file-input">
+                        <input type="file" id="import-file" name="file" onchange="uploadFile(event)" class="custom-file-input">
                         <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
                     </div>
                     <a href="/formats/Emp_Attendance_Import_Sample.xlsx">Download Sample File</a>
@@ -147,26 +147,31 @@
             exportTableToExcel("EmpMonthlyAttendanceTable", '@ViewData["Title"]');
             searchAttendance();
         });
-        function uploadFile() {
-            var frm = $("#emp-monthly-attendance-filter-frm");
-            if (frm.valid()) {
-                filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
-                    $("#import-file").val("");
-                    if (!response.includes("not supported")) {
-                        $("#EmpMonthlyAttendanceData").empty();
-                        $("#excel-import-data").html(response);
-                        var tableRowCnt = $("#ExecelData tbody tr").length;
-                        if (tableRowCnt == 0)
-                            $("#excel-import-data").empty();
-                        $("#btn-excel").addClass("d-none");
-                    }
-                    else
-                        showErrorToastr(response);
-                });
+        function uploadFile(event) {
+            var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+            if (excelExtensions.includes(ext)) {
+                var frm = $("#emp-monthly-attendance-filter-frm");
+                if (frm.valid()) {
+                    filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
+                        $("#import-file").val("");
+                        if (!response.includes("not supported")) {
+                            $("#EmpMonthlyAttendanceData").empty();
+                            $("#excel-import-data").html(response);
+                            var tableRowCnt = $("#ExecelData tbody tr").length;
+                            if (tableRowCnt == 0)
+                                $("#excel-import-data").empty();
+                            $("#btn-excel").addClass("d-none");
+                        }
+                        else
+                            showErrorToastr(response);
+                    });
+                }
+                else
+                    showErrorToastr("Please provide highlighted field");
+                $("#import-file").val("");
             }
             else
-                showErrorToastr("Please provide highlighted field");
-            $("#import-file").val("");
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
     </script>
 }

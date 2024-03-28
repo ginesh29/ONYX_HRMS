@@ -14,15 +14,14 @@
                         <div class="form-group">
                             <label asp-for="LvCd"></label>
                             <select asp-for="LvCd" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems">
-                                
                             </select>
                             <span asp-validation-for="LvCd" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.PayTypCd) ? "disabled-container" : "")">
                             <label asp-for="PayTypCd"></label>
-                            <select asp-for="PayTypCd" class="form-control select-picker" asp-items="ViewBag.PayTypeItems" onchange="onChangePayType(this)">
+                            <select asp-for="PayTypCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.PayTypCd) ? "disabled" : "")" asp-items="ViewBag.PayTypeItems" onchange="onChangePayType(this)">
                                 
                             </select>
                             <span asp-validation-for="PayTypCd" class="text-danger"></span>
@@ -31,9 +30,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.PayTypCd) ? "disabled-container" : "")">
                             <label asp-for="PayCd"></label>
-                            <select asp-for="PayCd" class="form-control select-picker" asp-items="ViewBag.PayCodeItems">
+                            <select asp-for="PayCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.PayTypCd) ? "disabled" : "")" asp-items="ViewBag.PayCodeItems">
                                 
                             </select>
                             <span asp-validation-for="PayCd" class="text-danger"></span>

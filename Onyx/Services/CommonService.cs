@@ -10,19 +10,40 @@ using System.Net.Sockets;
 
 namespace Onyx.Services
 {
-    public class CommonService(AppDbContext context)
+
+    public class CommonService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
     {
         private readonly AppDbContext _context = context;
-
-        public string GetConnectionString()
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        public IEnumerable<Company_Getrow_Result> GetCompanies()
         {
+            var procedureName = "Company_Getrow";
+            using var connection = _context.CreateConnection();
+            var companies = connection.Query<Company_Getrow_Result>
+                (procedureName, commandType: CommandType.StoredProcedure);
+            return companies;
+        }
+        public string GetConnectionString(string CoCd = null)
+        {
+            CoCd ??= _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
             var procedureName = "CompanyDatabases_Getrow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CoAbbr", CommonSetting.MAINCOMPANY);
+            parameters.Add("v_CoCd", CoCd);
             using var connection = _context.CreateConnection();
             var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return $"Server={company.Server};Initial catalog={company.DbName};uid={company.DbUser}; pwd={company.DbPwd};TrustServerCertificate=True;Connection Timeout=120;";
+        }
+        public IEnumerable<Branch_UserCo_GetRow_Result> GetUserCompanies(string UserCd)
+        {
+            var procedureName = "Branch_UserCo_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_UserCd", UserCd);
+            var connectionString = GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var companies = connection.Query<Branch_UserCo_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return companies;
         }
         public IEnumerable<GetMenuWithPermissions_Result> GetMenuWithPermissions(string UserCd)
         {
@@ -119,7 +140,7 @@ namespace Onyx.Services
         {
             var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
             var os = Environment.OSVersion.Platform.ToString();
-            var connectionString = GetConnectionString();
+            var connectionString = GetConnectionString(model.CoCd);
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CoCd);

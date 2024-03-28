@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -23,22 +24,29 @@ namespace Onyx.Controllers
         }
         public IActionResult Login()
         {
+            ViewBag.CompanyItems = _commonService.GetCompanies().Select(m => new SelectListItem
+            {
+                Text = m.CoName,
+                Value = m.Cd.Trim()
+            });
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
+            string UserCd = string.Empty;
             var result = new CommonResponse { Success = false };
             if (model.UserType == UserTypeEnum.User)
             {
                 var validateUser = _userService.ValidateUser(model);
                 if (validateUser != null)
                 {
-                    var user = _userService.GetUsers(validateUser.Cd).FirstOrDefault();
+                    UserCd = validateUser.Cd;
+                    var user = _userService.GetUsers(validateUser.Cd, model.CoCd).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = model.CoCd,
-                        UserCd = validateUser.Cd,
+                        UserCd = UserCd,
                         UserOrEmployee = "U",
                         Username = validateUser.UName,
                         UserAbbr = user.Abbr,
@@ -47,6 +55,7 @@ namespace Onyx.Controllers
                     };
                     await _authService.SignInUserAsync(u, model.RememberMe);
                     result.Success = true;
+                    result.Message = "Login Successfully";
                 }
                 else
                     result.Message = CommonMessage.INVALIDUSER;
@@ -56,11 +65,12 @@ namespace Onyx.Controllers
                 var employee = _userService.ValidateEmployee(model);
                 if (employee != null)
                 {
-                    var user = _userService.GetUsers(employee.UserCd.Trim()).FirstOrDefault();
+                    UserCd = employee.UserCd.Trim();
+                    var user = _userService.GetUsers(employee.UserCd.Trim(), model.CoCd).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = model.CoCd,
-                        UserCd = employee.UserCd.Trim(),
+                        UserCd = UserCd,
                         UserOrEmployee = "E",
                         Username = user.Username,
                         UserAbbr = model.LoginId,
@@ -69,27 +79,21 @@ namespace Onyx.Controllers
                     };
                     await _authService.SignInUserAsync(u, model.RememberMe);
                     result.Success = true;
+                    result.Message = "Login Successfully";
                 }
                 else
                     result.Message = CommonMessage.INVALIDUSER;
             }
-            return Json(result);
-        }
-        [HttpPost]
-        public async Task<IActionResult> LoginWithCompany(string CoCd)
-        {
-            await _authService.UpdateClaim("CompanyCd", CoCd);
-            _commonService.SetActivityLogHead(new ActivityLogModel
+            if (result.Success)
             {
-                Browser = _loggedInUser.Browser,
-                CoCd = CoCd,
-                UserCd = _loggedInUser.UserCd
-            });
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = "Login Successfully",
-            };
+                //HttpContext.Session.SetString("CoCd", model.CoCd);
+                _commonService.SetActivityLogHead(new ActivityLogModel
+                {
+                    Browser = model.Browser,
+                    CoCd = model.CoCd,
+                    UserCd = UserCd
+                });
+            }
             return Json(result);
         }
         public async Task<IActionResult> LogOut()
@@ -114,7 +118,7 @@ namespace Onyx.Controllers
                 });
                 if (user != null)
                 {
-                    var userFromDb = _userService.GetUsers(_loggedInUser.UserCd).FirstOrDefault();
+                    var userFromDb = _userService.GetUsers(_loggedInUser.UserCd, _loggedInUser.CompanyCd).FirstOrDefault();
                     userFromDb.UPwd = model.ConfirmPassword.Encrypt();
                     _settingService.SaveUser(new UserModel
                     {

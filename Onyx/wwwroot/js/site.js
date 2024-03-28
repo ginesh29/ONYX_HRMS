@@ -38,6 +38,7 @@ const dataTableDefaultOptions = {
 }
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 const pdfExtensions = ['pdf'];
+const excelExtensions = ['xlsx'];
 const LeaveConfirmTypesEnum = {
     Confirm: 0,
     Revise: 1,

@@ -9,7 +9,7 @@ namespace Onyx.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         public async Task SignInUserAsync(LoggedInUserModel model, bool rememberMe)
-        {
+        {            
             var claims = new List<Claim>()
             {
                 new("Username", model.Username),
@@ -17,12 +17,9 @@ namespace Onyx.Services
                 new("UserType",model.UserType.ToString()),
                 new("Browser", model.Browser),
                 new("UserCd", model.UserCd),
-                new("UserOrEmployee", model.UserOrEmployee)
+                new("UserOrEmployee", model.UserOrEmployee),
+                new("CompanyCd", model.CompanyCd)
             };
-            if (!string.IsNullOrEmpty(model.CompanyCd))
-            {
-                claims.Add(new("CompanyCd", model.CompanyCd));
-            }
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var prop = new AuthenticationProperties();

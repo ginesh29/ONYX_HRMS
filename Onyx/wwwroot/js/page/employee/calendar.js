@@ -86,18 +86,23 @@ function bindEmployeeDropdown(callback) {
         if (callback) callback();
     });
 }
-function uploadFile() {
-    var frm = $("#import-frm");
-    filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
-        if (!response.includes("not supported")) {
-            $("#excel-import-data").html(response);
-            var tableRowCnt = $("#ExecelData tbody tr").length;
-            if (tableRowCnt == 0)
-                $("#excel-import-data").empty();
-            calendar.refetchEvents();
-        }
-        else
-            showErrorToastr(response);
-        $("#import-file").val("");
-    });
+function uploadFile(event) {
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    if (excelExtensions.includes(ext)) {
+        var frm = $("#import-frm");
+        filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
+            if (!response.includes("not supported")) {
+                $("#excel-import-data").html(response);
+                var tableRowCnt = $("#ExecelData tbody tr").length;
+                if (tableRowCnt == 0)
+                    $("#excel-import-data").empty();
+                calendar.refetchEvents();
+            }
+            else
+                showErrorToastr(response);
+            $("#import-file").val("");
+        });
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 }

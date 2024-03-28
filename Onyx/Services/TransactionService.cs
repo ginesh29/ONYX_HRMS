@@ -540,6 +540,67 @@ namespace Onyx.Services
                 (procedureName, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<EmpFund_Approval_GetRow_Result> GetEmpFundApprovalData(string EmpCd, string EmpUser, string CoCd)
+        {
+            var procedureName = "EmpFund_Approval_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Param", string.Empty);
+            parameters.Add("v_Typ", "3");
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_EmpCd", EmpCd);
+            parameters.Add("v_EmpUser", EmpUser);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpFund_Approval_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<EmpFund_View_Getrow_Result> GetEmpFundDisburseData(string transNo)
+        {
+            var procedureName = "EmpFund_View_Getrow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_TransNo", transNo);
+            parameters.Add("v_Typ", string.Empty);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpFund_View_Getrow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpFundAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            parameters.Add("v_ApprDt", model.ApprDate ?? DateTime.Now.Date);
+            parameters.Add("v_Status", model.Status);
+            parameters.Add("v_Typ", model.Typ);
+            parameters.Add("v_Amount", model.Amount);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void SaveEmpFundConfirm(EmpFund_View_Getrow_Result model, string CoCd)
+        {
+            var connectionString = _commonService.GetConnectionString();
+            var procedureName = "EmpFund_Confirm_Revise_Cancel_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Typ", model.Status);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_CancelBy", model.ApprBy);
+            parameters.Add("v_CancelDt", DateTime.Now.Date);
+            parameters.Add("v_Remarks", model.Remarks);
+            parameters.Add("v_LvSalary", model.Amount);
+            parameters.Add("v_Disburse", "Y");
+            parameters.Add("v_Appltyp", model.Type);
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         #endregion
 
         #region Emp Transfer
@@ -827,14 +888,14 @@ namespace Onyx.Services
             parameters.Add("v_Amt", model.Amt);
             parameters.Add("v_Narr", narr);
             parameters.Add("v_EntryBy", filterModel.EntryBy);
-            parameters.Add("v_SrNo", model.srNo);
+            parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_FromDt", filterModel.FromDt);
             parameters.Add("v_ToDt", filterModel.ToDt);
             parameters.Add("v_TrnInd", "M");
             parameters.Add("v_EmpDiv", filterModel.Branch);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            var a = connection.Query<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> GetVariablePayComponentFromExcel(IFormFile file, string CoCd)
         {
@@ -870,7 +931,7 @@ namespace Onyx.Services
                     ErrorMessage = errorMessage,
                     Cd = empCd,
                     Amt = amt,
-                    srNo = cnt
+                    SrNo = cnt
                 };
                 result.Add(excelData);
                 cnt++;
@@ -894,53 +955,6 @@ namespace Onyx.Services
 
                 EmpTrans_Update(item, filterModel);
             }
-        }
-        #endregion
-
-        #region
-        public IEnumerable<EmpFund_Approval_GetRow_Result> GetEmpFundApprovalData(string EmpCd, string EmpUser, string CoCd)
-        {
-            var procedureName = "EmpFund_Approval_GetRow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Param", string.Empty);
-            parameters.Add("v_Typ", "3");
-            parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_EmpCd", EmpCd);
-            parameters.Add("v_EmpUser", EmpUser);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<EmpFund_Approval_GetRow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-        public IEnumerable<EmpFund_View_Getrow_Result> GetEmpFundDisburseData(string transNo, string EmpCd)
-        {
-            var procedureName = "EmpFund_View_Getrow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_EmpCd", EmpCd);
-            parameters.Add("v_TransNo", transNo);
-            parameters.Add("v_Typ", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<EmpFund_View_Getrow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-        public void SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model)
-        {
-            var connectionString = _commonService.GetConnectionString();
-            var procedureName = "EmpFundAppr_Update";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_TransNo", model.TransNo);
-            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
-            parameters.Add("v_ApprBy", model.ApprBy);
-            parameters.Add("v_ApprDt", model.ApprDate ?? DateTime.Now.Date);
-            parameters.Add("v_Status", model.Status);
-            parameters.Add("v_Typ", model.Typ);
-            parameters.Add("v_Amount", model.Amount);
-            parameters.Add("v_EntryBy", model.EntryBy);
-            var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
     }

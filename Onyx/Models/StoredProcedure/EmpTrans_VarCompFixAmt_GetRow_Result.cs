@@ -2,7 +2,7 @@
 {
     public class EmpTrans_VarCompFixAmt_GetRow_Result
     {
-        public int srNo { get; set; }
+        public int SrNo { get; set; }
         public string Cd { get; set; }
         public string EmpName { get; set; }
         public string Branch { get; set; }

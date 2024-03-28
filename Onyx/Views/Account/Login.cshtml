@@ -3,7 +3,6 @@
     Layout = null;
     ViewData["Title"] = "Login";
     var userTypeList = Html.GetEnumSelectList<UserTypeEnum>().Select(m => { m.Selected = m.Value == ((int)UserTypeEnum.User).ToString(); return m; });
-    IEnumerable<SelectListItem> companyItems = ViewBag.CompanyItems;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -43,11 +42,11 @@
                                 }
                             </div>
                         </div>
-                        <div class="login__field d-none">
+                        <div class="login__field">
                             <div>
                                 <i class="login__icon fas fa-building"></i>
-                                <select asp-for="CoCd" class="login__input" id="login-company-dropdown" onchange="changeCompany(this)">
-                                    <option value="0">@CommonSetting.DEFAULTSELECT</option>
+                                <select asp-for="CoCd" class="login__input" id="login-company-dropdown" asp-items="ViewBag.CompanyItems">
+                                    <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                             </div>
                             <span asp-validation-for="CoCd" class="text-danger"></span>
@@ -86,15 +85,12 @@
             loadingButton(btn);
             postAjax(`/account/login`, frm.serialize(), function (response) {
                 if (response.success) {
-                    bindCompanyDropdown(function () {
-                        var drpLength = $("#login-company-dropdown option").length
-                        if (drpLength == 1)
-                            loginWithCompany();
-                        else {
-                            $("#login-company-dropdown").closest(".login__field").removeClass("d-none");
-                            $("#btn-login").attr("onclick", "loginWithCompany(this)");
-                        }
-                    });
+                    var returnUrl = $("#returnUrl").val();
+                    returnUrl = returnUrl ? returnUrl : "/";
+                    showSuccessToastr(response.message)
+                    setTimeout(function () {
+                        window.location.href = returnUrl;
+                    }, 1000)
                     unloadingButton(btn);
                 }
                 else
@@ -102,30 +98,6 @@
                 unloadingButton(btn);
             });
         }
-    }
-    function loginWithCompany(btn) {
-        loadingButton(btn);
-        var returnUrl = $("#returnUrl").val();
-        returnUrl = returnUrl ? returnUrl : "/";
-        var companyCd = $("#login-company-dropdown").val();
-
-        postAjax(`/account/LoginWithCompany`, { CoCd: companyCd }, function (response) {
-            showSuccessToastr(response.message)
-            setTimeout(function () {
-                window.location.href = returnUrl;
-            }, 1000)
-        });
-    }
-    function bindCompanyDropdown(callback) {
-        getAjax("/home/FetchCompanies", function (response) {
-            var drpHtml = '';
-            $.each(response.data, function (i, company) {
-                drpHtml += `<option value="${company.value}">${company.text}</option>`;
-            });
-            $("#login-company-dropdown").html(drpHtml);
-            $("#login-frm input").prop("disabled", true);
-            if (callback) callback();
-        });
     }
     $('#Password').keypress(function (e) {
         if (e.keyCode === 13) {

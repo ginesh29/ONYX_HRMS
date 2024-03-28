@@ -9,7 +9,7 @@
                     <th>No.</th>
                     <th>Trans. No.</th>
                     <th>Employee</th>
-                    <th>Tran Dt</th>
+                    <th>Branch</th>
                     <th>Amount</th>
                     <th></th>
                 </tr>
@@ -36,32 +36,25 @@
                             return `${row.emp.trim()}(${row.empCd.trim()})`
                         }
                     },
-                    {
-                        data: function (row) {
-                            return row.transDt && moment(row.transDt).format(CommonSetting.DisplayDateFormat);
-                        },
-                    },
+                    { data: "div" },
                     { data: "amount" },
                     {
                         data: function (row) {
                             return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
                                                         <i class="fas fa-search"></i>
                                                     </button>
-                                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}')">
+                                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundDisburseModal('${row.transNo.trim()}')">
                                                         <i class="fas fa-check"></i>
-                                                    </button>
-                                                            <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}',true)">
-                                                        <i class="fa fa-times"></i>
                                                     </button>`;
-                        }, "width": "150px"
+                        }, "width": "80px"
                     }
                 ],
             }
         );
 
-        function showFundApprovalModal(transNo, reject) {
-            var url = `/Transactions/GetEmpFundApproval?transNo=${transNo}`;
-            $('#EmpFundApprovalModal').load(url, function () {
+        function showFundDisburseModal(transNo, reject) {
+            var url = `/Transactions/GetEmpFundDisburse?transNo=${transNo}`;
+            $('#EmpFundDisburseModal').load(url, function () {
                 parseDynamicForm();
                 if (!reject) {
                     var amt = $('#Amount').attr("data-max");
@@ -73,27 +66,27 @@
                             }
                         });
                     }, 500)
-                    $("#Status").val("Y");
+                    $("#Status").val("0");
                 }
                 else {
                     $("#approval-div").addClass("d-none");
                     $("#approval-div input").val("");
                     $("#btn-submit").text("Reject");
                     $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
-                    $("#Status").val("R");
+                    $("#Status").val("1");
                 }
-                $("#EmpFundApprovalModal").modal("show");
+                $("#EmpFundDisburseModal").modal("show");
             });
         }
 
-        function saveFundAppraval(btn) {
-            var frm = $("#fund-approval-frm");
+        function saveFundDisburse(btn) {
+            var frm = $("#fund-disburse-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                postAjax("/Transactions/SaveEmpFundApproval", frm.serialize(), function (response) {
+                postAjax("/Transactions/SaveEmpFundDisburse", frm.serialize(), function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
-                        $("#EmpFundApprovalModal").modal("hide");
+                        $("#EmpFundDisburseModal").modal("hide");
                         reloadDatatable();
                     }
                     else {

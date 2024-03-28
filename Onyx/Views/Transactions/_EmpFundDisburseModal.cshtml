@@ -1,0 +1,61 @@
+﻿@model EmpFund_View_Getrow_Result
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+}
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Employee Fund Approval</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h5 class="text-primary">Application & Approval Details</h5>
+            <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
+            <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
+            <div><span class="font-weight-bold">Application Date: </span>@Model.AppDt.Value.ToString(dateFormat)</div>
+            <div><span class="font-weight-bold">Fund Type: </span>@Model.Type</div>
+            <div><span class="font-weight-bold">Requested Amount: </span>@Model.Amount</div>
+            <div><span class="font-weight-bold">Approved Date: </span>@Model.ApprDt.Value.ToString(dateFormat)</div>
+            <div><span class="font-weight-bold">Approved By: </span>@Model.ApprBy</div>
+            <form id="fund-disburse-frm">
+                <input type="hidden" asp-for="TransNo" />
+                @* <input type="hidden" asp-for="Current_Approval_Level" />
+                <input type="hidden" asp-for="Current_Approval" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="Typ" /> *@
+                <div id="approval-div">
+                    <h5 class="text-primary">Disburse/Cancel</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Status"></label>
+                                <select type="text" asp-for="Status" class="form-control select-picker">
+                                    <option value="0">Disburse</option>
+                                    <option value="1">Cancel</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Amount"></label>
+                                <input type="text" asp-for="Amount" class="form-control int-input" data-max="@Model.Amount" />
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Remarks"></label>
+                        <textarea type="text" asp-for="Remarks" class="form-control"></textarea>
+                        <span asp-validation-for="Remarks" class="text-danger"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveFundDisburse(this)" id="btn-submit">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
