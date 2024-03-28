@@ -57,6 +57,12 @@ const dateRangePickerDefaultOptions = {
     autoUpdateInput: false,
     autoApply: true,
 }
+function loadingPage() {
+    $("#page-loader").removeClass("d-none");
+}
+function unloadingPage() {
+    $("#page-loader").addClass("d-none");
+}
 function loadingButton(btn) {
     var $this = $(btn);
     if (!$this.find(".fa-spinner").length) {
@@ -65,7 +71,7 @@ function loadingButton(btn) {
     }
     else
         $this.find(".fa-spinner").removeClass("d-none");
-    $("#page-loader").removeClass("d-none");
+    loadingPage();
     $this.prop("disabled", true);
 }
 function unloadingButton(btn) {
@@ -74,7 +80,7 @@ function unloadingButton(btn) {
         $this.prop("disabled", false);
         $($this).find("i").removeClass("d-none");
         $this.find(".fa-spinner").addClass("d-none");
-        $("#page-loader").addClass("d-none");
+        unloadingPage();
     }, 1000);
 }
 function showSuccessToastr(msg) {

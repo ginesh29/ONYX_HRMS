@@ -833,8 +833,14 @@ namespace Onyx.Controllers
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
                 string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
-                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
-                if (validData.Any())
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records imported succussfully";
+                bool validHeader = _employeeService.ValidHeaderCalendarEventExcel(file);
+                if (!validHeader)
+                {
+                    excelData = null;
+                    Message = "Headers are not matched. Download again & refill data";
+                }
+                if (validHeader && validData.Any())
                     _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
                 return PartialView("_ExcelData", new { Data = excelData, Message });
             }

@@ -90,6 +90,7 @@ function uploadFile(event) {
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
     if (excelExtensions.includes(ext)) {
         var frm = $("#import-frm");
+        loadingPage();
         filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
             if (!response.includes("not supported")) {
                 $("#excel-import-data").html(response);
@@ -101,6 +102,7 @@ function uploadFile(event) {
             else
                 showErrorToastr(response);
             $("#import-file").val("");
+            unloadingPage();
         });
     }
     else

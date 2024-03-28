@@ -3,40 +3,43 @@
     var excelData = (IEnumerable<EmpCalendarExcelModel>)Model.Data;
     var dateFormat = ExtensionMethod.GetDateFormat();
 }
-<table class="table table-sm mt-3" id="ExecelData">
-    <thead class="thead-dark">
-        <tr>
-            <th>Employee Code</th>
-            <th>Date</th>
-            <th>Title</th>
-            <th>Holiday</th>
-            <th>Narration</th>
-            <th></th>
-        </tr>
-    </thead>
-    @foreach (var item in excelData)
-    {
-        <tr>
-            <td>
-                <span>
-                    @item.EmpCd
-                    @if (item.IsValid)
-                    {
-                        <i class="far fa-check-circle text-success" aria-hidden="true"></i>
-                    }
-                    else
-                    {
-                        <i class="far fa-times-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-html="true" data-original-title="@item.ErrorMessage"></i>
-                    }
-                </span>
-            </td>
-            <td>@item.Date.ToString(dateFormat)</td>
-            <td>@item.Title</td>
-            <td>@(item.Holiday ? "Y" : "N")</td>
-            <td>@item.Narr</td>
-        </tr>
-    }
-</table>
+@if (excelData != null)
+{
+    <table class="table table-sm mt-3" id="ExecelData">
+        <thead class="thead-dark">
+            <tr>
+                <th>Employee Code</th>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Holiday</th>
+                <th>Narration</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var item in excelData)
+        {
+            <tr>
+                <td>
+                    <span>
+                        @item.EmpCd
+                        @if (item.IsValid)
+                        {
+                            <i class="far fa-check-circle text-success" aria-hidden="true"></i>
+                        }
+                        else
+                        {
+                            <i class="far fa-times-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-html="true" data-original-title="@item.ErrorMessage"></i>
+                        }
+                    </span>
+                </td>
+                <td>@item.Date.ToString(dateFormat)</td>
+                <td>@item.Title</td>
+                <td>@(item.Holiday ? "Y" : "N")</td>
+                <td>@item.Narr</td>
+            </tr>
+        }
+    </table>
+}
 <script>
     if ('@Model.Message'.includes("succussfully"))
         showSuccessToastr('@Model.Message');

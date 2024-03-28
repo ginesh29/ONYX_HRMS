@@ -754,7 +754,13 @@ namespace Onyx.Controllers
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
                 string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
-                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records imported succussfully";
+                bool validHeader = _transactionService.ValidHeaderAttendanceExcel(file);
+                if (validData.Any() && validHeader)
+                {
+                    excelData = null;
+                    Message = "Headers are not matched. Download again & refill data";
+                }
                 if (validData.Any())
                     _transactionService.ImportAttendanceExcelData(validData, filterModel);
                 return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
@@ -851,8 +857,14 @@ namespace Onyx.Controllers
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
                 string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
-                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records importd succussfully";
-                if (validData.Any())
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records imported succussfully";
+                bool validHeader = _transactionService.ValidHeaderVariblePayComponentsExcel(file);
+                if (!validHeader)
+                {
+                    excelData = null;
+                    Message = "Headers are not matched. Download again & refill data";
+                }
+                if (validData.Any() && validHeader)
                     _transactionService.ImportVariablePayComponentExcelData(validData, filterModel, _loggedInUser.CompanyCd);
                 return PartialView("_VariablePayDedComponentsExcelData", new { Data = excelData, Message });
             }
@@ -928,7 +940,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveEmpFundDisburse(EmpFund_View_Getrow_Result model, string processId)
         {
-            _transactionService.SaveEmpFundConfirm(model,_loggedInUser.CompanyCd);
+            _transactionService.SaveEmpFundConfirm(model, _loggedInUser.CompanyCd);
             var ActivityAbbr = "UPD";
             var action = model.Status == "0" ? "disbursed" : "canceled";
             var Message = $", Fund is {action} With Trans no={model.TransNo}";

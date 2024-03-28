@@ -152,6 +152,7 @@
             if (excelExtensions.includes(ext)) {
                 var frm = $("#emp-monthly-attendance-filter-frm");
                 if (frm.valid()) {
+                    loadingPage();
                     filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
                         $("#import-file").val("");
                         if (!response.includes("not supported")) {
@@ -164,6 +165,7 @@
                         }
                         else
                             showErrorToastr(response);
+                        unloadingPage();
                     });
                 }
                 else

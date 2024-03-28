@@ -1,7 +1,7 @@
 ﻿function BindEmployeeGrid(url) {
-    $("#page-loader").removeClass("d-none");
+    loadingPage();
     $('#EmployeeTableContainer').load(url, function () {
-        $("#page-loader").addClass("d-none");
+        unloadingPage();
     });
 }
 bindEmployeeDropdown();

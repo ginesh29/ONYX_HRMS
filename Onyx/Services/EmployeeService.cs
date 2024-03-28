@@ -524,13 +524,26 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public bool ValidHeaderCalendarEventExcel(IFormFile file)
+        {
+            var result = true;
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            reader.Read();
+            var headers = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+                headers.Add(Convert.ToString(reader.GetValue(i)));
+            var expectedHeaders = new List<string> { "Employee Code", "Date", "Title", "Holiday", "Narration" };
+            if (!headers.SequenceEqual(expectedHeaders))
+                result = false;
+            return result;
+        }
         public IEnumerable<EmpCalendarExcelModel> GetCalendarEventsFromExcel(IFormFile file, string CoCd)
         {
             using var stream = file.OpenReadStream();
             using var reader = ExcelReaderFactory.CreateReader(stream);
             var result = new List<EmpCalendarExcelModel>();
             reader.Read();
-            var dateFormat = ExtensionMethod.GetDateFormat();
             while (reader.Read())
             {
                 bool isEmptyRow = true;

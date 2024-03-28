@@ -781,6 +781,21 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public bool ValidHeaderAttendanceExcel(IFormFile file)
+        {
+            var result = true;
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            reader.Read();
+            var headers = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+                headers.Add(Convert.ToString(reader.GetValue(i)));
+            headers = headers.Where(m => !string.IsNullOrEmpty(m)).ToList();
+            var expectedHeaders = new List<string> { "Employee Code", "No Of Days", "Paid", "Unpaid", "W.OT", "H.OT" };
+            if (!headers.SequenceEqual(expectedHeaders))
+                result = false;
+            return result;
+        }
         public IEnumerable<EmpAttendance_Getrow_Result> GetAttendanceFromExcel(IFormFile file, string CoCd)
         {
             using var stream = file.OpenReadStream();
@@ -936,6 +951,21 @@ namespace Onyx.Services
                 result.Add(excelData);
                 cnt++;
             }
+            return result;
+        }
+        public bool ValidHeaderVariblePayComponentsExcel(IFormFile file)
+        {
+            var result = true;
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            reader.Read();
+            var headers = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+                headers.Add(Convert.ToString(reader.GetValue(i)));
+            headers = headers.Where(m => !string.IsNullOrEmpty(m)).ToList();
+            var expectedHeaders = new List<string> { "Employee Code", "Amount" };
+            if (!headers.SequenceEqual(expectedHeaders))
+                result = false;
             return result;
         }
         public void ImportVariablePayComponentExcelData(IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> excelData, VariablePayDedComponentFilterModel filterModel, string CoCd)
