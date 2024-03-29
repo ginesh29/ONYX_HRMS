@@ -15,6 +15,7 @@
                     <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
                         <label asp-for="EmpCd"></label>
                         <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
+                            <option value="@Model.EmpCd">@Model.EmpName</option>
                         </select>
                         <span asp-validation-for="EmpCd" class="text-danger"></span>
                     </div>
@@ -22,7 +23,7 @@
                 else
                 {
                     <input type="hidden" asp-for="EmpCd" />
-                }                
+                }
                 <div class=" row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
@@ -84,8 +85,3 @@
         </div>
     </div>
 </div>
-<script>
-    bindEmployeeDropdown(function () {
-        $('#EmpCd').selectpicker('val', '@Model.EmpCd');
-    });
-</script>

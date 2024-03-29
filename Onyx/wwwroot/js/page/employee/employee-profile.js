@@ -342,6 +342,7 @@ function showDocumentModal(empCd, docTypeCd, srNo) {
     empCd = empCd ? empCd : empCode;
     var url = `/Employee/GetDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
     $('#DocumentModal').load(url, function () {
+        bindEmployeeDropdown();
         parseDynamicForm();
         $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
         if (!visibleEmpName)
@@ -522,6 +523,7 @@ function showComponentModal(empCd, edCd, edTyp, srNo) {
     var url = `/Employee/GetComponent?empCd=${encodeURI(empCd)}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`;
     $('#ComponentModal').load(url, function () {
         parseDynamicForm();
+        bindEmployeeDropdown();
         changePercentageAmt();
         $("#ComponentModal").modal("show");
     });

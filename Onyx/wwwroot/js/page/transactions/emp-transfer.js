@@ -41,7 +41,7 @@ function showEmpTransferModal(empCd, srNo) {
     var url = `/Transactions/GetEmpTransfer?empCd=${empCd}&srNo=${srNo}`;
     $('#EmployeeTransferModal').load(url, function () {
         parseDynamicForm();
-        $("#btn-submit").prop("disabled", true);
+        bindEmployeeDropdown();
         $("#EmployeeTransferModal").modal("show");
     });
 }

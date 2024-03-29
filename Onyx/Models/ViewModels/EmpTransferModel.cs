@@ -7,7 +7,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Employee")]
         public string EmpCd { get; set; }
-        public string Fname { get; set; }
+        public string Name { get; set; }
         public decimal SrNo { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Transfer Date")]

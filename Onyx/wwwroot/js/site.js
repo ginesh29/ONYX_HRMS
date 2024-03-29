@@ -305,11 +305,13 @@ $("#user-company-dropdown").on('change', function (e) {
         window.location.reload();
     });
 })
-var bindEmployeeDropdown = function () {
+function bindEmployeeDropdown() {
     var el = $("select#EmpCd,select#EmployeeCode");
+    id = el.attr("id");
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
+        dropdownParent: $(`#${id}`).closest(".form-group"),
         ajax: {
             url: `/Employee/FetchEmployeeItems`,
             data: function (params) {
@@ -332,6 +334,7 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
+        dropdownParent: "#BankAccountModal",
         ajax: {
             url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
             data: function (params) {
@@ -353,6 +356,14 @@ function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();
 }
+
+$(document).on('select2:open', e => {
+    const select2 = $(e.target).data('select2');
+    if (!select2.options.get('multiple')) {
+        select2.dropdown.$search.get(0).focus();
+    }
+});
+
 function initControls() {
     $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)
     $(".select-picker").attr("title", "-- Select --");

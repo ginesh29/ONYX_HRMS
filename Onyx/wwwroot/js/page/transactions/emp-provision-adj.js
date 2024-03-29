@@ -42,7 +42,7 @@ function showEmpProvisionAdjModal(transNo) {
     var url = `/Transactions/GetProvisionAdj?transNo=${transNo}`;
     $('#EmpProvisionAdjModal').load(url, function () {
         parseDynamicForm();
-        $("#btn-submit").prop("disabled", true);
+        bindEmployeeDropdown();
         $("#EmpProvisionAdjModal").modal("show");
     });
 }

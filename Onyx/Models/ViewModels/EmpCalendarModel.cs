@@ -20,5 +20,6 @@ namespace Onyx.Models.ViewModels
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }
         public DateTime? EditDt { get; set; }
+        public string EmpName { get; set; }
     }
 }

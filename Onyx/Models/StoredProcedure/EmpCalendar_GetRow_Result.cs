@@ -4,6 +4,7 @@
     {
         public int? SrNo { get; set; }
         public string EmpCd { get; set; }
+        public string EmpName { get; set; }
         public DateTime Date { get; set; }
         public bool Holiday { get; set; }
         public string Title { get; set; }

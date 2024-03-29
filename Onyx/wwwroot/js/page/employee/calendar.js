@@ -35,6 +35,7 @@ function showCalendarEventModal(srNo) {
     var url = `/Employee/GetCalendarEvent?srNo=${srNo}`;
     $('#CalendarEventModal').load(url, function () {
         parseDynamicForm();
+        bindEmployeeDropdown();
         $("#CalendarEventModal").modal("show");
     });
 }

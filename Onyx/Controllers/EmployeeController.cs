@@ -812,6 +812,7 @@ namespace Onyx.Controllers
                     SrNo = calendarEvent.SrNo,
                     Title = calendarEvent.Title,
                     EmpCd = calendarEvent.EmpCd,
+                    EmpName = calendarEvent.EmpName,
                     Date = calendarEvent.Date,
                     Holiday = calendarEvent.Holiday,
                     Narr = calendarEvent.Narr,
