@@ -853,6 +853,7 @@ namespace Onyx.Services
                 var spYearMonth = filterModel.MonthYear.Split("/");
                 filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
                 item.NHrs = Convert.ToInt32((item.W_days - item.Up_HDays - item.P_HDays) * float.Parse(filterModel.WorkingHrDay));
+                item.Payable = item.W_days - item.Up_HDays;
                 UpdateEmpMonthlyAttendance(item, filterModel);
             }
         }

@@ -141,6 +141,8 @@
             var workingHrDay = $("#WorkingHrDay").val();
             var NHrs = parseInt((W_days - curr.value - P_HDays) * parseFloat(workingHrDay));
             $(`#AttendanceData_${index}__NHrs`).val(NHrs);
+            var payable = parseInt(W_days - curr.value);
+            $(`#AttendanceData_${index}__Payable`).val(payable);
         }
         $('#btn-excel').on('click', function (e) {
             e.preventDefault();
