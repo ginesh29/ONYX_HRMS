@@ -344,11 +344,22 @@ function showDocumentModal(empCd, docTypeCd, srNo) {
     $('#DocumentModal').load(url, function () {
         bindEmployeeDropdown();
         parseDynamicForm();
+        showHideExpiry();
         $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
         if (!visibleEmpName)
             $("#EmpCd").closest(".form-group").addClass("d-none");
         $("#DocumentModal").modal("show");
     });
+}
+function showHideExpiry() {
+    $("#expiry-div").addClass("d-none");
+    var expiry = $("#Expiry").is(":checked");
+    if (expiry)
+        $("#expiry-div").removeClass("d-none");
+    else {
+        var el = $("#expiry-div");
+        el.find("input").val("");
+    }
 }
 function deleteDocument(empCd, docTypeCd, srNo) {
     Swal.fire({

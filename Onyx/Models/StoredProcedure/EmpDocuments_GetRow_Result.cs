@@ -21,5 +21,6 @@
         public string Filter { get; set; }
         public string DocTypCd { get; set; }
         public decimal SrNo { get; set; }
+        public bool Expiry { get; set; }
     }
 }

@@ -311,7 +311,7 @@ function bindEmployeeDropdown() {
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
-        dropdownParent: $(`#${id}`).closest(".form-group"),
+        dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
         ajax: {
             url: `/Employee/FetchEmployeeItems`,
             data: function (params) {

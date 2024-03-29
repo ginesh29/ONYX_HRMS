@@ -20,6 +20,7 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Expiry Date")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? ExpDt { get; set; }
+        public bool Expiry { get; set; }
         public string FormatedIssueDt { get; set; }
         public string FormatedExpDt { get; set; }
         [Display(Name = "Issue Place")]

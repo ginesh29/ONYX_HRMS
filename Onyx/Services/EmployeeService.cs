@@ -273,6 +273,7 @@ namespace Onyx.Services
             parameters.Add("v_OthRefNo", string.Empty);
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_Expiry", model.Expiry);
             parameters.Add("v_ExpDt", model.ExpDt);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);

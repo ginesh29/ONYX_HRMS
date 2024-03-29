@@ -57,7 +57,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="custom-control custom-checkbox form-group">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Expiry" onchange="showHideExpiry()">
+                    <label asp-for="Expiry" class="custom-control-label font-weight-normal">Expiry</label>
+                </div>
+                <div class="row" id="expiry-div">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ExpDt"></label>

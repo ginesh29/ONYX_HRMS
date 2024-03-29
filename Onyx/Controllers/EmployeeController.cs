@@ -459,6 +459,7 @@ namespace Onyx.Controllers
                     DocNo = document.DocNo,
                     DocTypSDes = document.DocTypSDes,
                     DocTypCd = document.DocTypCd.Trim(),
+                    Expiry = document.Expiry,
                     ExpDt = document.ExpDt,
                     IssueDt = document.IssueDt,
                     SrNo = document.SrNo,
