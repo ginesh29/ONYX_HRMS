@@ -50,18 +50,16 @@
                         </div>
                     </div>
                 </div>
-                @if (Model.ApprovalLevels != null)
-                {
-                    <ul>
-                        @foreach (var item in Model.ApprovalLevels)
-                        {
-                            <li>@item.EmpName (@item.EmpCd.Trim())</li>
-                        }
-                    </ul>
-                }
                 <div class="form-group">
                     <label>Approval Levels</label>
                     <select asp-for="ApprovalLevels" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                        @if (Model.ApprovalLevels != null)
+                        {
+                            @for (int i = 0; i < Model.ApprovalLevels.Count(); i++)
+                            {
+                                <option value="@Model.ApprovalLevels[i].EmpCd.Trim()" selected>@Model.ApprovalLevels[i].EmpName.Trim()</option>
+                            }
+                        }
                     </select>
                     <span asp-validation-for="ApprovalLevels" class="text-danger"></span>
                 </div>
@@ -76,7 +74,7 @@
 <script>
     var approvalLevelJson = '@jsonString';
     var approvalLevelsValues = approvalLevelJson ? approvalLevelJson.replace(/&quot;/g, '"') : null;
-    bindEmployeeDropdown('', '', '', '', function () {
+    bindEmployeeMultipleDropdown('', '', '', '', function () {
         $('#ApprovalLevels').selectpicker('val', JSON.parse(approvalLevelsValues));
     });
 </script>

@@ -61,7 +61,7 @@ namespace Onyx.Controllers
             ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(string term, int page, string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
@@ -70,7 +70,21 @@ namespace Onyx.Controllers
             var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
-            return Json(employees);
+            if (!string.IsNullOrEmpty(term))
+                employees = employees.Where(m => m.Name.Contains(term, StringComparison.OrdinalIgnoreCase) || m.Cd.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
+            var pageSize = 50;
+            var skip = page > 0 ? (page - 1) * pageSize : 0;
+            var items = employees.OrderBy(m => m.Name).Select(s => new Select2Item
+            {
+                Id = s.Cd.Trim(),
+                Text = $"{s.Name.Trim()}({s.Cd.Trim()})"
+            }).Skip(skip).Take(pageSize);
+            var result = new Select2Model
+            {
+                Items = items,
+                TotalCount = employees.Count()
+            };
+            return Json(result);
         }
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
@@ -81,9 +95,9 @@ namespace Onyx.Controllers
             if (isFilter)
             {
                 employees = employees.Where(e =>
-                 (!string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Contains(filterModel.Name))
+                 (!string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name))
                  ||
-                 (!string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Contains(filterModel.Name))
+                 (!string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name))
                  ||
                  (filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim()))
                  ||

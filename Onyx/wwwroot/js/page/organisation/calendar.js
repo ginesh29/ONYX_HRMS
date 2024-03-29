@@ -39,7 +39,7 @@ function showCalendarEventModal(cd) {
             var designations = $("#Designation_Filter").val();
             var branches = $("#Branch_Filter").val();
             var locations = $("#Location_Filter").val();
-            bindEmployeeDropdown(departments, designations, branches, locations);
+            bindEmployeeMultipleDropdown(departments, designations, branches, locations);
         })
         showHideInvite();
         $("#Invite").change(function () {
@@ -87,18 +87,6 @@ function saveCalendarEvent(btn) {
             unloadingButton(btn);
         });
     }
-}
-function bindEmployeeDropdown(departments, designations, branches, locations, callback) {
-    $("#Attendees").empty();
-    getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#Attendees").html(html);
-        $('.select-picker').selectpicker('refresh');
-        if (callback) callback();
-    });
 }
 
 function showHideInvite() {

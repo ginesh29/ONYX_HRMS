@@ -100,6 +100,13 @@
                 <div class="form-group">
                     <label>Meeting Attendees</label>
                     <select asp-for="Attendees" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                        @if (Model.Attendees != null)
+                        {
+                            @for (int i = 0; i < Model.Attendees.Count(); i++)
+                            {
+                                <option value="@Model.Attendees[i]" selected>@Model.AttendeesName[i]</option>
+                            }
+                        }
                     </select>
                     <span asp-validation-for="Attendees" class="text-danger"></span>
                 </div>
@@ -114,7 +121,7 @@
 <script>
     var attendeesJson = '@jsonString';
     var attendeesValues = attendeesJson ? attendeesJson.replace(/&quot;/g, '"') : null;
-    bindEmployeeDropdown('', '', '', '', function () {
+    bindEmployeeMultipleDropdown('', '', '', '', function () {
         $('#Attendees').selectpicker('val', JSON.parse(attendeesValues));
     });
 </script>

@@ -26,17 +26,6 @@ function resetFilter() {
     frm.find(".filter-select-picker").val('').selectpicker('refresh');
     frm.find(".filter-select-picker").selectpicker('deselectAll');
 }
-function bindEmployeeDropdown() {
-    $("#EmpCd").empty();
-    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#EmpCd").html(html);
-        $('.select-picker').selectpicker('refresh');
-    });
-}
 $("#EmpCd").change(function (e) {
     var url = `/Employee/FetchEmployees?Name=${encodeURI(e.target.value)}`;
     BindEmployeeGrid(url);

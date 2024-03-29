@@ -19,8 +19,9 @@ namespace Onyx.Models.ViewModels
         public string CoId { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public List<string> Attendees { get; set; }
+        public List<string> AttendeesName { get; set; } = [];
         public string EmailIds { get; set; }
-        
+
         [Display(Name = "Email Subject")]
         public string EmailSubject { get; set; }
         public string EntryBy { get; set; }

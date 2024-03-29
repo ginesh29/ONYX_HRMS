@@ -154,10 +154,6 @@ function parseDynamicForm() {
     $("form").removeData("unobtrusiveValidation");
     $.validator.unobtrusive.parse("form");
 }
-function removeBackdrop() {
-    $('body').removeClass('modal-open');
-    $('.modal-backdrop').remove();
-}
 function exportExcel(table, filePrefix) {
     var header = [table.columns().header().map(d => d.textContent).toArray()];
     var data = table.data().toArray();
@@ -309,6 +305,50 @@ $("#user-company-dropdown").on('change', function (e) {
         window.location.reload();
     });
 })
+var bindEmployeeDropdown = function () {
+    var el = $("select#EmpCd,select#EmployeeCode");
+    el.select2({
+        placeholder: "-- Select --",
+        allowClear: true,
+        ajax: {
+            url: `/Employee/FetchEmployeeItems`,
+            data: function (params) {
+                return { term: params.term, page: params.page || 1 };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.items,
+                    pagination: {
+                        more: (params.page * 50) < data.totalCount
+                    }
+                };
+            }
+        }
+    });
+}
+function bindEmployeeMultipleDropdown(departments, designations, branches, locations, callback) {
+    var el = $("select#ApprovalLevels,select#Attendees");
+    el.select2({
+        placeholder: "-- Select --",
+        allowClear: true,
+        ajax: {
+            url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
+            data: function (params) {
+                return { term: params.term, page: params.page || 1 };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.items,
+                    pagination: {
+                        more: (params.page * 50) < data.totalCount
+                    }
+                };
+            }
+        }
+    });
+}
 function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();

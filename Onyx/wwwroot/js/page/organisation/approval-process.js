@@ -79,15 +79,3 @@ function bindDocTypeByType(e) {
         $('.select-picker').selectpicker('refresh');
     });
 }
-function bindEmployeeDropdown(departments, designations, branches, locations, callback) {
-    $("#ApprovalLevels").empty();
-    getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#ApprovalLevels").html(html);
-        $('.select-picker').selectpicker('refresh');
-        if (callback) callback();
-    });
-}

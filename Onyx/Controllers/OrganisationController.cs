@@ -336,6 +336,7 @@ namespace Onyx.Controllers
             var calendarEvent = _organisationService.GetCalendarEvents(_loggedInUser.CompanyCd, Cd).FirstOrDefault();
             var model = new CompanyCalendarModel();
             if (calendarEvent != null)
+            {
                 model = new CompanyCalendarModel
                 {
                     Cd = calendarEvent.Cd,
@@ -349,6 +350,13 @@ namespace Onyx.Controllers
                     Invite = calendarEvent.Invite,
                     Attendees = calendarEvent.Invite ? [.. calendarEvent.Attendees.Split(',')] : null,
                 };
+                if (calendarEvent.Invite)
+                    foreach (var item in calendarEvent.Attendees.Split(','))
+                    {
+                        var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item).FirstOrDefault().Name;
+                        model.AttendeesName.Add(empName);
+                    }
+            }
             else
                 model.Cd = _organisationService.GetCalendarEvent_SrNo();
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
@@ -432,6 +440,7 @@ namespace Onyx.Controllers
             var notification = _organisationService.GetNotifications(_loggedInUser.CompanyCd).FirstOrDefault(m => m.SrNo == Cd && m.DocTyp.Trim() == docType && m.ProcessId.Trim() == processId);
             var model = new NotificationModel();
             if (notification != null)
+            {
                 model = new NotificationModel
                 {
                     Cd = notification.DocTyp,
@@ -447,7 +456,12 @@ namespace Onyx.Controllers
                     EmailSubject = notification.EmailSubject,
                     Attendees = notification.Attendees != null ? [.. notification.Attendees.Split(',')] : null,
                 };
-
+                foreach (var item in notification.Attendees.Split(','))
+                {
+                    var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item).FirstOrDefault().Name;
+                    model.AttendeesName.Add(empName);
+                }
+            }
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.ParameterCd.Trim(),
@@ -549,6 +563,7 @@ namespace Onyx.Controllers
             var approvalProcess = _organisationService.GetApprovalProcess(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd);
             var model = new CompanyProcessApprovalModel();
             if (approvalProcess != null & !string.IsNullOrEmpty(processId))
+            {
                 model = new CompanyProcessApprovalModel
                 {
                     Cd = approvalProcess.Branch,
@@ -560,8 +575,9 @@ namespace Onyx.Controllers
                     Dept = approvalProcess?.Dept,
                     ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
                     ProcessId = approvalProcess?.ProcessId,
-                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd),
+                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd).ToList(),
                 };
+            }
             ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.ParameterCd.Trim(),

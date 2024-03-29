@@ -38,19 +38,6 @@
     }
 );
 
-function bindEmployeeDropdown(callback) {
-    $("#EmpCd").empty();
-    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#EmpCd").html(html);
-        $('.select-picker').selectpicker('refresh');
-        if (callback) callback();
-    });
-}
-
 function showEmpProvisionAdjModal(transNo) {
     var url = `/Transactions/GetProvisionAdj?transNo=${transNo}`;
     $('#EmpProvisionAdjModal').load(url, function () {

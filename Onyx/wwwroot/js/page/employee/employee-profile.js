@@ -473,18 +473,6 @@ function saveEditFile() {
         },
     });
 }
-function bindEmployeeDropdown(callback) {
-    $("#EmpCd").empty();
-    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#EmpCd").html(html);
-        $('.select-picker').selectpicker('refresh');
-        if (callback) callback();
-    });
-}
 function bindComponentDataTable() {
     empCode = empCode ? empCode : "";
     if (!$.fn.DataTable.isDataTable('#ComponentsDataTable'))

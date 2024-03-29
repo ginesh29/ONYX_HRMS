@@ -24,6 +24,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string MessageBody { get; set; }
         public List<string> Attendees { get; set; }
+        public List<string> AttendeesName { get; set; } = [];
         public string EmailIds { get; set; }
 
         public string Mode

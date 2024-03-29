@@ -33,7 +33,8 @@
 function showBankAccountModal(empCd, bankCd, bankBrCd, srNo) {
     var url = `/Employee/GetBankAccount?empCd=${encodeURI(empCd)}&bankCd=${bankCd}&bankBrCd=${bankBrCd}&srNo=${srNo}`;
     $('#BankAccountModal').load(url, function () {
-        parseDynamicForm();        
+        parseDynamicForm();
+        bindEmployeeDropdown();
         $("#BankAccountModal").modal("show");
     });
 }
@@ -72,29 +73,6 @@ function saveBankAccount(btn) {
             unloadingButton(btn);
         });
     }
-}
-function bindEmployeeDropdown(pageNumber, pageSize) {
-    getAjax(`/Employee/FetchEmployeeItems?pageNumber=${pageNumber}&pageSize=${pageSize}`, function (response) {
-        if (pageNumber === 1)
-            $("#EmpCd").empty();
-        $.each(response, function (index, item) {
-            $('#EmpCd').append($('<option>', {
-                value: item.cd.trim(),
-                text: `${item.name}(${item.cd.trim()})`
-            }));
-        });
-        //setTimeout(function () {
-        //    $('#EmpCd').on('rendered.bs.select', function () {
-        //        alert()
-        //        var totalOptions = $(this).find('option').length;
-        //        var currentPage = Math.ceil(totalOptions / 50);
-        //        if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight && currentPage !== Math.ceil(totalOptions / 50)) {
-        //            loadOptions(currentPage + 1, 50);
-        //        }
-        //    });
-        //}, 500)
-        $('.select-picker').selectpicker('refresh');        
-    });
 }
 function bindBankBranch(e) {
     $("#BankBrCd").empty();

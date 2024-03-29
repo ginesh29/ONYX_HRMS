@@ -74,18 +74,6 @@ function saveCalendarEvent(btn) {
         });
     }
 }
-function bindEmployeeDropdown(callback) {
-    $("#EmpCd").empty();
-    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
-        var html = '';
-        $.each(response, function (i, item) {
-            html += `<option value='${item.cd.trim()}'>${item.name}(${item.cd.trim()})</option>`
-        })
-        $("#EmpCd").html(html);
-        $('.select-picker').selectpicker('refresh');
-        if (callback) callback();
-    });
-}
 function uploadFile(event) {
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
     if (excelExtensions.includes(ext)) {

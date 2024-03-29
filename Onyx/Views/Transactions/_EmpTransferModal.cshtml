@@ -14,7 +14,7 @@
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model?.EmpCd) ? "disabled-container" : "")">
                             <label asp-for="EmpCd"></label>
-                            <select asp-for="EmpCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model?.EmpCd) ? "disabled" : "")" onchange="getEmpTransferEmployeeDetail('@Model.EmpCd')">
+                            <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmpCd) ? "disabled" : "")" onchange="getEmpTransferEmployeeDetail('@Model.EmpCd')">
                             </select>
                             <span asp-validation-for="EmpCd" class="text-danger"></span>
                         </div>
