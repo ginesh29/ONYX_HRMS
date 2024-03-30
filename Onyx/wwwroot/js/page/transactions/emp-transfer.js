@@ -10,7 +10,7 @@
             },
             {
                 data: function (row) {
-                    return `${row.fname}(${row.empCd.trim()})`
+                    return `${row.name}(${row.empCd.trim()})`
                 }
             },
             {

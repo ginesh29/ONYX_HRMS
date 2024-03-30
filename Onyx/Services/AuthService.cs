@@ -18,7 +18,8 @@ namespace Onyx.Services
                 new("Browser", model.Browser),
                 new("UserCd", model.UserCd),
                 new("UserOrEmployee", model.UserOrEmployee),
-                new("CompanyCd", model.CompanyCd)
+                new("CompanyCd", model.CompanyCd),
+                new("CoAbbr", model.CoAbbr)
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -50,6 +51,7 @@ namespace Onyx.Services
                     user.Username = claims.FirstOrDefault(m => m.Type == "Username")?.Value;
                     user.UserType = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "UserType")?.Value);
                     user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+                    user.CoAbbr = claims.FirstOrDefault(m => m.Type == "CoAbbr")?.Value;
                     user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
                 }
             }

@@ -45,11 +45,11 @@
                         <div class="login__field">
                             <div>
                                 <i class="login__icon fas fa-building"></i>
-                                <select asp-for="CoCd" class="login__input" id="login-company-dropdown" asp-items="ViewBag.CompanyItems">
+                                <select asp-for="Company" class="login__input" id="login-company-dropdown" asp-items="ViewBag.CompanyItems">
                                     <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                             </div>
-                            <span asp-validation-for="CoCd" class="text-danger"></span>
+                            <span asp-validation-for="Company" class="text-danger"></span>
                         </div>
                         <div class="login__field">
                             <div class="custom-control custom-checkbox">

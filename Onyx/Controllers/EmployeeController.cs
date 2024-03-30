@@ -253,7 +253,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
             });
-            ViewBag.StatusItems = _commonService.GetSysCodes("HSTAT").Select(m => new SelectListItem
+            ViewBag.StatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = m.SDes
@@ -333,7 +333,7 @@ namespace Onyx.Controllers
                 };
             else
                 model.SrNo = _employeeService.GetEmpQualification_SrNo(empCd);
-            ViewBag.QualificationItems = _settingService.GetCodeGroupItems("HQUAL").Select(m => new SelectListItem
+            ViewBag.QualificationItems = _settingService.GetCodeGroupItems(CodeGroup.Qualification).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
@@ -475,7 +475,7 @@ namespace Onyx.Controllers
                 model.Expiry = true;
             }
             model.EmpCd = empCd;
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems("HDTYP").Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
@@ -750,7 +750,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            ViewBag.BankGroupItems = _settingService.GetCodeGroupItems("BKGRP").Select(m => new SelectListItem
+            ViewBag.BankGroupItems = _settingService.GetCodeGroupItems(CodeGroup.BankGroup).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),

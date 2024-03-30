@@ -146,7 +146,13 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: auto;
     width: 2.1rem;
 }
-
+.lv-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-weight: 500;
+    float:right;
+}
 textarea {
     resize: none;
     overflow-y: hidden;
@@ -156,9 +162,9 @@ textarea {
 
 .status-container i {
     position: absolute;
-    right: -5px;
-    top: -5px;
-    font-size: 10px;
+    right: -10px;
+    top: -10px;
+    font-size: 20px;
 }
 
 .fc-event-title {

@@ -7,9 +7,10 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class EmployeeService(CommonService commonService)
+    public class EmployeeService(CommonService commonService, AuthService authService)
     {
         private readonly CommonService _commonService = commonService;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _commonService.GetConnectionString();
@@ -28,7 +29,7 @@ namespace Onyx.Services
             var connectionString = _commonService.GetConnectionString();
             var procedureName = "Employee_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Param", empCd);
+            parameters.Add("v_Param", empCd ?? string.Empty);
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_RowsCnt", "2");
@@ -256,6 +257,7 @@ namespace Onyx.Services
             parameters.Add("v_DocTyp", string.Empty);
             parameters.Add("v_SrNo", 0);
             parameters.Add("v_Typ", type ?? "N");
+            parameters.Add("v_Usercd",_loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpDocuments_GetRow_Result>
@@ -344,6 +346,7 @@ namespace Onyx.Services
             parameters.Add("v_EdTyp", string.Empty);
             parameters.Add("v_Typ", "3");
             parameters.Add("v_SrNo", 0);
+            parameters.Add("v_Usercd",_loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpEarnDed_GetRow_Result>
@@ -447,6 +450,7 @@ namespace Onyx.Services
             var procedureName = "EmpBankAc_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpBankAc_GetRow_Result>
@@ -494,6 +498,7 @@ namespace Onyx.Services
             var procedureName = "EmpCalendar_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpCalendar_GetRow_Result>

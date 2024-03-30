@@ -11,7 +11,7 @@ namespace Onyx.Services
         private readonly CommonService _commonService = commonService;
         public Validate_User_Result ValidateUser(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoCd);
+            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
             var procedureName = "Validate_User";
             var parameters = new DynamicParameters();
             parameters.Add("v_UserID", model.LoginId);
@@ -23,7 +23,7 @@ namespace Onyx.Services
         }
         public Validate_Employee_Result ValidateEmployee(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoCd);
+            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
             var procedureName = "Validate_Employee";
             var parameters = new DynamicParameters();
             parameters.Add("v_EMPID", model.LoginId);
@@ -33,9 +33,9 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Users_GetRow_Result> GetUsers(string UserCd = "", string CoCd = null)
+        public IEnumerable<Users_GetRow_Result> GetUsers(string UserCd = "", string CoAbbr = null)
         {
-            var connectionString = _commonService.GetConnectionString(CoCd);
+            var connectionString = _commonService.GetConnectionString(CoAbbr);
             var procedureName = "Users_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);

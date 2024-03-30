@@ -959,6 +959,91 @@ namespace Onyx.Controllers
         {
             return View();
         }
+        public IActionResult DocumentRenew()
+        {
+            return View();
+        }
+        public IActionResult GetRenewalDocument(string empCd, string docTypeCd, int srNo)
+        {
+            var document = _employeeService.GetDocuments(string.Empty, null).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var model = new EmpDocumentModel();
+            if (document != null)
+                model = new EmpDocumentModel
+                {
+                    Cd = document.EmpCd,
+                    EmpCd = document.EmpCd,
+                    DocNo = document.DocNo,
+                    DocTypSDes = document.DocTypSDes,
+                    DocTypCd = document.DocTypCd.Trim(),
+                    Expiry = document.Expiry,
+                    ExpDt = document.ExpDt,
+                    IssueDt = document.IssueDt,
+                    SrNo = _transactionService.EmpDocIssueRcpt_NextSrNo(empCd, document.DocTypCd),
+                    IssuePlace = document.IssuePlace,
+                    TrnDt = DateTime.Now.Date,
+                };
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DocStatusItems = _settingService.GetCodeGroupItems(CodeGroup.DocStatus).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_RenewalDocumentModal", model);
+        }
+        public IActionResult SaveRenewalDocument(EmpDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveEmpDocIssueReceipt(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Document renewal requested successfully"
+            };
+            return Json(result);
+        }
+        public IActionResult FetchEmpDocRenewalData()
+        {
+            var docs = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            CommonResponse result = new()
+            {
+                Data = docs,
+            };
+            return Json(result);
+        }
+        public IActionResult GetRenewalDocumentApproval(string empCd, string docTypeCd, int srNo)
+        {
+            var document = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.EmployeeCode.Trim() == empCd && m.DocType.Trim() == docTypeCd && m.SrNo == srNo);
+            document.DocType = document.DocType.Trim();
+            document.DocStat = document.DocStat.Trim();
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DocStatusItems = _settingService.GetCodeGroupItems(CodeGroup.DocStatus).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_RenewalDocumentApprovalModal", document);
+        }
+        public IActionResult SaveRenewalDocumentApproval(EmpDocIssueRcpt_GetRow_Result model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
+            _transactionService.SaveEmpDocIssueRcptAppr(model);
+            var action = model.Status == "0" ? "approved" : "rejected";
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Document renewal {action} successfully"
+            };
+            return Json(result);
+        }
         #endregion
     }
 }

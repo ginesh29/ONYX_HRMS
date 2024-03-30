@@ -7,10 +7,11 @@ using ExcelDataReader;
 
 namespace Onyx.Services
 {
-    public class TransactionService(CommonService commonService, EmployeeService employeeService)
+    public class TransactionService(CommonService commonService, EmployeeService employeeService, AuthService authService)
     {
         private readonly CommonService _commonService = commonService;
         private readonly EmployeeService _employeeService = employeeService;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
 
         #region Loan Application
         public CommonResponse SaveLoan(EmpLoanModel model)
@@ -261,6 +262,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", "0");
             parameters.Add("v_Dept", "0");
             parameters.Add("v_EmpCd1", string.Empty);
+            parameters.Add("v_UserCd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_Approval_GetRow_Result>
@@ -274,6 +276,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_TransNo", TransNo);
             parameters.Add("v_Typ", Type);
+            parameters.Add("v_UserCd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_View_GetRow_Result>
@@ -459,6 +462,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", EmpOrUser);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_Approval_GetRow_Result>
@@ -489,6 +493,7 @@ namespace Onyx.Services
             parameters.Add("v_TransNo", string.Empty);
             parameters.Add("v_Typ", string.Empty);
             parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_View_Getrow_Result>
@@ -671,6 +676,7 @@ namespace Onyx.Services
             parameters.Add("v_Typ", "6");
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EmpUser", empUser);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Empprovisionsadj_GetRow_Result>
@@ -986,6 +992,80 @@ namespace Onyx.Services
 
                 EmpTrans_Update(item, filterModel);
             }
+        }
+        #endregion
+
+        #region Doc Renewal
+        public int EmpDocIssueRcpt_NextSrNo(string EmpCd, string type)
+        {
+            var procedureName = "EmpDocIssueRcpt_NextSrNo";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", EmpCd);
+            parameters.Add("v_DocTyp", type);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveEmpDocIssueReceipt(EmpDocumentModel model)
+        {
+            var trnTyp = model.DocStatus == "HDS0001" ? "R" : model.DocStatus == "HDS0002" ? "I" : "P";
+            var procedureName = "EmpDocIssueRcpt_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_DocTyp", model.DocTypCd);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_TrnDt", model.TrnDt);
+            parameters.Add("v_TransTyp", trnTyp);
+            parameters.Add("v_DocStatus", model.DocStatus);
+            parameters.Add("v_Status", "N");
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpDocIssueRcpt_GetRow_Result> GetEmpDocIssueRcpt(string LoginEmpCd, string EmpUser)
+        {
+            var procedureName = "EmpDocIssueRcpt_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_DocTyp", string.Empty);
+            parameters.Add("v_Typ", string.Empty);
+            parameters.Add("v_SrNo", 0);
+            parameters.Add("v_LoginEmpCd", LoginEmpCd);
+            parameters.Add("v_EmpUser", EmpUser);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpDocIssueRcpt_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveEmpDocIssueRcptAppr(EmpDocIssueRcpt_GetRow_Result model)
+        {
+            var procedureName = "EmpDocIssueRcptAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmployeeCode);
+            parameters.Add("v_DocTyp", model.DocType);
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_Status", model.Status);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_EditBy", model.EntryBy);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            var connectionString = _commonService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
     }

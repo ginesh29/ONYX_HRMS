@@ -6,9 +6,10 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class SettingService(CommonService commonService)
+    public class SettingService(CommonService commonService, AuthService authService)
     {
         private readonly CommonService _commonService = commonService;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         #region Branch
         public IEnumerable<Branch_GetRow_Result> GetBranches(string CoCd)
         {
@@ -16,6 +17,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Branch_GetRow_Result>

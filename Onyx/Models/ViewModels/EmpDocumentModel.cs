@@ -20,6 +20,9 @@ namespace Onyx.Models.ViewModels
         [Display(Name = "Expiry Date")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? ExpDt { get; set; }
+        [Display(Name = "Transaction Date")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public DateTime? TrnDt { get; set; }
         public bool Expiry { get; set; }
         public string FormatedIssueDt { get; set; }
         public string FormatedExpDt { get; set; }
@@ -37,6 +40,12 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string DocTypCd { get; set; }
         public decimal SrNo { get; set; }
+        [Display(Name = "Status")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        public string DocStatus { get; set; }
+        [Display(Name = "Narration")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public string Narr { get; set; }
         public IEnumerable<IFormFile> DocFiles { get; set; }
         public IEnumerable<EmpDocImages_GetRow_Result> DocsPaths { get; set; }
         public string Cd { get; set; }

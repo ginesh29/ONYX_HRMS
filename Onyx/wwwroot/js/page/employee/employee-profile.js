@@ -325,8 +325,8 @@ function bindDocumentDataTable() {
                             return row.expDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                         }, width: "100px"
                     },
-                    {
-                        data: function (row) {
+                   {
+                         data: function (row) {
                             return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">

@@ -335,7 +335,7 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
-        dropdownParent: "#BankAccountModal",
+        //dropdownParent: "#BankAccountModal",
         ajax: {
             url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
             data: function (params) {

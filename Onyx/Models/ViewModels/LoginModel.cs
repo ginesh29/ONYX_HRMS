@@ -9,10 +9,10 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Password { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        [Display(Name = "Company")]
-        public string CoCd { get; set; }
+        public string Company { get; set; }
         public UserTypeEnum UserType { get; set; }
         public bool RememberMe { get; set; }
         public string Browser { get; set; }
+        public string CoAbbr { get; set; }
     }
 }

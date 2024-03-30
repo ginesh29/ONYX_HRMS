@@ -1,21 +1,22 @@
 ﻿@{
-    ViewData["Title"] = "Document Renewal Approval";
+    ViewData["Title"] = "Document Renewal";
 }
 <div class="card">
-    <div class="card-body">
-        <div class="mb-3">
-            <button type="button" class="btn btn-info" onclick="showDocumentRenewalModal()">New Document Renew</button>
+    <div class="card-header">
+        <div style="width:350px" class="select2-container float-right">
+            <select id="EmpCd" class="form-control select2"></select>
         </div>
-        <table class="table table-sm" id="RenewalDocumentsApprovalDataTable">
+    </div>
+    <div class="card-body">
+        <table class="table table-sm" id="RenewalDocumentsSearchDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>
-                    <th>Employee Name</th>
                     <th>Doc. Type</th>
                     <th>Doc. No</th>
-                    <th>Trans. Date</th>
-                    <th>Doc. Status</th>
-                    <th>Narration</th>
+                    <th>Issue Date</th>
+                    <th>Issue Place</th>
+                    <th>Expiry Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -25,4 +26,7 @@
 <div id="DocumentRenewModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script src="~/js/page/transactions/document-renewal.js" asp-append-version="true"></script>
-}
+    <script>
+        bindEmployeeDropdown();
+    </script>
+} 

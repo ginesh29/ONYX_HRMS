@@ -3,7 +3,7 @@
     public class EmpTransfers_GetRow_Result
     {
         public string EmpCd { get; set; }
-        public string Fname { get; set; }
+        public string Name { get; set; }
         public decimal SrNo { get; set; }
         public DateTime? TransferDt { get; set; }
         public string FormatedTransferDt { get; set; }

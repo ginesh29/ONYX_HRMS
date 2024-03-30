@@ -27,13 +27,16 @@ namespace Onyx.Controllers
             ViewBag.CompanyItems = _commonService.GetCompanies().Select(m => new SelectListItem
             {
                 Text = m.CoName,
-                Value = m.Cd.Trim()
+                Value = $"{m.Cd.Trim()}_{m.Abbr.Trim()}"
             });
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
+            var companySp = model.Company.Split("_");
+            var CoCd = companySp[0];
+            model.CoAbbr = companySp[1];
             string UserCd = string.Empty;
             var result = new CommonResponse { Success = false };
             if (model.UserType == UserTypeEnum.User)
@@ -42,10 +45,11 @@ namespace Onyx.Controllers
                 if (validateUser != null)
                 {
                     UserCd = validateUser.Cd;
-                    var user = _userService.GetUsers(validateUser.Cd, model.CoCd).FirstOrDefault();
+                    var user = _userService.GetUsers(validateUser.Cd, model.CoAbbr).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
-                        CompanyCd = model.CoCd,
+                        CompanyCd = CoCd,
+                        CoAbbr = model.CoAbbr,
                         UserCd = UserCd,
                         UserOrEmployee = "U",
                         Username = validateUser.UName,
@@ -66,10 +70,11 @@ namespace Onyx.Controllers
                 if (employee != null)
                 {
                     UserCd = employee.UserCd.Trim();
-                    var user = _userService.GetUsers(employee.UserCd.Trim(), model.CoCd).FirstOrDefault();
+                    var user = _userService.GetUsers(employee.UserCd.Trim(), model.CoAbbr).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
-                        CompanyCd = model.CoCd,
+                        CompanyCd = CoCd,
+                        CoAbbr = model.CoAbbr,
                         UserCd = UserCd,
                         UserOrEmployee = "E",
                         Username = user.Username,
@@ -86,11 +91,11 @@ namespace Onyx.Controllers
             }
             if (result.Success)
             {
-                //HttpContext.Session.SetString("CoCd", model.CoCd);
                 _commonService.SetActivityLogHead(new ActivityLogModel
                 {
                     Browser = model.Browser,
-                    CoCd = model.CoCd,
+                    CoAbbr = model.CoAbbr,
+                    CoCd = CoCd,
                     UserCd = UserCd
                 });
             }

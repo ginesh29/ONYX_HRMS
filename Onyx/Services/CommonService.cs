@@ -11,10 +11,10 @@ using System.Net.Sockets;
 namespace Onyx.Services
 {
 
-    public class CommonService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+    public class CommonService(AppDbContext context, AuthService authService)
     {
         private readonly AppDbContext _context = context;
-        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public IEnumerable<Company_Getrow_Result> GetCompanies()
         {
             var procedureName = "Company_Getrow";
@@ -23,12 +23,12 @@ namespace Onyx.Services
                 (procedureName, commandType: CommandType.StoredProcedure);
             return companies;
         }
-        public string GetConnectionString(string CoCd = null)
+        public string GetConnectionString(string CoAbbr = null)
         {
-            CoCd ??= _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+            CoAbbr ??= _loggedInUser.CoAbbr;
             var procedureName = "CompanyDatabases_Getrow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_CoAbbr", CoAbbr);
             using var connection = _context.CreateConnection();
             var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -140,7 +140,7 @@ namespace Onyx.Services
         {
             var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
             var os = Environment.OSVersion.Platform.ToString();
-            var connectionString = GetConnectionString(model.CoCd);
+            var connectionString = GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CoCd);

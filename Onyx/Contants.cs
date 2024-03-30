@@ -17,6 +17,7 @@
         public const string EmpProgression = "HREP";
         public const string RecMode = "HLREC";
         public const string RecPrd = "HLRI";
+        public const string EmpStatus = "HSTAT";
     }
     public class CodeGroup
     {
@@ -39,6 +40,9 @@
         public const string EmpType = "J_ET";
         public const string HDocType = "HDTYP";
         public const string Address = "HADD";
+        public const string Qualification = "HQUAL";
+        public const string BankGroup = "BKGRP";
+        public const string DocStatus = "HDS";
     }
     public class CommonMessage
     {

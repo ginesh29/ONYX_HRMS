@@ -4,7 +4,7 @@
     {
         public string UserOrEmployee { get; set; }
         public string UserCd { get; set; }
-        //public string LoginId { get; set; }
+        public string CoAbbr { get; set; }
         public string Username { get; set; }
         public string UserAbbr { get; set; }
         public int UserType { get; set; }

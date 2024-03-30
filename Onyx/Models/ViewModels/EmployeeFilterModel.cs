@@ -5,7 +5,7 @@ namespace Onyx.Models.ViewModels
     public class EmployeeFilterModel
     {
         [Display(Name = "Employee Name/Code")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public List<string> Branches { get; set; } = [];
         public List<string> Departments { get; set; } = [];
         public List<string> Sponsors { get; set; } = [];

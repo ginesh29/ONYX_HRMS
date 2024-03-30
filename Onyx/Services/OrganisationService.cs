@@ -3,18 +3,14 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Diagnostics;
-using System.Data.SqlTypes;
-using System.Transactions;
 
 namespace Onyx.Services
 {
-    public class OrganisationService(CommonService commonService)
+    public class OrganisationService(CommonService commonService, AuthService authService)
     {
         private readonly CommonService _commonService = commonService;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         #region Component
         public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents(string type)
         {
@@ -426,6 +422,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_DocTypCd", string.Empty);
             parameters.Add("v_DivCd", string.Empty);
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyDocuments_GetRow_Result>
@@ -864,7 +861,8 @@ namespace Onyx.Services
             parameters.Add("v_ApplTyp", "0");
             parameters.Add("v_Div", "0");
             parameters.Add("v_Dept", "0");
-            parameters.Add("v_typ", "0");
+            parameters.Add("v_typ", "1");
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProcessApproval_GetRow>
@@ -881,6 +879,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
             parameters.Add("v_typ", "1");
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _commonService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<CompanyProcessApproval_GetRow>

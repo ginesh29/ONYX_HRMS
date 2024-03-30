@@ -32,7 +32,7 @@ $("#EmpCd").change(function (e) {
 })
 function changeShowEntries(curr) {
     var frm = $("#employee-filter-frm").serialize();
-    var name = $("#EmpCd").val();
+    var name = $("#EmpCd").val() ?? "";
     var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&pageSize=${curr.value}`;
     BindEmployeeGrid(url);
 }
