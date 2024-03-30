@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Document Renewal";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button type="button" class="btn btn-info" onclick="showDocumentModal('','',0)">New Document</button>
+        </div>
+        <table class="table table-sm" id="DocumentsDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Employee Name</th>
+                    <th>Doc. Type</th>
+                    <th>Doc. No</th>
+                    <th>Issue Date</th>
+                    <th>Issue Place</th>
+                    <th>Expiry Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="DocumentModal" class="modal fade" role="dialog" tabindex='-1'>
+
+</div>
+<div id="PreviewModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/transaction/document-renewal.js" asp-append-version="true"></script>
+    <script>
+        bindDocumentDataTable();
+    </script>
+}

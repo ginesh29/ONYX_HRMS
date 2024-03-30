@@ -116,7 +116,6 @@ namespace Onyx.Models.StoredProcedure
         [Display(Name = "Emp. Type")]
         public string EmpTyp { get; set; }
         [Display(Name = "Emp. Password")]
-        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Pwd { get; set; }
         [Compare("Pwd", ErrorMessage = CommonMessage.CONFIRMPASSWORDNOTMATCHED)]
         [Display(Name = "Confirm Password")]

@@ -67,7 +67,7 @@ namespace Onyx.Controllers
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
             var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
             var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => m.Active == "Y");
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, string.Empty, _loggedInUser.UserCd).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
             if (!string.IsNullOrEmpty(term))
@@ -90,8 +90,8 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             var size = pageSize ?? 9;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, filterModel.LeaveStatus);
-            bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null;
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, string.Empty, _loggedInUser.UserCd);
+            bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
             if (isFilter)
             {
                 employees = employees.Where(e =>
@@ -110,6 +110,9 @@ namespace Onyx.Controllers
                  (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
                  ||
                  (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
+                 ||
+                 (filterModel.LeaveStatus != null &&
+                 ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
                 );
             }
             if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
@@ -273,7 +276,7 @@ namespace Onyx.Controllers
         public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
-            model.ConfirmPassword = model.ConfirmPassword.Encrypt();
+            model.ConfirmPassword = !string.IsNullOrEmpty(model.ConfirmPassword) ? model.ConfirmPassword.Encrypt() : null;
             if (model.AvatarFile != null)
             {
                 var filePath = await _fileHelper.UploadFile(model.AvatarFile, "emp-photo", _loggedInUser.CompanyCd);
@@ -467,7 +470,10 @@ namespace Onyx.Controllers
                     DocsPaths = _employeeService.GetDocumentFiles(empCd, document.DocTypCd)
                 };
             else
+            {
                 model.SrNo = _commonService.GetNext_SrNo("EmpDocuments", "srNo");
+                model.Expiry = true;
+            }
             model.EmpCd = empCd;
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems("HDTYP").Select(m => new SelectListItem
             {

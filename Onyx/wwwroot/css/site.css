@@ -3,6 +3,14 @@
     width: 265px;
 }
 
+.modal {
+    overflow: auto !important;
+}
+
+.text-orange {
+    color: #FFA500;
+}
+
 .side-separator-container {
     text-align: center;
     border-bottom: 1px ridge #b5b5c3;
@@ -164,9 +172,11 @@ textarea {
 .dropdown-menu.show {
     overflow: visible !important;
 }
+
 .select-picker.show .dropdown-toggle {
     border: 1px solid #80bdff !important;
 }
+
 .bootstrap-select .btn:focus {
     outline: none !important;
 }
@@ -175,12 +185,12 @@ textarea {
     border: 1px solid #a7aaad;
 }
 
-.bootstrap-select .dropdown-toggle
- {
+.bootstrap-select .dropdown-toggle {
     background: #fff;
     border: 1px solid #ced4da;
     outline: none;
 }
+
     .bootstrap-select .dropdown-toggle:active,
     .bootstrap-select .dropdown-toggle:focus {
         border: 1px solid #80bdff;

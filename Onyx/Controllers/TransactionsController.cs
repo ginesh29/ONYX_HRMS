@@ -953,5 +953,12 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Document Renewal
+        public IActionResult DocumentRenewal()
+        {
+            return View();
+        }
+        #endregion
     }
 }

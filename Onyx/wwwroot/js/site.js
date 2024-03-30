@@ -279,6 +279,7 @@ function adjustIframeHeight() {
         iframe.onload = resizeIframe;
     }
 }
+
 function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, parseInt(window.getComputedStyle(textarea).getPropertyValue("max-height"))) + 'px';
