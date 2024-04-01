@@ -1,5 +1,4 @@
-﻿
-window["datatable"] = $('#EmployeeLeavesApprovalDataTable').DataTable(
+﻿window["datatable"] = $('#EmployeeLeavesApprovalDataTable').DataTable(
     {
         ajax: "/Transactions/FetchEmpLeaveApprovalData",
         ordering: false,
@@ -60,7 +59,7 @@ function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
     $('#EmployeeLeaveApprovalModal').load(url, function () {
         parseDynamicForm();
-        if (!reject) {            
+        if (!reject) {
             $('#WpDateRange').rules("add", {
                 eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
                 messages: {
@@ -124,7 +123,7 @@ function ValidateDateRange() {
     var WopDateRange = $("#WopDateRange").val();
     if (checkRangesOverlap(WpDateRange, WopDateRange))
         $("#errorContainer").text("Date Range (WP) & (WOP) is ovelaped");
-    else if (totalLvDays != calculatedTotalLvDays)
+    else if (Number(totalLvDays) != calculatedTotalLvDays)
         $("#errorContainer").text("Total Leaves not matched with Date Range (WP) & (WOP)");
     else {
         isValid = true;

@@ -41,7 +41,9 @@
                             <input type="hidden" asp-for="WopFrom" />
                             <input type="hidden" asp-for="WopTo" />
                             <input type="hidden" asp-for="LvDays" />
-                            <input type="hidden" asp-for="WopLvDays" />
+                            <input type="hidden" asp-for="WpLvDays" id="WpDateRangeDays" />
+                            <input type="hidden" asp-for="WopLvDays" id="WopDateRangeDays" />
+                            <input type="hidden" id="" />
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -61,35 +63,18 @@
                             <div class="row form-group revise-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group mb-0">
-                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt"></span>
+                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt">(@Model.WpLvDays days)</span>
                                         <input asp-for="WpDateRange" class="form-control either-or" />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-0">
-                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt"></span>
+                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt">(@Model.WopLvDays days)</span>
                                         <input asp-for="WopDateRange" class="form-control either-or" />
                                     </div>
                                 </div>
                                 <span class="text-danger ml-2" id="errorContainer"></span>
                             </div>
-
-                            @* <div class="row revise-div d-none">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays">(@Model.WpLvDays days)</span>
-                                        <input asp-for="WpDateRange" class="form-control" />
-                                        <span asp-validation-for="WpDateRange" class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays">(@Model.WopLvDays days)</span>
-                                        <input asp-for="WopDateRange" class="form-control" />
-                                        <span asp-validation-for="WopDateRange" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div> *@
                             <div class="row revise-div confirm-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">

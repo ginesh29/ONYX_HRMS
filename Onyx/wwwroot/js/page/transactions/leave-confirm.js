@@ -63,6 +63,7 @@ function showLeaveConfirmModal(transNo) {
                 var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
                 var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
                 $(`#${ev.target.id}Days`).text(`(${days} days)`);
+                $(`#${ev.target.id}Days`).val(days);
                 $(this).val(`${startDate} - ${endDate}`);
             });
         $('#WpDateRange').rules("add", {
@@ -91,13 +92,13 @@ function ValidateDateRange() {
     var isValid = false;
     var WpDateRangeDays = $("#WpDateRangeDays").val();
     var WopDateRangeDays = $("#WopDateRangeDays").val();
-    var totalLvDays = $("#TotalLvDays").val();
+    var totalLvDays = $("#totalLvDays").text();
     var calculatedTotalLvDays = Number(WpDateRangeDays) + Number(WopDateRangeDays);
     var WpDateRange = $("#WpDateRange").val();
     var WopDateRange = $("#WopDateRange").val();
     if (checkRangesOverlap(WpDateRange, WopDateRange))
         $("#errorContainer").text("Date Range (WP) & (WOP) is ovelaped");
-    else if (totalLvDays != calculatedTotalLvDays)
+    else if (Number(totalLvDays) != calculatedTotalLvDays)
         $("#errorContainer").text("Total Leaves not matched with Date Range (WP) & (WOP)");
     else {
         isValid = true;

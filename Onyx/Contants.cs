@@ -23,7 +23,7 @@
     {
         public const string Bank = "BANK";
         public const string BankBranch = "BNKBR";
-        public const string DocType = "HCDOC";
+        public const string CompanyDocType = "HCDOC";
         public const string Sector = "TSECTTSECT";
         public const string Class = "TCLAS";
         public const string EmpDeployLoc = "HLOC";
@@ -38,7 +38,7 @@
         public const string Religion = "HRELG";
         public const string Sponsor = "ESPON";
         public const string EmpType = "J_ET";
-        public const string HDocType = "HDTYP";
+        public const string EmpDocType = "HDTYP";
         public const string Address = "HADD";
         public const string Qualification = "HQUAL";
         public const string BankGroup = "BKGRP";

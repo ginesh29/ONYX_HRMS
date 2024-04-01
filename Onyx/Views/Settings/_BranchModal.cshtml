@@ -1,6 +1,7 @@
 ﻿@model BranchModel
 @{
-    var image = !string.IsNullOrEmpty(Model.Image) ? $"~/uploads/branch/{Model.Image}" : string.Empty;
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+    var image = !string.IsNullOrEmpty(Model.Image) ? $"~/uploads/{companyCd}/branch/{Model.Image}" : string.Empty;
 }
 <div class="modal-dialog modal-md">
     <!-- Modal content-->

@@ -60,7 +60,9 @@ namespace Onyx.Controllers
                     LvFrom = leaveData.LvFrom,
                     LvTo = leaveData.LvTo,
                     LvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.LvFrom, leaveData.LvTo),
+                    WpDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.LvFrom, leaveData.LvTo),
                     LvDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
+                    WpDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
                     ApprDt = DateTime.Now.Date,
@@ -334,10 +336,10 @@ namespace Onyx.Controllers
                 Text = $"{m.ShortDes}({m.Code.Trim()})",
                 Value = m.Code.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             return PartialView("_EmpTransferModal", model);
         }
@@ -707,10 +709,10 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
@@ -792,10 +794,10 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             ViewBag.PayTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new SelectListItem
             {
@@ -979,7 +981,7 @@ namespace Onyx.Controllers
                     IssuePlace = document.IssuePlace,
                     TrnDt = DateTime.Now.Date,
                 };
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
@@ -1016,7 +1018,7 @@ namespace Onyx.Controllers
             var document = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.EmployeeCode.Trim() == empCd && m.DocType.Trim() == docTypeCd && m.SrNo == srNo);
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),

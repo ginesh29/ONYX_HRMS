@@ -34,14 +34,16 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public IEnumerable<GetUserBranches_Result> GetUserBranches(string UserCd)
+        public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd,string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "GetUserBranches";
+            var procedureName = "UserBranch_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("UserCd", UserCd);
+            parameters.Add("v_UserCd", UserCd);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Div", string.Empty);
             var connection = new SqlConnection(connectionString);
-            var data = connection.Query<GetUserBranches_Result>
+            var data = connection.Query<UserBranch_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }

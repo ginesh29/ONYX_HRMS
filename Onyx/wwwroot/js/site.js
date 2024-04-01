@@ -315,7 +315,6 @@ function bindEmployeeDropdown() {
         dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
         ajax: {
             url: `/Employee/FetchEmployeeItems`,
-            dataType: 'json',
             processResults: function (data) {
                 return {
                     results: data
@@ -325,15 +324,13 @@ function bindEmployeeDropdown() {
         }
     });
 }
-function bindEmployeeMultipleDropdown(departments, designations, branches, locations, callback) {
+function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
     var el = $("select#ApprovalLevels,select#Attendees");
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
         ajax: {
             url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
-            dataType: 'json',
-            delay: 250,
             processResults: function (data) {
                 return {
                     results: data

@@ -1042,7 +1042,7 @@ namespace Onyx.Services
             }
             else if (proccessId == "HRPT8")
             {
-                var docTypes = _commonService.GetCodesGroups(CodeGroup.HDocType).Select(m => new SelectListItem
+                var docTypes = _commonService.GetCodesGroups(CodeGroup.EmpDocType).Select(m => new SelectListItem
                 {
                     Value = m.Code.Trim(),
                     Text = m.ShortDes

@@ -40,7 +40,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_Find_Result> EmployeeFind(string Cd, string CoCd)
+        public Employee_Find_Result EmployeeFind(string Cd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_Find";
@@ -49,7 +49,7 @@ namespace Onyx.Services
             parameters.Add("v_Typ", "1");
             parameters.Add("v_CoCd", CoCd);
             var connection = new SqlConnection(connectionString);
-            var employee = connection.Query<Employee_Find_Result>
+            var employee = connection.QueryFirstOrDefault<Employee_Find_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }

@@ -4,7 +4,7 @@
     int[] menuItems = ViewBag.SelectedMenuItems;
     string menuArray = JsonSerializer.Serialize(menuItems);
     string[] actionTypes = { "Add", "Edit", "Delete", "View", "Print" };
-    List<GetUserBranches_Result> UserBranchItems = ViewBag.UserBranchItems;
+    List<UserBranch_GetRow_Result> UserBranchItems = ViewBag.UserBranchItems;
 }
 <div class="modal-dialog modal-lg">
     <!-- Modal content-->
@@ -73,7 +73,7 @@
                                 @foreach (var item in UserBranchItems)
                                 {
                                     var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
-                                    <option data-content="@($"{item.Branch}({item.Cd.Trim()}) {@img}")" value="@item.Cd" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
+                                    <option data-content="@($"{item.Branch}({item.Div.Trim()}) {@img}")" value="@item.Div" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
                                 }
                             </select>
                             <span asp-validation-for="UserBranchCd" class="text-danger"></span>

@@ -369,10 +369,10 @@ namespace Onyx.Controllers
                 Text = $"{m.SDes}({m.Cd.Trim()})",
                 Value = m.Cd.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
@@ -467,7 +467,7 @@ namespace Onyx.Controllers
                 Value = m.ParameterCd.Trim(),
                 Text = m.Val
             });
-            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups(CodeGroup.HDocType).Select(m => new SelectListItem
+            ViewBag.DocumentTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpDocType).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
@@ -483,10 +483,10 @@ namespace Onyx.Controllers
                 Text = $"{m.SDes}({m.Cd.Trim()})",
                 Value = m.Cd.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             ViewBag.EmpDeployLocationItems = _commonService.GetCodesGroups(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
@@ -589,10 +589,10 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})",
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             return PartialView("_ApprovalProcessModal", model);
         }
@@ -727,15 +727,15 @@ namespace Onyx.Controllers
                     ExpDt = document.ExpDt,
                     DocsPaths = _organisationService.GetDocumentFiles(document.DivCd, document.DocTypCd, _loggedInUser.CompanyCd)
                 };
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.DocType).Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             return PartialView("_DocumentModal", model);
         }
@@ -873,10 +873,10 @@ namespace Onyx.Controllers
                     State = vehicle.State,
                     StateCd = vehicle.StateCd.Trim(),
                 };
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
-                Value = m.Cd.Trim(),
-                Text = $"{m.Branch}({m.Cd.Trim()})"
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
             });
             ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
             {
