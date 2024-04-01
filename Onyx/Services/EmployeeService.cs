@@ -24,7 +24,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, string status = "0", string userCd = "")
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, int rowCount = 2)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRow";
@@ -32,9 +32,9 @@ namespace Onyx.Services
             parameters.Add("v_Param", empCd ?? string.Empty);
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_RowsCnt", "2");
-            parameters.Add("v_Status", status ?? "0");
-            parameters.Add("v_Usercd", userCd);
+            parameters.Add("v_RowsCnt", rowCount);
+            parameters.Add("v_Status", "0");
+            parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -566,7 +566,7 @@ namespace Onyx.Services
                 var empCd = Convert.ToString(reader.GetValue(0));
                 var title = Convert.ToString(reader.GetValue(2));
                 var narration = Convert.ToString(reader.GetValue(4));
-                bool validEmployee = GetEmployees(CoCd, empCd).Any();
+                bool validEmployee = FindEmployee(empCd, CoCd) != null;
                 string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";

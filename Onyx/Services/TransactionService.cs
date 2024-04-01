@@ -822,7 +822,7 @@ namespace Onyx.Services
                 if (isEmptyRow)
                     continue;
                 var empCd = Convert.ToString(reader.GetValue(0));
-                bool validEmployee = _employeeService.GetEmployees(CoCd, empCd).Any();
+                bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
                 string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";
@@ -940,7 +940,7 @@ namespace Onyx.Services
                 if (isEmptyRow)
                     continue;
                 var empCd = Convert.ToString(reader.GetValue(0));
-                bool validEmployee = _employeeService.GetEmployees(CoCd, empCd).Any();
+                bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
                 string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";

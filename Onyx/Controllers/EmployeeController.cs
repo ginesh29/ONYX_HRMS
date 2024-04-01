@@ -67,11 +67,11 @@ namespace Onyx.Controllers
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
             var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
             var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, string.Empty, _loggedInUser.UserCd).Where(m => m.Active == "Y");
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
             if (!string.IsNullOrEmpty(term))
-                employees = employees.Where(m => m.Cd.Trim().Contains(term) || m.Name.Trim().Contains(term));
+                employees = employees.Where(m => m.Cd.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             var items = employees.OrderBy(m => m.Name).Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),
@@ -82,28 +82,30 @@ namespace Onyx.Controllers
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
             int pageNumber = page ?? 1;
-            var size = pageSize ?? 9;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, string.Empty, _loggedInUser.UserCd);
+            var size = pageSize ?? 100;
+            int rowCount = filterModel.EmployeeStatus == "N" ? 3 : 100;
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, rowCount);
             bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
+
             if (isFilter)
             {
                 employees = employees.Where(e =>
-                 (!string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name))
-                 ||
-                 (!string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name))
-                 ||
-                 (filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim()))
-                 ||
+                 !string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name)
+                 &&
+                 !string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name)
+                 &&
+                 filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim())
+                 &&
                  (filterModel.Designations.Count > 0 && filterModel.Designations.Contains(e.Desg?.Trim()))
-                 ||
+                 &&
                  (filterModel.Branches.Count > 0 && filterModel.Branches.Contains(e.BranchCd?.Trim()))
-                 ||
+                 &&
                  (filterModel.Sponsors.Count > 0 && filterModel.Sponsors.Contains(e.SponsorCd?.Trim()))
-                 ||
+                 &&
                  (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
-                 ||
+                 &&
                  (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
-                 ||
+                 &&
                  (filterModel.LeaveStatus != null &&
                  ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
                 );
@@ -185,7 +187,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd,_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
