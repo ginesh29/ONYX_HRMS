@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Employee Short List Report";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/colvis/1.1.3/css/dataTables.colVis.css">
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="EmpShortListReportTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Employeee</th>
+                    <th>Branch</th>
+                    <th>Total</th>
+                    <th>Personal No</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@section scripts {
+
+    <script type="text/javascript" src="https://cdn.datatables.net/colvis/1.1.3/js/dataTables.colVis.min.js"></script>
+    <script>
+        function loadReport() {
+            var table = $('#EmpShortListReportTable').DataTable(
+                {
+                    ajax: "/Reports/FetchEmpShotListReportData",
+                    ordering: false,
+                    layout: {
+                        topStart: {
+                            buttons: ['colvis']
+                        }
+                    },
+                    columns: [
+                        {
+                            data: function (data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            }
+                        },
+                        {
+                            data: function (row) {
+                                return `${row.empName}(${row.code.trim()})`;
+                            },
+                        },
+                        { data: "branch" },
+                        { data: "total" },
+                        { data: "passportNo" },
+                    ],
+                }
+            );
+            //new $.fn.dataTable.ColVis(table);
+        }
+        loadReport();
+    </script>
+}

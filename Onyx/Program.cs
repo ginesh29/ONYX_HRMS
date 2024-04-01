@@ -5,16 +5,17 @@ using Onyx.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddSingleton<AppDbContext>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<CommonService>();
+builder.Services.AddSingleton<DbGatewayService>();
 builder.Services.AddSingleton<AuthService>();
+builder.Services.AddSingleton<CommonService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<EmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
 builder.Services.AddSingleton<TransactionService>();
+builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

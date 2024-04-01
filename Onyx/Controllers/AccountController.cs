@@ -7,24 +7,26 @@ namespace Onyx.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly DbGatewayService _dbGatewayService;
         private readonly AuthService _authService;
         private readonly UserService _userService;
         private readonly EmployeeService _employeeService;
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public AccountController(AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
+        public AccountController(DbGatewayService dbGatewayService, AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
         {
             _authService = authService;
             _commonService = commonService;
             _userService = userService;
+            _dbGatewayService = dbGatewayService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
             _employeeService = employeeService;
         }
         public IActionResult Login()
         {
-            ViewBag.CompanyItems = _commonService.GetCompanies().Select(m => new SelectListItem
+            ViewBag.CompanyItems = _dbGatewayService.GetCompanies().Select(m => new SelectListItem
             {
                 Text = m.CoName,
                 Value = $"{m.Cd.Trim()}_{m.Abbr.Trim()}"

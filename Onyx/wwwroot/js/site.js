@@ -315,18 +315,13 @@ function bindEmployeeDropdown() {
         dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
         ajax: {
             url: `/Employee/FetchEmployeeItems`,
-            data: function (params) {
-                return { term: params.term, page: params.page || 1 };
-            },
-            processResults: function (data, params) {
-                params.page = params.page || 1;
+            dataType: 'json',
+            processResults: function (data) {
                 return {
-                    results: data.items,
-                    pagination: {
-                        more: (params.page * 50) < data.totalCount
-                    }
+                    results: data
                 };
-            }
+            },
+            cache: true
         }
     });
 }
@@ -335,21 +330,16 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
     el.select2({
         placeholder: "-- Select --",
         allowClear: true,
-        //dropdownParent: "#BankAccountModal",
         ajax: {
             url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
-            data: function (params) {
-                return { term: params.term, page: params.page || 1 };
-            },
-            processResults: function (data, params) {
-                params.page = params.page || 1;
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
                 return {
-                    results: data.items,
-                    pagination: {
-                        more: (params.page * 50) < data.totalCount
-                    }
+                    results: data
                 };
-            }
+            },
+            cache: true
         }
     });
 }

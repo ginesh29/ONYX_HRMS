@@ -46,7 +46,6 @@
                             <div>
                                 <i class="login__icon fas fa-building"></i>
                                 <select asp-for="Company" class="login__input" id="login-company-dropdown" asp-items="ViewBag.CompanyItems">
-                                    <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                             </div>
                             <span asp-validation-for="Company" class="text-danger"></span>
@@ -104,6 +103,9 @@
             $("#btn-login").click();
         }
     });
+    var comanyLength = $("#login-company-dropdown option").length;
+    if (comanyLength <= 1)
+        $("#login-company-dropdown").closest('.login__field').addClass("d-none");
 </script>
 <style>
     .bg-div {

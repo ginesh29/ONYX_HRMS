@@ -7,16 +7,16 @@ using ExcelDataReader;
 
 namespace Onyx.Services
 {
-    public class TransactionService(CommonService commonService, EmployeeService employeeService, AuthService authService)
+    public class TransactionService(DbGatewayService dbGatewayService, EmployeeService employeeService, AuthService authService)
     {
-        private readonly CommonService _commonService = commonService;
+        private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         private readonly EmployeeService _employeeService = employeeService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
 
         #region Loan Application
         public CommonResponse SaveLoan(EmpLoanModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoan_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -39,7 +39,7 @@ namespace Onyx.Services
         }
         public int GetEmpLoan_Due(string EmpCd, DateTime? EffDt)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoan_Due";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", EmpCd);
@@ -52,7 +52,7 @@ namespace Onyx.Services
         public string GetNextLoanTransNo(string CoCd, string tableId)
         {
             var procedureName = "Tool_Generate_No";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_TableId", tableId);
@@ -70,7 +70,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", EmpUser);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLoan_Approval_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -83,7 +83,7 @@ namespace Onyx.Services
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "0");
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLoan_Disburse_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -96,7 +96,7 @@ namespace Onyx.Services
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "0");
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLoan_Adjustment_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -109,7 +109,7 @@ namespace Onyx.Services
             parameters.Add("v_TransNo", transNo);
             parameters.Add("v_Typ", status);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLoanDetail_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -117,7 +117,7 @@ namespace Onyx.Services
         }
         public void SaveEmpLoanAdj(EmpLoanDetail_GetRow_Result model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoanDetail_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -143,7 +143,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_Prd", EffDt);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -158,7 +158,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", UserOrEmp);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<EmpLoan_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -166,7 +166,7 @@ namespace Onyx.Services
         }
         public void SaveLoanApproval(EmpLoan_GetRow_Result model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoanAppr_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -195,7 +195,7 @@ namespace Onyx.Services
         }
         public void SaveEmpLoanDisbursement(EmpLoan_GetRow_Result model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoan_Disburse_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -211,7 +211,7 @@ namespace Onyx.Services
         #region Leave Application
         public void SaveLeave(EmpLeaveModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeave_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -234,7 +234,7 @@ namespace Onyx.Services
         }
         public int GetEmpMaxLeave(string CoCd, string LeaveType)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var query = $"select LvMax from CompanyLeaveDetail where CoCd='{CoCd}' and LvCd='{LeaveType}'";
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<int>
@@ -244,7 +244,7 @@ namespace Onyx.Services
         public string GetNextLeaveTransNo()
         {
             var procedureName = "EmpLeave_TransNo";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (procedureName, commandType: CommandType.StoredProcedure);
@@ -263,7 +263,7 @@ namespace Onyx.Services
             parameters.Add("v_Dept", "0");
             parameters.Add("v_EmpCd1", string.Empty);
             parameters.Add("v_UserCd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_Approval_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -277,7 +277,7 @@ namespace Onyx.Services
             parameters.Add("v_TransNo", TransNo);
             parameters.Add("v_Typ", Type);
             parameters.Add("v_UserCd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_View_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -290,7 +290,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_FromDt", FromDt);
             parameters.Add("v_ToDt", ToDt);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
             var empLeaveDetail = multiResult.ReadFirstOrDefault<Employee_LeaveDetail>();
@@ -317,7 +317,7 @@ namespace Onyx.Services
             parameters.Add("Wop_FromDt", model.WopFrom);
             parameters.Add("Wop_ToDt", model.WopTo);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<EmpLeave_Allowances_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -325,7 +325,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeaveApproval(EmpLeaveApprovalModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeaveAppr_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -348,7 +348,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeaveConfirm(EmpLeaveConfirmModel model, string CoCd)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeave_Confirm_Revise_Cancel_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", model.Type);
@@ -367,7 +367,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeaveRevise(EmpLeaveConfirmModel model, string CoCd)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeave_Revise_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", model.LvTyp);
@@ -389,7 +389,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveDutyResumption(EmpDutyResumptionModel model, string CoCd)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeave_Resumption_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
@@ -409,7 +409,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeaveProvision(EmpDutyResumptionModel model, string provType)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeaveProvisions_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -431,7 +431,7 @@ namespace Onyx.Services
         #region Leave Salary Application
         public void SaveLeaveSalary(EmpLeaveSalaryModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeaveSalary_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -447,7 +447,7 @@ namespace Onyx.Services
         public string GetNextLeaveSalaryTransNo()
         {
             var procedureName = "EmpLeaveSalaryTicket_TransNo";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (procedureName, commandType: CommandType.StoredProcedure);
@@ -463,7 +463,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", EmpOrUser);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_Approval_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -471,7 +471,7 @@ namespace Onyx.Services
         }
         public void SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeaveSalaryAppr_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -494,7 +494,7 @@ namespace Onyx.Services
             parameters.Add("v_Typ", string.Empty);
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_View_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -502,7 +502,7 @@ namespace Onyx.Services
         }
         public void SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model, string CoCd)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLeaveSalaryTicket_Confirm_Revise_Cancel_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", model.Status);
@@ -523,7 +523,7 @@ namespace Onyx.Services
         #region Fund Request Application
         public void SaveFundRequest(EmployeeFundModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmployeeFund_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -539,7 +539,7 @@ namespace Onyx.Services
         public string GetNextEmpFund_TransNo()
         {
             var procedureName = "EmpFund_TransNo";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (procedureName, commandType: CommandType.StoredProcedure);
@@ -554,7 +554,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", EmpUser);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpFund_Approval_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -567,7 +567,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_TransNo", transNo);
             parameters.Add("v_Typ", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpFund_View_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -575,7 +575,7 @@ namespace Onyx.Services
         }
         public void SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpFundAppr_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
@@ -591,7 +591,7 @@ namespace Onyx.Services
         }
         public void SaveEmpFundConfirm(EmpFund_View_Getrow_Result model, string CoCd)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpFund_Confirm_Revise_Cancel_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", model.Status);
@@ -616,7 +616,7 @@ namespace Onyx.Services
             parameters.Add("v_Srno", 0);
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_Usercd", userCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpTransfers_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -640,7 +640,7 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Narr", model.Narration);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -651,7 +651,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Empcd", EmpCd);
             parameters.Add("v_Srno", SrNo);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -660,7 +660,7 @@ namespace Onyx.Services
             var procedureName = "EmpTransfer_SrNo_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Empcd", EmpCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -677,7 +677,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EmpUser", empUser);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Empprovisionsadj_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -687,7 +687,7 @@ namespace Onyx.Services
         {
             var procedureName = "Empprovisionsadj_TransNo";
             var parameters = new DynamicParameters();
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<string>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -705,7 +705,7 @@ namespace Onyx.Services
             parameters.Add("v_Purpose", model.Purpose);
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -722,7 +722,7 @@ namespace Onyx.Services
             parameters.Add("v_Status", model.Status);
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -732,7 +732,7 @@ namespace Onyx.Services
             var procedureName = "Empprovisionsadj_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", transNo);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -748,7 +748,7 @@ namespace Onyx.Services
             parameters.Add("v_DeptCd", model.Department ?? string.Empty);
             parameters.Add("v_Prd", model.MonthYear);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpAttendance_Getrow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -770,7 +770,7 @@ namespace Onyx.Services
             parameters.Add("v_Up_HDays", model.Up_HDays);
             parameters.Add("v_EntryBy", filterModel.EntryBy);
             parameters.Add("v_TrnInd", "S");
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<CommonResponse>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -783,7 +783,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", empCd ?? string.Empty);
             parameters.Add("v_Prd", period);
             parameters.Add("v_Div", branch);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -877,7 +877,7 @@ namespace Onyx.Services
             parameters.Add("v_EdTyp", model.PayType);
             parameters.Add("v_FromDt", model.FromDt);
             parameters.Add("v_ToDt", model.ToDt);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpTrans_VarCompFixAmt_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -892,7 +892,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", Branch);
             parameters.Add("v_DocRef", string.Empty);
             parameters.Add("v_Empcd", empCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -915,7 +915,7 @@ namespace Onyx.Services
             parameters.Add("v_ToDt", filterModel.ToDt);
             parameters.Add("v_TrnInd", "M");
             parameters.Add("v_EmpDiv", filterModel.Branch);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -1002,7 +1002,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_DocTyp", type);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -1026,7 +1026,7 @@ namespace Onyx.Services
             parameters.Add("v_Status", "N");
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -1040,7 +1040,7 @@ namespace Onyx.Services
             parameters.Add("v_SrNo", 0);
             parameters.Add("v_LoginEmpCd", LoginEmpCd);
             parameters.Add("v_EmpUser", EmpUser);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpDocIssueRcpt_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -1063,7 +1063,7 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_EditBy", model.EntryBy);
             parameters.Add("v_ApprBy", model.ApprBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }

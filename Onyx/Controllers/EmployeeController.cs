@@ -42,10 +42,10 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = $"{m.Branch}({m.Cd.Trim()})"
             });
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {
@@ -61,7 +61,7 @@ namespace Onyx.Controllers
             ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
             return View();
         }
-        public IActionResult FetchEmployeeItems(string term, int page, string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
@@ -70,21 +70,19 @@ namespace Onyx.Controllers
             var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, string.Empty, _loggedInUser.UserCd).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
-            if (!string.IsNullOrEmpty(term))
-                employees = employees.Where(m => m.Name.Contains(term, StringComparison.OrdinalIgnoreCase) || m.Cd.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
-            var pageSize = 50;
-            var skip = page > 0 ? (page - 1) * pageSize : 0;
+            //if (!string.IsNullOrEmpty(term))
+            //    employees = employees.Where(m => m.Name.Contains(term, StringComparison.OrdinalIgnoreCase) || m.Cd.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             var items = employees.OrderBy(m => m.Name).Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),
                 Text = $"{s.Name.Trim()}({s.Cd.Trim()})"
-            }).Skip(skip).Take(pageSize);
-            var result = new Select2Model
-            {
-                Items = items,
-                TotalCount = employees.Count()
-            };
-            return Json(result);
+            });
+            //var result = new Select2Model
+            //{
+            //    Items = items,
+            //    TotalCount = employees.Count()
+            //};
+            return Json(items);
         }
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
@@ -192,10 +190,10 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = $"{m.Branch}({m.Cd.Trim()})"
             });
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
             {

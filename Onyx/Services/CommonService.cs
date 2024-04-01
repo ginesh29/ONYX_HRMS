@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Onyx.Data;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
@@ -10,36 +9,15 @@ using System.Net.Sockets;
 
 namespace Onyx.Services
 {
-
-    public class CommonService(AppDbContext context, AuthService authService)
+    public class CommonService(DbGatewayService dbGatewayService)
     {
-        private readonly AppDbContext _context = context;
-        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
-        public IEnumerable<Company_Getrow_Result> GetCompanies()
-        {
-            var procedureName = "Company_Getrow";
-            using var connection = _context.CreateConnection();
-            var companies = connection.Query<Company_Getrow_Result>
-                (procedureName, commandType: CommandType.StoredProcedure);
-            return companies;
-        }
-        public string GetConnectionString(string CoAbbr = null)
-        {
-            CoAbbr ??= _loggedInUser.CoAbbr;
-            var procedureName = "CompanyDatabases_Getrow";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_CoAbbr", CoAbbr);
-            using var connection = _context.CreateConnection();
-            var company = connection.QueryFirstOrDefault<CompanyDatabases_Getrow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return $"Server={company.Server};Initial catalog={company.DbName};uid={company.DbUser}; pwd={company.DbPwd};TrustServerCertificate=True;Connection Timeout=120;";
-        }
+        private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         public IEnumerable<Branch_UserCo_GetRow_Result> GetUserCompanies(string UserCd)
         {
             var procedureName = "Branch_UserCo_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_UserCd", UserCd);
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var companies = connection.Query<Branch_UserCo_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -47,7 +25,7 @@ namespace Onyx.Services
         }
         public IEnumerable<GetMenuWithPermissions_Result> GetMenuWithPermissions(string UserCd)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetMenuWithPermissions";
             var parameters = new DynamicParameters();
             parameters.Add("UserCd", UserCd);
@@ -58,7 +36,7 @@ namespace Onyx.Services
         }
         public IEnumerable<GetUserBranches_Result> GetUserBranches(string UserCd)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetUserBranches";
             var parameters = new DynamicParameters();
             parameters.Add("UserCd", UserCd);
@@ -69,7 +47,7 @@ namespace Onyx.Services
         }
         public void SaveUserMenu(string UserCd, string ActiveMenuIds)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             string insertQuery = !string.IsNullOrEmpty(ActiveMenuIds) ? "INSERT INTO UserMenu(UserCd,MenuId,Visible) VALUES" : null;
             if (!string.IsNullOrEmpty(ActiveMenuIds))
             {
@@ -83,7 +61,7 @@ namespace Onyx.Services
         }
         public void SaveUserPermission(string UserCd, IEnumerable<string> PermissionIdsWithActions)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             string insertQuery = PermissionIdsWithActions != null ? "INSERT INTO UserPermission(UserCd,MenuId,uAdd,uEdit,uDelete,uView,uPrint) VALUES" : null;
 
             if (PermissionIdsWithActions != null)
@@ -124,7 +102,7 @@ namespace Onyx.Services
         }
         public void SaveUserBranch(string UserCd, List<string> UserBranchIds)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             string insertQuery = UserBranchIds != null ? "INSERT INTO UserBranch(UserCd,Div,Des) VALUES" : null;
             if (UserBranchIds != null)
             {
@@ -140,7 +118,7 @@ namespace Onyx.Services
         {
             var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
             var os = Environment.OSVersion.Platform.ToString();
-            var connectionString = GetConnectionString(model.CoAbbr);
+            var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CoCd);
@@ -166,7 +144,7 @@ namespace Onyx.Services
             parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_ActivityAbbr", ActivityAbbr);
             parameters.Add("v_Mesg", Message);
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             int result = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -174,7 +152,7 @@ namespace Onyx.Services
         }
         public Parameters_GetRow_Result GetParameterByType(string CoCd, string Cd)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Parameters_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
@@ -187,7 +165,7 @@ namespace Onyx.Services
         }
         public DateTime GetCuurentLoggedInDetails(string CoCd)
         {
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "ActvityLogHead_MaxActivityId_Getrow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
@@ -202,7 +180,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", type);
             parameters.Add("v_ExceptCd", string.Empty);
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<GetSysCodes_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -211,7 +189,7 @@ namespace Onyx.Services
         public IEnumerable<GetSysCodes_Result> GetPayElements()
         {
             var procedureName = "CompanyEarnDed_OT_GetRow";
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<GetSysCodes_Result>
                 (procedureName, commandType: CommandType.StoredProcedure);
@@ -222,7 +200,7 @@ namespace Onyx.Services
             var procedureName = "Codes_Grp_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Grp", grp);
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Codes_Grp_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -307,7 +285,7 @@ namespace Onyx.Services
         public IEnumerable<GetSysCodes_Result> GetEarnDedTypes(string type)
         {
             var procedureName = "CompanyEarnDed_Loan_GetRow";
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", type);
             var connection = new SqlConnection(connectionString);
@@ -336,7 +314,7 @@ namespace Onyx.Services
         public int GetNext_SrNo(string tableName, string fileldName)
         {
             var query = $"SELECT Isnull(Max({fileldName}),0)+1 AS NextID FROM {tableName};";
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (query);
@@ -345,7 +323,7 @@ namespace Onyx.Services
         public IEnumerable<GetSysCodes_Result> GetPayCodesByType(string payType)
         {
             var procedureName = "CompanyEarnDed_AllTypes_GetRow";
-            var connectionString = GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", payType);
             parameters.Add("v_TrnTyp", "V");

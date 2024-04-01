@@ -6,12 +6,12 @@ using System.Data;
 
 namespace Onyx.Services
 {
-    public class UserService(CommonService commonService)
+    public class UserService(DbGatewayService dbGatewayService)
     {
-        private readonly CommonService _commonService = commonService;
+        private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         public Validate_User_Result ValidateUser(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
+            var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "Validate_User";
             var parameters = new DynamicParameters();
             parameters.Add("v_UserID", model.LoginId);
@@ -23,7 +23,7 @@ namespace Onyx.Services
         }
         public Validate_Employee_Result ValidateEmployee(LoginModel model)
         {
-            var connectionString = _commonService.GetConnectionString(model.CoAbbr);
+            var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "Validate_Employee";
             var parameters = new DynamicParameters();
             parameters.Add("v_EMPID", model.LoginId);
@@ -35,7 +35,7 @@ namespace Onyx.Services
         }
         public IEnumerable<Users_GetRow_Result> GetUsers(string UserCd = "", string CoAbbr = null)
         {
-            var connectionString = _commonService.GetConnectionString(CoAbbr);
+            var connectionString = _dbGatewayService.GetConnectionString(CoAbbr);
             var procedureName = "Users_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);

@@ -334,11 +334,10 @@ namespace Onyx.Controllers
                 Text = $"{m.ShortDes}({m.Code.Trim()})",
                 Value = m.Code.Trim()
             });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new
-            SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = $"{m.Branch}({m.Cd.Trim()})"
             });
             return PartialView("_EmpTransferModal", model);
         }
@@ -708,11 +707,10 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new
-            SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = $"{m.Branch}({m.Cd.Trim()})"
             });
             var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
@@ -794,11 +792,10 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _settingService.GetBranches(_loggedInUser.CompanyCd).Select(m => new
-            SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = $"{m.SDes}({m.Cd.Trim()})"
+                Text = $"{m.Branch}({m.Cd.Trim()})"
             });
             ViewBag.PayTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new SelectListItem
             {

@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Onyx.Services
 {
-    public class OrganisationService(CommonService commonService, AuthService authService)
+    public class OrganisationService(DbGatewayService dbGatewayService, CommonService commonService, AuthService authService)
     {
+        private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         private readonly CommonService _commonService = commonService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         #region Component
@@ -18,7 +19,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_Typ", type);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyEarnDed_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -42,7 +43,7 @@ namespace Onyx.Services
             parameters.Add("v_OtCd", model.OtCd ? "Yes" : "No");
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -53,7 +54,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             parameters.Add("v_Typ", type);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -65,7 +66,7 @@ namespace Onyx.Services
             var procedureName = "CompanyLoanTypes_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyLoanTypes_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -88,7 +89,7 @@ namespace Onyx.Services
             parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -98,7 +99,7 @@ namespace Onyx.Services
             var procedureName = "CompanyLoanTypes_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -111,7 +112,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyWHrs_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -131,7 +132,7 @@ namespace Onyx.Services
             parameters.Add("v_HolTyp", model.HolTypCd);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -141,7 +142,7 @@ namespace Onyx.Services
             var procedureName = "CompanyWHrs_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -154,7 +155,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Typ", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyOvertimeRates_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -175,7 +176,7 @@ namespace Onyx.Services
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -187,7 +188,7 @@ namespace Onyx.Services
             parameters.Add("v_SrNo", Cd);
             parameters.Add("v_Typ", type);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -197,7 +198,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Typ", type);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -212,7 +213,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyCalendar_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -232,7 +233,7 @@ namespace Onyx.Services
             parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -242,14 +243,14 @@ namespace Onyx.Services
             var procedureName = "CompanyCalendar_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
         public void SaveCalendarEventAttendees(string EventCd, List<string> EmpIds)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             string insertQuery = EmpIds != null ? "INSERT INTO CalendarEventAttendees(EventCd,EmpCd) VALUES" : null;
             if (EmpIds != null)
             {
@@ -264,7 +265,7 @@ namespace Onyx.Services
         public string GetCalendarEvent_SrNo()
         {
             var query = $"SELECT FORMAT(MAX(Cd) + 1, '00') AS NextID FROM companycalendar;";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (query);
@@ -278,7 +279,7 @@ namespace Onyx.Services
             var procedureName = "Notification_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Notification_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -297,7 +298,7 @@ namespace Onyx.Services
             parameters.Add("v_MessageBody", model.MessageBody);
             parameters.Add("v_DocTyp", model.DocTyp);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -311,7 +312,7 @@ namespace Onyx.Services
             parameters.Add("v_DocTyp", model.DocTyp);
             parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_EmpCd", EmpCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -323,7 +324,7 @@ namespace Onyx.Services
             parameters.Add("v_SrNo", Cd);
             parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -334,7 +335,7 @@ namespace Onyx.Services
             parameters.Add("v_SrNo", Cd);
             parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -346,7 +347,7 @@ namespace Onyx.Services
             parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_Typ", "1");
             parameters.Add("v_DocTyp", DocType);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -357,7 +358,7 @@ namespace Onyx.Services
             var procedureName = "Notification_Type_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Notification_Type_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -372,7 +373,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_BankCd", string.Empty);
             parameters.Add("v_BranchCd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyBank_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -396,7 +397,7 @@ namespace Onyx.Services
             parameters.Add("v_URL", model.URL);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -407,7 +408,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_BankCd", bankCd);
             parameters.Add("v_BranchCd", branchCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -423,7 +424,7 @@ namespace Onyx.Services
             parameters.Add("v_DocTypCd", string.Empty);
             parameters.Add("v_DivCd", string.Empty);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyDocuments_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -446,7 +447,7 @@ namespace Onyx.Services
             parameters.Add("v_Partners", model.Partners);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -458,7 +459,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", divCd);
             parameters.Add("v_DocTyp", docTypeCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -469,7 +470,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", divCd);
             parameters.Add("v_DocTyp", docTypCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompDocImages_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -485,7 +486,7 @@ namespace Onyx.Services
             parameters.Add("v_SlNo", model.SlNo);
             parameters.Add("v_ImageFile", model.ImageFile);
             parameters.Add("v_EntryBy", model.EntryBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -497,7 +498,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", divCd);
             parameters.Add("v_DocTyp", docTypCd);
             parameters.Add("v_SlNo", srNo);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -510,7 +511,7 @@ namespace Onyx.Services
             var procedureName = "CompanyVehicle_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyVehicle_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -549,7 +550,7 @@ namespace Onyx.Services
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -559,7 +560,7 @@ namespace Onyx.Services
             var procedureName = "CompanyVehicle_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -570,7 +571,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<VehDocuments_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -590,7 +591,7 @@ namespace Onyx.Services
             parameters.Add("v_ExpDt", model.ExpDt);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -602,7 +603,7 @@ namespace Onyx.Services
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", docType);
             parameters.Add("v_SrNo", 0);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -615,7 +616,7 @@ namespace Onyx.Services
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", docType);
             parameters.Add("v_SrNo", 0);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -625,7 +626,7 @@ namespace Onyx.Services
             var procedureName = "VehDocImages_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_VehCd", vehCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<VehDocImages_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -640,7 +641,7 @@ namespace Onyx.Services
             parameters.Add("v_SlNo", model.SlNo);
             parameters.Add("v_ImageFile", model.ImageFile);
             parameters.Add("v_EntryBy", model.EntryBy);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -651,7 +652,7 @@ namespace Onyx.Services
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", docType);
             parameters.Add("v_SlNo", slNo);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -664,7 +665,7 @@ namespace Onyx.Services
             var procedureName = "Designation_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Designation_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -679,7 +680,7 @@ namespace Onyx.Services
             parameters.Add("v_Des", model.Description);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -689,14 +690,14 @@ namespace Onyx.Services
             var procedureName = "Designation_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public string GetDesignation_SrNo()
         {
             var query = $"SELECT 'DESG' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DESG', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Designation;";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (query);
@@ -711,7 +712,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyLeave_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -736,7 +737,7 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             parameters.Add("v_Active", model.Active);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -746,7 +747,7 @@ namespace Onyx.Services
             var procedureName = "CompanyLeave_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -759,7 +760,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_LvCd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyLeavePay_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -775,7 +776,7 @@ namespace Onyx.Services
             parameters.Add("v_LvCd", model.LvCd);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -788,7 +789,7 @@ namespace Onyx.Services
             parameters.Add("@v_PayTyp", payTypCd);
             parameters.Add("@v_PayCd", payCd);
             parameters.Add("@v_LvCd", lvCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -801,7 +802,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_SectCd", string.Empty);
             parameters.Add("v_Class", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<AirFare_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -821,7 +822,7 @@ namespace Onyx.Services
             parameters.Add("v_Des", model.Description);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -833,7 +834,7 @@ namespace Onyx.Services
             parameters.Add("v_SectCd", sectCd);
             parameters.Add("v_Class", classCd);
             parameters.Add("v_SrNo", cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -843,7 +844,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_SectCd", sectCd);
             parameters.Add("v_Class", classCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<int>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -863,7 +864,7 @@ namespace Onyx.Services
             parameters.Add("v_Dept", "0");
             parameters.Add("v_typ", "1");
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProcessApproval_GetRow>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -880,7 +881,7 @@ namespace Onyx.Services
             parameters.Add("v_Dept", deptCd);
             parameters.Add("v_typ", "1");
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<CompanyProcessApproval_GetRow>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -895,7 +896,7 @@ namespace Onyx.Services
             parameters.Add("v_ApplTyp", applTypCd);
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProcessApproval_Detail_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -905,7 +906,7 @@ namespace Onyx.Services
         {
 
             var procedureName = "CompanyProcessApproval_Update";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var parameters = new DynamicParameters();
             parameters.Add("v_ProcessId", model.ProcessIdCd);
@@ -936,7 +937,7 @@ namespace Onyx.Services
             parameters.Add("v_Dept", model.DeptCd ?? "0");
             parameters.Add("v_SrNo", srNo);
             parameters.Add("v_EmpCd", empCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -949,7 +950,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -963,7 +964,7 @@ namespace Onyx.Services
             parameters.Add("v_ApplTyp", applTyp);
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -972,7 +973,7 @@ namespace Onyx.Services
             var procedureName = "CompanyProcessApproval_Type_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProcessApproval_Type_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -983,7 +984,7 @@ namespace Onyx.Services
             var procedureName = "CompanyProvisions_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProvisions_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -994,7 +995,7 @@ namespace Onyx.Services
             var procedureName = "CompanyFundTypes_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyFundTypes_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

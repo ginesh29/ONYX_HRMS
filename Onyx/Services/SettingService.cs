@@ -6,9 +6,9 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class SettingService(CommonService commonService, AuthService authService)
+    public class SettingService(DbGatewayService dbGatewayService, AuthService authService)
     {
-        private readonly CommonService _commonService = commonService;
+        private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         #region Branch
         public IEnumerable<Branch_GetRow_Result> GetBranches(string CoCd)
@@ -18,7 +18,7 @@ namespace Onyx.Services
             parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Branch_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -36,7 +36,7 @@ namespace Onyx.Services
             parameters.Add("v_Image", model.Image ?? "");
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -47,7 +47,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -56,7 +56,7 @@ namespace Onyx.Services
             var procedureName = "BankBranch_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Bank", bankCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<BankBranch_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -67,7 +67,7 @@ namespace Onyx.Services
         #region User
         public CommonResponse SaveUser(UserModel model)
         {
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Users_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
@@ -87,7 +87,7 @@ namespace Onyx.Services
             var procedureName = "Users_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -123,7 +123,7 @@ namespace Onyx.Services
             var procedureName = "Dept_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Dept_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -138,7 +138,7 @@ namespace Onyx.Services
             parameters.Add("v_SDes", model.Name);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -148,14 +148,14 @@ namespace Onyx.Services
             var procedureName = "Dept_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public string GetDepartment_SrNo()
         {
             var query = "SELECT 'DEP' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DEP', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Dept;";
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (query);
@@ -170,7 +170,7 @@ namespace Onyx.Services
             var procedureName = "Codes_Auto_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", type);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -181,7 +181,7 @@ namespace Onyx.Services
             var procedureName = "CodeGroups_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CodeGroups_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -192,7 +192,7 @@ namespace Onyx.Services
             var procedureName = "Codes_Grp_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Grp", grp);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Codes_Grp_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -203,7 +203,7 @@ namespace Onyx.Services
             var procedureName = "Codes_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Codes_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -221,7 +221,7 @@ namespace Onyx.Services
             parameters.Add("v_Active", model.Active);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -231,7 +231,7 @@ namespace Onyx.Services
             var procedureName = "Codes_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
@@ -243,7 +243,7 @@ namespace Onyx.Services
             var procedureName = "Country_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Country_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -261,7 +261,7 @@ namespace Onyx.Services
             parameters.Add("v_Provisions", model.Provisions);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -271,7 +271,7 @@ namespace Onyx.Services
             var procedureName = "Country_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -285,7 +285,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_CoCd", CoCd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Currency_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -306,7 +306,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
@@ -316,7 +316,7 @@ namespace Onyx.Services
             var procedureName = "Currency_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
-            var connectionString = _commonService.GetConnectionString();
+            var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
