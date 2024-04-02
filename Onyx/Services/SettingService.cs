@@ -12,7 +12,7 @@ namespace Onyx.Services
         #region Branch
         public IEnumerable<Branch_GetRow_Result> GetBranches(string CoCd)
         {
-            var procedureName = "Branch_GetRow";
+            var procedureName = "Branch_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             parameters.Add("v_CoCd", CoCd);
@@ -24,7 +24,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveBranch(BranchModel model)
         {
-            var procedureName = "Branch_Update";
+            var procedureName = "Branch_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code.Trim());
             parameters.Add("v_Des", model.Description);
