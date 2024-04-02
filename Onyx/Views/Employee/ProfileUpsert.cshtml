@@ -58,8 +58,9 @@
                                             <div id="Addresses"></div>
                                         }
                                     </div>
-                                    <button type="button" class="btn btn-primary" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
-                                    <button type="button" class="btn btn-primary float-right" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                    <button type="button" class="btn btn-primary @(item.i != 0 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
+                                    <button type="button" class="btn btn-primary float-right @(item.i != 6 ? "visible" :"invisible")" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(item.i == 6 ? "visible" :"invisible")">Exit Profile</a>
                                 </div>
                             }
                         </form>

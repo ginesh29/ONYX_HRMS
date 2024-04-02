@@ -75,7 +75,9 @@ function GoToNextPrev(btn, back) {
             else if (activeStepIndex == 5)
                 bindAddresses(empCode);
             if (activeStepIndex != 0 && activeStepIndex != 1)
-                stepper.next();
+                setTimeout(function () {
+                    stepper.next();
+                }, 1000);
         }
     }
     else
@@ -112,28 +114,21 @@ function getUserDetail(e) {
         $("#ConfirmPassword").val(response)
     })
 }
-var prevJson = null;
-setTimeout(function () {
-    prevJson = $("#emp-profile-frm").serialize();
-}, 500);
 
 function saveBasicDetail(btn) {
     var frm = $("#emp-profile-frm");
-    var newJson = frm.serialize();
     if (frm.valid()) {
         loadingButton(btn);
-        if (prevJson !== newJson) {
-            filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
-                if (response.success) {
-                    $("#btn-avatar-delete").removeClass("d-none");
+        filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
+            if (response.success) {
+                $("#btn-avatar-delete").removeClass("d-none");
+                setTimeout(function () {
                     stepper.next();
-                }
-                else
-                    showErrorToastr(response.message);
-            });
-        }
-        else
-            stepper.next();
+                }, 1000);
+            }
+            else
+                showErrorToastr(response.message);
+        });
         unloadingButton(btn);
     }
 }
@@ -325,8 +320,8 @@ function bindDocumentDataTable() {
                             return row.expDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                         }, width: "100px"
                     },
-                   {
-                         data: function (row) {
+                    {
+                        data: function (row) {
                             return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
