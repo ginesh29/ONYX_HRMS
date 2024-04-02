@@ -1,5 +1,4 @@
-﻿
-var type = $("#Type").val();
+﻿var type = $("#Type").val();
 window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
     {
         ajax: `/Transactions/FetchEmpLeaveData?type=${type}`,
@@ -62,10 +61,17 @@ function showLeaveConfirmModal(transNo) {
                 var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
                 var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
                 var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
-                $(`#${ev.target.id}Days`).text(`(${days} days)`);
+                $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
                 $(`#${ev.target.id}Days`).val(days);
                 $(this).val(`${startDate} - ${endDate}`);
-            });
+            }).on('change.daterangepicker', function (ev, picker) {
+                $(this).val("");
+                $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
+                $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
+                $(`#${ev.target.id}Days-txt`).text("");
+                $(`#${ev.target.id}Days`).val("");
+
+            });;
         $('#WpDateRange').rules("add", {
             eitherOrRequired: ['#WopDateRange', '#WpDateRange'],
             messages: {

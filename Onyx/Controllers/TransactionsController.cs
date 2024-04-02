@@ -121,19 +121,13 @@ namespace Onyx.Controllers
                 var dateSp = model.DateRange.Split(" - ");
                 model.FromDt = Convert.ToDateTime(dateSp[0]);
                 model.ToDt = Convert.ToDateTime(dateSp[1]);
-                if (!string.IsNullOrEmpty(model.WpDateRange))
-                {
-                    var wpDateSp = model.WpDateRange.Split(" - ");
-                    model.WpFrom = Convert.ToDateTime(wpDateSp[0]);
-                    model.WpTo = Convert.ToDateTime(wpDateSp[1]);
-                }
-                if (!string.IsNullOrEmpty(model.WopDateRange))
-                {
-                    var wopDateSp = model.WopDateRange.Split(" - ");
-                    model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
-                    model.WopTo = Convert.ToDateTime(wopDateSp[1]);
-                }
-                //_transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
+                var wpDateSp = !string.IsNullOrEmpty(model.WpDateRange) ? model.WpDateRange.Split(" - ") : null;
+                model.WpFrom = !string.IsNullOrEmpty(model.WpDateRange) ? Convert.ToDateTime(wpDateSp[0]) : null;
+                model.WpTo = !string.IsNullOrEmpty(model.WpDateRange) ? Convert.ToDateTime(wpDateSp[1]) : null;
+                var wopDateSp = !string.IsNullOrEmpty(model.WopDateRange) ? model.WopDateRange.Split(" - ") : null;
+                model.WopFrom = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[0]) : null;
+                model.WopTo = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[1]) : null;
+                _transactionService.SaveLeaveRevise(model, _loggedInUser.CompanyCd);
             }
             else
                 _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
@@ -238,12 +232,12 @@ namespace Onyx.Controllers
             model.ApprBy = _loggedInUser.UserAbbr;
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprDays = model.LvDays + model.WopLvDays;
-            var wpDateSp = model.WpDateRange.Split(" - ");
-            model.WpFrom = Convert.ToDateTime(wpDateSp[0]);
-            model.WpTo = Convert.ToDateTime(wpDateSp[1]);
-            var wopDateSp = model.WopDateRange.Split(" - ");
-            model.WopFrom = Convert.ToDateTime(wopDateSp[0]);
-            model.WopTo = Convert.ToDateTime(wopDateSp[1]);
+            var wpDateSp = !string.IsNullOrEmpty(model.WpDateRange) ? model.WpDateRange.Split(" - ") : null;
+            model.WpFrom = !string.IsNullOrEmpty(model.WpDateRange) ? Convert.ToDateTime(wpDateSp[0]) : null;
+            model.WpTo = !string.IsNullOrEmpty(model.WpDateRange) ? Convert.ToDateTime(wpDateSp[1]) : null;
+            var wopDateSp = !string.IsNullOrEmpty(model.WopDateRange) ? model.WopDateRange.Split(" - ") : null;
+            model.WopFrom = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[0]) : null;
+            model.WopTo = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[1]) : null;
             _transactionService.SaveDutyResumption(model, _loggedInUser.CompanyCd);
             if (!string.IsNullOrEmpty(model.GraduityDateRange))
             {

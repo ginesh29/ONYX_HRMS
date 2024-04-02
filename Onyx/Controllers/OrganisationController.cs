@@ -564,6 +564,7 @@ namespace Onyx.Controllers
             var model = new CompanyProcessApprovalModel();
             if (approvalProcess != null & !string.IsNullOrEmpty(processId))
             {
+                var approvals = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd);
                 model = new CompanyProcessApprovalModel
                 {
                     Cd = approvalProcess.Branch,
@@ -575,7 +576,8 @@ namespace Onyx.Controllers
                     Dept = approvalProcess?.Dept,
                     ProcessIdCd = approvalProcess?.ProcessIdCd.Trim(),
                     ProcessId = approvalProcess?.ProcessId,
-                    ApprovalLevels = _organisationService.GetCompanyProcessApproval_Detail(processId, applTypCd, branchCd, deptCd, _loggedInUser.CompanyCd).ToList(),
+                    ApprovalLevels = approvals.ToList(),
+                    Approvals = approvals.Select(m => m.EmpCd).ToList(),
                 };
             }
             ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
@@ -608,10 +610,8 @@ namespace Onyx.Controllers
             if (model.Mode == "I")
                 _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
             _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
-            foreach (var item in model.ApprovalLevels.Select((value, i) => new { i, value }))
-            {
-                _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value.EmpCd, _loggedInUser.CompanyCd);
-            }
+            foreach (var item in model.Approvals.Select((value, i) => new { i, value }))
+                _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value, _loggedInUser.CompanyCd);
             var result = new CommonResponse
             {
                 Success = true,

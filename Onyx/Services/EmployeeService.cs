@@ -7,9 +7,10 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class EmployeeService(DbGatewayService dbGatewayService, AuthService authService)
+    public class EmployeeService(DbGatewayService dbGatewayService, CommonService commonService, AuthService authService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
+        private readonly CommonService _commonService = commonService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {

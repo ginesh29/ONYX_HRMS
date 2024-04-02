@@ -106,10 +106,12 @@ namespace Onyx
             var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{CoCd}/{foldername}/{filename}");
             return File.Exists(path);
         }
-        public static string GetDateRange(DateTime? start, DateTime? end)
+        public static string GetDateRange(DateTime? startDate, DateTime? endDate)
         {
             var format = GetDateFormat();
-            return $"{Convert.ToDateTime(start).ToString(format)} - {Convert.ToDateTime(end).ToString(format)}";
+            if (startDate == null || endDate == null)
+                return string.Empty;
+            return $"{Convert.ToDateTime(startDate).ToString(format)} - {Convert.ToDateTime(endDate).ToString(format)}";
         }
         public static string GetDateFormat()
         {
@@ -119,6 +121,8 @@ namespace Onyx
         }
         public static int GetDaysBetweenDateRange(DateTime? startDate, DateTime? endDate)
         {
+            if (startDate == null || endDate == null)
+                return 0;
             return (Convert.ToDateTime(endDate) - Convert.ToDateTime(startDate)).Days + 1;
         }
     }

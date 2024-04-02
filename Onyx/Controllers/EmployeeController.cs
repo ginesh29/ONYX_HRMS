@@ -12,21 +12,23 @@ namespace Onyx.Controllers
     public class EmployeeController : Controller
     {
         private readonly AuthService _authService;
-        private readonly EmployeeService _employeeService;
+        private readonly OrganisationService _organisationService;
         private readonly CommonService _commonService;
         private readonly SettingService _settingService;
+        private readonly EmployeeService _employeeService;
         private readonly UserService _userService;
-        private readonly OrganisationService _organisationService;
+        private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public EmployeeController(AuthService authService, EmployeeService employeeService, CommonService commonService, SettingService settingService, OrganisationService organisationService, UserService userService)
+        public EmployeeController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, EmployeeService employeeService, UserService userService, EmailService emailService)
         {
-            _employeeService = employeeService;
             _authService = authService;
-            _commonService = commonService;
-            _settingService = settingService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
+            _commonService = commonService;
+            _settingService = settingService;
+            _emailService = emailService;
+            _employeeService = employeeService;
             _userService = userService;
             _fileHelper = new FileHelper();
         }
@@ -84,32 +86,32 @@ namespace Onyx.Controllers
             int pageNumber = page ?? 1;
             var size = pageSize ?? 100;
             int rowCount = filterModel.EmployeeStatus == "N" ? 3 : 100;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, rowCount);
-            bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, rowCount);
+            //bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
 
-            if (isFilter)
-            {
-                employees = employees.Where(e =>
-                 !string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name)
-                 &&
-                 !string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name)
-                 &&
-                 filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim())
-                 &&
-                 (filterModel.Designations.Count > 0 && filterModel.Designations.Contains(e.Desg?.Trim()))
-                 &&
-                 (filterModel.Branches.Count > 0 && filterModel.Branches.Contains(e.BranchCd?.Trim()))
-                 &&
-                 (filterModel.Sponsors.Count > 0 && filterModel.Sponsors.Contains(e.SponsorCd?.Trim()))
-                 &&
-                 (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
-                 &&
-                 (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
-                 &&
-                 (filterModel.LeaveStatus != null &&
-                 ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
-                );
-            }
+            //if (isFilter)
+            //{
+            //    employees = employees.Where(e =>
+            //     !string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name)
+            //     &&
+            //     !string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name)
+            //     &&
+            //     filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim())
+            //     &&
+            //     (filterModel.Designations.Count > 0 && filterModel.Designations.Contains(e.Desg?.Trim()))
+            //     &&
+            //     (filterModel.Branches.Count > 0 && filterModel.Branches.Contains(e.BranchCd?.Trim()))
+            //     &&
+            //     (filterModel.Sponsors.Count > 0 && filterModel.Sponsors.Contains(e.SponsorCd?.Trim()))
+            //     &&
+            //     (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
+            //     &&
+            //     (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
+            //     &&
+            //     (filterModel.LeaveStatus != null &&
+            //     ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
+            //    );
+            //}
             if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
                 employees = employees.Where(m => m.Active == "Y");
             var pagedEmployees = employees.ToPagedList(pageNumber, size);

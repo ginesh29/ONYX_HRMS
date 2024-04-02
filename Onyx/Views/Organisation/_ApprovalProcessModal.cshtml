@@ -52,7 +52,7 @@
                 </div>
                 <div class="form-group">
                     <label>Approval Levels</label>
-                    <select asp-for="ApprovalLevels" class="form-control" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
+                    <select asp-for="Approvals" class="form-control" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
                         @if (Model.ApprovalLevels != null)
                         {
                             @for (int i = 0; i < Model.ApprovalLevels.Count(); i++)

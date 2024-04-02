@@ -308,37 +308,31 @@ $("#user-company-dropdown").on('change', function (e) {
 })
 function bindEmployeeDropdown() {
     var el = $("select#EmpCd,select#EmployeeCode");
+    el.select2();
     id = el.attr("id");
-    el.select2({
-        placeholder: "-- Select --",
-        allowClear: true,
-        dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
-        ajax: {
-            url: `/Employee/FetchEmployeeItems`,
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-            cache: true
-        }
-    });
+    el.append("<option vlaue>-- Select --</option>")
+    getAjax(`/Employee/FetchEmployeeItems`, function (response) {
+        el.select2({
+            placeholder: "-- Select --",
+            allowClear: true,
+            dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
+            data: response
+        })
+    })
 }
 function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
-    var el = $("select#ApprovalLevels,select#Attendees");
-    el.select2({
-        placeholder: "-- Select --",
-        allowClear: true,
-        ajax: {
-            url: `/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`,
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-            cache: true
-        }
-    });
+    var el = $("select#Approvals,select#Attendees");
+    el.select2();
+    id = el.attr("id");
+    el.append("<option vlaue>-- Select --</option>")
+    getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
+        el.select2({
+            placeholder: "-- Select --",
+            allowClear: true,
+            dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
+            data: response
+        })
+    })
 }
 function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";

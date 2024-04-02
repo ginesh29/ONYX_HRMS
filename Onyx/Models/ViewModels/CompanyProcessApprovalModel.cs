@@ -23,6 +23,7 @@ namespace Onyx.Models.ViewModels
         public string DeptCd { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Approval Levels")]
+        public List<string> Approvals { get; set; }
         public List<CompanyProcessApproval_Detail_GetRow_Result> ApprovalLevels { get; set; }
         public string Cd { get; set; }
         public string Mode

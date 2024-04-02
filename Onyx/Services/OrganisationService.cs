@@ -911,8 +911,8 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_ProcessId", model.ProcessIdCd);
             parameters.Add("v_ApplTyp", model.ApplTypCd);
-            parameters.Add("v_Div", "0");
-            parameters.Add("v_Dept", "0");
+            parameters.Add("v_Div", model.BranchCd ?? "0");
+            parameters.Add("v_Dept", model.DeptCd ?? "0");
             parameters.Add("v_CoCd", CoCd);
             connection.Open();
             using SqlTransaction transaction = connection.BeginTransaction();
@@ -962,8 +962,8 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", processId);
             parameters.Add("v_ApplTyp", applTyp);
-            parameters.Add("v_Div", branchCd);
-            parameters.Add("v_Dept", deptCd);
+            parameters.Add("v_Div", branchCd ?? "0");
+            parameters.Add("v_Dept", deptCd ?? "0");
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
