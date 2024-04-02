@@ -63,7 +63,7 @@ namespace Onyx.Services
         #region Loan Type
         public IEnumerable<CompanyLoanTypes_GetRow_Result> GetLoanTypes()
         {
-            var procedureName = "CompanyLoanTypes_GetRow";
+            var procedureName = "CompanyLoanTypes_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -74,7 +74,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLoanType(LoanTypeModel model)
         {
-            var procedureName = "CompanyLoanTypes_Update";
+            var procedureName = "CompanyLoanTypes_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_PayTyp", model.PayTyp);
@@ -418,7 +418,7 @@ namespace Onyx.Services
         #region Document
         public IEnumerable<CompanyDocuments_GetRow_Result> GetDocuments(string CoCd)
         {
-            var procedureName = "CompanyDocuments_GetRow";
+            var procedureName = "CompanyDocuments_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_DocTypCd", string.Empty);
@@ -855,7 +855,7 @@ namespace Onyx.Services
         #region Approval Process
         public IEnumerable<CompanyProcessApproval_GetRow> GetApprovalProcesses(string CoCd)
         {
-            var procedureName = "CompanyProcessApproval_GetRow";
+            var procedureName = "CompanyProcessApproval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", "0");
@@ -889,7 +889,7 @@ namespace Onyx.Services
         }
         public IEnumerable<CompanyProcessApproval_Detail_GetRow_Result> GetCompanyProcessApproval_Detail(string processIdCd, string applTypCd, string branchCd, string deptCd, string CoCd)
         {
-            var procedureName = "CompanyProcessApproval_Detail_GetRow";
+            var procedureName = "CompanyProcessApproval_Detail_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", processIdCd);
@@ -905,7 +905,7 @@ namespace Onyx.Services
         public void SaveApprovalProcess(CompanyProcessApprovalModel model, string CoCd)
         {
 
-            var procedureName = "CompanyProcessApproval_Update";
+            var procedureName = "CompanyProcessApproval_Update_N";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var parameters = new DynamicParameters();
@@ -928,7 +928,7 @@ namespace Onyx.Services
         }
         public void SaveApprovalProcess_Detail(CompanyProcessApprovalModel model, int srNo, string empCd, string CoCd)
         {
-            var procedureName = "CompanyProcessApproval_Detail_Insert";
+            var procedureName = "CompanyProcessApproval_Detail_Insert_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", model.ProcessIdCd);

@@ -255,7 +255,7 @@ namespace Onyx.Services
         #region Document
         public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string type)
         {
-            var procedureName = "EmpDocuments_GetRow";
+            var procedureName = "EmpDocuments_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_DocTyp", string.Empty);
