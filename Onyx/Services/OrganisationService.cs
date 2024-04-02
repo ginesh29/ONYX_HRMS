@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Onyx.Services
 {
-    public class OrganisationService(DbGatewayService dbGatewayService, CommonService commonService, AuthService authService)
+    public class OrganisationService(DbGatewayService dbGatewayService, AuthService authService, CommonService commonService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        private readonly CommonService _commonService = commonService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
+        private readonly CommonService _commonService = commonService;
+
         #region Component
         public IEnumerable<CompanyEarnDed_GetRow_Result> GetComponents(string type)
         {
@@ -862,7 +863,7 @@ namespace Onyx.Services
             parameters.Add("v_ApplTyp", "0");
             parameters.Add("v_Div", "0");
             parameters.Add("v_Dept", "0");
-            parameters.Add("v_typ", "1");
+            parameters.Add("v_typ", "0");
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

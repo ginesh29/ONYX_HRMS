@@ -481,7 +481,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLoanApproval(string transNo)
         {
             var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim()).FirstOrDefault();
+            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserCd).FirstOrDefault();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
             loanDetails.Salary = Convert.ToInt32(empDetail.Total);
             loanDetails.ApprAmt = loanDetails.Amt;
@@ -958,7 +958,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(string.Empty, null).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel

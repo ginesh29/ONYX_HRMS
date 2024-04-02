@@ -20,9 +20,10 @@ namespace Onyx.Controllers
             _commonService = commonService;
             _userService = userService;
             _dbGatewayService = dbGatewayService;
+            _employeeService = employeeService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
-            _employeeService = employeeService;
+
         }
         public IActionResult Login()
         {

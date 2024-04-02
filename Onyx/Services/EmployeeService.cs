@@ -10,7 +10,6 @@ namespace Onyx.Services
     public class EmployeeService(DbGatewayService dbGatewayService, AuthService authService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -24,21 +23,21 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", bool Active = true)
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", string empType = "0", bool Active = true)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "Employee_GetRow";
+            var procedureName = "Employee_GetRow_N";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Param", empCd ?? string.Empty);
-            parameters.Add("v_Typ", "99");
+            parameters.Add("v_Empcd", empCd ?? string.Empty);
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_RowsCnt", Active ? 2 : 3);
             parameters.Add("v_Div", div ?? "0");
             parameters.Add("v_Dept", dept ?? "0");
             parameters.Add("v_Sponsor", sponsor ?? "0");
             parameters.Add("v_Designation", Desg ?? "0");
             parameters.Add("v_Status", status ?? "0");
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_EmpTyp", empType ?? "0");
+            parameters.Add("v_Active", Active ? "Y" : "N");
+            parameters.Add("v_Usercd", UserCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -253,7 +252,7 @@ namespace Onyx.Services
         #endregion
 
         #region Document
-        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string type)
+        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string type, string UserCd)
         {
             var procedureName = "EmpDocuments_GetRow_N";
             var parameters = new DynamicParameters();
@@ -261,7 +260,7 @@ namespace Onyx.Services
             parameters.Add("v_DocTyp", string.Empty);
             parameters.Add("v_SrNo", 0);
             parameters.Add("v_Typ", type ?? "N");
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpDocuments_GetRow_Result>
@@ -341,7 +340,7 @@ namespace Onyx.Services
         #endregion
 
         #region Component
-        public IEnumerable<EmpEarnDed_GetRow_Result> GetComponents(string empCd)
+        public IEnumerable<EmpEarnDed_GetRow_Result> GetComponents(string empCd, string UserCd)
         {
             var procedureName = "EmpEarnDed_View_GetRow";
             var parameters = new DynamicParameters();
@@ -350,7 +349,7 @@ namespace Onyx.Services
             parameters.Add("v_EdTyp", string.Empty);
             parameters.Add("v_Typ", "3");
             parameters.Add("v_SrNo", 0);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpEarnDed_GetRow_Result>
@@ -449,12 +448,12 @@ namespace Onyx.Services
         #endregion
 
         #region Bank Account
-        public IEnumerable<EmpBankAc_GetRow_Result> GetBankAccounts()
+        public IEnumerable<EmpBankAc_GetRow_Result> GetBankAccounts(string UserCd)
         {
             var procedureName = "EmpBankAc_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpBankAc_GetRow_Result>
@@ -497,12 +496,12 @@ namespace Onyx.Services
         #endregion
 
         #region Calendar Event
-        public IEnumerable<EmpCalendar_GetRow_Result> GetCalendarEvents(string empCd)
+        public IEnumerable<EmpCalendar_GetRow_Result> GetCalendarEvents(string empCd, string UserCd)
         {
             var procedureName = "EmpCalendar_GetRow";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpCalendar_GetRow_Result>

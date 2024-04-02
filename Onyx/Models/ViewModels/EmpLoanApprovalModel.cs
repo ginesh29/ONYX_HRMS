@@ -1,4 +1,4 @@
-﻿namespace Onyx.Models.StoredProcedure
+﻿namespace Onyx.Models.ViewModels
 {
     public class EmpLoanApprovalModel
     {

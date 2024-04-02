@@ -20,12 +20,12 @@ namespace Onyx.Controllers
         private readonly EmailService _emailService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public EmployeeController(AuthService authService, OrganisationService organisationService, CommonService commonService, SettingService settingService, EmployeeService employeeService, UserService userService, EmailService emailService)
+        public EmployeeController(AuthService authService, EmployeeService employeeService, OrganisationService organisationService, CommonService commonService, SettingService settingService, UserService userService, EmailService emailService)
         {
             _authService = authService;
+            _commonService = commonService;
             _loggedInUser = _authService.GetLoggedInUser();
             _organisationService = organisationService;
-            _commonService = commonService;
             _settingService = settingService;
             _emailService = emailService;
             _employeeService = employeeService;
@@ -69,7 +69,7 @@ namespace Onyx.Controllers
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
             var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
             var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => m.Active == "Y");
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Where(m => m.Active == "Y");
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
             if (!string.IsNullOrEmpty(term))
@@ -84,36 +84,14 @@ namespace Onyx.Controllers
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)
         {
             int pageNumber = page ?? 1;
-            var size = pageSize ?? 100;
-            //int rowCount = filterModel.EmployeeStatus == "N" ? 3 : 100;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, filterModel.Branches, filterModel.Departments, filterModel.Sponsors, filterModel.Designations, filterModel.LeaveStatus);
-            //bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
-
-            //if (isFilter)
-            //{
-            //    employees = employees.Where(e =>
-            //     !string.IsNullOrEmpty(filterModel.Name) && e.Cd.Trim().Equals(filterModel.Name)
-            //     &&
-            //     !string.IsNullOrEmpty(filterModel.Name) && e.Name.Trim().Equals(filterModel.Name)
-            //     &&
-            //     filterModel.Departments.Count > 0 && filterModel.Departments.Contains(e.DepartmentCd?.Trim())
-            //     &&
-            //     (filterModel.Designations.Count > 0 && filterModel.Designations.Contains(e.Desg?.Trim()))
-            //     &&
-            //     (filterModel.Branches.Count > 0 && filterModel.Branches.Contains(e.BranchCd?.Trim()))
-            //     &&
-            //     (filterModel.Sponsors.Count > 0 && filterModel.Sponsors.Contains(e.SponsorCd?.Trim()))
-            //     &&
-            //     (filterModel.EmployeeTypes.Count > 0 && filterModel.EmployeeTypes.Contains(e.EmpTyp?.Trim()))
-            //     &&
-            //     (filterModel.EmployeeStatus != null && ((filterModel.EmployeeStatus == "Y" && e.Active == "Y") || (filterModel.EmployeeStatus == "N" && e.Active != "Y") || (filterModel.EmployeeStatus == "R" && e.Status != null && e.Status.Contains("Resign"))))
-            //     &&
-            //     (filterModel.LeaveStatus != null &&
-            //     ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
-            //    );
-            //}
-            //if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
-            //    employees = employees.Where(m => m.Active == "Y");
+            var size = pageSize ?? 25;
+            var branches = filterModel.Branches != null ? string.Join(",", filterModel.Branches) : null;
+            var departments = filterModel.Departments != null ? string.Join(",", filterModel.Departments) : null;
+            var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
+            var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
+            var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
+            //bool isActive = filterModel.EmployeeStatus != "Y" ? false : true;
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.LeaveStatus, empTypes);
             var pagedEmployees = employees.ToPagedList(pageNumber, size);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
@@ -204,7 +182,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"
@@ -440,7 +418,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocuments(string type, string empCd = "")
         {
-            var documents = _employeeService.GetDocuments(empCd, type);
+            var documents = _employeeService.GetDocuments(empCd, type, _loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -449,7 +427,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(string.Empty, null).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel
@@ -562,7 +540,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchComponents(string empCd = "")
         {
-            var components = _employeeService.GetComponents(empCd);
+            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = components,
@@ -571,7 +549,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetComponent(string empCd, string edCd, string edTyp, int srNo)
         {
-            var component = _employeeService.GetComponents(empCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
+            var component = _employeeService.GetComponents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
             var model = new EmpEarnDedModel();
             if (component != null)
             {
@@ -707,7 +685,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchBankAccounts()
         {
-            var bankaccounts = _employeeService.GetBankAccounts();
+            var bankaccounts = _employeeService.GetBankAccounts(_loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = bankaccounts,
@@ -716,7 +694,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
         {
-            var bankAccount = _employeeService.GetBankAccounts().FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd && m.SrNo == srNo);
+            var bankAccount = _employeeService.GetBankAccounts(_loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd && m.SrNo == srNo);
             var model = new EmpBankAcModel();
             if (bankAccount != null)
                 model = new EmpBankAcModel
@@ -798,7 +776,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCalendarEvents(string empCd = "")
         {
-            var events = _employeeService.GetCalendarEvents(empCd).Select(m => new CalendarModel
+            var events = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserCd).Select(m => new CalendarModel
             {
                 Id = m.SrNo.ToString(),
                 AllDay = true,
@@ -811,7 +789,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetCalendarEvent(int srNo, string empCd = "")
         {
-            var calendarEvent = _employeeService.GetCalendarEvents(empCd).FirstOrDefault(m => m.SrNo == srNo);
+            var calendarEvent = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.SrNo == srNo);
             var model = new EmpCalendarModel();
             if (calendarEvent != null)
                 model = new EmpCalendarModel

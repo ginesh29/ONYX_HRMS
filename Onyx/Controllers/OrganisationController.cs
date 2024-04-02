@@ -353,7 +353,7 @@ namespace Onyx.Controllers
                 if (calendarEvent.Invite)
                     foreach (var item in calendarEvent.Attendees.Split(','))
                     {
-                        var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item).FirstOrDefault().Name;
+                        var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item, _loggedInUser.UserCd).FirstOrDefault().Name;
                         model.AttendeesName.Add(empName);
                     }
             }
@@ -391,7 +391,7 @@ namespace Onyx.Controllers
                 if (model.Invite)
                 {
                     _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
-                    var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                    var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
                     var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
                     {
                         RecipientEmail = m.Email,
@@ -458,7 +458,7 @@ namespace Onyx.Controllers
                 };
                 foreach (var item in notification.Attendees.Split(','))
                 {
-                    var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item).FirstOrDefault().Name;
+                    var empName = _employeeService.GetEmployees(_loggedInUser.CompanyCd, item, _loggedInUser.UserCd).FirstOrDefault().Name;
                     model.AttendeesName.Add(empName);
                 }
             }
@@ -504,7 +504,7 @@ namespace Onyx.Controllers
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty);
+                var emps = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd);
                 if (model.Attendees != null)
                     emps = emps.Where(m => model.Attendees.Contains(m.Cd.Trim()));
                 var recipients = emps.Select(m => new EmailRecipientModel
@@ -903,7 +903,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            ViewBag.DriverItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty).Select(m => new SelectListItem
+            ViewBag.DriverItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Text = $"{m.Name}({m.Cd.Trim()})",
                 Value = m.Cd.Trim(),

@@ -7,11 +7,11 @@ using ExcelDataReader;
 
 namespace Onyx.Services
 {
-    public class TransactionService(DbGatewayService dbGatewayService, EmployeeService employeeService, AuthService authService)
+    public class TransactionService(DbGatewayService dbGatewayService, AuthService authService, EmployeeService employeeService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        private readonly EmployeeService _employeeService = employeeService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
+        private readonly EmployeeService _employeeService = employeeService;        
 
         #region Loan Application
         public CommonResponse SaveLoan(EmpLoanModel model)
