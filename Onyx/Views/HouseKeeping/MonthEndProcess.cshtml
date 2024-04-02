@@ -3,21 +3,40 @@
 }
 <div class="card">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-1">
-                <div class="form-group disabled-container">
-                    <label>Month/Year</label>
-                    <input id="MonthYear" value="@ViewBag.currentMonthYear" class="form-control disabled" type="text">
+        <form id="month-end-frm">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="form-group disabled-container">
+                        <label>Month/Year</label>
+                        <input id="MonthYear" value="@ViewBag.currentMonthYear" class="form-control disabled" type="text">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="custom-control custom-checkbox form-group">
+            @* <div class="custom-control custom-checkbox form-group">
             <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" id="UpdateAccount">
             <label for="UpdateAccount" class="custom-control-label font-weight-normal">Update Account</label>
-        </div>
-        <button type="button" class="btn btn-info" onclick="saveVehicle(this)">Submit</button>
+            </div> *@
+            <button type="button" class="btn btn-info" onclick="saveMonthEnd(this)">Submit</button>
+        </form>
     </div>
 </div>
 @section scripts {
-    <script></script>
+    <script>
+        function saveMonthEnd(btn) {
+            var frm = $("#month-end-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/HouseKeeping/SaveMonthEndProcess", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else {
+                        showErrorToastr(response.message);
+                    }
+                    unloadingButton(btn);
+                });
+            }
+        }
+    </script>
 }

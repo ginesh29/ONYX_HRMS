@@ -16,5 +16,6 @@ namespace Onyx.Models.ViewModels
         public string LeaveStatus { get; set; }
         [Display(Name = "Employee Status")]
         public string EmployeeStatus { get; set; }
+        public bool Active { get; set; } = true;
     }
 }

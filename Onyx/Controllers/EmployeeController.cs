@@ -60,7 +60,11 @@ namespace Onyx.Controllers
                 Text = m.ShortDes
             });
             ViewBag.LeaveStatusItems = _commonService.GetLeaveStatusTypes();
-            ViewBag.EmployeeStatusItems = _commonService.GetEmployeeStatusTypes();
+            ViewBag.EmployeeStatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
             return View();
         }
         public IActionResult FetchEmployeeItems(string term, string departments, string designations, string branches, string locations)
@@ -90,8 +94,9 @@ namespace Onyx.Controllers
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
             var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
             var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
-            //bool isActive = filterModel.EmployeeStatus != "Y" ? false : true;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.LeaveStatus, empTypes);
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active);
+            if (filterModel.LeaveStatus != null)
+                employees = employees.Where(e => (filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P"));
             var pagedEmployees = employees.ToPagedList(pageNumber, size);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
@@ -434,6 +439,7 @@ namespace Onyx.Controllers
                 {
                     Cd = document.EmpCd,
                     EmpCd = document.EmpCd,
+                    EmpName = document.EmpName,
                     DocNo = document.DocNo,
                     DocTypSDes = document.DocTypSDes,
                     DocTypCd = document.DocTypCd.Trim(),

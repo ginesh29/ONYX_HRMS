@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <form id="employee-filter-frm">
-                    <div class="row">                       
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Branches"></label>
@@ -58,6 +58,10 @@
                                 <select asp-for="LeaveStatus" class="form-control filter-select-picker" asp-items="ViewBag.LeaveStatusItems"></select>
                             </div>
                         </div>
+                    </div>
+                    <div class="custom-control custom-checkbox form-group">
+                        <input checked class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active">
+                        <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
                     </div>
                 </form>
             </div>

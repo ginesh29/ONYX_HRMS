@@ -308,9 +308,7 @@ $("#user-company-dropdown").on('change', function (e) {
 })
 function bindEmployeeDropdown() {
     var el = $("select#EmpCd,select#EmployeeCode");
-    el.select2();
-    id = el.attr("id");
-    el.append("<option vlaue>-- Select --</option>")
+    var id = $(el).attr("id");
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
         el.select2({
             placeholder: "-- Select --",
@@ -323,13 +321,10 @@ function bindEmployeeDropdown() {
 function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
     var el = $("select#Approvals,select#Attendees");
     el.select2();
-    id = el.attr("id");
-    el.append("<option vlaue>-- Select --</option>")
     getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
         el.select2({
             placeholder: "-- Select --",
             allowClear: true,
-            dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
             data: response
         })
     })

@@ -10,20 +10,13 @@
             <form id="document-frm">
                 <input type="hidden" asp-for="Cd" />
                 <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
-                @if (string.IsNullOrEmpty(Model.EmpCd))
-                {
-                    <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
-                        <label asp-for="EmpCd"></label>
-                        <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
-                            <option value="@Model.EmpCd">@Model.EmpName (@Model.EmpCd)</option>
-                        </select>
-                        <span asp-validation-for="EmpCd" class="text-danger"></span>
-                    </div>
-                }
-                else
-                {
-                    <input type="hidden" asp-for="EmpCd" />
-                }
+                <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
+                    <label asp-for="EmpCd"></label>
+                    <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
+                        <option value="@Model.EmpCd">@Model.EmpName (@Model.EmpCd)</option>
+                    </select>
+                    <span asp-validation-for="EmpCd" class="text-danger"></span>
+                </div>
                 <div class=" row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">

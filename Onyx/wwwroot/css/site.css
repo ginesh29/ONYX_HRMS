@@ -7,10 +7,10 @@
     overflow: auto !important;
 }
 
-.text-orange {
-    color: #FFA500;
+.badge-orange {
+    color: #fff;
+    background-color: #FFA500;
 }
-
 .side-separator-container {
     text-align: center;
     border-bottom: 1px ridge #b5b5c3;

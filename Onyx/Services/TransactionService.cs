@@ -639,7 +639,6 @@ namespace Onyx.Services
             parameters.Add("v_BU_To", string.Empty);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Narr", model.Narration);
-            parameters.Add("v_Mode", model.Mode);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);

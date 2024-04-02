@@ -4,6 +4,7 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Sockets;
 
@@ -34,7 +35,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd,string CoCd)
+        public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "UserBranch_GetRow_N";
@@ -239,16 +240,6 @@ namespace Onyx.Services
                 new() { Text="On Leave", Value="OL"}};
             return statusTypes;
         }
-        public IEnumerable<SelectListItem> GetEmployeeStatusTypes()
-        {
-            var statusTypes = new List<SelectListItem>()
-            {
-                new() {Text="Active", Value="Y"},
-                new() { Text="In Active", Value="N"},
-                new() {Text="Resigned", Value="R"}
-            };
-            return statusTypes;
-        }
         public IEnumerable<SelectListItem> GetCalulationBasisTypes()
         {
             var calculationTypes = new List<SelectListItem>()
@@ -333,6 +324,16 @@ namespace Onyx.Services
             var data = connection.Query<GetSysCodes_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
+        }
+        public int MonthEndProcess(string CoCd)
+        {
+            var procedureName = "Tool_Process_MonthEnd";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
     }
 }
