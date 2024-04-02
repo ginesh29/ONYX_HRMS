@@ -36,7 +36,7 @@ namespace Onyx.Services
         public IEnumerable<Users_GetRow_Result> GetUsers(string UserCd = "", string CoAbbr = null)
         {
             var connectionString = _dbGatewayService.GetConnectionString(CoAbbr);
-            var procedureName = "Users_GetRow";
+            var procedureName = "Users_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", UserCd);
             var connection = new SqlConnection(connectionString);

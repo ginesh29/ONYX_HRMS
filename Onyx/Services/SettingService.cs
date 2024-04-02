@@ -66,7 +66,7 @@ namespace Onyx.Services
         public CommonResponse SaveUser(UserModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "Users_Update";
+            var procedureName = "Users_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_LoginId", model.LoginId);
@@ -198,7 +198,7 @@ namespace Onyx.Services
         }
         public IEnumerable<Codes_GetRow_Result> GetCodes()
         {
-            var procedureName = "Codes_GetRow";
+            var procedureName = "Codes_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -209,7 +209,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveCode(CodeModel model)
         {
-            var procedureName = "Codes_Update";
+            var procedureName = "Codes_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_Typ", model.Type);
@@ -249,7 +249,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveCountry(CountryModel model)
         {
-            var procedureName = "Country_Update";
+            var procedureName = "Country_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_SDes", model.ShortDesc);
@@ -291,7 +291,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveCurrency(CurrencyModel model, string CoCd)
         {
-            var procedureName = "Currency_Update";
+            var procedureName = "Currency_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_Des", model.Description);
