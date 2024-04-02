@@ -44,7 +44,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -85,8 +85,8 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             var size = pageSize ?? 100;
-            int rowCount = filterModel.EmployeeStatus == "N" ? 3 : 100;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, rowCount);
+            //int rowCount = filterModel.EmployeeStatus == "N" ? 3 : 100;
+            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, filterModel.Branches, filterModel.Departments, filterModel.Sponsors, filterModel.Designations, filterModel.LeaveStatus);
             //bool isFilter = !string.IsNullOrEmpty(filterModel.Name) || filterModel.Departments.Count > 0 || filterModel.Designations.Count > 0 || filterModel.Branches.Count > 0 || filterModel.Sponsors.Count > 0 || filterModel.EmployeeTypes.Count > 0 || filterModel.EmployeeStatus != null || filterModel.LeaveStatus != null;
 
             //if (isFilter)
@@ -112,8 +112,8 @@ namespace Onyx.Controllers
             //     ((filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P")))
             //    );
             //}
-            if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
-                employees = employees.Where(m => m.Active == "Y");
+            //if (string.IsNullOrEmpty(filterModel.EmployeeStatus))
+            //    employees = employees.Where(m => m.Active == "Y");
             var pagedEmployees = employees.ToPagedList(pageNumber, size);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
@@ -189,7 +189,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"

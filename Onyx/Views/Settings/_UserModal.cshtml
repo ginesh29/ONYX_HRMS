@@ -5,6 +5,7 @@
     string menuArray = JsonSerializer.Serialize(menuItems);
     string[] actionTypes = { "Add", "Edit", "Delete", "View", "Print" };
     List<UserBranch_GetRow_Result> UserBranchItems = ViewBag.UserBranchItems;
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
 }
 <div class="modal-dialog modal-lg">
     <!-- Modal content-->
@@ -72,7 +73,7 @@
                             <select asp-for="UserBranchCd" class="select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%">
                                 @foreach (var item in UserBranchItems)
                                 {
-                                    var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
+                                    var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/{companyCd}/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
                                     <option data-content="@($"{item.Branch}({item.Div.Trim()}) {@img}")" value="@item.Div" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
                                 }
                             </select>

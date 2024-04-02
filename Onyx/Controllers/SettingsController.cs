@@ -119,9 +119,7 @@ namespace Onyx.Controllers
             var visibleMenuIds = visibleMenuItems.Select(m => m.MenuId).Distinct();
             menuItems = menuItems.Where(m => visibleMenuIds.Contains(m.MenuId));
             ViewBag.SelectedMenuItems = menuItems.Select(m => m.MenuId).ToArray();
-            var allBranches = _commonService.GetUserBranches("001", _loggedInUser.CompanyCd);
-            
-            ViewBag.UserBranchItems = _commonService.GetUserBranches(user?.Code, _loggedInUser.CompanyCd);
+            ViewBag.UserBranchItems = _commonService.GetUserBranches(model.Cd, _loggedInUser.CompanyCd);
             return PartialView("_UserModal", model);
         }
         [HttpPost]

@@ -37,7 +37,7 @@ namespace Onyx.Services
         public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd,string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "UserBranch_GetRow";
+            var procedureName = "UserBranch_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_UserCd", UserCd);
             parameters.Add("v_CoCd", CoCd);

@@ -369,7 +369,7 @@ namespace Onyx.Controllers
                 Text = $"{m.SDes}({m.Cd.Trim()})",
                 Value = m.Cd.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -483,7 +483,7 @@ namespace Onyx.Controllers
                 Text = $"{m.SDes}({m.Cd.Trim()})",
                 Value = m.Cd.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -591,7 +591,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})",
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -607,9 +607,9 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveApprovalProcess(CompanyProcessApprovalModel model)
         {
-            if (model.Mode == "I")
-                _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
-            _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
+            _organisationService.SaveApprovalProcess(model, _loggedInUser.CompanyCd);
+            if (model.Mode == "U")
+                _organisationService.DeleteCompanyProcessApproval_Detail(model.ProcessIdCd, model.ApplTypCd, model.BranchCd, model.DeptCd, _loggedInUser.CompanyCd);
             foreach (var item in model.Approvals.Select((value, i) => new { i, value }))
                 _organisationService.SaveApprovalProcess_Detail(model, item.i + 1, item.value, _loggedInUser.CompanyCd);
             var result = new CommonResponse
@@ -732,7 +732,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -873,7 +873,7 @@ namespace Onyx.Controllers
                     State = vehicle.State,
                     StateCd = vehicle.StateCd.Trim(),
                 };
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"

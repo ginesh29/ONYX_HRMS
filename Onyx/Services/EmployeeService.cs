@@ -7,10 +7,9 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class EmployeeService(DbGatewayService dbGatewayService, CommonService commonService, AuthService authService)
+    public class EmployeeService(DbGatewayService dbGatewayService, AuthService authService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        private readonly CommonService _commonService = commonService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
@@ -25,7 +24,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, int rowCount = 2)
+        public IEnumerable<Employee_GetRow_Result> GetEmployees(string CoCd, string empCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", bool Active = true)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRow";
@@ -33,8 +32,12 @@ namespace Onyx.Services
             parameters.Add("v_Param", empCd ?? string.Empty);
             parameters.Add("v_Typ", "99");
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_RowsCnt", rowCount);
-            parameters.Add("v_Status", "0");
+            parameters.Add("v_RowsCnt", Active ? 2 : 3);
+            parameters.Add("v_Div", div ?? "0");
+            parameters.Add("v_Dept", dept ?? "0");
+            parameters.Add("v_Sponsor", sponsor ?? "0");
+            parameters.Add("v_Designation", Desg ?? "0");
+            parameters.Add("v_Status", status ?? "0");
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
             var connection = new SqlConnection(connectionString);
             var employee = connection.Query<Employee_GetRow_Result>
