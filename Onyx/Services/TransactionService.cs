@@ -11,7 +11,7 @@ namespace Onyx.Services
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
-        private readonly EmployeeService _employeeService = employeeService;        
+        private readonly EmployeeService _employeeService = employeeService;
 
         #region Loan Application
         public CommonResponse SaveLoan(EmpLoanModel model)
@@ -796,8 +796,9 @@ namespace Onyx.Services
             for (int i = 0; i < reader.FieldCount; i++)
                 headers.Add(Convert.ToString(reader.GetValue(i)));
             headers = headers.Where(m => !string.IsNullOrEmpty(m)).ToList();
-            var expectedHeaders = new List<string> { "Employee Code", "No Of Days", "Paid", "Unpaid", "W.OT", "H.OT" };
-            if (!headers.SequenceEqual(expectedHeaders))
+            var expectedHeaders = new List<string> { "Employee Code", "Unpaid", "W.OT", "H.OT" };
+            var expectedHeaders2 = new List<string> { "Employee Code", "Unpaid" };
+            if (!headers.SequenceEqual(expectedHeaders) && !headers.SequenceEqual(expectedHeaders2))
                 result = false;
             return result;
         }
@@ -825,15 +826,11 @@ namespace Onyx.Services
                 string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int W_days))
-                    errorMessage += "<li>No of Days is not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int P_HDays))
-                    errorMessage += "<li>No of Paid Days is not valid</li>";
                 if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int Up_HDays))
                     errorMessage += "<li>No of Unpaid Days is not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int W_OT))
+                if (!int.TryParse(Convert.ToString(reader.GetValue(2)), out int W_OT))
                     errorMessage += "<li>W.OT is not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int H_OT))
+                if (!int.TryParse(Convert.ToString(reader.GetValue(3)), out int H_OT))
                     errorMessage += "<li>H.OT is not valid</li>";
                 errorMessage += "</ul>";
                 var excelData = new EmpAttendance_Getrow_Result
@@ -841,8 +838,6 @@ namespace Onyx.Services
                     IsValid = validEmployee,
                     ErrorMessage = errorMessage,
                     Cd = empCd,
-                    W_days = W_days,
-                    P_HDays = P_HDays,
                     Up_HDays = Up_HDays,
                     W_OT = W_OT,
                     H_OT = H_OT
@@ -857,6 +852,8 @@ namespace Onyx.Services
             {
                 var spYearMonth = filterModel.MonthYear.Split("/");
                 filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+                int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(spYearMonth[1]), Convert.ToInt32(spYearMonth[0]));
+                item.W_days = lastDayOfMonth;
                 item.NHrs = Convert.ToInt32((item.W_days - item.Up_HDays - item.P_HDays) * float.Parse(filterModel.WorkingHrDay));
                 item.Payable = item.W_days - item.Up_HDays;
                 UpdateEmpMonthlyAttendance(item, filterModel);

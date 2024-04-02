@@ -750,7 +750,7 @@ namespace Onyx.Controllers
                 string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
                     : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records imported succussfully";
                 bool validHeader = _transactionService.ValidHeaderAttendanceExcel(file);
-                if (validData.Any() && validHeader)
+                if (!validHeader)
                 {
                     excelData = null;
                     Message = "Headers are not matched. Download again & refill data";
