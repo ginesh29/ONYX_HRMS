@@ -547,6 +547,21 @@ namespace Onyx.Controllers
         #region Approval Process
         public IActionResult ApprovalProcesses()
         {
+            ViewBag.TypeItems = _organisationService.GetProcessApprovalTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.ParameterCd.Trim(),
+                Text = m.Val
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})",
+            });
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
             return View();
         }
         public IActionResult FetchApprovalProcesses()

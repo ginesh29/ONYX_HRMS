@@ -1,8 +1,43 @@
 ﻿@{
     ViewData["Title"] = "Approval Processes";
 }
+@model CompanyProcessApprovalModel
 <div class="card">
-    <div class="card-body">
+    <div class="card-body">        
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="ProcessIdCd"></label>
+                    <select asp-for="ProcessIdCd" class="form-control filter-select-picker" asp-items="ViewBag.TypeItems" onchange="bindDocTypeByType(this)" data-index="1">
+                    </select>
+                    <span asp-validation-for="ProcessIdCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="ApplTypCd"></label>
+                    <select asp-for="ApplTypCd" class="form-control filter-select-picker" asp-items="ViewBag.DocumentTypeItems" data-index="2">
+                    </select>
+                    <span asp-validation-for="ApplTypCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="BranchCd"></label>
+                    <select asp-for="BranchCd" class="form-control filter-select-picker" asp-items="ViewBag.BranchItems" data-index="3">
+                    </select>
+                    <span asp-validation-for="BranchCd" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="DeptCd"></label>
+                    <select asp-for="DeptCd" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems" data-index="4">
+                    </select>
+                    <span asp-validation-for="DeptCd" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
         <div class="mb-3">
             <button class="btn btn-info" onclick="showApprovalProcessModal('','','','')">New Approval Process</button>
         </div>
@@ -10,6 +45,10 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Sr. No</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th>Application</th>
                     <th>Type</th>
                     <th>Branch</th>

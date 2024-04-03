@@ -8,12 +8,17 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
+            { data: "processIdCd", visible: false },
+            { data: "applTypCd", visible: false },
+            { data: "branchCd", visible: false },
+            { data: "deptCd", visible: false },
             { data: "processId" },
             { data: "applTyp" },
             { data: "branch" },
             { data: "dept" },
             {
                 data: function (row) {
+                    console.log(row)
                     return `<button class="btn btn-sm btn-info" onclick="showApprovalProcessModal('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteApprovalProcess('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">
@@ -79,3 +84,11 @@ function bindDocTypeByType(e) {
         $('.select-picker').selectpicker('refresh');
     });
 }
+
+$('#ProcessIdCd, #ApplTypCd, #BranchCd, #DeptCd').on('change', function (e) {
+    var dataTable = window["datatable"];
+    var value = $(this).val();
+    var columnIndex = $(this).attr("data-index");
+    if (dataTable.column(columnIndex).search() !== value)
+        dataTable.column(columnIndex).search(value).draw();
+});

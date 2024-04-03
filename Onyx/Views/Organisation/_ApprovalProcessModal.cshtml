@@ -1,7 +1,4 @@
 ﻿@model CompanyProcessApprovalModel
-@{
-    string jsonString = Model.ApprovalLevels != null ? Model.ApprovalLevels.Select(m => m.EmpCd.Trim()).ToList().JsonObjectToString() : string.Empty;
-}
 <div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
@@ -72,9 +69,5 @@
     </div>
 </div>
 <script>
-    var approvalLevelJson = '@jsonString';
-    var approvalLevelsValues = approvalLevelJson ? approvalLevelJson.replace(/&quot;/g, '"') : null;
-    bindEmployeeMultipleDropdown('', '', '', '', function () {
-        $('#ApprovalLevels').selectpicker('val', JSON.parse(approvalLevelsValues));
-    });
+    bindEmployeeMultipleDropdown();
 </script>
