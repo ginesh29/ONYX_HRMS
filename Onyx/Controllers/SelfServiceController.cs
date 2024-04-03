@@ -109,7 +109,7 @@ namespace Onyx.Controllers
                 return Json(new CommonResponse
                 {
                     Success = false,
-                    Message = lvExist ? "Leave already applied on same day." : "Leave Application Maximum Limit Exceeded"
+                    Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : "Leave Application Maximum Limit Exceeded"
                 });
             }
         }

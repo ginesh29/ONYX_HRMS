@@ -36,3 +36,10 @@ function changeShowEntries(curr) {
     var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&pageSize=${curr.value}`;
     BindEmployeeGrid(url);
 }
+$('#EmpCd').on('select2:open', function () {
+    $('.select2-search__field').on('input', function () {
+        var searchText = $(this).val();
+        var url = `/Employee/FetchEmployees?Name=${encodeURI(searchText)}`;
+        BindEmployeeGrid(url);
+    });
+});

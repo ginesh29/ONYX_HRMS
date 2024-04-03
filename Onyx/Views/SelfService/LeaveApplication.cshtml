@@ -37,7 +37,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="LeaveType"></label> <span class="ml-2" id="TotalLeaveTaken"></span>/<span id="TotalLeave"></span>
+                            <label asp-for="LeaveType"></label> <span class="ml-2" id="TotalLeave"></span>
                             <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems" onchange="getTotalLeave(this)"></select>
                             <span asp-validation-for="LeaveType" class="text-danger"></span>
                         </div>

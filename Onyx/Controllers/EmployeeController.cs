@@ -76,7 +76,7 @@ namespace Onyx.Controllers
             var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd);
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
-            var items = employees.OrderBy(m => m.Name).Select(s => new Select2Item
+            var items = employees.Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),
                 Text = $"{s.Name.Trim()}({s.Cd.Trim()})"
@@ -87,12 +87,13 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             var size = pageSize ?? 25;
+            var name = !string.IsNullOrEmpty(filterModel.Name) ? $"%{filterModel.Name}%" : string.Empty;
             var branches = filterModel.Branches != null ? string.Join(",", filterModel.Branches) : null;
             var departments = filterModel.Departments != null ? string.Join(",", filterModel.Departments) : null;
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
             var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
             var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
-            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active, pageNumber, size);
+            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active, pageNumber, size);
             var pagedEmployees = new StaticPagedList<Employee_GetRow_Result>(employeesData.Employees, pageNumber, size, employeesData.TotalCount);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
