@@ -232,6 +232,19 @@ namespace Onyx.Services
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public bool ExistingLvApplication(string empCd, DateTime? fromDt, DateTime? endDt)
+        {
+            var procedureName = "VerifyExistingLvApplication";
+            var parameters = new DynamicParameters();
+            parameters.Add("EmpCd", empCd);
+            parameters.Add("StartDt", fromDt);
+            parameters.Add("EndDt", endDt);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<bool>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public int GetEmpMaxLeave(string CoCd, string LeaveType)
         {
             var connectionString = _dbGatewayService.GetConnectionString();

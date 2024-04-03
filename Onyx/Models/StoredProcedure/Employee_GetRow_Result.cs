@@ -48,7 +48,7 @@ namespace Onyx.Models.StoredProcedure
         public string CurrencyCd { get; set; }
         public string Currency { get; set; }
         public decimal? CurrencyExchangeRate { get; set; }
-        public bool FareEligible { get; set; }
+        public string FareEligible { get; set; }
         public string FareEligiblity { get; set; }
         public decimal? NoOfTickets { get; set; }
         public string TravelSector { get; set; }

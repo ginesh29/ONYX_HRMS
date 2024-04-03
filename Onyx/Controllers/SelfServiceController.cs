@@ -78,15 +78,21 @@ namespace Onyx.Controllers
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
+        public IActionResult GetLeaveType(string cd)
+        {
+            var leaveType = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
+            return Json(leaveType);
+        }
         public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
-            if (maxLeave >= model.LvTaken)
+            var dateSp = model.DateRange.Split(" - ");
+            model.FromDt = Convert.ToDateTime(dateSp[0]);
+            model.ToDt = Convert.ToDateTime(dateSp[1]);
+            bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
+            if (!lvExist && maxLeave >= model.LvTaken)
             {
-                var dateSp = model.DateRange.Split(" - ");
-                model.FromDt = Convert.ToDateTime(dateSp[0]);
-                model.ToDt = Convert.ToDateTime(dateSp[1]);
                 _transactionService.SaveLeave(model);
                 var ActivityAbbr = "INS";
                 var Message = $", Leave is applied With Trans no={model.TransNo}";
@@ -103,10 +109,9 @@ namespace Onyx.Controllers
                 return Json(new CommonResponse
                 {
                     Success = false,
-                    Message = "Leave Application Maximum Limit Exceeded"
+                    Message = lvExist ? "Leave already applied on same day." : "Leave Application Maximum Limit Exceeded"
                 });
             }
-
         }
         #endregion
 

@@ -155,6 +155,9 @@ namespace Onyx.Models.StoredProcedure
         [Display(Name = "Leave Days/Year")]
         public decimal LvMax { get; set; }
         public string Code { get; set; }
+        public string Name { get; set; }
+        public string MobNo { get; set; }
+        public int Total { get; set; }
         public string Mode
         {
             get

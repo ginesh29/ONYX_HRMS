@@ -67,17 +67,15 @@ namespace Onyx.Controllers
             });
             return View();
         }
-        public IActionResult FetchEmployeeItems(string term, string departments, string designations, string branches, string locations)
+        public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
             var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
             var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
             var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
             var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Where(m => m.Active == "Y");
+            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd);
             if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
                 employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
-            if (!string.IsNullOrEmpty(term))
-                employees = employees.Where(m => m.Cd.Trim().Contains(term, StringComparison.OrdinalIgnoreCase) || m.Name.Trim().Contains(term, StringComparison.OrdinalIgnoreCase));
             var items = employees.OrderBy(m => m.Name).Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),
@@ -94,10 +92,8 @@ namespace Onyx.Controllers
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
             var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
             var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
-            var employees = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active);
-            if (filterModel.LeaveStatus != null)
-                employees = employees.Where(e => (filterModel.LeaveStatus == "LR" && e.LvStatus == "N") || (filterModel.LeaveStatus == "LA" && e.LvStatus == "Y") || (filterModel.LeaveStatus == "OL" && e.LvStatus == "F") || (filterModel.LeaveStatus == "PW" && e.LvStatus == "P"));
-            var pagedEmployees = employees.ToPagedList(pageNumber, size);
+            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, filterModel.Name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active, pageNumber, size);
+            var pagedEmployees = new StaticPagedList<Employee_GetRow_Result>(employeesData.Employees, pageNumber, size, employeesData.TotalCount);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
         public IActionResult Profile(string Cd)
@@ -187,7 +183,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Employees.Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"
@@ -575,7 +571,7 @@ namespace Onyx.Controllers
                     SrNo = component.SrNo,
                     Type = component.Type
                 };
-                var employee = _employeeService.EmployeeFind(empCd, _loggedInUser.CompanyCd);
+                var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
                 model.CurrCd = employee.CurrCd.Trim();
             }
             model.EmpCd = empCd;

@@ -23,6 +23,7 @@
                             <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
                                 <label asp-for="EmployeeCode"></label>
                                 <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                                    <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                                 <span asp-validation-for="EmployeeCode" class="text-danger"></span>
                             </div>
@@ -36,8 +37,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="LeaveType"></label>
-                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems"></select>
+                            <label asp-for="LeaveType"></label> <span class="ml-2" id="TotalLeaveTaken"></span>/<span id="TotalLeave"></span>
+                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems" onchange="getTotalLeave(this)"></select>
                             <span asp-validation-for="LeaveType" class="text-danger"></span>
                         </div>
                     </div>
@@ -104,5 +105,10 @@
             }
         }
         bindEmployeeDropdown();
+        function getTotalLeave(e) {
+            getAjax(`/SelfService/GetLeaveType?cd=${e.value}`, function (response) {
+                $("#TotalLeave").text(response.lvMax);
+            });
+        }
     </script>
 }

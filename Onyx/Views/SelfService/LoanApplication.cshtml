@@ -21,6 +21,7 @@
                             <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
                                 <label asp-for="EmployeeCode"></label>
                                 <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                                    <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                                 <span asp-validation-for="EmployeeCode" class="text-danger"></span>
                             </div>
