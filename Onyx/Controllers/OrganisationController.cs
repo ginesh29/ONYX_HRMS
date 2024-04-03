@@ -902,12 +902,7 @@ namespace Onyx.Controllers
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
-            });
-            //ViewBag.DriverItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
-            //{
-            //    Text = $"{m.Name}({m.Cd.Trim()})",
-            //    Value = m.Cd.Trim(),
-            //});
+            });            
             return View("VehicleForm", model);
         }
         [HttpPost]

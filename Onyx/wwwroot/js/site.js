@@ -307,7 +307,7 @@ $("#user-company-dropdown").on('change', function (e) {
     });
 })
 function bindEmployeeDropdown() {
-    var el = $("select#EmpCd,select#EmployeeCode");
+    var el = $("select#EmpCd,select#EmployeeCode,select#DriverCd");
     var id = $(el).attr("id");
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
         el.select2({

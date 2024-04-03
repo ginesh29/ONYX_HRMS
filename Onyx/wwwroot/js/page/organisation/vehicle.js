@@ -61,6 +61,7 @@ window["datatable-2"] = $('#VehicleDocumentsDataTable').DataTable(
         ],
     }
 );
+bindEmployeeDropdown();
 function showVehicleModal(cd) {
     var url = `/Organisation/GetVehicle?cd=${cd}`;
     window.location.href = url;

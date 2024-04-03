@@ -85,7 +85,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="DriverCd"></label>
-                                        <select asp-for="DriverCd" class="form-control select-picker" asp-items="ViewBag.DriverItems">
+                                        <select asp-for="DriverCd" class="form-control select2">
+                                            <option value="">@CommonSetting.DEFAULTSELECT</option>
                                         </select>
                                         <span asp-validation-for="DriverCd" class="text-danger"></span>
                                     </div>
