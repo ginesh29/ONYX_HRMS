@@ -1,6 +1,47 @@
 ﻿@model Employee_LeaveHistory_Detail
 @{
     var dateFormat = ExtensionMethod.GetDateFormat();
+    var leaveDetail = Model.EmpLeaveDetail;
+    var LeaveOpening = leaveDetail.LeaveOp;
+    var LeaveCum = leaveDetail.Leave;
+    var Leave = leaveDetail.LeaveOp + leaveDetail.Leave;
+    var LeaveTaken = leaveDetail.LeaveTaken;
+    var LeaveBalance = leaveDetail.Leave + leaveDetail.LeaveTaken;
+
+    // lblLeaveBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LeaveOp"] == null ? "0" : 
+    // (ds.Tables[0].Rows[0]["LeaveOp"].ToString() == "" ? "0" :
+    //     ds.Tables[0].Rows[0]["LeaveOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["Leave"] == null ? "0" :
+    //     (ds.Tables[0].Rows[0]["Leave"].ToString() == "" ? "0" :
+    //     ds.Tables[0].Rows[0]["Leave"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LeaveTaken"] == null ? "0" :
+    //     (ds.Tables[0].Rows[0]["LeaveTaken"].ToString() == "" ? "0" :
+    //     ds.Tables[0].Rows[0]["LeaveTaken"].ToString()))).ToString();
+
+    // lblLeaveEligibility.Text = Convert.ToDouble(lblLeaveBalance.Text.ToString()) >= Convert.ToDouble(lblReqLeave1.Text.ToString()) ? "Yes" : "No";
+    // lblLeaveEligibility.ForeColor = lblLeaveEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+
+    // lblLvSalDaysOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())).ToString();
+    // lblLvSalDaysCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString())).ToString();
+    // lblLvSalDays.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString()))).ToString();
+    // lblLvSalDaysTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString())).ToString();
+    // lblLvSalDaysBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString()))).ToString();
+
+    // lblLvSalaryOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())).ToString();
+    // lblLvSalaryCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString())).ToString();
+    // lblLvSalary.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString()))).ToString();
+    // lblLvSalaryTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString())).ToString();
+    // lblLvSalaryBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString()))).ToString();
+    // lblLvSalaryEligibility.Text = Convert.ToDouble(lblLvSalaryBalance.Text.ToString()) >= Convert.ToDouble(lblLvSalYr.Text.ToString()) ? "Yes" : "No";
+    // lblLvSalaryEligibility.ForeColor = lblLvSalaryEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+
+    // lblLvTicketOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString())).ToString();
+    // lblLvTicketCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())).ToString();
+    // lblLvTicket.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString()))).ToString();
+    // lblLvTicketTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketTaken"].ToString())).ToString();
+    // lblLvTicketBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketTaken"].ToString()))).ToString();
+    // lblLvTicketEligibility.Text = Convert.ToDouble(lblLvTicketBalance.Text.ToString()) >= Convert.ToDouble(lblLvTicYr.Text.ToString()) ? "Yes" : "No";
+    // lblLvTicketEligibility.ForeColor = lblLvTicketEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+
+    // lblOpeningNoPay.Text = ds.Tables[0].Rows[0]["Cumlvnopay"] == null ? "0" : ds.Tables[0].Rows[0]["Cumlvnopay"].ToString();
 }
 <div class="modal-dialog modal-lg">
     <!-- Modal content-->
@@ -11,41 +52,99 @@
         </div>
         <div class="modal-body">
             <div id="print-container">
-                <h5 class="text-primary">Employee Details</h5>
-                <div><span class="font-weight-bold">Name/Code: </span>@Model.EmpLeaveDetail.Name (@Model.EmpLeaveDetail.Code)</div>
-                <div><span class="font-weight-bold">Nationality : </span></div>
-                <div><span class="font-weight-bold">Location : </span>@Model.EmpLeaveDetail.Location</div>
-                <div><span class="font-weight-bold">Desgignation : </span>@Model.EmpLeaveDetail.Designation</div>
-                <div><span class="font-weight-bold">Joined Date : </span>@Model.EmpLeaveDetail.FormatedDoj.ToString(dateFormat)</div>
-                <div><span class="font-weight-bold">Last Rejoined Date : </span>@Model.EmpLeaveDetail.LastRejoinDt.ToString(dateFormat)</div>
-                <div><span class="font-weight-bold">Total Days With Company : </span>@Model.EmpLeaveDetail.TotalDays</div>
-                <div><span class="font-weight-bold">Outstanding  : </span>@Model.OutstandingDetail.Outstanding</div>
-                <div><span class="font-weight-bold">Leave Salary/yr : </span>@Model.EmpLeaveDetail.LvSalary</div>
-                <div><span class="font-weight-bold">Leave Ticket/yr : </span>@Model.EmpLeaveDetail.LvTicket</div>
-                <div><span class="font-weight-bold">This month Salary : </span>@Model.EmpLeaveDetail.LvSalary</div>
-                <div><span class="font-weight-bold">Opening NoPay : </span>@Model.EmpLeaveDetail.Cumlvnopay</div>
-                <h5 class="text-primary mt-2">Salary Details</h5>
-                <table class="table table-sm">
-                    <thead class="thead-dark">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="text-primary">Employee Details</h5>
+                        <div><span class="font-weight-bold">Name/Code: </span>@Model.EmpLeaveDetail.Name (@Model.EmpLeaveDetail.Code)</div>
+                        <div><span class="font-weight-bold">Nationality : </span></div>
+                        <div><span class="font-weight-bold">Location : </span>@Model.EmpLeaveDetail.Location</div>
+                        <div><span class="font-weight-bold">Desgignation : </span>@Model.EmpLeaveDetail.Designation</div>
+                        <div><span class="font-weight-bold">Joined Date : </span>@Model.EmpLeaveDetail.FormatedDoj.ToString(dateFormat)</div>
+                        <div><span class="font-weight-bold">Last Rejoined Date : </span>@Model.EmpLeaveDetail.LastRejoinDt.ToString(dateFormat)</div>
+                        <div><span class="font-weight-bold">Total Days With Company : </span>@Model.EmpLeaveDetail.TotalDays</div>
+                        <div><span class="font-weight-bold">Outstanding  : </span>@Model.OutstandingDetail.Outstanding</div>
+                        <div><span class="font-weight-bold">Leave Salary/Yr : </span>@Model.EmpLeaveDetail.LvSalYr</div>
+                        <div><span class="font-weight-bold">Leave Ticket/Yr : </span>@Model.EmpLeaveDetail.LvTicYr</div>
+                        <div><span class="font-weight-bold">This month Salary : </span>@Model.IncomeDetails.Sum(m => m.AmtVal)</div>
+                        <div><span class="font-weight-bold">Opening No Pay : </span>@Model.EmpLeaveDetail.Cumlvnopay</div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-primary mt-2">Salary Details</h5>
+                        <table class="table table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in Model.IncomeDetails)
+                            {
+                                <tr>
+                                    <td>@item.Des</td>
+                                    <td>@item.AmtVal</td>
+                                </tr>
+                            }
+                            <tfoot>
+                                <tr>
+                                    <th>Total</th>
+                                    <th>@Model.IncomeDetails.Sum(m => m.AmtVal)</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <h5 class="text-primary mt-2">Balance Details</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Type</th>
+                                <th>Opening</th>
+                                <th>Month Cum.</th>
+                                <th>Total</th>
+                                <th>Total Taken</th>
+                                <th>Balance</th>
+                                <th>Eligibility</th>
+                            </tr>
+                        </thead>
                         <tr>
-                            <th>Description</th>
-                            <th>Amount</th>
+                            @* <th>Leave</th>
+                            <td>@LeaveOpening</td>
+                            <td>@LeaveCum</td>
+                            <td>@Model.EmpLeaveDetail.LeaveOp +  @Model.EmpLeaveDetail.Leave lblLeave</td>
+                            <td>@Model.EmpLeaveDetail.LeaveTaken lblLeaveTaken</td>
+                            <td>@Model.EmpLeaveDetail.LeaveOp lblLeaveBalance</td>
+                            <td>@</td> *@
                         </tr>
-                    </thead>
-                    @foreach (var item in Model.IncomeDetails)
-                    {
                         <tr>
-                            <td>@item.Des</td>
-                            <td>@item.AmtVal</td>
+                            <th>Leave Salary Days</th>
+                            <td>lblLvSalDaysOpening</td>
+                            <td>lblLvSalDaysCum</td>
+                            <td>lblLvSalDays</td>
+                            <td>lblLvSalDaysTaken</td>
+                            <td>lblLvSalDaysBalance</td>
+                            <td>lblLvSalDaysEligibility</td>
                         </tr>
-                    }
-                    <tfoot>
                         <tr>
-                            <th>Total</th>
-                            <th>@Model.IncomeDetails.Sum(m => m.AmtVal)</th>
+                            <th>Leave Salary</th>
+                            <td>lblLvSalaryOpening</td>
+                            <td>lblLvSalaryCum</td>
+                            <td>lblLvSalary</td>
+                            <td>lblLvSalaryTaken</td>
+                            <td>lblLvSalaryBalance</td>
+                            <td>lblLvSalaryEligibility</td>
                         </tr>
-                    </tfoot>
-                </table>
+                        <tr>
+                            <th>Leave Ticket</th>
+                            <td>lblLvTicketOpening</td>
+                            <td>lblLvTicketCum</td>
+                            <td>lblLvTicket</td>
+                            <td>lblLvTicketTaken</td>
+                            <td>lblLvTicketBalance</td>
+                            <td>lblLvTicketEligibility</td>
+                        </tr>
+                    </table>
+                </div>
                 <h5 class="text-primary mt-2">Previous Exit & Entry Details</h5>
                 <table class="table table-sm">
                     <thead class="thead-dark">

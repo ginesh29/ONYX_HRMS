@@ -50,7 +50,7 @@ var isAdmin = $("#IsAdmin").val() == 1;
 if (isAdmin)
     window["datatable"].column(8).visible(false);
 function showLeaveDetailModal(empCd, fromDt, toDt) {
-    var url = `/Transactions/GetEmpLoanApproval?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
+    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
     $('#EmployeeLeaveDetailModal').load(url, function () {
         $("#EmployeeLeaveDetailModal").modal("show");
     });

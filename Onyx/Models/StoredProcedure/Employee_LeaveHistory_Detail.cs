@@ -21,30 +21,30 @@
         public string Bank { get; set; }
         public double LeaveDays { get; set; }
         public string Status { get; set; }
+        public string Sponsor { get; set; }
         public DateTime FormatedDoj { get; set; }
         public DateTime LastRejoinDt { get; set; }
-        public double Leave { get; set; }
-        public double LeaveTaken { get; set; }
-        public double LvSalYr { get; set; }
-        public double LvTicYr { get; set; }
-        public double TotalDays { get; set; }
-        public double LeaveOp { get; set; }
-        public double LeaveSalary { get; set; }
-        public double LeaveTakenDays { get; set; }
-        public double LvSalDaysOp { get; set; }
-        public double LvSalDays { get; set; }
-        public double LvSalDaysTaken { get; set; }
-        public double LvSalary { get; set; }
-        public double LvSalaryOp { get; set; }
-        public double LvSalaryTaken { get; set; }
-        public double LvTicket { get; set; }
-        public double LvTicketOp { get; set; }
-        public double LvTicketTaken { get; set; }
+        public int ReqLv { get; set; }
+        public int LvSalYr { get; set; }
+        public int LvTicYr { get; set; }
+        public int TotalDays { get; set; }
+        public decimal LeaveOp { get; set; }
+        public decimal Leave { get; set; }
+        public decimal LeaveTaken { get; set; }
+        public decimal LvSalDaysOp { get; set; }
+        public decimal LvSalDays { get; set; }
+        public decimal LvSalDaysTaken { get; set; }
+        public decimal LvSalary { get; set; }
+        public decimal LvSalaryOp { get; set; }
+        public decimal LvSalaryTaken { get; set; }
+        public decimal LvTicket { get; set; }
+        public decimal LvTicketOp { get; set; }
+        public decimal LvTicketTaken { get; set; }
         public DateTime FormatedWPFromDt { get; set; }
         public DateTime FormatedWPToDt { get; set; }
         public DateTime FormatedWOPFromDt { get; set; }
         public DateTime FormatedWOPToDt { get; set; }
-        public double Cumlvnopay { get; set; }
+        public decimal Cumlvnopay { get; set; }
     }
     public class PreviousLeaveHistory
     {

@@ -23,7 +23,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employee;
         }
-        public EmpProfileGrid GetEmployees(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", string empType = "0", bool Active = true, int pageNumber = 1, int pageSize = 100)
+        public EmpProfileGrid GetEmployees(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", string empType = "0", string lvStatus = "", bool Active = true, int pageNumber = 1, int pageSize = 100)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRow_N";
@@ -40,6 +40,7 @@ namespace Onyx.Services
             parameters.Add("v_Usercd", UserCd);
             parameters.Add("v_PageNumber", pageNumber);
             parameters.Add("v_PageSize", pageSize);
+            //parameters.Add("v_LvStatus", lvStatus);
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
             var employee = multiResult.Read<Employee_GetRow_Result>();

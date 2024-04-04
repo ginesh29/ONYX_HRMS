@@ -44,7 +44,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -93,7 +93,7 @@ namespace Onyx.Controllers
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
             var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
             var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
-            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.Active, pageNumber, size);
+            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.LeaveStatus, filterModel.Active, pageNumber, size);
             var pagedEmployees = new StaticPagedList<Employee_GetRow_Result>(employeesData.Employees, pageNumber, size, employeesData.TotalCount);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
@@ -169,7 +169,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes == "Y").Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -184,7 +184,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _employeeService.GetEmployees(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Employees.Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"

@@ -9,6 +9,7 @@
         public string Division { get; set; }
         public string Image { get; set; }
         public string Branch { get; set; }
+        public bool Visible { get; set; }
         public string EntryBy { get; set; }
         public DateTime? Entrydt { get; set; }
         public string EditBy { get; set; }

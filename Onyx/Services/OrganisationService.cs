@@ -873,7 +873,7 @@ namespace Onyx.Services
         }
         public CompanyProcessApproval_GetRow GetApprovalProcess(string processIdCd, string applTypCd, string branchCd, string deptCd, string CoCd)
         {
-            var procedureName = "CompanyProcessApproval_GetRow";
+            var procedureName = "CompanyProcessApproval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", processIdCd);
