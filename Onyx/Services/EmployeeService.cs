@@ -183,7 +183,7 @@ namespace Onyx.Services
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var parameters = new DynamicParameters();
-            var procedureName = "EmpQualification_Update";
+            var procedureName = "EmpQualification_Update_N";
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_QualCd", model.QualCd);
@@ -235,7 +235,7 @@ namespace Onyx.Services
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var parameters = new DynamicParameters();
-            var procedureName = "EmpExperience_Update";
+            var procedureName = "EmpExperience_Update_N";
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_SrNo", model.Srno);
             parameters.Add("v_Stdt", model.StartingDate);
@@ -280,7 +280,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveDocument(EmpDocumentModel model)
         {
-            var procedureName = "EmpDocuments_Update";
+            var procedureName = "EmpDocuments_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_DocTyp", model.DocTypCd);
@@ -353,7 +353,7 @@ namespace Onyx.Services
         #region Component
         public IEnumerable<EmpEarnDed_GetRow_Result> GetComponents(string empCd, string UserCd)
         {
-            var procedureName = "EmpEarnDed_View_GetRow";
+            var procedureName = "EmpEarnDed_View_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EdCd", string.Empty);
@@ -379,7 +379,7 @@ namespace Onyx.Services
 
         public CommonResponse SaveComponent(EmpEarnDedModel model)
         {
-            var procedureName = "EmpEarnDed_Update";
+            var procedureName = "EmpEarnDed_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_EdCd", model.EdCd);
@@ -425,7 +425,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveAddress(EmpAddressModel model)
         {
-            var procedureName = "EmpAddress_Update";
+            var procedureName = "EmpAddress_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", model.EmployeeCode);
             parameters.Add("v_AddTyp", model.AddTyp);
@@ -473,7 +473,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveBankAccount(EmpBankAcModel model)
         {
-            var procedureName = "EmpBankAc_Update";
+            var procedureName = "EmpBankAc_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", model.EmpCd);
             parameters.Add("v_Bank", model.BankCd);
@@ -521,7 +521,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveCalendarEvent(EmpCalendarModel model)
         {
-            var procedureName = "EmpCalendar_Update";
+            var procedureName = "EmpCalendar_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("@v_SrNo", model.SrNo);
             parameters.Add("@v_Empcd", model.EmpCd);
