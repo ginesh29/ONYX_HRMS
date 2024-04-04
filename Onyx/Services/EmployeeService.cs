@@ -353,7 +353,7 @@ namespace Onyx.Services
         #region Component
         public IEnumerable<EmpEarnDed_GetRow_Result> GetComponents(string empCd, string UserCd)
         {
-            var procedureName = "EmpEarnDed_View_GetRow";
+            var procedureName = "EmpEarnDed_View_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EdCd", string.Empty);
