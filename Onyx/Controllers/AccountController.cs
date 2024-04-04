@@ -23,7 +23,6 @@ namespace Onyx.Controllers
             _employeeService = employeeService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
-
         }
         public IActionResult Login()
         {
