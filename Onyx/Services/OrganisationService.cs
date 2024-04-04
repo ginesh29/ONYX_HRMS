@@ -466,7 +466,7 @@ namespace Onyx.Services
         }
         public IEnumerable<CompDocImages_GetRow_Result> GetDocumentFiles(string divCd, string docTypCd, string CoCd)
         {
-            var procedureName = "CompDocImages_GetRow";
+            var procedureName = "CompDocImages_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", divCd);
@@ -479,7 +479,7 @@ namespace Onyx.Services
         }
         public void SaveDocumentFile(CompDocImageModel model)
         {
-            var procedureName = "CompDocImages_Update";
+            var procedureName = "CompDocImages_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CompanyCode);
             parameters.Add("v_Div", model.DivCd);
@@ -493,7 +493,7 @@ namespace Onyx.Services
         }
         public CommonResponse DeleteDocumentFile(string divCd, string docTypCd, int srNo, string CoCd)
         {
-            var procedureName = "CompDocImages_Delete";
+            var procedureName = "CompDocImages_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", divCd);
@@ -799,7 +799,7 @@ namespace Onyx.Services
         #region Travel Fare
         public IEnumerable<AirFare_GetRow_Result> GetTravelFares()
         {
-            var procedureName = "AirFare_GetRow";
+            var procedureName = "AirFare_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_SectCd", string.Empty);
             parameters.Add("v_Class", string.Empty);
@@ -811,7 +811,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveTravelFare(AirFareModel model)
         {
-            var procedureName = "AirFare_Update";
+            var procedureName = "AirFare_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_SectCd", model.SectCd);
             parameters.Add("v_Class", model.ClassCd);
