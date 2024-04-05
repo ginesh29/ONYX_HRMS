@@ -111,6 +111,7 @@ namespace Onyx.Controllers
                 employee.Sponsor = employee.Sponsor?.Trim();
                 employee.Desg = employee.Desg?.Trim();
                 employee.Dept = employee.Dept?.Trim();
+                employee.Div = employee.Div?.Trim();
                 employee.LocCd = employee.LocCd?.Trim();
                 employee.RepTo = employee.RepTo?.Trim();
                 employee.UserCd = employee.UserCd?.Trim();

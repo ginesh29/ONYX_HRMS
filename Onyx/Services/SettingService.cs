@@ -82,7 +82,7 @@ namespace Onyx.Services
         }
         public void DeleteUser(string Cd)
         {
-            var procedureName = "Users_Delete";
+            var procedureName = "Users_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -129,7 +129,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveDepartment(DepartmentModel model)
         {
-            var procedureName = "Dept_Update";
+            var procedureName = "Dept_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code);
             parameters.Add("v_Des", model.Description);
@@ -165,7 +165,7 @@ namespace Onyx.Services
 
         public string GetNextCode(string type)
         {
-            var procedureName = "Codes_Auto_GetRow";
+            var procedureName = "Codes_Auto_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Typ", type);
             var connectionString = _dbGatewayService.GetConnectionString();

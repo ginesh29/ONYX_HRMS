@@ -70,7 +70,7 @@ namespace Onyx.Services
         public CommonResponse SaveEmployee(Employee_Find_Result model, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "Employee_Update";
+            var procedureName = "Employee_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Salute", model.Salute);
@@ -313,7 +313,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpDocImages_GetRow_Result> GetDocumentFiles(string empCd, string docTypCd)
         {
-            var procedureName = "EmpDocImages_GetRow";
+            var procedureName = "EmpDocImages_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_DocTyp", docTypCd);
@@ -338,7 +338,7 @@ namespace Onyx.Services
         }
         public CommonResponse DeleteDocumentFile(string empCd, string docTypCd, int srNo)
         {
-            var procedureName = "EmpDocImages_Delete";
+            var procedureName = "EmpDocImages_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_DocTyp", docTypCd);
@@ -414,7 +414,7 @@ namespace Onyx.Services
         #region Address
         public IEnumerable<EmpAddress_GetRow_Result> GetAddresses(string empCd)
         {
-            var procedureName = "EmpAddress_GetRow";
+            var procedureName = "EmpAddress_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -448,7 +448,7 @@ namespace Onyx.Services
         }
         public void DeleteAddress(string empCd, string type)
         {
-            var procedureName = "EmpAddress_Delete";
+            var procedureName = "EmpAddress_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_AddTyp", type);
@@ -509,7 +509,7 @@ namespace Onyx.Services
         #region Calendar Event
         public IEnumerable<EmpCalendar_GetRow_Result> GetCalendarEvents(string empCd, string UserCd)
         {
-            var procedureName = "EmpCalendar_GetRow";
+            var procedureName = "EmpCalendar_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_Usercd", UserCd);

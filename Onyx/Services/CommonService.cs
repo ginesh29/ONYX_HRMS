@@ -4,10 +4,8 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Sockets;
-using System.Xml.Linq;
 
 namespace Onyx.Services
 {
@@ -340,20 +338,20 @@ namespace Onyx.Services
         {
             var modifiedSpQuery = @"SELECT name,  modify_date 
 	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-01-01' and name not like '%_N%'
+	                                WHERE type = 'P' and modify_date > '2024-01-01' and name like '%_N%'
 	                                ORDER BY modify_date DESC";
             var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=Onyx;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
             var sps = connection.Query<string>(modifiedSpQuery);
-            foreach (var item in sps)
+            foreach (var item in sps.Where(m => m.Contains("_N")))
             {
                 string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.Trim()}')) AS Definition";
                 string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
                 if (!string.IsNullOrEmpty(storedProcedureText))
                 {
-                    string filename = $"{item}_N";
+                    string filename = item;
                     string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\{filename}.sql";
-                    storedProcedureText = storedProcedureText.Replace(item, filename);
+                    storedProcedureText = storedProcedureText.Replace(item, filename).Replace("CREATE", "CREATE OR ALTER");
                     File.WriteAllText(filePath, storedProcedureText);
                 }
             }

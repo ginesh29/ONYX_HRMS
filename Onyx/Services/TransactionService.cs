@@ -212,7 +212,7 @@ namespace Onyx.Services
         public void SaveLeave(EmpLeaveModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpLeave_Update";
+            var procedureName = "EmpLeave_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_TransDt", model.TransDt);
@@ -265,7 +265,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpLeave_Approval_GetRow_Result> GetEmpLeaveApprovalData(string CoCd, string EmpCd, string EmpUserType)
         {
-            var procedureName = "EmpLeave_Approval_GetRow";
+            var procedureName = "EmpLeave_Approval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "3");
@@ -284,7 +284,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpLeave_View_GetRow_Result> GetEmpLeaveData(string TransNo = "", string Type = "")
         {
-            var procedureName = "EmpLeave_View_GetRow";
+            var procedureName = "EmpLeave_View_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_TransNo", TransNo);
@@ -298,7 +298,7 @@ namespace Onyx.Services
         }
         public Employee_LeaveHistory_Detail GetEmployee_LeaveHistory(string empCd, DateTime FromDt, DateTime ToDt)
         {
-            var procedureName = "Employee_LeaveHistory";
+            var procedureName = "Employee_LeaveHistory_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_FromDt", FromDt);
@@ -339,7 +339,7 @@ namespace Onyx.Services
         public CommonResponse SaveLeaveApproval(EmpLeaveApprovalModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpLeaveAppr_Update";
+            var procedureName = "EmpLeaveAppr_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
@@ -445,7 +445,7 @@ namespace Onyx.Services
         public void SaveLeaveSalary(EmpLeaveSalaryModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpLeaveSalary_Update";
+            var procedureName = "EmpLeaveSalary_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_TransDt", model.TransDt);
@@ -468,7 +468,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpLeaveSalaryTicket_Approval_GetRow_Result> GetEmpLeaveSalaryApprovalData(string EmpCd, string EmpOrUser, string CoCd)
         {
-            var procedureName = "EmpLeaveSalaryTicket_Approval_GetRow";
+            var procedureName = "EmpLeaveSalaryTicket_Approval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "3");
@@ -501,7 +501,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpLeaveSalaryTicket_View_Getrow_Result> GetEmpLeaveSalaryDisburseData()
         {
-            var procedureName = "EmpLeaveSalaryTicket_View_Getrow";
+            var procedureName = "EmpLeaveSalaryTicket_View_Getrow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", string.Empty);
             parameters.Add("v_Typ", string.Empty);
@@ -1041,7 +1041,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpDocIssueRcpt_GetRow_Result> GetEmpDocIssueRcpt(string LoginEmpCd, string EmpUser)
         {
-            var procedureName = "EmpDocIssueRcpt_GetRow";
+            var procedureName = "EmpDocIssueRcpt_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_DocTyp", string.Empty);

@@ -11,7 +11,7 @@ namespace Onyx.Services
         public IEnumerable<GetRepo_EmpShortList_Result> GetEmpShortList(string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "GetRepo_EmpShortList";
+            var procedureName = "GetRepo_EmpShortList_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
 

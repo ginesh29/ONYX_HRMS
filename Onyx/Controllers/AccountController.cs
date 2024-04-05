@@ -26,6 +26,8 @@ namespace Onyx.Controllers
         }
         public IActionResult Login()
         {
+            _commonService.GenerateModifiedSp();
+
             ViewBag.CompanyItems = _dbGatewayService.GetCompanies().Select(m => new SelectListItem
             {
                 Text = m.CoName,

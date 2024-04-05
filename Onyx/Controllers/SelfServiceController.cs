@@ -32,7 +32,7 @@ namespace Onyx.Controllers
                 Text = m.Sdes.Trim(),
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextLoanTransNo(_loggedInUser.CompanyCd, "EMPLOAN");
-            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+            if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
@@ -74,7 +74,7 @@ namespace Onyx.Controllers
             });
             ViewBag.IntLocalTypeItems = _commonService.GetIntLocalTypes();
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveTransNo();
-            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+            if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
@@ -119,7 +119,7 @@ namespace Onyx.Controllers
         public IActionResult LeaveSalaryApplication()
         {
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
-            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+            if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }
@@ -148,7 +148,7 @@ namespace Onyx.Controllers
                 Text = m.Des.Trim(),
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
-            if (!_loggedInUser.UserAbbr.Contains("Admin"))
+            if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
         }

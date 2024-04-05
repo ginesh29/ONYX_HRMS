@@ -24,7 +24,7 @@ namespace Onyx.Services
         public Validate_Employee_Result ValidateEmployee(LoginModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
-            var procedureName = "Validate_Employee";
+            var procedureName = "Validate_Employee_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EMPID", model.LoginId);
             parameters.Add("v_PWD", model.Password.Encrypt());
