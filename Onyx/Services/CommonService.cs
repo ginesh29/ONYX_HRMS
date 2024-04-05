@@ -233,10 +233,10 @@ namespace Onyx.Services
         {
             var statusTypes = new List<SelectListItem>()
             {
-                new() {Text="Present(Working)", Value="PW"},
-                new() { Text="Leave requested", Value="LR"},
-                new() {Text="Leave approved", Value="LA"},
-                new() { Text="On Leave", Value="OL"}};
+                new() {Text="Present(Working)", Value="P"},
+                new() { Text="Leave requested", Value="N"},
+                new() {Text="Leave approved", Value="A"},
+                new() { Text="On Leave", Value="F"}};
             return statusTypes;
         }
         public IEnumerable<SelectListItem> GetCalulationBasisTypes()

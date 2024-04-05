@@ -7,29 +7,53 @@
     <div class="card-body">
         <form>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="EmpCd"></label>
-                        <select id="EmpCd" class="form-control select2">
+                        <select asp-for="EmpCd" class="form-control select2">
                             <option value=""></option>
                         </select>
                     </div>
-                    <div>
-                        <label>Visible Column:</label>
-                        <div class="input-group">
-                            <select class="form-control select-picker" multiple>
-                                <option>1</option>
-                                <option>2</option>
-                            </select>
-                            <button class="btn btn-secondary ml-2" onclick="filterShowCustomerTransactions(this)">Search</button>
-                        </div>
-                        <!-- /.input group -->
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Branch"></label>
+                        <select class="form-control filter-select-picker" asp-for="Branch" asp-items="ViewBag.BranchItems"></select>
                     </div>
                 </div>
-                <div class="report-btn-div">
-                    <button class="btn btn-outline-danger ml-2" onclick="filterShowCustomerTransactions(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
-                    <button class="btn btn-outline-info ml-2" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Department"></label>
+                        <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems"></select>
+                    </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Designation"></label>
+                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Sponsor"></label>
+                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
+                    </div>
+                </div>
+                @* <div>
+                    <label>Visible Column:</label>
+                    <div class="input-group">
+                        <select class="form-control select-picker" multiple>
+                            <option>1</option>
+                            <option>2</option>
+                        </select>
+                        <button class="btn btn-secondary ml-2" onclick="filterShowCustomerTransactions(this)">Search</button>
+                    </div>
+                    <!-- /.input group -->
+                </div> *@
+            </div>
+            <div class="report-btn-div">
+                <button class="btn btn-outline-danger ml-2" onclick="filterShowCustomerTransactions(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                <button class="btn btn-outline-info ml-2" id="btn-excel"><i class="fa fa-file-excel"></i></button>
             </div>
         </form>
         <hr />
@@ -47,7 +71,6 @@
     </div>
 </div>
 @section scripts {
-
     <script>
         function loadReport() {
             var table = $('#EmpShortListReportTable').DataTable(
@@ -71,8 +94,8 @@
                     ],
                 }
             );
-            //new $.fn.dataTable.ColVis(table);
         }
         loadReport();
+        bindEmployeeDropdown();
     </script>
 }
