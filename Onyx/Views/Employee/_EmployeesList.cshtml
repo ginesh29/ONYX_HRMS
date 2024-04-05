@@ -7,6 +7,7 @@
     var data = (StaticPagedList<Employee_GetRow_Result>)Model.Data;
     var filterModel = (EmployeeFilterModel)Model.FilterModel;
     int[] entries = { 9, 25, 50, 100 };
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <div class="row" id="EmployeeGrid">
     @foreach (var item in data)
@@ -30,6 +31,7 @@
                             <p class="text-muted text-sm mb-0"><b>Department: </b> @item.Department</p>
                             <p class="text-muted text-sm mb-0"><b>Type: </b> @item.EmpType</p>
                             <p class="text-muted text-sm mb-0"><b>Nationality: </b> @item.Nationality</p>
+                            <p class="text-muted text-sm mb-0"><b>Date of Join: </b> @item.DOJ.Value.ToString(dateFormat)</p>
                         </div>
                         <div class="col-5 text-center">
                             <img src="@avatarImage" alt="user-avatar" class="rounded img-fluid border" style="height: 150px;">
