@@ -1,22 +1,26 @@
-﻿function BindEmployeeGrid(url) {
+﻿function BindEmployeeGrid() {
     loadingPage();
+    var frm = $("#employee-filter-frm").serialize();
+    var name = $("#EmpCd").val();
+    name = name ? name : searchText;
+    var pageSize = $("#PageSize").val();
+    var page = $(".active.page-item .page-link").text();
+    var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&page=${page}&pageSize=${pageSize}`;
     $('#EmployeeTableContainer').load(url, function () {
         unloadingPage();
     });
 }
-bindEmployeeDropdown();
-var url = `/Employee/FetchEmployees`;
-BindEmployeeGrid(url);
+$(function () {
+    bindEmployeeDropdown();
+    BindEmployeeGrid();
+})
 $(document).on('click', '.pagination a', function (e) {
     e.preventDefault();
-    var url = $(this).attr("href");
-    BindEmployeeGrid(url);
+    BindEmployeeGrid();
 });
 function filterEmployee(btn) {
     loadingButton(btn);
-    var frm = $("#employee-filter-frm").serialize();
-    var url = `/Employee/FetchEmployees?${frm}`;
-    BindEmployeeGrid(url);
+    BindEmployeeGrid();
     unloadingButton(btn);
     $("#EmployeeFilterModal").modal("hide");
 }
@@ -26,22 +30,18 @@ function resetFilter() {
     frm.find(".filter-select-picker").val('').selectpicker('refresh');
     frm.find(".filter-select-picker").selectpicker('deselectAll');
 }
-$("#EmpCd").change(function (e) {
-    var url = `/Employee/FetchEmployees?Name=${encodeURI(e.target.value)}`;
-    BindEmployeeGrid(url);
+$("#EmpCd").change(function () {
+    BindEmployeeGrid();
 })
-function changeShowEntries(curr) {
-    var frm = $("#employee-filter-frm").serialize();
-    var name = $("#EmpCd").val() ?? "";
-    var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&pageSize=${curr.value}`;
-    BindEmployeeGrid(url);
+function changeShowEntries() {
+    BindEmployeeGrid();
 }
 var searchText = '';
 $('#EmpCd').on('select2:open', function () {
-    $('.select2-search__field').val(searchText);
-    $('.select2-search__field').on('input', function () {
+    $('.select2-search__field').val(searchText.trim());
+    $('.select2-search__field').on('input', function (e) {
         searchText = $(this).val();
-        var url = `/Employee/FetchEmployees?Name=${encodeURI(searchText)}`;
-        BindEmployeeGrid(url);
+        $(this).val(searchText.trim());
+        BindEmployeeGrid();
     });
 });

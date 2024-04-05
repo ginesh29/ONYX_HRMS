@@ -28,7 +28,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveComponent(EarnDedModel model)
         {
-            var procedureName = "CompanyEarnDed_Update";
+            var procedureName = "CompanyEarnDed_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Typ", model.TypeCd);
@@ -121,7 +121,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveWorkingHour(WorkingHourModel model, string CoCd)
         {
-            var procedureName = "CompanyWHrs_Update";
+            var procedureName = "CompanyWHrs_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Code.Trim());
             parameters.Add("v_Narr", model.Description);
@@ -164,7 +164,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveOvertimeRate(OvertimeRateModel model, string CoCd)
         {
-            var procedureName = "CompanyOvertimeRates_Update";
+            var procedureName = "CompanyOvertimeRates_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Typ", model.TypCd);
@@ -210,7 +210,7 @@ namespace Onyx.Services
         #region Calendar Event
         public IEnumerable<CompanyCalendar_GetRow_Result> GetCalendarEvents(string CoCd, string Cd = "")
         {
-            var procedureName = "CompanyCalendar_GetRow";
+            var procedureName = "CompanyCalendar_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", Cd);
@@ -222,7 +222,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveCalendarEvent(CompanyCalendarModel model, string CoCd)
         {
-            var procedureName = "CompanyCalendar_Update";
+            var procedureName = "CompanyCalendar_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Cd", model.Cd);
@@ -265,7 +265,7 @@ namespace Onyx.Services
         }
         public string GetCalendarEvent_SrNo()
         {
-            var query = $"SELECT FORMAT(MAX(Cd) + 1, '00') AS NextID FROM companycalendar;";
+            var query = $"SELECT FORMAT(MAX(Cd) + 1, '00') AS NextID FROM companycalendar_N;";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
@@ -277,7 +277,7 @@ namespace Onyx.Services
         #region Notification
         public IEnumerable<Notification_GetRow_Result> GetNotifications(string CoCd)
         {
-            var procedureName = "Notification_GetRow";
+            var procedureName = "Notification_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -288,7 +288,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveNotificationMaster(NotificationModel model, string CoCd)
         {
-            var procedureName = "Notification_Update";
+            var procedureName = "Notification_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_ProcessId", model.ProcessId);
@@ -306,7 +306,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveNotificationDetail(NotificationModel model, string EmpCd, string CoCd)
         {
-            var procedureName = "Notification_Detail_Insert";
+            var procedureName = "Notification_Detail_Insert_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_ProcessId", model.ProcessId);

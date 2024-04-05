@@ -87,7 +87,7 @@ namespace Onyx.Controllers
         {
             int pageNumber = page ?? 1;
             var size = pageSize ?? 25;
-            var name = !string.IsNullOrEmpty(filterModel.Name) ? $"%{filterModel.Name}%" : string.Empty;
+            var name = !string.IsNullOrEmpty(filterModel.Name) ? $"%{filterModel.Name.Trim()}%" : string.Empty;
             var branches = filterModel.Branches != null ? string.Join(",", filterModel.Branches) : null;
             var departments = filterModel.Departments != null ? string.Join(",", filterModel.Departments) : null;
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;

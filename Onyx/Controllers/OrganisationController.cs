@@ -113,7 +113,7 @@ namespace Onyx.Controllers
                     Code = loanType.Cd,
                     Abbriviation = loanType.Abbr,
                     ChgsTyp = loanType.ChgsTyp,
-                    ChgsTypCd = loanType.ChgsTypCd.Trim(),
+                    ChgsTypCd = loanType.ChgsTypCd?.Trim(),
                     DedCd = loanType.DedCd,
                     DedComp = loanType.DedComp,
                     DedTyp = loanType.DedTyp,

@@ -11,7 +11,7 @@
             <div class="card-body p-0">
                 <div id="stepper" class="bs-stepper">
                     <div class="bs-stepper-header" role="tablist">
-                        @foreach (var item in sections.Select((value, i) => new { i, value }))
+                        @foreach (var item in sections.Where(m => m != "Components").Select((value, i) => new { i, value }))
                         {
                             <div class="step" data-target="#@item.value.ConvertToSlug()-part">
                                 <button type="button" class="step-trigger @(item.i!=0 &&string.IsNullOrEmpty(Model.Code)?"disabled":"")" role="tab" aria-controls="@item.value.ConvertToSlug()-part" id="@item.value.ConvertToSlug()-trigger">
@@ -25,7 +25,7 @@
                     <div class="bs-stepper-content">
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
-                            @foreach (var item in sections.Select((value, i) => new { i, value }))
+                            @foreach (var item in sections.Where(m => m != "Components").Select((value, i) => new { i, value }))
                             {
                                 <div id="@item.value.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.value.ConvertToSlug()-part-trigger">
                                     <div style="min-height:400px">
@@ -59,8 +59,8 @@
                                         }
                                     </div>
                                     <button type="button" class="btn btn-primary @(item.i != 0 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
-                                    <button type="button" class="btn btn-primary float-right @(item.i != 6 ? "visible" :"invisible")" onclick="GoToNextPrev(this)">Next &raquo;</button>
-                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(item.i == 6 ? "visible" :"invisible")">Exit Profile</a>
+                                    <button type="button" class="btn btn-primary float-right @(item.i != 5 ? "visible" :"invisible")" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(item.i == 5 ? "visible" :"invisible")">Exit Profile</a>
                                 </div>
                             }
                         </form>

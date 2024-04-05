@@ -338,23 +338,25 @@ namespace Onyx.Services
         {
             var modifiedSpQuery = @"SELECT name,  modify_date 
 	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-01-01' and name like '%_N%'
+	                                WHERE type = 'P' and modify_date > '2024-01-01'
 	                                ORDER BY modify_date DESC";
             var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=Onyx;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
             var sps = connection.Query<string>(modifiedSpQuery);
-            foreach (var item in sps.Where(m => m.Contains("_N")))
+            var result = string.Empty;
+            foreach (var item in sps)
             {
                 string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.Trim()}')) AS Definition";
                 string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
                 if (!string.IsNullOrEmpty(storedProcedureText))
                 {
-                    string filename = item;
-                    string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\{filename}.sql";
-                    storedProcedureText = storedProcedureText.Replace(item, filename).Replace("CREATE", "CREATE OR ALTER");
-                    File.WriteAllText(filePath, storedProcedureText);
+                    string filename = item.Contains("_N") ? item : $"{item}_N";
+                    storedProcedureText = storedProcedureText.Replace(item, filename).Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
+                    result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #").Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#")} \n Go \n";
                 }
             }
+            string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now.ToString("ddMMyyyy_HHmms")}.sql";
+            File.WriteAllText(filePath, result);
         }
     }
 }

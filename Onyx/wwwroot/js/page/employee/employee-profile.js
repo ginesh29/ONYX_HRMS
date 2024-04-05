@@ -74,17 +74,17 @@ function GoToNextPrev(btn, back) {
                 bindComponentDataTable();
             else if (activeStepIndex == 5)
                 bindAddresses(empCode);
-            if (activeStepIndex != 0 && activeStepIndex != 1)
+            if (activeStepIndex != 0 && activeStepIndex != 1) {
+                loadingButton(btn);
                 setTimeout(function () {
                     stepper.next();
+                    unloadingButton(btn);
                 }, 1000);
+            }                
         }
     }
     else
         stepper.previous()
-}
-function GotoStep(no) {
-    stepper.to(no);
 }
 var empCode = $("#Cd").val();
 var visibleEmpName = !empCode ? true : false;

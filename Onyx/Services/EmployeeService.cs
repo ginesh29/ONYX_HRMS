@@ -40,7 +40,7 @@ namespace Onyx.Services
             parameters.Add("v_Usercd", UserCd);
             parameters.Add("v_PageNumber", pageNumber);
             parameters.Add("v_PageSize", pageSize);
-            //parameters.Add("v_LvStatus", lvStatus);
+            parameters.Add("v_LvStatus", lvStatus ?? "");
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
             var employee = multiResult.Read<Employee_GetRow_Result>();
@@ -461,7 +461,7 @@ namespace Onyx.Services
         #region Bank Account
         public IEnumerable<EmpBankAc_GetRow_Result> GetBankAccounts(string UserCd)
         {
-            var procedureName = "EmpBankAc_GetRow";
+            var procedureName = "EmpBankAc_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_Usercd", UserCd);
