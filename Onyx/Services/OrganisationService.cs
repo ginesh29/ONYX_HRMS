@@ -241,7 +241,7 @@ namespace Onyx.Services
         }
         public CommonResponse DeleteCalendarEvent(string Cd)
         {
-            var procedureName = "CompanyCalendar_Delete";
+            var procedureName = "CompanyCalendar_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -382,7 +382,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveBank(BankModel model)
         {
-            var procedureName = "Bank_Update";
+            var procedureName = "Bank_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_BankCd", model.BankCd);
             parameters.Add("v_BranchCd", model.BranchCd);
@@ -433,7 +433,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveDocument(CompanyDocumentModel model, string CoCd)
         {
-            var procedureName = "CompanyDocuments_Update";
+            var procedureName = "CompanyDocuments_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_DivCd", model.DivCd);
@@ -520,7 +520,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveVehicle(CompanyVehicleModel model)
         {
-            var procedureName = "CompanyVehicle_Update";
+            var procedureName = "CompanyVehicle_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_SDes", model.SDes);
@@ -663,7 +663,7 @@ namespace Onyx.Services
         #region Designation
         public IEnumerable<Designation_GetRow_Result> GetDesignations()
         {
-            var procedureName = "Designation_GetRow";
+            var procedureName = "Designation_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -674,7 +674,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveDesignation(DesignationModel model)
         {
-            var procedureName = "Designation_Update";
+            var procedureName = "Designation_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_SDes", model.SDes);
@@ -688,7 +688,7 @@ namespace Onyx.Services
         }
         public void DeleteDesignation(string Cd)
         {
-            var procedureName = "Designation_Delete";
+            var procedureName = "Designation_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -721,7 +721,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeaveType(CompanyLeaveModel model, string Cocd)
         {
-            var procedureName = "CompanyLeave_Update";
+            var procedureName = "CompanyLeave_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_SDes", model.SDes);
@@ -769,7 +769,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveLeavePayComponent(CompanyLeavePayModel model, string CoCd)
         {
-            var procedureName = "CompanyLeavePay_Update";
+            var procedureName = "CompanyLeavePay_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_PayTyp", model.PayTypCd);

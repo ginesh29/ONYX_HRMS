@@ -456,10 +456,13 @@ namespace Onyx.Controllers
                     EmailSubject = notification.EmailSubject,
                     Attendees = notification.Attendees != null ? [.. notification.Attendees.Split(',')] : null,
                 };
-                foreach (var item in notification.Attendees.Split(','))
+                if (notification.Attendees != null)
                 {
-                    var empName = _employeeService.FindEmployee(item, _loggedInUser.CompanyCd).Name;
-                    model.AttendeesName.Add(empName);
+                    foreach (var item in notification.Attendees?.Split(','))
+                    {
+                        var empName = _employeeService.FindEmployee(item, _loggedInUser.CompanyCd).Name;
+                        model.AttendeesName.Add(empName);
+                    }
                 }
             }
             ViewBag.TypeItems = _organisationService.GetNotificationTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
@@ -583,7 +586,7 @@ namespace Onyx.Controllers
                 model = new CompanyProcessApprovalModel
                 {
                     Cd = approvalProcess.Branch,
-                    Branch = approvalProcess.Branch,
+                    Branch = approvalProcess.Branch.Trim(),
                     ApplTypCd = approvalProcess.ApplTypCd.Trim(),
                     ApplTyp = approvalProcess?.ApplTyp,
                     BranchCd = approvalProcess?.BranchCd.Trim(),
@@ -917,7 +920,7 @@ namespace Onyx.Controllers
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
-            });            
+            });
             return View("VehicleForm", model);
         }
         [HttpPost]
