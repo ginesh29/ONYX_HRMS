@@ -97,12 +97,6 @@ function showLeaveConfirmModal(transNo) {
         $("#EmployeeLeaveConfirmModal").modal("show");
     });
 }
-function showLeaveDetailModal(empCd, fromDt, toDt) {
-    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
-    $('#EmployeeLeaveDetailModal').load(url, function () {
-        $("#EmployeeLeaveDetailModal").modal("show");
-    });
-}
 function ValidateDateRange() {
     var isValid = false;
     var WpDateRangeDays = $("#WpDateRangeDays").val();

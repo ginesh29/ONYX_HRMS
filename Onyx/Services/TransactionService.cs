@@ -296,13 +296,13 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public Employee_LeaveHistory_Detail GetEmployee_LeaveHistory(string empCd, DateTime FromDt, DateTime ToDt)
+        public Employee_LeaveHistory_Detail GetEmployee_LeaveHistory(string empCd, DateTime? FromDt, DateTime? ToDt)
         {
             var procedureName = "Employee_LeaveHistory_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_FromDt", FromDt.ToString(CommonSetting.InputDateFormat));
-            parameters.Add("v_ToDt", ToDt.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_FromDt", FromDt.Value.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_ToDt", Convert.ToDateTime(ToDt).IsNotEmptyDate() ? ToDt.Value.ToString(CommonSetting.InputDateFormat) : string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);

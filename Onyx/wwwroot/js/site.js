@@ -329,6 +329,13 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
         })
     })
 }
+
+function showLeaveDetailModal(empCd, fromDt, toDt) {
+    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
+    $('#EmployeeLeaveDetailModal').load(url, function () {
+        $("#EmployeeLeaveDetailModal").modal("show");
+    });
+}
 function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();

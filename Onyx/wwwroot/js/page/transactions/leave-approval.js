@@ -41,7 +41,7 @@
                             <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
                                 <i class="fa fa-times"></i>
                             </button>`;
-                }, "width": "150px"
+                }, "width": "120px"
             }
         ],
     }
@@ -49,12 +49,6 @@
 var isAdmin = $("#IsAdmin").val() == 1;
 if (isAdmin)
     window["datatable"].column(8).visible(false);
-function showLeaveDetailModal(empCd, fromDt, toDt) {
-    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
-    $('#EmployeeLeaveDetailModal').load(url, function () {
-        $("#EmployeeLeaveDetailModal").modal("show");
-    });
-}
 function showLeaveApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpLeaveApproval?transNo=${transNo}`;
     $('#EmployeeLeaveApprovalModal').load(url, function () {

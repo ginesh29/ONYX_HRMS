@@ -19,13 +19,16 @@
             { data: "lvTicket" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLeaveSalaryDisburseModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.appDt}')">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info ml-2" onclick="showLeaveSalaryDisburseModal('${row.transNo.trim()}')">
                                 <i class="fas fa-check"></i>
                             </button>
                             <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveSalaryDisburseModal('${row.transNo.trim()}',true)">
                                 <i class="fa fa-times"></i>
                             </button>`;
-                }, "width": "80px"
+                }, "width": "120px"
             }
         ],
     }
