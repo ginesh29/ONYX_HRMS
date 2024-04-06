@@ -2,46 +2,46 @@
 @{
     var dateFormat = ExtensionMethod.GetDateFormat();
     var leaveDetail = Model.EmpLeaveDetail;
+    var WpDateRange = leaveDetail.FormatedWPFromDt.IsNotEmptyDate() || leaveDetail.FormatedWPToDt.IsNotEmptyDate() ? $"{leaveDetail.FormatedWPFromDt.ToString(dateFormat)} - {leaveDetail.FormatedWPToDt.ToString(dateFormat)}" : null;
+    var WopDateRange = leaveDetail.FormatedWOPFromDt.IsNotEmptyDate() || leaveDetail.FormatedWOPToDt.IsNotEmptyDate() ? $"{leaveDetail.FormatedWOPFromDt.ToString(dateFormat)} - {leaveDetail.FormatedWOPToDt.ToString(dateFormat)}" : null;
+    var WpDays = leaveDetail.FormatedWPFromDt.IsNotEmptyDate() || leaveDetail.FormatedWPToDt.IsNotEmptyDate() ? ExtensionMethod.GetDaysBetweenDateRange(leaveDetail.FormatedWPFromDt, leaveDetail.FormatedWPToDt) : 0;
+    var WopDays = leaveDetail.FormatedWOPFromDt.IsNotEmptyDate() || leaveDetail.FormatedWOPToDt.IsNotEmptyDate() ? ExtensionMethod.GetDaysBetweenDateRange(leaveDetail.FormatedWOPFromDt, leaveDetail.FormatedWOPToDt) : 0;
+    var totalIncome = Model.IncomeDetails.Where(m => m.Type != "Deductions").Sum(m => m.AmtVal);
+    var totalDeductions = Model.IncomeDetails.Where(m => m.Type == "Deductions").Sum(m => m.AmtVal);
+
     var LeaveOpening = leaveDetail.LeaveOp;
     var LeaveCum = leaveDetail.Leave;
-    var Leave = leaveDetail.LeaveOp + leaveDetail.Leave;
+    var LeaveTotal = LeaveOpening + LeaveCum;
+    var Leave = LeaveOpening + LeaveCum;
     var LeaveTaken = leaveDetail.LeaveTaken;
-    var LeaveBalance = leaveDetail.Leave + leaveDetail.LeaveTaken;
+    var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
+    var LeaveEligibility = LeaveBalance >= leaveDetail.ReqLv ? "Yes" : "No";
+    var LeaveEligibilityColor = LeaveEligibility == "Yes" ? "success" : "danger";
 
-    // lblLeaveBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LeaveOp"] == null ? "0" : 
-    // (ds.Tables[0].Rows[0]["LeaveOp"].ToString() == "" ? "0" :
-    //     ds.Tables[0].Rows[0]["LeaveOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["Leave"] == null ? "0" :
-    //     (ds.Tables[0].Rows[0]["Leave"].ToString() == "" ? "0" :
-    //     ds.Tables[0].Rows[0]["Leave"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LeaveTaken"] == null ? "0" :
-    //     (ds.Tables[0].Rows[0]["LeaveTaken"].ToString() == "" ? "0" :
-    //     ds.Tables[0].Rows[0]["LeaveTaken"].ToString()))).ToString();
+    var LeaveSalDaysOpening = leaveDetail.LvSalDaysOp;
+    var LeaveSalDaysCum = leaveDetail.LvSalDays;
+    var LeaveSalDaysTotal = LeaveSalDaysOpening + LeaveSalDaysCum;
+    var LeaveSalDays = LeaveSalDaysOpening + LeaveSalDaysCum;
+    var LeaveSalDaysTaken = leaveDetail.LvSalDaysTaken;
+    var LeaveSalDaysBalance = LeaveSalDaysOpening + LeaveSalDays - LeaveSalDaysTaken;
 
-    // lblLeaveEligibility.Text = Convert.ToDouble(lblLeaveBalance.Text.ToString()) >= Convert.ToDouble(lblReqLeave1.Text.ToString()) ? "Yes" : "No";
-    // lblLeaveEligibility.ForeColor = lblLeaveEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+    var LeaveSalOpening = leaveDetail.LvSalaryOp;
+    var LeaveSalCum = leaveDetail.LvSalary;
+    var LeaveSalTotal = LeaveSalOpening + LeaveSalCum;
+    var LeaveSal = LeaveSalOpening + LeaveSalCum;
+    var LeaveSalTaken = leaveDetail.LvSalaryTaken;
+    var LeaveSalBalance = LeaveSalOpening + LeaveSal - LeaveSalTaken;
+    var LeaveSalEligibility = LeaveSalBalance >= leaveDetail.LvSalYr ? "Yes" : "No";
+    var LeaveSalEligibilityColor = LeaveSalEligibility == "Yes" ? "success" : "danger";
 
-    // lblLvSalDaysOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())).ToString();
-    // lblLvSalDaysCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString())).ToString();
-    // lblLvSalDays.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString()))).ToString();
-    // lblLvSalDaysTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString())).ToString();
-    // lblLvSalDaysBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDays"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDays"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDays"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalDaysTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalDaysTaken"].ToString()))).ToString();
-
-    // lblLvSalaryOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())).ToString();
-    // lblLvSalaryCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString())).ToString();
-    // lblLvSalary.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString()))).ToString();
-    // lblLvSalaryTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString())).ToString();
-    // lblLvSalaryBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryOp"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalary"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalary"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalary"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvSalaryTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvSalaryTaken"].ToString()))).ToString();
-    // lblLvSalaryEligibility.Text = Convert.ToDouble(lblLvSalaryBalance.Text.ToString()) >= Convert.ToDouble(lblLvSalYr.Text.ToString()) ? "Yes" : "No";
-    // lblLvSalaryEligibility.ForeColor = lblLvSalaryEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
-
-    // lblLvTicketOpening.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString())).ToString();
-    // lblLvTicketCum.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())).ToString();
-    // lblLvTicket.Text = (Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString()))).ToString();
-    // lblLvTicketTaken.Text = Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketTaken"].ToString())).ToString();
-    // lblLvTicketBalance.Text = ((Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicket"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicket"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicket"].ToString())) + Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketOp"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketOp"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketOp"].ToString()))) - Convert.ToDouble(ds.Tables[0].Rows[0]["LvTicketTaken"] == null ? "0" : (ds.Tables[0].Rows[0]["LvTicketTaken"].ToString() == "" ? "0" : ds.Tables[0].Rows[0]["LvTicketTaken"].ToString()))).ToString();
-    // lblLvTicketEligibility.Text = Convert.ToDouble(lblLvTicketBalance.Text.ToString()) >= Convert.ToDouble(lblLvTicYr.Text.ToString()) ? "Yes" : "No";
-    // lblLvTicketEligibility.ForeColor = lblLvTicketEligibility.Text == "Yes" ? System.Drawing.Color.Green : System.Drawing.Color.Red;
-
-    // lblOpeningNoPay.Text = ds.Tables[0].Rows[0]["Cumlvnopay"] == null ? "0" : ds.Tables[0].Rows[0]["Cumlvnopay"].ToString();
+    var LeaveTicketOpening = leaveDetail.LvTicketOp;
+    var LeaveTicketCum = leaveDetail.LvTicket;
+    var LeaveTicketTotal = LeaveTicketOpening + LeaveTicketCum;
+    var LeaveTicket = LeaveTicketOpening + LeaveTicketCum;
+    var LeaveTicketTaken = leaveDetail.LvTicketTaken;
+    var LeaveTicketBalance = LeaveTicketOpening + LeaveTicket - LeaveTicketTaken;
+    var LeaveTicketEligibility = LeaveTicketBalance >= leaveDetail.LvTicYr ? "Yes" : "No";
+    var LeaveTicketEligibilityColor = LeaveTicketEligibility == "Yes" ? "success" : "danger";
 }
 <div class="modal-dialog modal-lg">
     <!-- Modal content-->
@@ -55,21 +55,47 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h5 class="text-primary">Employee Details</h5>
-                        <div><span class="font-weight-bold">Name/Code: </span>@Model.EmpLeaveDetail.Name (@Model.EmpLeaveDetail.Code)</div>
-                        <div><span class="font-weight-bold">Nationality : </span></div>
-                        <div><span class="font-weight-bold">Location : </span>@Model.EmpLeaveDetail.Location</div>
-                        <div><span class="font-weight-bold">Desgignation : </span>@Model.EmpLeaveDetail.Designation</div>
-                        <div><span class="font-weight-bold">Joined Date : </span>@Model.EmpLeaveDetail.FormatedDoj.ToString(dateFormat)</div>
-                        <div><span class="font-weight-bold">Last Rejoined Date : </span>@Model.EmpLeaveDetail.LastRejoinDt.ToString(dateFormat)</div>
-                        <div><span class="font-weight-bold">Total Days With Company : </span>@Model.EmpLeaveDetail.TotalDays</div>
+                        <div><span class="font-weight-bold">Name/Code: </span>@leaveDetail.Name (@leaveDetail.Code)</div>
+                        <div><span class="font-weight-bold">Nationality : </span>@leaveDetail.Nationality</div>
+                        <div><span class="font-weight-bold">Location : </span>@leaveDetail.Location</div>
+                        <div><span class="font-weight-bold">Designation : </span>@leaveDetail.Designation</div>
+                        <div><span class="font-weight-bold">Joined Date : </span>@leaveDetail.FormatedDoj.ToString(dateFormat)</div>
+                        <div><span class="font-weight-bold">Last Rejoined Date : </span>@leaveDetail.LastRejoinDt.ToString(dateFormat)</div>
+                        <div><span class="font-weight-bold">Total Days With Company : </span>@leaveDetail.TotalDays</div>
                         <div><span class="font-weight-bold">Outstanding  : </span>@Model.OutstandingDetail.Outstanding</div>
-                        <div><span class="font-weight-bold">Leave Salary/Yr : </span>@Model.EmpLeaveDetail.LvSalYr</div>
-                        <div><span class="font-weight-bold">Leave Ticket/Yr : </span>@Model.EmpLeaveDetail.LvTicYr</div>
-                        <div><span class="font-weight-bold">This month Salary : </span>@Model.IncomeDetails.Sum(m => m.AmtVal)</div>
-                        <div><span class="font-weight-bold">Opening No Pay : </span>@Model.EmpLeaveDetail.Cumlvnopay</div>
+                        <div><span class="font-weight-bold">Leave Salary/Yr : </span>@leaveDetail.LvSalYr</div>
+                        <div><span class="font-weight-bold">Leave Ticket/Yr : </span>@leaveDetail.LvTicYr</div>
+                        <div><span class="font-weight-bold">This month Salary : </span>@(totalIncome - totalDeductions)</div>
+                        <div><span class="font-weight-bold">Opening No Pay : </span>@leaveDetail.Cumlvnopay</div>
+                        <div><span class="font-weight-bold">With Pay : </span>@WpDateRange (@WpDays days)</div>
+                        <div><span class="font-weight-bold">Without Pay : </span>@WopDateRange (@WopDays days)</div>
                     </div>
                     <div class="col-md-6">
-                        <h5 class="text-primary mt-2">Salary Details</h5>
+                        <h5 class="text-primary">Approval Details</h5>
+                        <table class="table table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Approved By</th>
+                                    <th>Approved Date</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in Model.LeaveApprovalDetails)
+                            {
+                                <tr>
+                                    <td>@item.LvApprBy</td>
+                                    <td>@item.ApprDt.ToString(dateFormat)</td>
+                                </tr>
+                            }
+                            @if (Model.LeaveApprovalDetails.Count() == 0)
+                            {
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2">@CommonMessage.EMPTYGRID</td>
+                                    </tr>
+                                </tfoot>
+                            }
+                        </table>
+                        <h5 class="text-primary">Salary Details</h5>
                         <table class="table table-sm">
                             <thead class="thead-dark">
                                 <tr>
@@ -87,7 +113,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Total</th>
-                                    <th>@Model.IncomeDetails.Sum(m => m.AmtVal)</th>
+                                    <th>@(totalIncome - totalDeductions)</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -108,40 +134,40 @@
                             </tr>
                         </thead>
                         <tr>
-                            @* <th>Leave</th>
+                            <th>Leave</th>
                             <td>@LeaveOpening</td>
-                            <td>@LeaveCum</td>
-                            <td>@Model.EmpLeaveDetail.LeaveOp +  @Model.EmpLeaveDetail.Leave lblLeave</td>
-                            <td>@Model.EmpLeaveDetail.LeaveTaken lblLeaveTaken</td>
-                            <td>@Model.EmpLeaveDetail.LeaveOp lblLeaveBalance</td>
-                            <td>@</td> *@
+                            <td>@LeaveCum.ToString("#.##")</td>
+                            <td>@LeaveTotal.ToString("#.##")</td>
+                            <td>@LeaveTaken</td>
+                            <td>@(LeaveBalance > 0 ? LeaveTotal.ToString("#.##") : 0)</td>
+                            <td><span class="font-weight-bold text-@LeaveEligibilityColor">@LeaveEligibility</span></td>
                         </tr>
                         <tr>
                             <th>Leave Salary Days</th>
-                            <td>lblLvSalDaysOpening</td>
-                            <td>lblLvSalDaysCum</td>
-                            <td>lblLvSalDays</td>
-                            <td>lblLvSalDaysTaken</td>
-                            <td>lblLvSalDaysBalance</td>
-                            <td>lblLvSalDaysEligibility</td>
+                            <td>@LeaveSalDaysOpening</td>
+                            <td>@(LeaveSalDaysCum > 0 ? LeaveSalDaysCum.ToString("#.##") : 0)</td>
+                            <td>@LeaveSalDaysTotal.ToString("#.##")</td>
+                            <td>@LeaveSalDaysTaken</td>
+                            <td>@(LeaveSalDaysBalance > 0 ? LeaveSalDaysTotal.ToString("#.##") : 0)</td>
+                            <td>-</td>
                         </tr>
                         <tr>
                             <th>Leave Salary</th>
-                            <td>lblLvSalaryOpening</td>
-                            <td>lblLvSalaryCum</td>
-                            <td>lblLvSalary</td>
-                            <td>lblLvSalaryTaken</td>
-                            <td>lblLvSalaryBalance</td>
-                            <td>lblLvSalaryEligibility</td>
+                            <td>@LeaveSalOpening</td>
+                            <td>@(LeaveSalCum > 0 ? LeaveSalCum.ToString("#.##") : 0)</td>
+                            <td>@LeaveSalTotal.ToString("#.##")</td>
+                            <td>@LeaveSalTaken</td>
+                            <td>@(LeaveSalBalance > 0 ? LeaveSalTotal.ToString("#.##") : 0)</td>
+                            <td><span class="font-weight-bold text-@LeaveSalEligibilityColor">@LeaveSalEligibility</span></td>
                         </tr>
                         <tr>
                             <th>Leave Ticket</th>
-                            <td>lblLvTicketOpening</td>
-                            <td>lblLvTicketCum</td>
-                            <td>lblLvTicket</td>
-                            <td>lblLvTicketTaken</td>
-                            <td>lblLvTicketBalance</td>
-                            <td>lblLvTicketEligibility</td>
+                            <td>@LeaveTicketOpening</td>
+                            <td>@(LeaveTicketCum > 0 ? LeaveTicketCum.ToString("#.##") : 0)</td>
+                            <td>@LeaveTicketTotal.ToString("#.##")</td>
+                            <td>@LeaveTicketTaken</td>
+                            <td>@(LeaveTicketBalance > 0 ? LeaveTicketTotal.ToString("#.##") : 0)</td>
+                            <td><span class="font-weight-bold text-@LeaveTicketEligibilityColor">@LeaveTicketEligibility</span></td>
                         </tr>
                     </table>
                 </div>
@@ -164,15 +190,15 @@
                             <td>@item.Total</td>
                         </tr>
                     }
+                    @if (Model.PreviousLeaveHistory.Count() == 0)
+                    {
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">@CommonMessage.EMPTYGRID</td>
+                            </tr>
+                        </tfoot>
+                    }
                 </table>
-                @*
-                <div><span class="font-weight-bold">Employee: </span>@($"{Model.Emp}({Model.EmpCd.Trim()})")</div>
-                <div><span class="font-weight-bold">Designation: </span>@Model.Desg</div>
-                <div><span class="font-weight-bold">Branch: </span>@Model.Branch</div>
-                <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(ViewData["ServerDateFormat"].ToString())</div>
-                <div><span class="font-weight-bold">Leave Type: </span>@Model.LvTyp</div>
-                <div><span class="font-weight-bold">Date Range: </span>@Model.LvDateRange (@Model.LvDays days)</div>
-                <div><span class="font-weight-bold">Reason: </span>@Model.Reason</div> *@
             </div>
         </div>
         <div class="modal-footer">

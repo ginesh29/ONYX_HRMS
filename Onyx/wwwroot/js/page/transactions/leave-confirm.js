@@ -38,7 +38,10 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLeaveConfirmModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.fromDt}','${row.toDt}')">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info ml-2" onclick="showLeaveConfirmModal('${row.transNo.trim()}')">
                                 <i class="fas fa-pen"></i>
                             </button>`
                 }, "width": "80px"
@@ -92,6 +95,12 @@ function showLeaveConfirmModal(transNo) {
             $('#WpDateRange,#WopDateRange').data('daterangepicker').maxDate = picker.endDate;
         });
         $("#EmployeeLeaveConfirmModal").modal("show");
+    });
+}
+function showLeaveDetailModal(empCd, fromDt, toDt) {
+    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
+    $('#EmployeeLeaveDetailModal').load(url, function () {
+        $("#EmployeeLeaveDetailModal").modal("show");
     });
 }
 function ValidateDateRange() {

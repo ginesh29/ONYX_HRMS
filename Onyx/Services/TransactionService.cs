@@ -301,8 +301,8 @@ namespace Onyx.Services
             var procedureName = "Employee_LeaveHistory_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_FromDt", FromDt);
-            parameters.Add("v_ToDt", ToDt);
+            parameters.Add("v_FromDt", FromDt.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_ToDt", ToDt.ToString(CommonSetting.InputDateFormat));
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -310,7 +310,7 @@ namespace Onyx.Services
             var previousleavehistory = multiResult.Read<PreviousLeaveHistory>();
             var incomeDetails = multiResult.Read<IncomeDetails>();
             var outstanding = multiResult.ReadFirstOrDefault<OutstandingDetail>();
-            var leaveApprovalDetail = multiResult.ReadFirstOrDefault<LeaveApprovalDetails>();
+            var leaveApprovalDetail = multiResult.Read<LeaveApprovalDetails>();
             return new Employee_LeaveHistory_Detail
             {
                 EmpLeaveDetail = empLeaveDetail,
@@ -347,10 +347,10 @@ namespace Onyx.Services
             parameters.Add("v_LvApprBy", model.ApprBy);
             parameters.Add("v_LvApprDt", model.ApprDt);
             parameters.Add("v_Status", model.Status);
-            parameters.Add("v_WP_FromDt", model.WpFrom);
-            parameters.Add("v_WP_ToDt", model.WpTo);
-            parameters.Add("v_WOP_FromDt", model.WopFrom);
-            parameters.Add("v_WOP_ToDt", model.WopTo);
+            parameters.Add("v_WP_FromDt", Convert.ToDateTime(model.WpFrom).IsNotEmptyDate() ? Convert.ToDateTime(model.WpFrom).ToString(CommonSetting.InputDateFormat) : CommonSetting.DeafultDate);
+            parameters.Add("v_WP_ToDt", Convert.ToDateTime(model.WpTo).IsNotEmptyDate() ? Convert.ToDateTime(model.WpTo).ToString(CommonSetting.InputDateFormat) : CommonSetting.DeafultDate);
+            parameters.Add("v_WOP_FromDt", Convert.ToDateTime(model.WopFrom).IsNotEmptyDate() ? Convert.ToDateTime(model.WopFrom).ToString(CommonSetting.InputDateFormat) : CommonSetting.DeafultDate);
+            parameters.Add("v_WOP_ToDt", Convert.ToDateTime(model.WopTo).IsNotEmptyDate() ? Convert.ToDateTime(model.WopTo).ToString(CommonSetting.InputDateFormat) : CommonSetting.DeafultDate);
             parameters.Add("v_Narr", model.Remark);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Reason", model.Remark);

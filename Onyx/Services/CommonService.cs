@@ -165,6 +165,19 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public Parameters_GetRow_Result GetParameterByProcess(string CoCd, string Cd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "ParameterByProcess_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", Cd);
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_opt", "");
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<Parameters_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         public DateTime GetCuurentLoggedInDetails(string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -355,7 +368,7 @@ namespace Onyx.Services
                     result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #").Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#")} \n Go \n";
                 }
             }
-            string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now.ToString("ddMMyyyy_HHmms")}.sql";
+            string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now:ddMMyyyy_HHmms}.sql";
             File.WriteAllText(filePath, result);
         }
     }

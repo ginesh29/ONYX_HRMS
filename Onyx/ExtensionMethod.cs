@@ -106,6 +106,13 @@ namespace Onyx
             var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{CoCd}/{foldername}/{filename}");
             return File.Exists(path);
         }
+        public static bool IsNotEmptyDate(this DateTime date)
+        {
+            if (date != DateTime.MinValue && date.Year != 1900 && date.Year != 0001)
+                return true;
+            else
+                return false;
+        }
         public static string GetDateRange(DateTime? startDate, DateTime? endDate)
         {
             var format = GetDateFormat();

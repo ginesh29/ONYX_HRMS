@@ -6,7 +6,7 @@
         public IEnumerable<PreviousLeaveHistory> PreviousLeaveHistory { get; set; }
         public IEnumerable<IncomeDetails> IncomeDetails { get; set; }
         public OutstandingDetail OutstandingDetail { get; set; }
-        public LeaveApprovalDetails LeaveApprovalDetails { get; set; }
+        public IEnumerable<LeaveApprovalDetails> LeaveApprovalDetails { get; set; }
     }
 
     public class Employee_LeaveDetail
@@ -18,6 +18,7 @@
         public string Department { get; set; }
         public string Location { get; set; }
         public string Designation { get; set; }
+        public string Nationality { get; set; }
         public string Bank { get; set; }
         public double LeaveDays { get; set; }
         public string Status { get; set; }
@@ -28,23 +29,23 @@
         public int LvSalYr { get; set; }
         public int LvTicYr { get; set; }
         public int TotalDays { get; set; }
-        public decimal LeaveOp { get; set; }
+        public int LeaveOp { get; set; }
         public decimal Leave { get; set; }
-        public decimal LeaveTaken { get; set; }
-        public decimal LvSalDaysOp { get; set; }
+        public int LeaveTaken { get; set; }
+        public int LvSalDaysOp { get; set; }
         public decimal LvSalDays { get; set; }
-        public decimal LvSalDaysTaken { get; set; }
+        public int LvSalDaysTaken { get; set; }
         public decimal LvSalary { get; set; }
-        public decimal LvSalaryOp { get; set; }
-        public decimal LvSalaryTaken { get; set; }
+        public int LvSalaryOp { get; set; }
+        public int LvSalaryTaken { get; set; }
         public decimal LvTicket { get; set; }
-        public decimal LvTicketOp { get; set; }
-        public decimal LvTicketTaken { get; set; }
+        public int LvTicketOp { get; set; }
+        public int LvTicketTaken { get; set; }
         public DateTime FormatedWPFromDt { get; set; }
         public DateTime FormatedWPToDt { get; set; }
         public DateTime FormatedWOPFromDt { get; set; }
         public DateTime FormatedWOPToDt { get; set; }
-        public decimal Cumlvnopay { get; set; }
+        public int Cumlvnopay { get; set; }
     }
     public class PreviousLeaveHistory
     {
@@ -66,8 +67,8 @@
     }
     public class LeaveApprovalDetails
     {
-        public string Approver { get; set; }
-        public DateTime ApprovalDate { get; set; }
+        public string LvApprBy { get; set; }
+        public DateTime ApprDt { get; set; }
         public int ApprovalLevel { get; set; }
     }
 }
