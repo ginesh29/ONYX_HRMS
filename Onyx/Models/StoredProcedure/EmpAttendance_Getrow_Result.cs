@@ -16,7 +16,6 @@
         public int C_OT { get; set; }
         public double Payable { get; set; }
         public double LoanDed { get; set; }
-        public string EmpCd { get; set; }
         public bool IsValid { get; set; }
         public string ErrorMessage { get; set; }
     }

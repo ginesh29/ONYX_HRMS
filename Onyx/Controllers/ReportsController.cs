@@ -44,6 +44,29 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
+            ViewBag.EmpTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            ViewBag.StatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.Nationality
+            });
+            ViewBag.QualificationItems = _settingService.GetCodeGroupItems(CodeGroup.Qualification).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
             return View();
         }
         public IActionResult FetchEmpShotListReportData()

@@ -10,69 +10,80 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="EmpCd"></label>
-                        <select asp-for="EmpCd" class="form-control select2">
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.ALLSELECT">
                             <option value=""></option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label asp-for="Branch"></label>
                         <select class="form-control filter-select-picker" asp-for="Branch" asp-items="ViewBag.BranchItems"></select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label asp-for="Department"></label>
                         <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems"></select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label asp-for="Designation"></label>
                         <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Sponsor"></label>
+                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="Period"></label>
+                        <input asp-for="Period" value="@ViewBag.currentMonthYear" class="form-control month-year-input" type="text" data-toggle="datetimepicker">
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="Sponsor"></label>
-                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="EmpCd"></label>
-                        <select asp-for="EmpCd" class="form-control select2">
-                            <option value=""></option>
+                        <label asp-for="Nationality"></label>
+                        <select asp-for="Nationality" class="form-control filter-select-picker" asp-items="ViewBag.NationalityItems">
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-1">
                     <div class="form-group">
-                        <label asp-for="Branch"></label>
-                        <select class="form-control filter-select-picker" asp-for="Branch" asp-items="ViewBag.BranchItems"></select>
+                        <label asp-for="Age"></label>
+                        <select class="form-control filter-select-picker" asp-for="Age">
+                            @for (int i = 18; i < 65; i++)
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        </select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="Department"></label>
-                        <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems"></select>
+                        <label asp-for="Qualification"></label>
+                        <select asp-for="Qualification" class="form-control filter-select-picker" asp-items="ViewBag.QualificationItems"></select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="Designation"></label>
-                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems"></select>
+                        <label asp-for="EmployeeType"></label>
+                        <select asp-for="EmployeeType" class="form-control filter-select-picker" asp-items="ViewBag.EmpTypeItems"></select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="Sponsor"></label>
-                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
+                        <label asp-for="Status"></label>
+                        <select asp-for="Status" class="form-control filter-select-picker" asp-items="ViewBag.StatusItems"></select>
                     </div>
                 </div>
+
                 @* <div>
                 <label>Visible Column:</label>
                 <div class="input-group">
@@ -85,8 +96,15 @@
                 <!-- /.input group -->
                 </div> *@
             </div>
+            <div class="col-md-1">
+                <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active">
+                    <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
+                </div>
+            </div>
             <div class="report-btn-div">
-                <button class="btn btn-outline-danger ml-2" onclick="filterShowCustomerTransactions(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                <button class="btn btn-secondary" onclick="filterShowCustomers(this)">Search</button>
+                <button class="btn btn-outline-danger ml-2" onclick="" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
                 <button class="btn btn-outline-info ml-2" id="btn-excel"><i class="fa fa-file-excel"></i></button>
             </div>
         </form>
@@ -105,6 +123,7 @@
     </div>
 </div>
 @section scripts {
+    
     <script>
         function loadReport() {
             var table = $('#EmpShortListReportTable').DataTable(
@@ -131,5 +150,31 @@
         }
         loadReport();
         bindEmployeeDropdown();
+
+        function generatePDF() {
+            const element = $('#EmpShortListReportTable')[0];
+            const opt = {
+                margin: 1,
+                filename: 'custom_pdf.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all'] },
+                header: function () {
+                    return '<h1 style="text-align: center;">Custom Header</h1>';
+                },
+                footer: function (currentPage, pageCount) {
+                    return '<h1 style="text-align: center;">Page ' + currentPage + ' of ' + pageCount + '</h1>';
+                }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        // Bind click event to generate PDF button using jQuery
+        $(document).ready(function () {
+            $('#btn-pdf').click(function () {
+                generatePDF();
+            });
+        });
     </script>
 }
