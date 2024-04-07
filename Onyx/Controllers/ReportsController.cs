@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
+using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
+using Rotativa.AspNetCore;
+using Rotativa.AspNetCore.Options;
 
 namespace Onyx.Controllers
 {
@@ -22,7 +25,7 @@ namespace Onyx.Controllers
             _organisationService = organisationService;
             _settingService = settingService;
         }
-        public IActionResult EmpShortListReport()
+        public IActionResult EmpShortList()
         {
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
             {
@@ -69,14 +72,19 @@ namespace Onyx.Controllers
             ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
             return View();
         }
-        public IActionResult FetchEmpShotListReportData()
+        public IActionResult FetchEmpShortListData(EmpShortListFilterModel filterModel)
         {
             var empShortList = _reportService.GetEmpShortList(_loggedInUser.CompanyCd);
-            CommonResponse result = new()
+            return PartialView("_EmpShortList", empShortList);
+        }
+        public IActionResult EmpShortListReport()
+        {
+            var customers = _reportService.GetEmpShortList(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(customers)
             {
-                Data = empShortList,
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
             };
-            return Json(result);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
-@using X.PagedList.Web.Common
 @model dynamic
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;

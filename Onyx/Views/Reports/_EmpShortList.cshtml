@@ -1,0 +1,22 @@
+﻿@model IEnumerable<GetRepo_EmpShortList_Result>
+<table class="table table-sm" id="EmpShortListReportTable">
+    <thead class="thead-dark">
+        <tr>
+            <th>No.</th>
+            <th>Employeee</th>
+            <th>Branch</th>
+            <th>Total</th>
+            <th>Personal No</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Select((value, i) => new { i, value }))
+    {
+        <tr>
+            <td>@(item.i + 1)</td>
+            <td>@item.value.EmpName (@item.value.Code.Trim())</td>
+            <td>@item.value.Branch</td>
+            <td>@item.value.Total</td>
+            <td>@item.value.PassportNo</td>
+        </tr>
+    }
+</table>

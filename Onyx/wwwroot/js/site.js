@@ -33,7 +33,6 @@ const intMaskOptions = {
     placeholder: '0',
 }
 const dataTableDefaultOptions = {
-    "pagingType": "simple",
     "ordering": false
 }
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
@@ -306,6 +305,12 @@ $("#user-company-dropdown").on('change', function (e) {
         window.location.reload();
     });
 })
+$('#btn-excel').on('click', function (e) {
+    e.preventDefault();
+    var title = document.title.replace(" - Onyx", "");
+    if (window["datatable"])
+        exportExcel(window["datatable"], title)
+});
 function bindEmployeeDropdown() {
     var el = $("select#EmpCd,select#EmployeeCode,select#DriverCd");
     var id = $(el).attr("id");

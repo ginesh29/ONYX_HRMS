@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Onyx.BackgroundTask;
 using Onyx.Data;
 using Onyx.Services;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseDeveloperExceptionPage();
+app.UseRotativa();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
