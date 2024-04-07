@@ -1,10 +1,10 @@
-﻿function BindEmployeeGrid() {
+﻿function BindEmployeeGrid(page) {
     loadingPage();
     var frm = $("#employee-filter-frm").serialize();
     var name = $("#EmpCd").val();
     name = name ? name : searchText;
     var pageSize = $("#PageSize").val();
-    var page = $(".active.page-item .page-link").text();
+    page = page ? page : $(".active.page-item .page-link").text();
     var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&page=${page}&pageSize=${pageSize}`;
     $('#EmployeeTableContainer').load(url, function () {
         unloadingPage();
@@ -16,7 +16,8 @@ $(function () {
 })
 $(document).on('click', '.pagination a', function (e) {
     e.preventDefault();
-    BindEmployeeGrid();
+    var page = $(this).text();
+    BindEmployeeGrid(page);
 });
 function filterEmployee(btn) {
     loadingButton(btn);
