@@ -624,7 +624,7 @@ namespace Onyx.Services
         #region Emp Transfer
         public IEnumerable<EmpTransfers_GetRow_Result> GetEmpTransferData(string userCd)
         {
-            var procedureName = "EmpTransfers_GetRow";
+            var procedureName = "EmpTransfers_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Srno", 0);
             parameters.Add("v_EmpCd", string.Empty);
