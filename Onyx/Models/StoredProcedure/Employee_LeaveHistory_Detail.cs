@@ -12,7 +12,7 @@
     public class Employee_LeaveDetail
     {
         public string Name { get; set; }
-        public int Code { get; set; }
+        public string Code { get; set; }
         public string Company { get; set; }
         public string Branch { get; set; }
         public string Department { get; set; }
