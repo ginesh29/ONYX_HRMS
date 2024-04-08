@@ -1,5 +1,4 @@
 ﻿setActiveMenu();
-setBrowserInfo();
 $("#user-company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
         showSuccessToastr(response.message);
