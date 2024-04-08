@@ -11,13 +11,15 @@ namespace Onyx.ViewComponents
         private readonly AuthService _authService;
         private readonly EmployeeService _employeeService;
         private readonly CommonService _commonService;
+        private readonly TransactionService _transactionService;
         private readonly LoggedInUserModel _loggedInUser;
-        public UserMenuViewComponent(AuthService authService, EmployeeService employeeService, CommonService commonService)
+        public UserMenuViewComponent(AuthService authService, EmployeeService employeeService, CommonService commonService, TransactionService transactionService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _employeeService = employeeService;
             _commonService = commonService;
+            _transactionService = transactionService;
         }
         public IViewComponentResult Invoke()
         {
@@ -31,6 +33,8 @@ namespace Onyx.ViewComponents
             else
                 companies = companies.Select(m => { m.Selected = m.Value.Trim() == _loggedInUser.CompanyCd; return m; });
             ViewBag.UserCompanyItems = companies;
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            ViewBag.LeaveApprovalData = leaveData;
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,

@@ -1,6 +1,4 @@
-﻿setActiveMenu();
-setBrowserInfo();
-const decimalMaskOptions = {
+﻿const decimalMaskOptions = {
     alias: 'numeric',
     radixPoint: '.',
     autoGroup: true,
@@ -121,7 +119,7 @@ function filePostAjax(url, formData, callback) {
         },
     });
 }
-var deleteAjax = function (url, callback) {
+function deleteAjax(url, callback) {
     $.ajax({
         url: url,
         type: 'DELETE',
@@ -141,8 +139,10 @@ function reloadPageAfterSometime() {
     }, 1000);
 }
 function reloadDatatable() {
-    window["datatable"].ajax.reload();
-    window["datatable"].search('').draw();
+    if (window["datatable"]) {
+        window["datatable"].ajax.reload();
+        window["datatable"].search('').draw();
+    }
     if (window["datatable-2"]) {
         window["datatable-2"].ajax.reload();
         window["datatable-2"].search('').draw();
@@ -205,14 +205,6 @@ function setBrowserInfo() {
         }
     }
     $("#Browser").val(`${browserName} ${browserVersion}`);
-}
-
-function showChangePasswordModal() {
-    var url = `/Account/ChangePassword`;
-    $('#ChangePasswordModal').load(url, function () {
-        parseDynamicForm();
-        $("#ChangePasswordModal").modal("show");
-    });
 }
 function changePassword(btn) {
     var frm = $("#change-password-frm");
@@ -278,7 +270,6 @@ function adjustIframeHeight() {
         iframe.onload = resizeIframe;
     }
 }
-
 function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, parseInt(window.getComputedStyle(textarea).getPropertyValue("max-height"))) + 'px';
@@ -299,12 +290,7 @@ function checkRangesOverlap(dateRange1, dateRange2) {
     }
     return false;
 }
-$("#user-company-dropdown").on('change', function (e) {
-    postAjax("/home/UpdateCompany", { CoCd: e.target.value }, function (response) {
-        showSuccessToastr(response.message);
-        window.location.reload();
-    });
-})
+
 $('#btn-excel').on('click', function (e) {
     e.preventDefault();
     var title = document.title.replace(" - Onyx", "");
@@ -334,24 +320,10 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
         })
     })
 }
-
-function showLeaveDetailModal(empCd, fromDt, toDt) {
-    var url = `/Transactions/GetEmpLeaveDetail?empCd=${empCd}&fromDt=${fromDt}&toDt=${toDt}`;
-    $('#EmployeeLeaveDetailModal').load(url, function () {
-        $("#EmployeeLeaveDetailModal").modal("show");
-    });
-}
 function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();
 }
-
-$(document).on('select2:open', e => {
-    const select2 = $(e.target).data('select2');
-    if (!select2.options.get('multiple')) {
-        select2.dropdown.$search.get(0).focus();
-    }
-});
 
 function initControls() {
     $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)

@@ -11,6 +11,7 @@
     color: #fff;
     background-color: #FFA500;
 }
+
 .side-separator-container {
     text-align: center;
     border-bottom: 1px ridge #b5b5c3;
@@ -29,6 +30,16 @@
     border-right: 1px solid #ced4da;
     padding-right: 15px
 }
+
+#leave-approvals-notifications {
+    max-width: 500px !important;
+    width: 420px !important;
+}
+
+    #leave-approvals-notifications .notifications {
+        max-height: 470px;
+        overflow-x: hidden !important;
+    }
 
 .pagination-container .pagination {
     margin-bottom: 0;
@@ -146,13 +157,15 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     height: auto;
     width: 2.1rem;
 }
+
 .lv-status {
     position: absolute;
     top: 10px;
     right: 10px;
     font-weight: 500;
-    float:right;
+    float: right;
 }
+
 textarea {
     resize: none;
     overflow-y: hidden;
@@ -244,6 +257,35 @@ textarea {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23ffffff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E") !important;
 }
 
+.btn-notification {
+    font-size: 12px;
+    margin: -8px;
+    position: relative;
+    border: none;
+    background: unset;
+    height: 30px;
+    padding: 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 12px; /* width of the entire scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* color of the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #888; /* color of the scroll thumb */
+    border-radius: 6px; /* roundness of the scroll thumb */
+    border: 3px solid #f1f1f1; /* creates padding around scroll thumb */
+}
+
+    /* Handle on hover */
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #555; /* color of the scroll thumb on hover */
+    }
+
 .bs-ok-default.check-mark:after {
     content: none !important;
 }
@@ -251,6 +293,11 @@ textarea {
 .dropdown-item:focus, .dropdown-item:hover {
     background: #007bff !important;
     color: #fff !important;
+}
+
+#leave-approvals-notifications .dropdown-item:focus, .dropdown-item:hover {
+    background: #EDF7FF !important;
+    color: #000 !important;
 }
 
 .input-validation-error,

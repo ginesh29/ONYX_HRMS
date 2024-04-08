@@ -3,9 +3,69 @@
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/emp-photo/{companyCd}/{Model.ProfilePic}" : "/images/avatar.png";
     IEnumerable<SelectListItem> companies = (IEnumerable<SelectListItem>)ViewBag.UserCompanyItems;
+    IEnumerable<EmpLeave_Approval_GetRow_Result> leaveApprovalData = ViewBag.LeaveApprovalData;
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
+<style>
+    .btn-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 !important;
+    }
+</style>
 <ul class="navbar-nav ml-auto">
-    <li class="nav-item mr-3">
+    <!-- Messages Dropdown Menu -->
+    <li class="nav-item dropdown">
+        <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: -1px;">@leaveApprovalData.Count()</span>
+            <i class="fas fa-bell" style="font-size:larger"></i>
+            <span class="font-weight-bold">Leave</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-approvals-notifications">
+            <h5 class="text-primary text-center mt-2">Leave Approval Notifications</h5>
+            <div class="dropdown-divider"></div>
+            <div class="notifications custom-scrollbar">
+                @foreach (var item in leaveApprovalData)
+                {
+                    var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                    var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                    <div id="transNo-@item.TransNo.Trim()">
+                        <a href="#" class="dropdown-item">
+                            <!-- Message Start -->
+                            <div class="media">
+                                <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                <div class="media-body">
+                                    <h3 class="dropdown-item-title">
+                                        @item.Emp.Trim() (@item.EmpCd.Trim())
+                                    </h3>
+                                    <p class="text-sm">
+                                        @item.LvFrom.Value.ToString(dateFormat) - @item.LvTo.Value.ToString(dateFormat) (@ExtensionMethod.GetDaysBetweenDateRange(item.LvFrom, item.LvTo) days)
+                                        <span>
+                                            <button class="btn btn-xs btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.LvFrom.Value.ToString(dateFormat)','@item.LvTo.Value.ToString(dateFormat)')">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                            <button class="btn btn-xs btn-info ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()')">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-xs btn-danger ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()',true)">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </span>
+                                    </p>
+                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                </div>
+                            </div>
+                            <!-- Message End -->
+                        </a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                }
+            </div>
+            <a href="/Transactions/EmpLeaveApprovals?processId=HRPT11" class="dropdown-item dropdown-footer">See All Leave Approvals</a>
+        </div>
+    </li>
+    <li class="nav-item mr-3 ml-5">
         <div style="width:200px;">
             <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
             </select>

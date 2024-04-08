@@ -34,5 +34,6 @@
         public string Reason { get; set; }
         public int Current_Approval_Level { get; set; }
         public string Current_Approval { get; set; }
+        public string ImagePath { get; set; }
     }
 }

@@ -23,9 +23,6 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="/" class="nav-link">Home</a>
-                </li>
             </ul>
             @await Component.InvokeAsync("UserMenu")
         </nav>
@@ -83,6 +80,8 @@
             </section>
         </div>
         <div id="ChangePasswordModal" class="modal fade" role="dialog" tabindex='-1'></div>
+        <div id="EmployeeLeaveApprovalModal" class="modal fade" role="dialog" tabindex='-1'></div>
+        <div id="EmployeeLeaveDetailModal" class="modal fade" role="dialog" tabindex='-1'></div>
         <!-- /.content-wrapper -->
         <footer class="main-footer">
             Copyright &copy; @DateTime.UtcNow.Year Onyx Designed & Developed By  <strong><a href="http://www.luminosofttechnologies.com/" target="_blank">Luminosoft Technologies</a>.</strong>
@@ -95,6 +94,7 @@
     <!-- overlayScrollbars -->
     <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/layout.js" asp-append-version="true"></script>
     @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

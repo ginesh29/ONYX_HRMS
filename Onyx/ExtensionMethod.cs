@@ -132,5 +132,32 @@ namespace Onyx
                 return 0;
             return (Convert.ToDateTime(endDate) - Convert.ToDateTime(startDate)).Days + 1;
         }
+        public static string GetRelativeTime(DateTime past, DateTime present)
+        {
+            TimeSpan timeDifference = present - past;
+            if (timeDifference.TotalSeconds < 60)
+                return "Just now";
+            else if (timeDifference.TotalMinutes < 60)
+                return $"{(int)timeDifference.TotalMinutes} minutes ago";
+            else if (timeDifference.TotalHours < 24)
+                return $"{(int)timeDifference.TotalHours} hours ago";
+            else if (timeDifference.TotalDays < 7)
+                return $"{(int)timeDifference.TotalDays} day(s) ago";
+            else if (timeDifference.TotalDays < 30)
+            {
+                int weeks = (int)(timeDifference.TotalDays / 7);
+                return $"{weeks} week(s) ago";
+            }
+            else if (timeDifference.TotalDays < 365)
+            {
+                int months = (int)(timeDifference.TotalDays / 30);
+                return $"{months} month(s) ago";
+            }
+            else
+            {
+                int years = (int)(timeDifference.TotalDays / 365);
+                return $"{years} year(s) ago";
+            }
+        }
     }
 }
