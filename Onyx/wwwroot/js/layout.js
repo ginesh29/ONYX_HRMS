@@ -49,7 +49,7 @@ function showLeaveApprovalModal(transNo, reject) {
                     $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
                     $(`#${ev.target.id}Days-txt`).text("");
                     $(`#${ev.target.id}Days`).val("");
-
+                    UpdateTotalLeavesDays();
                 });
             $("#Status").val("Y");
         }
@@ -114,4 +114,11 @@ function ValidateLeaveApprovalDateRange() {
         $("#errorContainer").text("");
     }
     return isValid;
+}
+
+function UpdateTotalLeavesDays() {
+    var lvDays = $("#WpDateRangeDays").val();
+    var WoplvDays = $("#WopDateRangeDays").val();
+    var totalLvDays = Number(lvDays) + Number(WoplvDays);
+    $("#totalLvDays").text(totalLvDays);
 }

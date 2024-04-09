@@ -66,7 +66,8 @@ function saveDocumentRenewal(btn) {
 }
 
 $("#EmpCd").change(function (e) {
-    bindDocumentRenewalSerachTable(e.target.value);
+    var empCd = e.target.value ? e.target.value : '0';
+    bindDocumentRenewalSerachTable(empCd);
 })
 window["datatable"] = $('#RenewalDocumentsApprovalDataTable').DataTable(
     {

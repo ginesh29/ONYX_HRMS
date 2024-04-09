@@ -5,6 +5,7 @@ using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
+using System.Security.Cryptography.Xml;
 
 namespace Onyx.Controllers
 {
@@ -25,6 +26,7 @@ namespace Onyx.Controllers
             _organisationService = organisationService;
             _settingService = settingService;
         }
+        #region Emp Short List
         public IActionResult EmpShortList()
         {
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
@@ -74,17 +76,55 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpShortListData(EmpShortListFilterModel filterModel)
         {
-            var empShortList = _reportService.GetEmpShortList(_loggedInUser.CompanyCd);
-            return PartialView("_EmpShortList", empShortList);
+            var spPeriod = filterModel.Period.Split('/');
+            filterModel.Period = $"{spPeriod[1]}{spPeriod[0]}";
+            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.CompanyCd).ToList();
+            ViewBag.TableResponsiveClass = "table-responsive";
+            return PartialView("_EmpShortList", new EmpShortListReportModel { Employees = employees, VisibleColumns = filterModel.VisibleColumns });
         }
-        public IActionResult EmpShortListReport()
+        public IActionResult EmpShortListReport(EmpShortListFilterModel filterModel)
         {
-            var customers = _reportService.GetEmpShortList(_loggedInUser.CompanyCd);
-            return new ViewAsPdf(customers)
+            var spPeriod = filterModel.Period.Split('/');
+            filterModel.Period = $"{spPeriod[1]}{spPeriod[0]}";
+            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.CompanyCd).ToList();
+            return new ViewAsPdf(new EmpShortListReportModel { Employees = employees, VisibleColumns = filterModel.VisibleColumns })
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
                 PageOrientation = Orientation.Landscape
             };
         }
+        #endregion
+
+        #region Emp Transactions
+        public IActionResult EmpTransactions()
+        {
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            return View();
+        }
+        public IActionResult FetchEmpTransactions(EmpTransactionFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.StartPeriod.Split('/');
+            filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
+            var spEndPeriod = filterModel.EndPeriod.Split('/');
+            filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
+            var transactions = _reportService.GetEmpTransactions(filterModel.EmpCd, filterModel.StartPeriod, filterModel.EndPeriod, _loggedInUser.CompanyCd);
+            return PartialView("_EmpTransactions", transactions);
+        }
+        public IActionResult EmpTransactionsReport(EmpTransactionFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.StartPeriod.Split('/');
+            filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
+            var spEndPeriod = filterModel.EndPeriod.Split('/');
+            filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
+            var transactions = _reportService.GetEmpTransactions(filterModel.EmpCd, filterModel.StartPeriod, filterModel.EndPeriod, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(transactions)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
     }
 }

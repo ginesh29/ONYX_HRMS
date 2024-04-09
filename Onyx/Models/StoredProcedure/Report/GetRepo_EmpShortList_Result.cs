@@ -5,19 +5,19 @@
         public string Code { get; set; }
         public string EmpName { get; set; }
         public string Sex { get; set; }
-        public string Martial { get; set; }
+        public string Marital { get; set; }
         public string Branch { get; set; }
         public string CC { get; set; }
         public string Department { get; set; }
         public string Location { get; set; }
         public string Nationality { get; set; }
         public string Designation { get; set; }
-        public string FormatedDob { get; set; }
-        public string FormatedDOJ { get; set; }
+        public DateTime Dob { get; set; }
+        public DateTime DOJ { get; set; }
         public string ReportingTo { get; set; }
         public string BasicCurr { get; set; }
-        public decimal? Basic { get; set; }
-        public decimal? Total { get; set; }
+        public int? Basic { get; set; }
+        public int? Total { get; set; }
         public string FareEligiblity { get; set; }
         public string Sponsor { get; set; }
         public string PayMode { get; set; }
@@ -30,7 +30,7 @@
         public string VisaNo { get; set; }
         public string VisaExpDt { get; set; }
         public string LabourCard { get; set; }
-        public string LabourCardExpDt { get; set; }
+        public DateTime LabourCardExpDt { get; set; }
         public string EmiratedId { get; set; }
         public string PhoneNo { get; set; }
         public string EmailId { get; set; }

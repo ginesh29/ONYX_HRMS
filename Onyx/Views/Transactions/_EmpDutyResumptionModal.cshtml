@@ -41,18 +41,19 @@
                             <input type="hidden" asp-for="LvDays" />
                             <input type="hidden" asp-for="WopFrom" />
                             <input type="hidden" asp-for="WopTo" />
-                            <input type="hidden" asp-for="WopLvDays" />
+                            <input type="hidden" asp-for="WpLvDays" id="WpDateRangeDays" />
+                            <input type="hidden" asp-for="WopLvDays" id="WopDateRangeDays" />
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays">(@Model.WpLvDays days)</span>
+                                        <label asp-for="WpDateRange"></label><span id="WpDateRangeDays-txt">(@Model.WpLvDays days)</span>
                                         <input asp-for="WpDateRange" class="form-control" />
                                         <span asp-validation-for="WpDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays">(@Model.WopLvDays days)</span>
+                                        <label asp-for="WopDateRange"></label><span id="WopDateRangeDays-txt">(@Model.WopLvDays days)</span>
                                         <input asp-for="WopDateRange" class="form-control" />
                                         <span asp-validation-for="WopDateRange" class="text-danger"></span>
                                     </div>
@@ -61,14 +62,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="GraduityDateRange"></label><span id="GraduityDateRangeDays"></span>
+                                        <label asp-for="GraduityDateRange"></label><span id="GraduityDateRangeDays-txt"></span>
                                         <input asp-for="GraduityDateRange" class="form-control" />
                                         <span asp-validation-for="GraduityDateRange" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="LvSalaryDateRange"></label><span id="LvSalaryDateRangeDays">(@Model.WopLvDays days)</span>
+                                        <label asp-for="LvSalaryDateRange"></label><span id="LvSalaryDateRangeDays-txt">(@Model.WopLvDays days)</span>
                                         <input asp-for="LvSalaryDateRange" class="form-control" />
                                         <span asp-validation-for="LvSalaryDateRange" class="text-danger"></span>
                                     </div>
@@ -77,7 +78,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label asp-for="LvTicketDateRange"></label><span id="LvTicketDateRangeDays"></span>
+                                        <label asp-for="LvTicketDateRange"></label><span id="LvTicketDateRangeDays-txt"></span>
                                         <input asp-for="LvTicketDateRange" class="form-control" />
                                         <span asp-validation-for="LvTicketDateRange" class="text-danger"></span>
                                     </div>

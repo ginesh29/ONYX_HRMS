@@ -67,13 +67,14 @@ function showLeaveConfirmModal(transNo) {
                 $(`#${ev.target.id}Days-txt`).text(`(${days} days)`);
                 $(`#${ev.target.id}Days`).val(days);
                 $(this).val(`${startDate} - ${endDate}`);
+                UpdateTotalLeavesDays();
             }).on('change.daterangepicker', function (ev, picker) {
                 $(this).val("");
                 $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
                 $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
                 $(`#${ev.target.id}Days-txt`).text("");
                 $(`#${ev.target.id}Days`).val("");
-
+                UpdateTotalLeavesDays();
             });;
         $('#WpDateRange').rules("add", {
             eitherOrRequired: ['#WopDateRange', '#WpDateRange'],

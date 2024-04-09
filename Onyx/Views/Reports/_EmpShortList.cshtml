@@ -1,22 +1,150 @@
-﻿@model IEnumerable<GetRepo_EmpShortList_Result>
-<table class="table table-sm" id="EmpShortListReportTable">
-    <thead class="thead-dark">
-        <tr>
-            <th>No.</th>
-            <th>Employeee</th>
-            <th>Branch</th>
-            <th>Total</th>
-            <th>Personal No</th>
-        </tr>
-    </thead>
-    @foreach (var item in Model.Select((value, i) => new { i, value }))
-    {
-        <tr>
-            <td>@(item.i + 1)</td>
-            <td>@item.value.EmpName (@item.value.Code.Trim())</td>
-            <td>@item.value.Branch</td>
-            <td>@item.value.Total</td>
-            <td>@item.value.PassportNo</td>
-        </tr>
-    }
-</table>
+﻿@model EmpShortListReportModel
+@{
+    var dateFormat = ExtensionMethod.GetDateFormat();
+    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirate Id", "Phone No.", "Email Id", "Nationality" };
+}
+<div class="@ViewBag.TableResponsiveClass">
+    <table class="table table-sm" id="EmpShortListReportTable">
+        <thead class="thead-dark">
+            <tr>
+                @for (int i = 0; i < columns.Length; i++)
+                {
+                    @if (Model.VisibleColumns.Contains(i.ToString()))
+                    {
+                        <th>@columns[i]</th>
+                    }
+                }
+
+                @* <th>Sex</th>
+                <th>Marital</th>
+                <th>Branch</th>
+                <th>Dept</th>
+                <th>Location</th>
+                <th>Desg.</th>
+                <th>Sponsor</th>
+                <th>DOB</th>
+                <th>DOJ</th>
+                <th>Repo. To</th>
+                <th>Basic</th>
+                <th>Total</th>
+                <th>Fare</th>
+                <th>PayMode</th>
+                <th>PayFreq</th>
+                <th>Status</th>
+                <th>Passport No</th>
+                <th>Pass. ExpDt</th>
+                <th>Visa No</th>
+                <th>Visa. ExpDt</th>
+                <th>EmiratedId</th>
+                <th>PhoneNo</th>
+                <th>EmailId</th>
+                <th>Nationality</th> *@
+            </tr>
+        </thead>
+        @foreach (var item in Model.Employees)
+        {
+            <tr>
+                @if (Model.VisibleColumns.Contains("0"))
+                {
+                    <td>@item.EmpName (@item.Code.Trim())</td>
+                }
+                @if (Model.VisibleColumns.Contains("1"))
+                {
+                    <td>@item.Sex</td>
+                }
+                @if (Model.VisibleColumns.Contains("2"))
+                {
+                    <td>@item.Marital</td>
+                }
+                @if (Model.VisibleColumns.Contains("3"))
+                {
+                    <td>@item.Branch</td>
+                }
+                @if (Model.VisibleColumns.Contains("4"))
+                {
+                    <td>@item.Department</td>
+                }
+                @if (Model.VisibleColumns.Contains("5"))
+                {
+                    <td>@item.Location</td>
+                }
+                @if (Model.VisibleColumns.Contains("6"))
+                {
+                    <td>@item.Designation</td>
+                }
+                @if (Model.VisibleColumns.Contains("7"))
+                {
+                    <td>@item.Sponsor</td>
+                }
+                @if (Model.VisibleColumns.Contains("8"))
+                {
+                    <td>@item.Dob.ToString(dateFormat)</td>
+                }
+                @if (Model.VisibleColumns.Contains("9"))
+                {
+                    <td>@item.DOJ.ToString(dateFormat)</td>
+                }
+                @if (Model.VisibleColumns.Contains("10"))
+                {
+                    <td>@item.ReportingTo</td>
+                }
+                @if (Model.VisibleColumns.Contains("11"))
+                {
+                    <td>@item.Basic</td>
+                }
+                @if (Model.VisibleColumns.Contains("12"))
+                {
+                    <td>@item.Total</td>
+                }
+                @if (Model.VisibleColumns.Contains("13"))
+                {
+                    <td>@item.FareEligiblity</td>
+                }
+                @if (Model.VisibleColumns.Contains("14"))
+                {
+                    <td>@item.PayMode</td>
+                }
+                @if (Model.VisibleColumns.Contains("15"))
+                {
+                    <td>@item.PayFrequency</td>
+                }
+                @if (Model.VisibleColumns.Contains("16"))
+                {
+                    <td>@item.Status</td>
+                }
+                @if (Model.VisibleColumns.Contains("17"))
+                {
+                    <td>@item.PassportNo</td>
+                }
+                @if (Model.VisibleColumns.Contains("18"))
+                {
+                    <td>@item.PassportExpDt</td>
+                }
+                @if (Model.VisibleColumns.Contains("19"))
+                {
+                    <td>@item.VisaNo</td>
+                }
+                @if (Model.VisibleColumns.Contains("20"))
+                {
+                    <td>@item.VisaExpDt</td>
+                }
+                @if (Model.VisibleColumns.Contains("21"))
+                {
+                    <td>@item.EmiratedId</td>
+                }
+                @if (Model.VisibleColumns.Contains("22"))
+                {
+                    <td>@item.PhoneNo</td>
+                }
+                @if (Model.VisibleColumns.Contains("23"))
+                {
+                    <td>@item.EmailId</td>
+                }
+                @if (Model.VisibleColumns.Contains("24"))
+                {
+                    <td>@item.Nationality</td>
+                }
+            </tr>
+        }
+    </table>
+</div>

@@ -49,10 +49,3 @@
 var isAdmin = $("#IsAdmin").val() == 1;
 if (isAdmin)
     window["datatable"].column(8).visible(false);
-
-function UpdateTotalLeavesDays() {
-    var lvDays = $("#WpDateRangeDays").val();
-    var WoplvDays = $("#WopDateRangeDays").val();
-    var totalLvDays = Number(lvDays) + Number(WoplvDays);
-    $("#totalLvDays").text(totalLvDays);
-}

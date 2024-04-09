@@ -975,7 +975,7 @@ namespace Onyx.Controllers
                     IssuePlace = document.IssuePlace,
                     TrnDt = DateTime.Now.Date,
                 };
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
@@ -1012,7 +1012,7 @@ namespace Onyx.Controllers
             var document = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.EmployeeCode.Trim() == empCd && m.DocType.Trim() == docTypeCd && m.SrNo == srNo);
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),

@@ -302,7 +302,8 @@ textarea {
 
 .input-validation-error,
 .input-validation-error + .input-group-append .input-group-text,
-.input-validation-error + .dropdown-toggle {
+.input-validation-error + .dropdown-toggle,
+.input-validation-error + .select2-container .select2-selection {
     border-color: #dc3545 !important;
 }
 

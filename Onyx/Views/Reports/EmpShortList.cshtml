@@ -1,10 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Employee Short List Report";
+    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirate Id", "Phone No.", "Email Id", "Nationality" };
 }
 @model EmpShortListFilterModel
 <div class="card">
     <div class="card-body">
-        <form>
+        <form id="filter-frm">
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -82,18 +83,17 @@
                         <select asp-for="Status" class="form-control filter-select-picker" asp-items="ViewBag.StatusItems"></select>
                     </div>
                 </div>
-
-                @* <div>
-                <label>Visible Column:</label>
-                <div class="input-group">
-                <select class="form-control select-picker" multiple>
-                <option>1</option>
-                <option>2</option>
-                </select>
-                <button class="btn btn-secondary ml-2" onclick="filterShowCustomerTransactions(this)">Search</button>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Column Visibility</label>
+                        <select id="VisibleColumns" name="VisibleColumns" class="form-control select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" title="@CommonSetting.DEFAULTSELECT">
+                            @for (int i = 0; i < columns.Length; i++)
+                            {
+                                <option value="@i" selected>@columns[i]</option>
+                            }
+                        </select>
+                    </div>
                 </div>
-                <!-- /.input group -->
-                </div> *@
             </div>
             <div class="col-md-1">
                 <div class="custom-control custom-checkbox">
@@ -101,19 +101,19 @@
                     <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
                 </div>
             </div>
-            <div class="report-btn-div">
+            <div class="report-btn-div mb-3" style="margin-top:15px !important">
                 <button class="btn btn-secondary" onclick="filterShowReport(this)">Search</button>
                 <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
                 <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
             </div>
         </form>
-        <hr />
         <div id="EmpShortList"></div>
     </div>
 </div>
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        bindEmployeeDropdown();
         function loadGridData(btn) {
             loadingButton(btn);
             var frm = $("#filter-frm").serialize();
@@ -128,11 +128,20 @@
         function filterShowReport(btn, report) {
             loadGridData(btn);
             if (report) {
-                debugger
                 var frm = $("#filter-frm").serialize();
                 var url = `/Reports/EmpShortListReport?${frm}`;
                 window.open(url);
             }
         }
+        $('#VisibleColumns').on('change', function (e) {
+            var selectedColumns = $(this).val();
+            for (var i = 0; i < window["datatable"].columns().count(); i++) {
+                var column = window["datatable"].column(i);
+                if (selectedColumns.includes(i.toString()))
+                    column.visible(true);
+                else
+                    column.visible(false);
+            }
+        });
     </script>
 }

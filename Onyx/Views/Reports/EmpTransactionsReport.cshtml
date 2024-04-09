@@ -1,0 +1,19 @@
+﻿@model IEnumerable<GetRepo_EmpTransactionDetail_Result>
+@{
+    ViewData["Title"] = "Employee Transactions Report";
+    Layout = null;
+    var detail = Model.FirstOrDefault();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <h3 class="text-center mb-3">Employee Transactions Report of @detail.Period</h3>
+    <h6><span class="font-weight-bold">Employee:</span> @detail.EmpName (@detail.Cd.Trim())</h6>
+    <h6><span class="font-weight-bold">Branch:</span> @detail.Branch</h6>
+    <h6 class="text-right"><span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now</h6>
+    <partial name="_EmpTransactions" model="Model" />
+</body>
+</html>

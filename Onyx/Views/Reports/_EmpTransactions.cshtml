@@ -1,0 +1,47 @@
+﻿@model IEnumerable<GetRepo_EmpTransactionDetail_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="EmpTransactionsReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Period</th>
+                <th>Basic</th>
+                <th>Allowance</th>
+                <th>OT</th>
+                <th>Last Sal.</th>
+                <th>LSA</th>
+                <th>LTA</th>
+                <th>TMF Pay</th>
+                <th>TMF.Coll</th>
+                <th>St. ADV.Given</th>
+                <th>St. ADV.Coll</th>
+                <th>St. Fun.Given</th>
+                <th>St. Fun.Coll</th>
+                <th>Other Deductions</th>
+                <th>Pension</th>
+                <th>Net Salary</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            var netSalary = item.BasicSalaray + item.Allowance + item.OverTime + item.LastSalary + item.LSA + item.LTA + item.TMFPay - item.TMF + item.StaffAdvGiven - item.StaffAdvCollected + item.StaffFundGiven - item.StaffFundCollected - item.Deductions + item.Pension;
+            <tr>
+                <th>@item.Month.Substring(0, 3) @item.Yr</th>
+                <td>@item.BasicSalaray</td>
+                <td>@item.Allowance</td>
+                <td>@item.OverTime</td>
+                <td>@item.LastSalary</td>
+                <td>@item.LSA</td>
+                <td>@item.LTA</td>
+                <td>@item.TMFPay</td>
+                <td>@item.TMF</td>
+                <td>@item.StaffAdvGiven</td>
+                <td>@item.StaffAdvCollected</td>
+                <td>@item.StaffFundGiven</td>
+                <td>@item.StaffFundCollected</td>
+                <td>@item.Deductions</td>
+                <td>@item.Pension</td>
+                <td>@netSalary</td>
+            </tr>
+        }
+    </table>
+</div>
