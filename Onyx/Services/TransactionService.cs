@@ -63,7 +63,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpLoan_Approval_GetRow_Result> GetEmpLoanApprovalData(string EmpCd, string EmpUser, string CoCd)
         {
-            var procedureName = "EmpLoan_Approval_GetRow";
+            var procedureName = "EmpLoan_Approval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "0");
@@ -560,7 +560,7 @@ namespace Onyx.Services
         }
         public IEnumerable<EmpFund_Approval_GetRow_Result> GetEmpFundApprovalData(string EmpCd, string EmpUser, string CoCd)
         {
-            var procedureName = "EmpFund_Approval_GetRow";
+            var procedureName = "EmpFund_Approval_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", string.Empty);
             parameters.Add("v_Typ", "3");

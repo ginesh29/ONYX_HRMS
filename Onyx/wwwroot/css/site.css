@@ -31,12 +31,19 @@
     padding-right: 15px
 }
 
-#leave-approvals-notifications {
+#leave-approvals-notifications,
+#leave-sal-approvals-notifications,
+#loan-approvals-notifications,
+#fund-approvals-notifications {
     max-width: 500px !important;
-    width: 420px !important;
+    width: 490px !important;
 }
 
-    #leave-approvals-notifications .notifications {
+
+    #leave-approvals-notifications .notifications,
+    #leave-sal-approvals-notifications .notifications,
+    #loan-approvals-notifications .notifications,
+    #fund-approvals-notifications .notifications {
         max-height: 470px;
         overflow-x: hidden !important;
     }
@@ -238,7 +245,7 @@ textarea {
         .dropdown-menu li.selected:hover .dropdown-item .text .text-muted,
         .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text,
         .filter-select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .text {
-            color: #fff !important;
+            color: #007bff !important;
         }
 
 .bs-ok-default.check-mark {
@@ -253,8 +260,8 @@ textarea {
 
 .select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .bs-ok-default.check-mark,
 .filter-select-picker[multiple] + .dropdown-toggle + .dropdown-menu.show ul.dropdown-menu.inner.show li.selected:hover .bs-ok-default.check-mark {
-    border: 1px solid #fff;
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23ffffff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E") !important;
+    border: 1px solid #007bff;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23007bff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z' /%3E%3C/svg%3E") !important;
 }
 
 .btn-notification {

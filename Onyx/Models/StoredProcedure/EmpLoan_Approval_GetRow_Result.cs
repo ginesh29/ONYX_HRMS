@@ -12,8 +12,8 @@
         public string DocRef { get; set; }
         public string DocDt { get; set; }
         public string FormatedDocDt { get; set; }
-        public decimal? Amt { get; set; }
-        public decimal? NoInstReq { get; set; }
+        public int? Amt { get; set; }
+        public int? NoInstReq { get; set; }
         public string Purpose { get; set; }
         public string Narr { get; set; }
         public string LoanApprBy { get; set; }
@@ -33,5 +33,6 @@
         public string PayMode { get; set; }
         public string ChgsTyp { get; set; }
         public decimal? ChgsPerc { get; set; }
+        public string ImagePath { get; set; }
     }
 }

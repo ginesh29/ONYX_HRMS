@@ -306,7 +306,7 @@ function bindEmployeeDropdown() {
             allowClear: true,
             dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
             data: response
-        })
+        });
     })
 }
 function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
@@ -317,7 +317,9 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
             placeholder: "-- Select --",
             allowClear: true,
             data: response
-        })
+        }).on('select2:open', function (e) {
+            $('.select2-search__field').focus();
+        });
     })
 }
 function printDiv(divContainer) {

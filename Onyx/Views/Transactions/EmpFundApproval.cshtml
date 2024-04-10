@@ -17,7 +17,6 @@
         </table>
     </div>
 </div>
-<div id="EmpFundApprovalModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
     <script>
         window["datatable"] = $('#EmpFundApprovalDataTable').DataTable(
@@ -58,50 +57,5 @@
                 ],
             }
         );
-
-        function showFundApprovalModal(transNo, reject) {
-            var url = `/Transactions/GetEmpFundApproval?transNo=${transNo}`;
-            $('#EmpFundApprovalModal').load(url, function () {
-                parseDynamicForm();
-                if (!reject) {
-                    var amt = $('#Amount').attr("data-max");
-                    setTimeout(function () {
-                        $('#Amount').rules("add", {
-                            max: Number(amt),
-                            messages: {
-                                max: `Please enter a number less than or equal to ${amt}`
-                            }
-                        });
-                    }, 500)
-                    $("#Status").val("Y");
-                }
-                else {
-                    $("#approval-div").addClass("d-none");
-                    $("#approval-div input").val("");
-                    $("#btn-submit").text("Reject");
-                    $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
-                    $("#Status").val("R");
-                }
-                $("#EmpFundApprovalModal").modal("show");
-            });
-        }
-
-        function saveFundAppraval(btn) {
-            var frm = $("#fund-approval-frm");
-            if (frm.valid()) {
-                loadingButton(btn);
-                postAjax("/Transactions/SaveEmpFundApproval", frm.serialize(), function (response) {
-                    if (response.success) {
-                        showSuccessToastr(response.message);
-                        $("#EmpFundApprovalModal").modal("hide");
-                        reloadDatatable();
-                    }
-                    else {
-                        showErrorToastr(response.message);
-                    }
-                    unloadingButton(btn);
-                });
-            }
-        }
     </script>
 }

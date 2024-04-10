@@ -22,5 +22,6 @@ namespace Onyx.Models.StoredProcedure
         public string ApprBy { get; set; }
         public string EntryBy { get; set; }
         public string Status { get; set; }
+        public string ImagePath { get; set; }
     }
 }

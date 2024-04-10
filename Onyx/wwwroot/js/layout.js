@@ -69,7 +69,6 @@ function showLeaveDetailModal(empCd, fromDt, toDt) {
         $("#EmployeeLeaveDetailModal").modal("show");
     });
 }
-
 function saveLeaveApproval(btn) {
     var frm = $("#leave-approval-frm");
     if (frm.valid() && ValidateLeaveApprovalDateRange()) {
@@ -96,7 +95,6 @@ function saveLeaveApproval(btn) {
             $("#errorContainer").text("Please enter Date Range(either WP or WOP) otherwise both");
     }
 }
-
 function ValidateLeaveApprovalDateRange() {
     var isValid = false;
     var WpDateRangeDays = $("#WpDateRangeDays").val();
@@ -115,10 +113,155 @@ function ValidateLeaveApprovalDateRange() {
     }
     return isValid;
 }
-
 function UpdateTotalLeavesDays() {
     var lvDays = $("#WpDateRangeDays").val();
     var WoplvDays = $("#WopDateRangeDays").val();
     var totalLvDays = Number(lvDays) + Number(WoplvDays);
     $("#totalLvDays").text(totalLvDays);
+}
+function showLeaveSalaryApprovalModal(transNo, reject) {
+    var url = `/Transactions/GetEmpLeaveSalaryApproval?transNo=${transNo}`;
+    $('#EmployeeLeaveSalaryApprovalModal').load(url, function () {
+        parseDynamicForm();
+        if (!reject) {
+            var LvSalary = $('#LvSalary').attr("data-max");
+            var LvTicket = $('#LvTicket').attr("data-max");
+            setTimeout(function () {
+                $('#LvSalary').rules("add", {
+                    max: Number(LvSalary),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${LvSalary}`
+                    }
+                });
+                $('#LvTicket').rules("add", {
+                    max: Number(LvTicket),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${LvTicket}`
+                    }
+                });
+            }, 500)
+            $("#Status").val("Y");
+        }
+        else {
+            $("#approval-div").addClass("d-none");
+            $("#approval-div input").val("");
+            $("#btn-submit").text("Reject");
+            $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
+            $("#Status").val("R");
+        }
+        $("#EmployeeLeaveSalaryApprovalModal").modal("show");
+    });
+}
+function saveLeaveSalaryApproval(btn) {
+    var frm = $("#leave-salary-approval-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveLeaveSalaryApproval", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmployeeLeaveSalaryApprovalModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function showLoanApprovalModal(transNo, reject) {
+    var url = `/Transactions/GetEmpLoanApproval?transNo=${transNo}`;
+    $('#EmployeeLoanApprovalModal').load(url, function () {
+        parseDynamicForm();
+        if (!reject) {
+            var amt = $('#ApprAmt').attr("data-max");
+            var NoInstReq = $('#NoInst').attr("data-max");
+            setTimeout(function () {
+                $('#ApprAmt').rules("add", {
+                    max: Number(amt),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${amt}`
+                    }
+                });
+                $('#NoInst').rules("add", {
+                    max: Number(NoInstReq),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${NoInstReq}`
+                    }
+                });
+            }, 500)
+            $("#LoanStatus").val("A");
+        }
+        else {
+            $("#approval-div").addClass("d-none");
+            $("#approval-div input").val("");
+            $("#btn-submit").text("Reject");
+            $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
+            $("#LoanStatus").val("R");
+        }
+        $("#EmployeeLoanApprovalModal").modal("show");
+    });
+}
+function saveLoanApproval(btn) {
+    var frm = $("#loan-approval-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveLoanApproval", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmployeeLoanApprovalModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
+
+}
+
+function showFundApprovalModal(transNo, reject) {
+    var url = `/Transactions/GetEmpFundApproval?transNo=${transNo}`;
+    $('#EmpFundApprovalModal').load(url, function () {
+        parseDynamicForm();
+        if (!reject) {
+            var amt = $('#Amount').attr("data-max");
+            setTimeout(function () {
+                $('#Amount').rules("add", {
+                    max: Number(amt),
+                    messages: {
+                        max: `Please enter a number less than or equal to ${amt}`
+                    }
+                });
+            }, 500)
+            $("#Status").val("Y");
+        }
+        else {
+            $("#approval-div").addClass("d-none");
+            $("#approval-div input").val("");
+            $("#btn-submit").text("Reject");
+            $("#btn-submit").removeClass("btn-info").addClass("btn-danger");
+            $("#Status").val("R");
+        }
+        $("#EmpFundApprovalModal").modal("show");
+    });
+}
+
+function saveFundAppraval(btn) {
+    var frm = $("#fund-approval-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        postAjax("/Transactions/SaveEmpFundApproval", frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmpFundApprovalModal").modal("hide");
+                reloadDatatable();
+            }
+            else {
+                showErrorToastr(response.message);
+            }
+            unloadingButton(btn);
+        });
+    }
 }
