@@ -109,7 +109,7 @@ namespace Onyx.Controllers
             filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
-            var transactions = _reportService.GetEmpTransactions(filterModel.EmpCd, filterModel.StartPeriod, filterModel.EndPeriod, _loggedInUser.CompanyCd);
+            var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
             return PartialView("_EmpTransactions", transactions);
         }
         public IActionResult EmpTransactionsReport(EmpTransactionFilterModel filterModel)
@@ -118,7 +118,7 @@ namespace Onyx.Controllers
             filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
-            var transactions = _reportService.GetEmpTransactions(filterModel.EmpCd, filterModel.StartPeriod, filterModel.EndPeriod, _loggedInUser.CompanyCd);
+            var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
             return new ViewAsPdf(transactions)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
@@ -134,14 +134,50 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchBalanceTransactions(BalanceTransactionFilterModel filterModel)
         {
-            var transactions = _reportService.GetBalanceTransactions(filterModel.EmpCd, filterModel.ToDate, _loggedInUser.CompanyCd);
+            var transactions = _reportService.GetBalanceTransactions(filterModel, _loggedInUser.CompanyCd);
             ViewBag.TableResponsiveClass = "table-responsive";
             return PartialView("_BalanceTransactions", transactions);
         }
         public IActionResult BalanceTransactionsReport(BalanceTransactionFilterModel filterModel)
         {
-            var transactions = _reportService.GetBalanceTransactions(filterModel.EmpCd, filterModel.ToDate, _loggedInUser.CompanyCd);
+            var transactions = _reportService.GetBalanceTransactions(filterModel, _loggedInUser.CompanyCd);
             return new ViewAsPdf(transactions)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
+
+        #region Provisions
+        public IActionResult Provisions()
+        {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            return View();
+        }
+        public IActionResult FetchProvisions(ProvisionFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.Period.Split('/');
+            filterModel.Period = spStartPeriod[0];
+            filterModel.Year = spStartPeriod[1];
+            var provisions = _reportService.GetProvisions(filterModel, _loggedInUser.CompanyCd);
+            ViewBag.TableResponsiveClass = "table-responsive";
+            return PartialView("_Provisions", provisions);
+        }
+        public IActionResult ProvisionsReport(ProvisionFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.Period.Split('/');
+            filterModel.Period = spStartPeriod[0];
+            filterModel.Year = spStartPeriod[1];
+            var provisions = _reportService.GetProvisions(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(provisions)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
                 PageOrientation = Orientation.Landscape

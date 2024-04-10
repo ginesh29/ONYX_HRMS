@@ -30,15 +30,15 @@
         public int LvTicYr { get; set; }
         public int TotalDays { get; set; }
         public int LeaveOp { get; set; }
-        public decimal Leave { get; set; }
+        public double Leave { get; set; }
         public int LeaveTaken { get; set; }
         public int LvSalDaysOp { get; set; }
-        public decimal LvSalDays { get; set; }
+        public double LvSalDays { get; set; }
         public int LvSalDaysTaken { get; set; }
-        public decimal LvSalary { get; set; }
+        public double LvSalary { get; set; }
         public int LvSalaryOp { get; set; }
         public int LvSalaryTaken { get; set; }
-        public decimal LvTicket { get; set; }
+        public double LvTicket { get; set; }
         public int LvTicketOp { get; set; }
         public int LvTicketTaken { get; set; }
         public DateTime FormatedWPFromDt { get; set; }

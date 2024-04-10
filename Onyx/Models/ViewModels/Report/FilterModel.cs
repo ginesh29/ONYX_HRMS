@@ -33,4 +33,11 @@ namespace Onyx.Models.ViewModels.Report
         public string EmpCd { get; set; }
         public DateTime? ToDate { get; set; }
     }
+    public class ProvisionFilterModel
+    {
+        public string BranchCd { get; set; }
+        public string Period { get; set; }
+        public string ProvisionType { get; set; }
+        public string Year { get; set; }
+    }
 }

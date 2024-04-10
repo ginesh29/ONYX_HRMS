@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Services
 {
@@ -31,30 +32,45 @@ namespace Onyx.Services
             return user;
         }
 
-        public IEnumerable<GetRepo_EmpTransactionDetail_Result> GetEmpTransactions(string empCd, string startPeriod, string endPeriod, string CoCd)
+        public IEnumerable<GetRepo_EmpTransactionDetail_Result> GetEmpTransactions(EmpTransactionFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpTransactionDetail_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_RFrmPrd", startPeriod);
-            parameters.Add("v_RToPrd", endPeriod);
+            parameters.Add("v_EmpCd", filterModel.EmpCd);
+            parameters.Add("v_RFrmPrd", filterModel.StartPeriod);
+            parameters.Add("v_RToPrd", filterModel.EndPeriod);
             var connection = new SqlConnection(connectionString);
             var user = connection.Query<GetRepo_EmpTransactionDetail_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }
-        public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(string empCd, DateTime? toDate, string CoCd)
+        public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(BalanceTransactionFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_LeaveHistory_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_EmpCd", empCd ?? "All");
-            parameters.Add("v_ToDt", toDate ?? DateTime.Now.Date);
+            parameters.Add("v_EmpCd", filterModel.EmpCd ?? "All");
+            parameters.Add("v_ToDt", filterModel.ToDate ?? DateTime.Now.Date);
             var connection = new SqlConnection(connectionString);
             var user = connection.Query<Employee_LeaveHistory_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return user;
+        }
+        public IEnumerable<GetRepo_Provisions_Result> GetProvisions(ProvisionFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Provisions_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_DivCd", filterModel.BranchCd ?? "All");
+            parameters.Add("v_ProvTyp", filterModel.ProvisionType);
+            parameters.Add("v_Prd", filterModel.Period);
+            parameters.Add("v_Year", filterModel.Year);
+            var connection = new SqlConnection(connectionString);
+            var user = connection.Query<GetRepo_Provisions_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }

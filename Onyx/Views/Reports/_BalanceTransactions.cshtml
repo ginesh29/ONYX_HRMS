@@ -11,30 +11,34 @@
                 <th class="text-center border-right border-white" colspan="2">Graduity</th>
             </tr>
             <tr>
-                <th>Opening</th>
-                <th>Cumm.</th>
-                <th>Total</th>
-                <th>Taken</th>
+                <th class="border-right border-white">Opening</th>
+                <th class="border-right border-white">Cumm.</th>
+                <th class="border-right border-white">Total</th>
+                <th class="border-right border-white">Taken</th>
                 <th class="border-right border-white">Balance</th>
-                <th>Opening</th>
-                <th>Cumm.</th>
-                <th>Total</th>
-                <th>Taken</th>
+
+                <th class="border-right border-white">Opening</th>
+                <th class="border-right border-white">Cumm.</th>
+                <th class="border-right border-white">Total</th>
+                <th class="border-right border-white">Taken</th>
                 <th class="border-right border-white">Balance</th>
-                <th>Opening</th>
-                <th>Cumm.</th>
-                <th>Total</th>
-                <th>Taken</th>
-                <th>Balance</th>
+
+                <th class="border-right border-white">Opening</th>
+                <th class="border-right border-white">Cumm.</th>
+                <th class="border-right border-white">Total</th>
+                <th class="border-right border-white">Taken</th>
+                <th class="border-right border-white">Balance</th>
                 <th class="border-right border-white">Eligibility</th>
-                <th>Opening</th>
-                <th>Cumm.</th>
-                <th>Total</th>
-                <th>Taken</th>
-                <th>Balance</th>
+
+                <th class="border-right border-white">Opening</th>
+                <th class="border-right border-white">Cumm.</th>
+                <th class="border-right border-white">Total</th>
+                <th class="border-right border-white">Taken</th>
+                <th class="border-right border-white">Balance</th>
                 <th class="border-right border-white">Eligibility</th>
-                <th>Days</th>
-                <th>Amt</th>
+
+                <th class="border-right border-white">Days</th>
+                <th class="border-right border-white">Amt</th>
             </tr>
         </thead>
         @foreach (var item in Model)
@@ -70,30 +74,30 @@
             var LeaveTicketEligibility = LeaveTicketBalance >= item.LvTicYr ? "Yes" : "No";
             <tr>
                 <td>@item.Name (@item.Code.Trim())</td>
-                <td>@LeaveOpening.ToString("#.##")</td>
-                <td>@LeaveCum.ToString("#.##")</td>
-                <td>@LeaveTotal.ToString("#.##")</td>
-                <td>@LeaveTaken.ToString("#.##")</td>
-                <td>@LeaveBalance.ToString("#.##")</td>
-                <td>@LeaveSalDaysOpening.ToString("#.##")</td>
-                <td>@LeaveSalDaysCum.ToString("#.##")</td>
-                <td>@LeaveSalDaysTotal.ToString("#.##")</td>
-                <td>@LeaveSalDaysTaken.ToString("#.##")</td>
-                <td>@LeaveSalDaysBalance.ToString("#.##")</td>
-                <td>@LeaveSalOpening.ToString("#.##")</td>
-                <td>@LeaveSalCum.ToString("#.##")</td>
-                <td>@LeaveSalTotal.ToString("#.##")</td>
-                <td>@LeaveSalTaken.ToString("#.##")</td>
-                <td>@LeaveSalBalance.ToString("#.##")</td>
+                <td>@LeaveOpening</td>
+                <td>@LeaveCum.ToString("0.00")</td>
+                <td>@LeaveTotal.ToString("0.00")</td>
+                <td>@LeaveTaken.ToString("0.00")</td>
+                <td>@LeaveBalance.ToString("0.00")</td>
+                <td>@LeaveSalDaysOpening.ToString("0.00")</td>
+                <td>@LeaveSalDaysCum.ToString("0.00")</td>
+                <td>@LeaveSalDaysTotal.ToString("0.00")</td>
+                <td>@LeaveSalDaysTaken.ToString("0.00")</td>
+                <td>@LeaveSalDaysBalance.ToString("0.00")</td>
+                <td>@LeaveSalOpening.ToString("0.00")</td>
+                <td>@LeaveSalCum.ToString("0.00")</td>
+                <td>@LeaveSalTotal.ToString("0.00")</td>
+                <td>@LeaveSalTaken.ToString("0.00")</td>
+                <td>@LeaveSalBalance.ToString("0.00")</td>
                 <td>@LeaveSalEligibility</td>
-                <td>@LeaveTicketOpening.ToString("#.##")</td>
-                <td>@LeaveTicketCum.ToString("#.##")</td>
-                <td>@LeaveTicketTotal.ToString("#.##")</td>
-                <td>@LeaveTicketTaken.ToString("#.##")</td>
-                <td>@LeaveTicketBalance.ToString("#.##")</td>
+                <td>@LeaveTicketOpening.ToString("0.00")</td>
+                <td>@LeaveTicketCum.ToString("0.00")</td>
+                <td>@LeaveTicketTotal.ToString("0.00")</td>
+                <td>@LeaveTicketTaken.ToString("0.00")</td>
+                <td>@LeaveTicketBalance.ToString("0.00")</td>
                 <td>@LeaveTicketEligibility</td>
-                <td>@item.GratDays.ToString("#.##")</td>
-                <td>@item.GratAmt.ToString("#.##")</td>
+                <td>@item.GratDays.ToString("0.00")</td>
+                <td>@item.GratAmt.ToString("0.00")</td>
             </tr>
         }
     </table>
