@@ -1,18 +1,28 @@
-﻿<div class="mb-3">
-    <button type="button" class="btn btn-info" onclick="showComponentModal('')">New Component</button>
-</div>
-<table class="table table-sm" id="ComponentsDataTable">
-    <thead class="thead-dark">
-        <tr>
-            <th>No.</th>
-            <th>Employee Name</th>
-            <th>Type</th>
-            <th>Component</th>
-            <th>Currency</th>
-            <th>Amt</th>
-            <th>%Value</th>
-            <th>Effective Date</th>
-            <th></th>
-        </tr>
-    </thead>
-</table>
+﻿@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
+}
+@if (componentPermission.UView == "Y")
+{
+    @if (componentPermission.UAdd == "Y")
+    {
+        <div class="mb-3">
+            <button type="button" class="btn btn-info" onclick="showComponentModal('')" id="btn-add-component">New Component</button>
+        </div>
+    }
+    <table class="table table-sm" id="ComponentsDataTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>No.</th>
+                <th>Employee Name</th>
+                <th>Type</th>
+                <th>Component</th>
+                <th>Currency</th>
+                <th>Amt</th>
+                <th>%Value</th>
+                <th>Effective Date</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+}

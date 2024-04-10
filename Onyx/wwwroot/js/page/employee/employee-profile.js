@@ -1,4 +1,13 @@
-﻿function previewAvatar(event) {
+﻿$(function () {
+    var hasAddPermission = $("#HasAddPermission").val();
+    if (!hasAddPermission) {
+        $("#btn-add-experience").remove();
+        $("#btn-add-education").remove();
+        $("#btn-add-address").remove();
+    }
+})
+
+function previewAvatar(event) {
     var reader = new FileReader();
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
     if (imageExtensions.includes(ext)) {
@@ -80,7 +89,7 @@ function GoToNextPrev(btn, back) {
                     stepper.next();
                     unloadingButton(btn);
                 }, 1000);
-            }                
+            }
         }
     }
     else

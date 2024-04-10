@@ -27,4 +27,10 @@ namespace Onyx.Models.ViewModels.Report
         public string StartPeriod { get; set; }
         public string EndPeriod { get; set; }
     }
+    public class BalanceTransactionFilterModel
+    {
+        [Display(Name = "Employee")]
+        public string EmpCd { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
 }

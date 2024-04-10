@@ -7,9 +7,25 @@
     overflow: auto !important;
 }
 
+.btn-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 !important;
+}
+
 .badge-orange {
     color: #fff;
     background-color: #FFA500;
+}
+
+.table .thead-dark th {
+    border-color: #fff !important;
+    border-width: 1px !important;
+}
+
+.table thead th {
+    border-bottom: none !important;
 }
 
 .side-separator-container {

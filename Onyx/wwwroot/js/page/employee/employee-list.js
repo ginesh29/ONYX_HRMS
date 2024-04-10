@@ -1,4 +1,8 @@
-﻿function BindEmployeeGrid(page) {
+﻿var hasAddPermission = $("#HasAddPermission").val();
+if (!hasAddPermission)
+    $("#btn-add-employee").remove();
+
+function BindEmployeeGrid(page) {
     loadingPage();
     var frm = $("#employee-filter-frm").serialize();
     var name = $("#EmpCd").val();

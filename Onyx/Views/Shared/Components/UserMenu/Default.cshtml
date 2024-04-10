@@ -9,14 +9,6 @@
     IEnumerable<EmpFund_Approval_GetRow_Result> fundApprovalData = ViewBag.FundApprovalData;
     var dateFormat = ExtensionMethod.GetDateFormat();
 }
-<style>
-    .btn-icon {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0 !important;
-    }
-</style>
 <ul class="navbar-nav ml-auto">
     <!-- Messages Dropdown Menu -->
     @if (leaveApprovalData.Count() > 0)

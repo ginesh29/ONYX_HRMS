@@ -4,7 +4,7 @@
     string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirate Id", "Phone No.", "Email Id", "Nationality" };
 }
 <div class="@ViewBag.TableResponsiveClass">
-    <table class="table table-sm" id="EmpShortListReportTable">
+    <table class="table table-sm" id="EmpShortListReportTable" style="font-size:x-small">
         <thead class="thead-dark">
             <tr>
                 @for (int i = 0; i < columns.Length; i++)
@@ -14,31 +14,6 @@
                         <th>@columns[i]</th>
                     }
                 }
-
-                @* <th>Sex</th>
-                <th>Marital</th>
-                <th>Branch</th>
-                <th>Dept</th>
-                <th>Location</th>
-                <th>Desg.</th>
-                <th>Sponsor</th>
-                <th>DOB</th>
-                <th>DOJ</th>
-                <th>Repo. To</th>
-                <th>Basic</th>
-                <th>Total</th>
-                <th>Fare</th>
-                <th>PayMode</th>
-                <th>PayFreq</th>
-                <th>Status</th>
-                <th>Passport No</th>
-                <th>Pass. ExpDt</th>
-                <th>Visa No</th>
-                <th>Visa. ExpDt</th>
-                <th>EmiratedId</th>
-                <th>PhoneNo</th>
-                <th>EmailId</th>
-                <th>Nationality</th> *@
             </tr>
         </thead>
         @foreach (var item in Model.Employees)

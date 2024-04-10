@@ -9,16 +9,20 @@
             <span class="jstree-checkbox">
                 @item.Caption
             </span>
-            <div class="permissions d-flex" style="float:right">
-                @foreach (var action in actionTypes)
-                {
-                    var a = action == "Add" ? item.UAdd : action == "Edit" ? item.UEdit : action == "Delete" ? item.UDelete : action == "View" ? item.UView : item.UPrint;
-                    <div class="custom-control custom-checkbox ml-2" onclick="changePermission(this)" data-id="checkbox_@(action)_@item.MenuId">
-                        <input class="custom-control-input custom-control-input-primary custom-control-input-outline permission_checkbox" type="checkbox" id="permission_checkbox_@(action)_@item.MenuId" checked="@(a=="Y")" value="@(item.MenuId)_@(action)" name="Permissions">
-                        <label for="permission_checkbox_@(action)_@item.MenuId" class="custom-control-label">@action</label>
-                    </div>
-                }
-            </div>
+            @if (!(item.Children != null && item.Children.Any()))
+            {
+                <div class="permissions d-flex" style="float:right">
+                    @foreach (var action in actionTypes)
+                    {
+                        var a = action == "Add" ? item.UAdd : action == "Edit" ? item.UEdit : action == "Delete" ? item.UDelete : action == "View" ? item.UView : item.UPrint;
+                        bool isChecked = a == "Y";
+                        <div class="custom-control custom-checkbox ml-2" onclick="changePermission(this)" data-id="checkbox_@(action)_@item.MenuId">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline permission_checkbox" type="checkbox" id="permission_checkbox_@(action)_@item.MenuId" value="@(item.MenuId)_@(action)" name="Permissions" @(isChecked ? "checked" : null)>
+                            <label for="permission_checkbox_@(action)_@item.MenuId" class="custom-control-label" data-val="@a">@action</label>
+                        </div>
+                    }
+                </div>
+            }
             @if (item.Children != null && item.Children.Any())
             {
                 @await Component.InvokeAsync("UserPermissionMenuChild", new { items = item.Children })

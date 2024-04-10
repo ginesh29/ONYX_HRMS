@@ -126,5 +126,27 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Balance Transactions
+        public IActionResult Balance()
+        {
+            return View();
+        }
+        public IActionResult FetchBalanceTransactions(BalanceTransactionFilterModel filterModel)
+        {
+            var transactions = _reportService.GetBalanceTransactions(filterModel.EmpCd, filterModel.ToDate, _loggedInUser.CompanyCd);
+            ViewBag.TableResponsiveClass = "table-responsive";
+            return PartialView("_BalanceTransactions", transactions);
+        }
+        public IActionResult BalanceTransactionsReport(BalanceTransactionFilterModel filterModel)
+        {
+            var transactions = _reportService.GetBalanceTransactions(filterModel.EmpCd, filterModel.ToDate, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(transactions)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
     }
 }

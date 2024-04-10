@@ -1,17 +1,27 @@
-﻿<div class="mb-3">
-    <button type="button" class="btn btn-info" onclick="showDocumentModal('','',0)">New Document</button>
-</div>
-<table class="table table-sm" id="DocumentsDataTable">
-    <thead class="thead-dark">
-        <tr>
-            <th>No.</th>
-            <th>Employee Name</th>
-            <th>Doc. Type</th>
-            <th>Doc. No</th>
-            <th>Issue Date</th>
-            <th>Issue Place</th>
-            <th>Expiry Date</th>
-            <th></th>
-        </tr>
-    </thead>
-</table>
+﻿@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
+}
+@if (documentPermission.UView == "Y")
+{
+    @if (documentPermission.UAdd == "Y")
+    {
+        <div class="mb-3">
+            <button type="button" class="btn btn-info" onclick="showDocumentModal('','',0)" id="btn-add-document">New Document</button>
+        </div>
+    }
+    <table class="table table-sm" id="DocumentsDataTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>No.</th>
+                <th>Employee Name</th>
+                <th>Doc. Type</th>
+                <th>Doc. No</th>
+                <th>Issue Date</th>
+                <th>Issue Place</th>
+                <th>Expiry Date</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+}

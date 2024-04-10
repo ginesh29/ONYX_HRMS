@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Employee_LeaveHistory_GetRow_Result>
+<div class="@ViewBag.TableResponsiveClass">
+    <table class="table table-sm" id="BalanceTransactionsReportTable" style="font-size:x-small">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-center border-right border-white align-middle" rowspan="2">Employee</th>
+                <th class="text-center border-right border-white" colspan="5">Leave</th>
+                <th class="text-center border-right border-white" colspan="5">Leave Salary Days</th>
+                <th class="text-center border-right border-white" colspan="6">Leave Salary</th>
+                <th class="text-center border-right border-white" colspan="6">Leave Ticket</th>
+                <th class="text-center border-right border-white" colspan="2">Graduity</th>
+            </tr>
+            <tr>
+                <th>Opening</th>
+                <th>Cumm.</th>
+                <th>Total</th>
+                <th>Taken</th>
+                <th class="border-right border-white">Balance</th>
+                <th>Opening</th>
+                <th>Cumm.</th>
+                <th>Total</th>
+                <th>Taken</th>
+                <th class="border-right border-white">Balance</th>
+                <th>Opening</th>
+                <th>Cumm.</th>
+                <th>Total</th>
+                <th>Taken</th>
+                <th>Balance</th>
+                <th class="border-right border-white">Eligibility</th>
+                <th>Opening</th>
+                <th>Cumm.</th>
+                <th>Total</th>
+                <th>Taken</th>
+                <th>Balance</th>
+                <th class="border-right border-white">Eligibility</th>
+                <th>Days</th>
+                <th>Amt</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            var LeaveOpening = item.LeaveOp;
+            var LeaveCum = item.Leave;
+            var LeaveTotal = LeaveOpening + LeaveCum;
+            var Leave = LeaveOpening + LeaveCum;
+            var LeaveTaken = item.LeaveTaken;
+            var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
+
+            var LeaveSalDaysOpening = item.LvSalDaysOp;
+            var LeaveSalDaysCum = item.LvSalDays;
+            var LeaveSalDaysTotal = LeaveSalDaysOpening + LeaveSalDaysCum;
+            var LeaveSalDays = LeaveSalDaysOpening + LeaveSalDaysCum;
+            var LeaveSalDaysTaken = item.LvSalDaysTaken;
+            var LeaveSalDaysBalance = LeaveSalDaysOpening + LeaveSalDays - LeaveSalDaysTaken;
+
+            var LeaveSalOpening = item.LvSalaryOp;
+            var LeaveSalCum = item.LvSalary;
+            var LeaveSalTotal = LeaveSalOpening + LeaveSalCum;
+            var LeaveSal = LeaveSalOpening + LeaveSalCum;
+            var LeaveSalTaken = item.LvSalaryTaken;
+            var LeaveSalBalance = LeaveSalOpening + LeaveSal - LeaveSalTaken;
+            var LeaveSalEligibility = LeaveSalBalance >= item.LvSalYr ? "Yes" : "No";
+
+            var LeaveTicketOpening = item.LvTicketOp;
+            var LeaveTicketCum = item.LvTicket;
+            var LeaveTicketTotal = LeaveTicketOpening + LeaveTicketCum;
+            var LeaveTicket = LeaveTicketOpening + LeaveTicketCum;
+            var LeaveTicketTaken = item.LvTicketTaken;
+            var LeaveTicketBalance = LeaveTicketOpening + LeaveTicket - LeaveTicketTaken;
+            var LeaveTicketEligibility = LeaveTicketBalance >= item.LvTicYr ? "Yes" : "No";
+            <tr>
+                <td>@item.Name (@item.Code.Trim())</td>
+                <td>@LeaveOpening.ToString("#.##")</td>
+                <td>@LeaveCum.ToString("#.##")</td>
+                <td>@LeaveTotal.ToString("#.##")</td>
+                <td>@LeaveTaken.ToString("#.##")</td>
+                <td>@LeaveBalance.ToString("#.##")</td>
+                <td>@LeaveSalDaysOpening.ToString("#.##")</td>
+                <td>@LeaveSalDaysCum.ToString("#.##")</td>
+                <td>@LeaveSalDaysTotal.ToString("#.##")</td>
+                <td>@LeaveSalDaysTaken.ToString("#.##")</td>
+                <td>@LeaveSalDaysBalance.ToString("#.##")</td>
+                <td>@LeaveSalOpening.ToString("#.##")</td>
+                <td>@LeaveSalCum.ToString("#.##")</td>
+                <td>@LeaveSalTotal.ToString("#.##")</td>
+                <td>@LeaveSalTaken.ToString("#.##")</td>
+                <td>@LeaveSalBalance.ToString("#.##")</td>
+                <td>@LeaveSalEligibility</td>
+                <td>@LeaveTicketOpening.ToString("#.##")</td>
+                <td>@LeaveTicketCum.ToString("#.##")</td>
+                <td>@LeaveTicketTotal.ToString("#.##")</td>
+                <td>@LeaveTicketTaken.ToString("#.##")</td>
+                <td>@LeaveTicketBalance.ToString("#.##")</td>
+                <td>@LeaveTicketEligibility</td>
+                <td>@item.GratDays.ToString("#.##")</td>
+                <td>@item.GratAmt.ToString("#.##")</td>
+            </tr>
+        }
+    </table>
+</div>

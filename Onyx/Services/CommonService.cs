@@ -34,6 +34,18 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public GetMenuWithPermissions_Result GetPermissionsByProcessId(string UserCd, string processId)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetMenuWithPermissions";
+            var parameters = new DynamicParameters();
+            parameters.Add("UserCd", UserCd);
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetMenuWithPermissions_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            data = data.Where(m => m.ProcessId.Trim() == processId && m.Visible == "Y");
+            return data.FirstOrDefault();
+        }
         public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -351,9 +363,9 @@ namespace Onyx.Services
         {
             var modifiedSpQuery = @"SELECT name,  modify_date 
 	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-01-01'
+	                                WHERE type = 'P' and modify_date > '2024-04-01'
 	                                ORDER BY modify_date DESC";
-            var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=Onyx;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
+            var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
             var sps = connection.Query<string>(modifiedSpQuery);
             var result = string.Empty;

@@ -39,7 +39,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="text-right">
-                        <a asp-action="Profile" asp-route-cd="@item.Cd.Trim()" class="btn btn-sm btn-primary">
+                        <a asp-action="Profile" asp-route-processId="HRPE1" asp-route-cd="@item.Cd.Trim()" class="btn btn-sm btn-primary btn-view-profile">
                             <i class="fas fa-user"></i> View Profile
                         </a>
                     </div>
@@ -114,5 +114,8 @@
     </div>
 </div>
 <script>
+    var hasViewPermission = $("#HasViewPermission").val();
+    if (!hasViewPermission)
+        $(".btn-view-profile").remove();
     $("#PageSize").val('@data.PageSize');
 </script>

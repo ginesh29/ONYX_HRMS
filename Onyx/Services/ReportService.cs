@@ -45,5 +45,18 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }
+        public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(string empCd, DateTime? toDate, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "Employee_LeaveHistory_GetRow_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_EmpCd", empCd ?? "All");
+            parameters.Add("v_ToDt", toDate ?? DateTime.Now.Date);
+            var connection = new SqlConnection(connectionString);
+            var user = connection.Query<Employee_LeaveHistory_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return user;
+        }
     }
 }

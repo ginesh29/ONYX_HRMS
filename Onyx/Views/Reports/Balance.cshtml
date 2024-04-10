@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Balance Transactions Report";
+}
+@model BalanceTransactionFilterModel
+<div class="card">
+    <div class="card-body">
+        <form id="filter-frm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.DEFAULTSELECT">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="EmpCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="ToDate"></label>
+                        <input asp-for="ToDate" class="form-control date-input" type="text">
+                    </div>
+                </div>
+                <div class="report-btn-div">
+                    <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                </div>
+            </div>
+        </form>
+        <div id="BalanceTransactions"></div>
+    </div>
+</div>
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        bindEmployeeDropdown();
+        function loadGridData(btn) {
+            var frm = $("#filter-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                var url = `/Reports/FetchBalanceTransactions?${frm.serialize()}`;
+                $('#BalanceTransactions').load(url, function () {
+                    unloadingButton(btn);
+                    window["datatable"] = $('#BalanceTransactionsReportTable').DataTable(dataTableDefaultOptions);
+                    if (window["datatable"].data().any())
+                        $("#btn-pdf,#btn-excel").removeClass("d-none");
+                });
+            }
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/BalanceTransactionsReport?${frm}`;
+                window.open(url);
+            }
+        }
+    </script>
+}

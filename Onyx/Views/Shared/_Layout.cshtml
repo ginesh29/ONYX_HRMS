@@ -2,6 +2,8 @@
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value.Contains("Admin");
     var processId = Context.Request.Query["processId"];
+    var loggedInUser = _authService.GetLoggedInUser();
+    var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, processId);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -75,6 +77,11 @@
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />
                     <input type="hidden" id="ProcessId" value="@processId" />
+                    <input type="hidden" id="HasViewPermission" value="@permission?.UView" />
+                    <input type="hidden" id="HasAddPermission" value="@permission?.UAdd" />
+                    <input type="hidden" id="HasEditPermission" value="@permission?.UEdit" />
+                    <input type="hidden" id="HasDeletePermission" value="@permission?.UDelete" />
+                    <input type="hidden" id="HasPrintPermission" value="@permission?.UPrint" />
                     @RenderBody()
                 </div>
             </section>

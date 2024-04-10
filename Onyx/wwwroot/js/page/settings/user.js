@@ -31,13 +31,6 @@
         ],
     }
 );
-function findParentNode(treeInstance, childNodeId) {
-
-}
-
-function expandParentNode(treeInstance, childNodeId) {
-
-}
 function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
@@ -57,12 +50,15 @@ function showUserModal(cd) {
             var uncheckedNodes = allNodes
                 .filter(node => !checkedNodes.includes(node.id))
                 .map(node => node.id);
+            var userCd = $("#Code").val();
             $.each(checkedNodes, function (i, item) {
-                $(`#permission_checkbox_Add_${item}`).prop("checked", true);
-                $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
-                $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
-                $(`#permission_checkbox_View_${item}`).prop("checked", true);
-                $(`#permission_checkbox_Print_${item}`).prop("checked", true);
+                if (!userCd) {
+                    $(`#permission_checkbox_Add_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_View_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Print_${item}`).prop("checked", true);
+                }
                 expandAllParents($('#tree-view'), item);
             });
             $.each(uncheckedNodes, function (i, item) {
