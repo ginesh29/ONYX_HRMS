@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Employee Leave Master Report";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="report-btn-div mb-3">
+            <button class="btn btn-outline-danger d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+            <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+        </div>
+        <div id="LeaveMaster"></div>
+    </div>
+</div>
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        loadGridData();
+        function loadGridData(btn) {
+            loadingButton(btn);
+            var url = `/Reports/FetchLeaveMaster`;
+            $('#LeaveMaster').load(url, function () {
+                unloadingButton(btn);
+                window["datatable"] = $('#LeaveMasterReportTable').DataTable(dataTableDefaultOptions);
+                if (window["datatable"].data().any())
+                    $("#btn-pdf,#btn-excel").removeClass("d-none");
+            });
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var url = `/Reports/LeaveMasterReport`;
+                window.open(url);
+            }
+        }
+    </script>
+}

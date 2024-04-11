@@ -27,9 +27,9 @@ namespace Onyx.Services
             parameters.Add("v_Status", filterModel.Status ?? "All");
             parameters.Add("v_Nationality", filterModel.Nationality ?? "All");
             var connection = new SqlConnection(connectionString);
-            var user = connection.Query<GetRepo_EmpShortList_Result>
+            var result = connection.Query<GetRepo_EmpShortList_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
+            return result;
         }
 
         public IEnumerable<GetRepo_EmpTransactionDetail_Result> GetEmpTransactions(EmpTransactionFilterModel filterModel, string CoCd)
@@ -42,9 +42,9 @@ namespace Onyx.Services
             parameters.Add("v_RFrmPrd", filterModel.StartPeriod);
             parameters.Add("v_RToPrd", filterModel.EndPeriod);
             var connection = new SqlConnection(connectionString);
-            var user = connection.Query<GetRepo_EmpTransactionDetail_Result>
+            var result = connection.Query<GetRepo_EmpTransactionDetail_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
+            return result;
         }
         public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(BalanceTransactionFilterModel filterModel, string CoCd)
         {
@@ -55,9 +55,9 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", filterModel.EmpCd ?? "All");
             parameters.Add("v_ToDt", filterModel.ToDate ?? DateTime.Now.Date);
             var connection = new SqlConnection(connectionString);
-            var user = connection.Query<Employee_LeaveHistory_GetRow_Result>
+            var result = connection.Query<Employee_LeaveHistory_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
+            return result;
         }
         public IEnumerable<GetRepo_Provisions_Result> GetProvisions(ProvisionFilterModel filterModel, string CoCd)
         {
@@ -70,9 +70,9 @@ namespace Onyx.Services
             parameters.Add("v_Prd", filterModel.Period);
             parameters.Add("v_Year", filterModel.Year);
             var connection = new SqlConnection(connectionString);
-            var user = connection.Query<GetRepo_Provisions_Result>
+            var result = connection.Query<GetRepo_Provisions_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
+            return result;
         }
         public IEnumerable<GetRepo_PaySlip_Format_Result> GetPaySlips(PaySlipFilterModel filterModel, string CoCd)
         {
@@ -85,9 +85,22 @@ namespace Onyx.Services
             parameters.Add("v_RYear", filterModel.Year);
             parameters.Add("v_EmpCd", filterModel.EmpCd ?? "All");
             var connection = new SqlConnection(connectionString);
-            var user = connection.Query<GetRepo_PaySlip_Format_Result>
+            var result = connection.Query<GetRepo_PaySlip_Format_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return user;
+            return result;
+        }
+        public IEnumerable<EmpLeaveMaster_GetRow_Result> GetEmpLeaveMaster(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "EmpLeaveMaster_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_LvTyp", string.Empty);
+            parameters.Add("v_Cocd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<EmpLeaveMaster_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
         }
     }
 }

@@ -218,5 +218,26 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Emp LeaveMaster
+        public IActionResult LeaveMaster()
+        {
+            return View();
+        }
+        public IActionResult FetchLeaveMaster()
+        {
+            var leaveMaster = _reportService.GetEmpLeaveMaster(_loggedInUser.CompanyCd);
+            ViewBag.TableResponsiveClass = "table-responsive";
+            return PartialView("_LeaveMaster", leaveMaster);
+        }
+        public IActionResult LeaveMasterReport()
+        {
+            var leaveMaster = _reportService.GetEmpLeaveMaster(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(leaveMaster)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
     }
 }

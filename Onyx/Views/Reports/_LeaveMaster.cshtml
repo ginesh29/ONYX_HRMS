@@ -1,0 +1,28 @@
+﻿@model IEnumerable<EmpLeaveMaster_GetRow_Result
+<div class="table-responsive">
+    <table class="table table-sm" id="LeaveMasterReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Employee</th>
+                <th>Leave Type</th>
+                <th>Max. Leave</th>
+                <th>Opening Bal.</th>
+                <th>Used</th>
+                <th>Accrued</th>
+                <th>Cum.Unpaid</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.EmpName (@item.EmpCd.Trim())</td>
+                <td>@item.LvTyp</td>
+                <td>@item.MaxLv.ToString("0.00")</td>
+                <td>@item.LvOpBal.ToString("0.00")</td>
+                <td>@item.LvUsed.ToString("0.00")</td>
+                <td>@item.LvAccr.ToString("0.00")</td>
+                <td>@item.CumLvNoPay.Value.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+</div>
