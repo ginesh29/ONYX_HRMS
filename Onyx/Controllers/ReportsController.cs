@@ -184,5 +184,39 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Pay Slip
+        public IActionResult PaySlip()
+        {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            return View();
+        }
+        public IActionResult FetchPaySlips(PaySlipFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.Period.Split('/');
+            filterModel.Period = spStartPeriod[0];
+            filterModel.Year = spStartPeriod[1];
+            var payslips = _reportService.GetPaySlips(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_PaySlips", payslips);
+        }
+        public IActionResult PaySlipsReport(PaySlipFilterModel filterModel)
+        {
+            var spStartPeriod = filterModel.Period.Split('/');
+            filterModel.Period = spStartPeriod[0];
+            filterModel.Year = spStartPeriod[1];
+            var payslips = _reportService.GetPaySlips(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(payslips)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
     }
 }

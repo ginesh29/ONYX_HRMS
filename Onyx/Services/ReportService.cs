@@ -74,5 +74,20 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return user;
         }
+        public IEnumerable<GetRepo_PaySlip_Format_Result> GetPaySlips(PaySlipFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_PaySlip_Format_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Div", filterModel.BranchCd ?? "All");
+            parameters.Add("v_RPrd", filterModel.Period);
+            parameters.Add("v_RYear", filterModel.Year);
+            parameters.Add("v_EmpCd", filterModel.EmpCd ?? "All");
+            var connection = new SqlConnection(connectionString);
+            var user = connection.Query<GetRepo_PaySlip_Format_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return user;
+        }
     }
 }

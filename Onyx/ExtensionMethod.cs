@@ -159,5 +159,60 @@ namespace Onyx
                 return $"{years} year(s) ago";
             }
         }
+        public static string NumberToWords(decimal number)
+        {
+            if (number == 0)
+                return "Zero";
+
+            string[] units = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+            string[] teens = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+            string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+            string words = "";
+
+            if ((int)(number / 1000000000) > 0)
+            {
+                words += NumberToWords((int)(number / 1000000000)) + " Billion ";
+                number %= 1000000000;
+            }
+
+            if ((int)(number / 1000000) > 0)
+            {
+                words += NumberToWords((int)(number / 1000000)) + " Million ";
+                number %= 1000000;
+            }
+
+            if ((int)(number / 1000) > 0)
+            {
+                words += NumberToWords((int)(number / 1000)) + " Thousand ";
+                number %= 1000;
+            }
+
+            if ((int)(number / 100) > 0)
+            {
+                words += NumberToWords((int)(number / 100)) + " Hundred ";
+                number %= 100;
+            }
+
+            if (number > 0)
+            {
+                if (words != "")
+                    words += "and ";
+
+                if (number < 10)
+                    words += units[(int)number] + " ";
+                else if (number < 20)
+                    words += teens[(int)number - 10] + " ";
+                else
+                {
+                    words += tens[(int)number / 10] + " ";
+                    if ((int)number % 10 > 0)
+                        words += units[(int)number % 10] + " ";
+                }
+            }
+
+            return words.Trim();
+        }
+
     }
 }

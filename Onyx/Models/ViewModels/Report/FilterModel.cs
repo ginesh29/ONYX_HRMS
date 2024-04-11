@@ -35,9 +35,19 @@ namespace Onyx.Models.ViewModels.Report
     }
     public class ProvisionFilterModel
     {
+        [Display(Name = "Branch")]
         public string BranchCd { get; set; }
         public string Period { get; set; }
         public string ProvisionType { get; set; }
+        public string Year { get; set; }
+    }
+    public class PaySlipFilterModel
+    {
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        [Display(Name = "Branch")]
+        public string BranchCd { get; set; }
+        public string Period { get; set; }
+        public string EmpCd { get; set; }
         public string Year { get; set; }
     }
 }
