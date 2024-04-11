@@ -16,8 +16,8 @@
         public string EditBy { get; set; }
         public DateTime? EditDt { get; set; }
         public decimal? CumLvNoPay { get; set; }
-        public decimal? BalanceLeave { get; set; }
-        public string LeaveDueDate { get; set; }
+        public decimal BalanceLeave { get; set; }
+        public DateTime LeaveDueDate { get; set; }
         public string CoName { get; set; }
     }
 }

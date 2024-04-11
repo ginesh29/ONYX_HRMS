@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Employee Leave Master Report";
+    ViewData["Title"] = ViewBag.ReportType == "LeaveMaster" ? "Employee Leave Master Report" : "Employee Annual Leave Due Report";
 }
 <div class="card">
     <div class="card-body">
@@ -16,7 +16,7 @@
         loadGridData();
         function loadGridData(btn) {
             loadingButton(btn);
-            var url = `/Reports/FetchLeaveMaster`;
+            var url = `/Reports/FetchLeaveMaster?reportType=@ViewBag.ReportType`;
             $('#LeaveMaster').load(url, function () {
                 unloadingButton(btn);
                 window["datatable"] = $('#LeaveMasterReportTable').DataTable(dataTableDefaultOptions);
@@ -27,7 +27,7 @@
         function filterShowReport(btn, report) {
             loadGridData(btn);
             if (report) {
-                var url = `/Reports/LeaveMasterReport`;
+                var url = `/Reports/LeaveMasterReport?reportType=@ViewBag.ReportType`;
                 window.open(url);
             }
         }

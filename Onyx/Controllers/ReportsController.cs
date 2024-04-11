@@ -222,21 +222,27 @@ namespace Onyx.Controllers
         #region Emp LeaveMaster
         public IActionResult LeaveMaster()
         {
+            ViewBag.ReportType = "LeaveMaster";
             return View();
         }
-        public IActionResult FetchLeaveMaster()
+        public IActionResult FetchLeaveMaster(string reportType)
         {
             var leaveMaster = _reportService.GetEmpLeaveMaster(_loggedInUser.CompanyCd);
             ViewBag.TableResponsiveClass = "table-responsive";
-            return PartialView("_LeaveMaster", leaveMaster);
+            return PartialView("_LeaveMaster", new { Data = leaveMaster, ReportType = reportType });
         }
-        public IActionResult LeaveMasterReport()
+        public IActionResult LeaveMasterReport(string reportType)
         {
             var leaveMaster = _reportService.GetEmpLeaveMaster(_loggedInUser.CompanyCd);
-            return new ViewAsPdf(leaveMaster)
+            return new ViewAsPdf(new { Data = leaveMaster, ReportType = reportType })
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
             };
+        }
+        public IActionResult AnnualLeaveDue()
+        {
+            ViewBag.ReportType = "LeaveDue";
+            return View("LeaveMaster");
         }
         #endregion
     }

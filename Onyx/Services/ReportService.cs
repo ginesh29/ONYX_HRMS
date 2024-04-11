@@ -92,7 +92,7 @@ namespace Onyx.Services
         public IEnumerable<EmpLeaveMaster_GetRow_Result> GetEmpLeaveMaster(string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpLeaveMaster_GetRow";
+            var procedureName = "EmpLeaveMaster_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_LvTyp", string.Empty);

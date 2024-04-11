@@ -214,5 +214,10 @@ namespace Onyx
             return words.Trim();
         }
 
+        public static string FormatDate(this DateTime date)
+        {
+            var dateFormat = GetDateFormat();
+            return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
+        }
     }
 }
