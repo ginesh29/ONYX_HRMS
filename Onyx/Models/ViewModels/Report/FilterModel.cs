@@ -50,4 +50,17 @@ namespace Onyx.Models.ViewModels.Report
         public string EmpCd { get; set; }
         public string Year { get; set; }
     }
+    public class EmpTranferFilterModel
+    {
+        public string EmpCd { get; set; }
+        public string BranchFrom { get; set; }
+        public string BranchTo { get; set; }
+        public string SectionFrom { get; set; }
+        public string SectionTo { get; set; }
+        public string DepartmentFrom { get; set; }
+        public string DepartmentTo { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string DateRange { get; set; }
+    }
 }

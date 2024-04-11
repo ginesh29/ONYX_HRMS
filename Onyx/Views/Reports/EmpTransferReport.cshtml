@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Getrepo_Emptransfers_Result>
+@{
+    ViewData["Title"] = "Employee Transfer Report";
+    Layout = null;
+    var detail = Model.FirstOrDefault();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <h6 class="text-right"><span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now</h6>
+    <partial name="_EmpTransfer" model="Model" />
+</body>
+</html>

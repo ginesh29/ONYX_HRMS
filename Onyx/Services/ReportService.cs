@@ -102,5 +102,25 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public IEnumerable<Getrepo_Emptransfers_Result> GetEmpTransfer(EmpTranferFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "Getrepo_Emptransfers_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_Employee", filterModel.EmpCd);
+            parameters.Add("v_Branch1", filterModel.BranchFrom);
+            parameters.Add("v_Branch2", filterModel.BranchFrom);
+            parameters.Add("v_Location1", filterModel.SectionFrom);
+            parameters.Add("v_Location2", filterModel.SectionTo);
+            parameters.Add("v_Department1", filterModel.DepartmentFrom);
+            parameters.Add("v_Department2", filterModel.DepartmentTo);
+            parameters.Add("v_Dt1", filterModel.StartDate);
+            parameters.Add("v_Dt2", filterModel.EndDate);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<Getrepo_Emptransfers_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }

@@ -245,5 +245,48 @@ namespace Onyx.Controllers
             return View("LeaveMaster");
         }
         #endregion
+
+        #region Emp Transfer
+        public IActionResult EmpTransfer()
+        {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Value = m.Code.Trim(),
+            });
+            return View();
+        }
+        public IActionResult FetchEmpTransfer(EmpTranferFilterModel filterModel)
+        {
+            var dateSp = filterModel.DateRange.Split(" - ");
+            filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+            filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            var empTransfer = _reportService.GetEmpTransfer(filterModel, _loggedInUser.CompanyCd);
+            ViewBag.TableResponsiveClass = "table-responsive";
+            return PartialView("_EmpTransfer", empTransfer);
+        }
+        public IActionResult EmpTransferReport(EmpTranferFilterModel filterModel)
+        {
+            var dateSp = filterModel.DateRange.Split(" - ");
+            filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+            filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            var empTransfer = _reportService.GetEmpTransfer(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(empTransfer)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
     }
 }

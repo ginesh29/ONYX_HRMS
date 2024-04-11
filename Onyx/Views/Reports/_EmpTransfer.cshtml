@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Getrepo_Emptransfers_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="EmpTransferReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th class="border-right text-center align-middle" rowspan="2">Employee</th>
+                <th class="border-right text-center align-middle" rowspan="2">Transfer Date</th>
+                <th class="border-right text-center" colspan="2">Branch</th>
+                <th class="border-right text-center" colspan="2">Section</th>
+                <th class="border-right text-center" colspan="2">Department</th>
+            </tr>
+            <tr>
+                <th class="border-right text-center">From</th>
+                <th class="border-right text-center">To</th>
+                <th class="border-right text-center">From</th>
+                <th class="border-right text-center">To</th>
+                <th class="border-right text-center">From</th>
+                <th class="border-right text-center">To</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name (@item.empcd.Trim())</td>
+                <td>@item.TransferDt.FormatDate()</td>
+                <td>@item.BrFrom</td>
+                <td>@item.BrTo</td>
+                <td>@item.LocFrom</td>
+                <td>@item.LocTo</td>
+                <td>@item.DeptFrom</td>
+                <td>@item.DeptTo</td>
+            </tr>
+        }
+    </table>
+</div>
