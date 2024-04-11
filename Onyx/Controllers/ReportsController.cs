@@ -288,5 +288,25 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Emp Loan Waiting Disburse
+        public IActionResult LoanClosed()
+        {
+            return View("EmpLoanWaitingDisburse");
+        }
+        public IActionResult FetchEmpLoanWaitingDisburse()
+        {
+            var loans = _reportService.GetEmpLoanWaitingDisburse(_loggedInUser.CompanyCd);
+            return PartialView("_EmpLoanWaitingDisburse", loans);
+        }
+        public IActionResult EmpLoanWaitingDisburseReport()
+        {
+            var loans = _reportService.GetEmpLoanWaitingDisburse(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
     }
 }

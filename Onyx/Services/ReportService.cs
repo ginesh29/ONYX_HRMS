@@ -122,5 +122,20 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+
+        public IEnumerable<GetRepo_EmpLoan_Result> GetEmpLoanWaitingDisburse(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpLoan";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_Header", string.Empty);
+            parameters.Add("v_Typ", "D");
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpLoan_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }
