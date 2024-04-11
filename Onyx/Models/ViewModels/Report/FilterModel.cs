@@ -63,4 +63,14 @@ namespace Onyx.Models.ViewModels.Report
         public DateTime? EndDate { get; set; }
         public string DateRange { get; set; }
     }
+    public class EmpLoanFilterModel
+    {
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        [Display(Name = "Branch")]
+        public string BranchCd { get; set; }
+        public string Period { get; set; }
+        public string EmpCd { get; set; }
+        public string Year { get; set; }
+        public string Status { get; set; }
+    }
 }

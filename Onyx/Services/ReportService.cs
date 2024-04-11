@@ -123,15 +123,15 @@ namespace Onyx.Services
             return result;
         }
 
-        public IEnumerable<GetRepo_EmpLoan_Result> GetEmpLoanWaitingDisburse(string CoCd)
+        public IEnumerable<GetRepo_EmpLoan_Result> GetEmpLoan(EmpLoanFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpLoan";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cocd", CoCd);
-            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_EmpCd", filterModel.EmpCd ?? string.Empty);
             parameters.Add("v_Header", string.Empty);
-            parameters.Add("v_Typ", "D");
+            parameters.Add("v_Typ", filterModel.Status);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpLoan_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

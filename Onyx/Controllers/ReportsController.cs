@@ -290,18 +290,26 @@ namespace Onyx.Controllers
         #endregion
 
         #region Emp Loan Waiting Disburse
-        public IActionResult LoanClosed()
+        public IActionResult EmpLoan()
         {
-            return View("EmpLoanWaitingDisburse");
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            return View();
         }
-        public IActionResult FetchEmpLoanWaitingDisburse()
+        public IActionResult FetchEmpLoan(EmpLoanFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpLoanWaitingDisburse(_loggedInUser.CompanyCd);
-            return PartialView("_EmpLoanWaitingDisburse", loans);
+            var loans = _reportService.GetEmpLoan(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_EmpLoan", loans);
         }
-        public IActionResult EmpLoanWaitingDisburseReport()
+        public IActionResult EmpLoanReport(EmpLoanFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpLoanWaitingDisburse(_loggedInUser.CompanyCd);
+            var loans = _reportService.GetEmpLoan(filterModel, _loggedInUser.CompanyCd);
             return new ViewAsPdf(loans)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

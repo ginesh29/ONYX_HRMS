@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Employee Loan Report";
+    var stausItems = new List<SelectListItem>{
+        new SelectListItem{Value="N",Text="Waiting for Approval",Selected=true},
+        new SelectListItem{Value="A",Text="Waiting for Disburse"},
+        new SelectListItem{Value="D",Text="Closed"},
+    };
+}
+@model EmpLoanFilterModel
+<div class="card">
+    <div class="card-body">
+        <form id="filter-frm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.DEFAULTSELECT">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="EmpCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="BranchCd"></label>
+                        <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                        </select>
+                        <span asp-validation-for="BranchCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="Period"></label>
+                        <input asp-for="Period" value="@ViewBag.currentMonthYear" class="form-control month-year-input" type="text" data-toggle="datetimepicker">
+                    </div>
+                </div>
+                <div class="report-btn-div">
+                    <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status"></label>
+                <div>
+                    @foreach (var status in stausItems)
+                    {
+                        <label class="radio-inline mb-0">
+                            <label class="custom-control custom-radio">
+                                <input type="radio" asp-for="Status" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="status_@status.Value" value="@status.Value" checked="@status.Selected">
+                                <label for="status_@status.Value" class="custom-control-label font-weight-normal">@status.Text</label>
+                            </label>
+                        </label>
+                    }
+                </div>
+            </div>
+        </form>
+        <hr />
+        <div id="EmpLoans"></div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        bindEmployeeDropdown();
+        function loadGridData(btn) {
+            var frm = $("#filter-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                var url = `/Reports/FetchEmpLoan?${frm.serialize()}`;
+                $('#EmpLoans').load(url, function () {
+                    unloadingButton(btn);
+                    if ($(".loan").length > 0)
+                        $("#btn-pdf").removeClass("d-none");
+                });
+            }
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/EmpLoanReport?${frm}`;
+                window.open(url);
+            }
+        }
+    </script>
+}
