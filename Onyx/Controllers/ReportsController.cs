@@ -289,7 +289,7 @@ namespace Onyx.Controllers
         }
         #endregion
 
-        #region Emp Loan Waiting Disburse
+        #region Emp Loan
         public IActionResult EmpLoan()
         {
             ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
@@ -310,6 +310,25 @@ namespace Onyx.Controllers
         public IActionResult EmpLoanReport(EmpLoanFilterModel filterModel)
         {
             var loans = _reportService.GetEmpLoan(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Loan Due List
+        public IActionResult LoanDueList()
+        {
+            return View();
+        }
+        public IActionResult FetchLoanDueList()
+        {
+            var loans = _reportService.GetEmpLoanDueList(_loggedInUser.CompanyCd);
+            return PartialView("_LoanDueList", loans);
+        }
+        public IActionResult LoanDueListReport()
+        {
+            var loans = _reportService.GetEmpLoanDueList(_loggedInUser.CompanyCd);
             return new ViewAsPdf(loans)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

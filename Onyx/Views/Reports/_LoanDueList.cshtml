@@ -1,0 +1,28 @@
+﻿@model IEnumerable<GetRepo_EmpLoanDueList_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="LoanDueListReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Employee</th>
+                <th>Trans. No</th>
+                <th>Appr. Date</th>
+                <th>Loan Type</th>
+                <th>Loan Amt</th>
+                <th>Deducted Amt</th>
+                <th>Balance Amt</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.EmpName (@item.Empcd.Trim())</td>
+                <td>@item.TransNo.Trim()</td>
+                <td>@item.ApprDate.FormatDate()</td>
+                <td>@item.LoanTyp</td>
+                <td>@item.ApprAmt.ToString("0.00")</td>
+                <td>@item.Deducted.ToString("0.00")</td>
+                <td>@item.Balance.ToString("0.00")</td>
+            </tr>
+        }
+    </table>
+</div>

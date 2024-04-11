@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Loan Due List Report";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="report-btn-div mb-3">
+            <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+        </div>
+        <div id="LoanDueList"></div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        bindEmployeeDropdown();
+        loadGridData();
+        function loadGridData(btn) {
+            loadingButton(btn);
+            var url = `/Reports/FetchLoanDueList`;
+            $('#LoanDueList').load(url, function () {
+                unloadingButton(btn);
+                window["datatable"] = $('#LoanDueListReportTable').DataTable(dataTableDefaultOptions);
+                if (window["datatable"].data().any())
+                    $("#btn-pdf,#btn-excel").removeClass("d-none");
+            });
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/LoanDueListReport`;
+                window.open(url);
+            }
+        }
+    </script>
+}
