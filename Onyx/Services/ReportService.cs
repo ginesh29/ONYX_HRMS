@@ -143,9 +143,27 @@ namespace Onyx.Services
             var procedureName = "GetRepo_EmpLoanDueList";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cocd", CoCd);
-            parameters.Add("v_EmpCd",  string.Empty);
+            parameters.Add("v_EmpCd", string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpLoanDueList_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_EmpLoan_Analysis_Result> GetEmpLoanAnalysis(EmpLoanAnalysisFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpLoan_Analysis_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
+            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Location", filterModel.Section ?? "All");
+            parameters.Add("v_Department", filterModel.Department ?? "All");
+            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            parameters.Add("v_LoanTyp", filterModel.LoanType ?? "0");
+            parameters.Add("v_LoanStatus", filterModel.LoanStatus ?? string.Empty);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpLoan_Analysis_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

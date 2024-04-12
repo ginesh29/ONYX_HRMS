@@ -316,6 +316,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Loan Due List
         public IActionResult LoanDueList()
         {
@@ -332,6 +333,66 @@ namespace Onyx.Controllers
             return new ViewAsPdf(loans)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Loan Analysis
+        public IActionResult LoanAnalysis()
+        {
+            ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.LaonTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.ShortDes
+            });
+            ViewBag.LoanStatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.Nationality
+            });
+            return View();
+        }
+        public IActionResult FetchLoanAnalysis(EmpLoanAnalysisFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpLoanAnalysis(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_LoanAnalysis", loans);
+        }
+        public IActionResult LoanAnalysisReport(EmpLoanAnalysisFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpLoanAnalysis(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
             };
         }
         #endregion

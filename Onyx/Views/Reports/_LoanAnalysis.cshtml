@@ -1,0 +1,38 @@
+﻿@model IEnumerable<GetRepo_EmpLoan_Analysis_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="EmpLoanAnalysisReportTable" style="font-size:small">
+        <thead class="thead-dark">
+            <tr>
+                <th>Trans. No</th>
+                <th>Employee</th>
+                <th>Branch</th>
+                <th>Appr. Date</th>
+                <th>Appr. Amt</th>
+                <th>No. of Inst.</th>
+                <th>Ded. Start Dt</th>
+                <th>Reco. Mode</th>
+                <th>Reco. Prd</th>
+                <th>Pay. Mode</th>
+                <th>Guarantor Detail</th>
+                <th>Remaks</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TransNo</td>
+                <td>@item.Employee (@item.EmpCd.Trim())</td>
+                <td>@item.Branch</td>
+                <td>@item.LoanApprDt.FormatDate()</td>
+                <td>@item.ApprAmt.ToString("0.00")</td>
+                <td>@item.NoInst</td>
+                <td>@item.DedStartDt.FormatDate()</td>
+                <td>@item.RecoModeDes</td>
+                <td>@item.RecoPrd</td>
+                <td>@item.PayModeDes</td>
+                <td>@item.Guarantor - @item.GuarantorDetails</td>
+                <td>@item.Remarks</td>
+            </tr>
+        }
+    </table>
+</div>
