@@ -152,7 +152,8 @@ namespace Onyx.Services
         }
         public string GetDepartment_SrNo()
         {
-            var query = "SELECT 'DEP' + CAST(isnull(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DEP', '') AS INT)),0) + 1 AS VARCHAR) AS NextCode FROM Dept;";
+            //var query = "SELECT 'DEP' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DEP', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Dept;";
+            var query = "SELECT 'DEP'+right('000'+ convert(varchar(3),isnull(Max(substring(cd,4,len(trim(cd)))),0)+1),3)  AS NextCode FROM Dept";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
