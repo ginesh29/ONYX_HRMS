@@ -48,6 +48,7 @@ namespace Onyx.Models.ViewModels
         public string Narr { get; set; }
         public IEnumerable<IFormFile> DocFiles { get; set; }
         public IEnumerable<EmpDocImages_GetRow_Result> DocsPaths { get; set; }
+        public string Type { get; set; }
         public string Cd { get; set; }
         public string Mode
         {

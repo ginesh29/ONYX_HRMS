@@ -171,7 +171,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", Cd);
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_opt", "");
+            parameters.Add("v_opt", string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<Parameters_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -254,7 +254,7 @@ namespace Onyx.Services
             };
             return percentageAmtTypes;
         }
-        public IEnumerable<SelectListItem> GetLeaveStatusTypes()
+        public IEnumerable<SelectListItem> GetEmpWorkingStatuses()
         {
             var statusTypes = new List<SelectListItem>()
             {
@@ -262,6 +262,30 @@ namespace Onyx.Services
                 new() { Text="Leave requested", Value="N"},
                 new() {Text="Leave approved", Value="A"},
                 new() { Text="On Leave", Value="F"}};
+            return statusTypes;
+        }
+        public IEnumerable<SelectListItem> GetEmpLeaveStatuses()
+        {
+            var statusTypes = new List<SelectListItem>()
+            {
+                new() {Text="Unapproved", Value="N"},
+                new() { Text="Approved", Value="Y"},
+                new() {Text="Confrimed", Value="F"},
+                new() { Text="Rejected", Value="R"},
+                new() { Text = "Revised", Value = "V" },
+                new() { Text = "Cancelled", Value = "C" },
+                new() { Text = "Rejoined", Value = "J" }};
+            return statusTypes;
+        }
+        public IEnumerable<SelectListItem> GetEmpLoanStatuses()
+        {
+            var statusTypes = new List<SelectListItem>()
+            {
+                new() {Text="Unapproved", Value="N"},
+                new() { Text="Approved", Value="A"},
+                new() {Text="Disburse", Value="D"},
+                new() { Text="Rejected", Value="R"},
+                new() { Text = "Closed", Value = "C" }};
             return statusTypes;
         }
         public IEnumerable<SelectListItem> GetCalulationBasisTypes()
@@ -359,11 +383,23 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<int>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public void PrePayrollProcess(string Period, string Year, string Branch, string CoCd)
+        {
+            var procedureName = "PrePayroll_Process";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Prd", Period);
+            parameters.Add("v_Year", Year);
+            parameters.Add("v_Div", Branch ?? "0");
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         public void GenerateModifiedSp()
         {
             var modifiedSpQuery = @"SELECT name,  modify_date 
 	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-04-01'
+	                                WHERE type = 'P' and modify_date > '2024-01-01'
 	                                ORDER BY modify_date DESC";
             var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
@@ -377,7 +413,7 @@ namespace Onyx.Services
                 {
                     string filename = item.Contains("_N") ? item : $"{item}_N";
                     storedProcedureText = storedProcedureText.Replace(item, filename).Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
-                    result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #").Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#")} \n Go \n";
+                    result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #", StringComparison.InvariantCultureIgnoreCase).Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#", StringComparison.InvariantCultureIgnoreCase)} \n Go \n";
                 }
             }
             string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now:ddMMyyyy_HHmms}.sql";

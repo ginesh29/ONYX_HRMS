@@ -1,9 +1,10 @@
-﻿function bindDocumentRenewalSerachTable(empCode) {
+﻿function bindDocumentRenewalSerachTable(cd, type) {
     if ($.fn.DataTable.isDataTable('#RenewalDocumentsSearchDataTable'))
         $('#RenewalDocumentsSearchDataTable').DataTable().destroy();
+    var url = type == "EMP" ? `/Employee/FetchDocuments?empCd=${encodeURI(cd)}` : type == "COM" ? `/Organisation/FetchDocuments?CompanyCd=${cd}` : `/Organisation/FetchVehicleDocuments?vehCd=${cd}`;
     window["datatable"] = $('#RenewalDocumentsSearchDataTable').DataTable(
         {
-            ajax: `/Employee/FetchDocuments?empCd=${encodeURI(empCode)}`,
+            ajax: url,
             ordering: false,
             columns: [
                 {
@@ -26,7 +27,11 @@
                 },
                 {
                     data: function (row) {
-                        return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                                <i class="fas fa-pen"></i>
+                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                                <i class="fas fa-pen"></i>
+                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehicleDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
                                 <i class="fas fa-pen"></i>
                                 </button>`
                     }, "width": "80px"
@@ -34,6 +39,7 @@
             ],
         }
     );
+    $("#RenewalDocumentsSearchDataTable").removeClass("d-none")
 }
 function showDocumentRenewalModal() {
     var url = `/Transactions/DocumentRenew`;
@@ -67,7 +73,15 @@ function saveDocumentRenewal(btn) {
 
 $("#EmpCd").change(function (e) {
     var empCd = e.target.value ? e.target.value : '0';
-    bindDocumentRenewalSerachTable(empCd);
+    bindDocumentRenewalSerachTable(empCd, "EMP");
+})
+$("#Company").change(function (e) {
+    var cd = e.target.value ? e.target.value : '0';
+    bindDocumentRenewalSerachTable(cd, "COM");
+})
+$("#Vehicle").change(function (e) {
+    var cd = e.target.value ? e.target.value : '0';
+    bindDocumentRenewalSerachTable(cd, "VEH");
 })
 window["datatable"] = $('#RenewalDocumentsApprovalDataTable').DataTable(
     {
@@ -130,3 +144,14 @@ function saveDocumentRenewalApproval(btn, reject) {
         });
     }
 }
+function showHideTypeDropdown() {
+    var type = $("input[name='Type']:checked").val();
+    $("#EmpCd,#Company,#Vehicle").closest('.form-group').addClass("d-none");
+    if (type == "EMP")
+        $("#EmpCd").closest('.form-group').removeClass("d-none");
+    else if (type == "COM")
+        $("#Company").closest('.form-group').removeClass("d-none");
+    else
+        $("#Vehicle").closest('.form-group').removeClass("d-none");
+}
+showHideTypeDropdown();

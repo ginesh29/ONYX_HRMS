@@ -22,15 +22,21 @@ namespace Onyx.Controllers
             ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
             return View();
         }
-        public IActionResult SaveMonthEndProcess()
+        public IActionResult SaveMonthEndProcess(string MonthYear)
         {
-            _commonService.MonthEndProcess(_loggedInUser.CompanyCd);
-            var result = new CommonResponse
+            var spMonthYear = MonthYear.Split('/');
+            var Period = Convert.ToInt32(spMonthYear[0]);
+            var Year = Convert.ToInt32(spMonthYear[1]);
+            int lastDayOfMonth = DateTime.DaysInMonth(Year, Period);
+            var date = new DateTime(Year, Period, lastDayOfMonth);
+            if (date <= DateTime.Now)
             {
-                Success = true,
-                Message = "Month End Done Succesfully"
-            };
-            return Json(result);
+                _commonService.MonthEndProcess(_loggedInUser.CompanyCd);
+                TempData["success"] = "Month End completed Succesfully";
+            }
+            else
+                TempData["error"] = "You Can't Month End before month complete";
+            return RedirectToAction("MonthEndProcess");
         }
     }
 }

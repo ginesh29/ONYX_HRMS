@@ -78,6 +78,7 @@ namespace Onyx.Controllers
             ViewBag.PercentageAmtItems = _commonService.GetPercentageAmtTypes();
             return PartialView("_ComponentModal", model);
         }
+
         [HttpPost]
         public IActionResult SaveComponent(EarnDedModel model)
         {
@@ -715,9 +716,10 @@ namespace Onyx.Controllers
         {
             return View();
         }
-        public IActionResult FetchDocuments()
+        public IActionResult FetchDocuments(string CompanyCd)
         {
-            var documents = _organisationService.GetDocuments(_loggedInUser.CompanyCd);
+            string CoCd = !string.IsNullOrEmpty(CompanyCd) ? CompanyCd : _loggedInUser.CompanyCd;
+            var documents = _organisationService.GetDocuments(CoCd);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -968,7 +970,7 @@ namespace Onyx.Controllers
             else
                 model.SrNo = _organisationService.GetVehicleDocument_SrNo(vehCd, docType);
             model.VehCd = vehCd;
-            ViewBag.DocumentTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDoc).Select(m => new SelectListItem
+            ViewBag.DocumentTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDocType).Select(m => new SelectListItem
             {
                 Text = $"{m.ShortDes}({m.Code.Trim()})",
                 Value = m.Code.Trim(),

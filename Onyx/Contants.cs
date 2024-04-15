@@ -33,7 +33,7 @@
         public const string Model = "MODEL";
         public const string Color = "COLOR";
         public const string Driver = "DRIV";
-        public const string VehicleDoc = "HVDOC";
+        public const string VehicleDocType = "HVDOC";
         public const string Salutation = "SALUT";
         public const string MaritalStatus = "HMS";
         public const string Religion = "HRELG";

@@ -85,4 +85,27 @@ namespace Onyx.Models.ViewModels.Report
         public string LoanType { get; set; }
         public string LoanStatus { get; set; }
     }
+    public class EmpLeaveAnalysisFilterModel
+    {
+        public string EmpCd { get; set; }
+        public string Sponsor { get; set; }
+        public string Branch { get; set; }
+        public string Section { get; set; }
+        public string Department { get; set; }
+        public string Designation { get; set; }
+        public string LeaveType { get; set; }
+        public string LeaveStatus { get; set; }
+        public string DateRange { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string OrderBy { get; set; }
+    }
+    public class ExpiredDocFilterModel
+    {
+        public string Type { get; set; }
+        public string DocType { get; set; }
+        public string DateRange { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
 }
