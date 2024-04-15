@@ -51,5 +51,8 @@ DROP CONSTRAINT PK_Designation;
 ALTER TABLE Designation
 ALTER COLUMN CD CHAR(10) not null;
 
+ALTER TABLE Employee
+ALTER COLUMN Desg CHAR(10) not null;
+
 ALTER TABLE Designation
 ADD CONSTRAINT PK_Designation PRIMARY KEY (Cd);

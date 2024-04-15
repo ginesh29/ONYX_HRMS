@@ -4,6 +4,8 @@ using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using MailKit.Search;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Onyx.Services
 {
@@ -164,6 +166,44 @@ namespace Onyx.Services
             parameters.Add("v_LoanStatus", filterModel.LoanStatus ?? string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpLoan_Analysis_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_EmpLeave_Result> GetEmpLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpLeave_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
+            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Location", filterModel.Section ?? "All");
+            parameters.Add("v_Department", filterModel.Department ?? "All");
+            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            parameters.Add("v_Typ", filterModel.LeaveType ?? string.Empty);
+            parameters.Add("v_LvStat", filterModel.LeaveStatus ?? string.Empty);
+            parameters.Add("v_Dt1", filterModel.StartDate.ToString() ?? string.Empty);
+            parameters.Add("v_Dt2", filterModel.EndDate.ToString() ?? string.Empty);
+            parameters.Add("orderBy", filterModel.OrderBy ?? string.Empty);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpLeave_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_ExpiredDocument_Result> GetDocExpired(ExpiredDocFilterModel filterModel, string UserCd, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_ExpiredDocument_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_FromDate", string.Empty ?? string.Empty);
+            parameters.Add("v_ToDate", string.Empty ?? string.Empty);
+            parameters.Add("v_Employee", "All");
+            parameters.Add("v_DocTyp", filterModel.DocType ?? "All");
+            parameters.Add("v_Typ", filterModel.Type);
+            parameters.Add("v_UserCd", UserCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_ExpiredDocument_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

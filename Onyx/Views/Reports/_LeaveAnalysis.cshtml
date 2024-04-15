@@ -1,0 +1,46 @@
+﻿@model IEnumerable<	GetRepo_EmpLeave_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="EmpLeaveAnalysisReportTable" style="font-size:small">
+        <thead class="thead-dark">
+            <tr>
+                <th>Trans. No</th>
+                <th>Employee</th>
+                <th>Branch</th>
+                <th>Department</th>
+                <th>Leave Type</th>
+                <th>Status</th>
+                <th>Appr. Date</th>
+                <th>Applied DateRange</th>
+                <th>Wp DateRange</th>
+                <th>Wop DateRange</th>
+                <th>Rejoin Date</th>
+                <th>Days</th>
+                <th>Lv. Salary</th>
+                <th>Lv. Ticket</th>
+                <th>Remarks</th>
+                <th>Narration</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TransNo</td>
+                <td>@item.Employee (@item.EmpCd.Trim())</td>
+                <td>@item.Branch</td>
+                <td>@item.Dept</td>
+                <td>@item.LeaveType</td>
+                <td>@item.LvStatus</td>
+                <td>@item.FormatedLvApprDt.FormatDate()</td>
+                <td>@item.LvFromDt.FormatDate() - @item.LvToDt.FormatDate()</td>
+                <td>@item.FormatedWP_FromDt.FormatDate() - @item.FormatedWP_ToDt.FormatDate()</td>
+                <td>@item.FormatedWOP_FromDt.FormatDate() - @item.FormatedWOP_ToDt.FormatDate()</td>
+                <td>@item.JoinDt.FormatDate()</td>
+                <td>@item.Days</td>
+                <td>@item.Lvsalary.ToString("0.00")</td>
+                <td>@item.Lvfare.ToString("0.00")</td>
+                <td>@item.Remarks</td>
+                <td>@item.Narr</td>
+            </tr>
+        }
+    </table>
+</div>

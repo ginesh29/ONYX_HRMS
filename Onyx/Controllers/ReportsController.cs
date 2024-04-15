@@ -364,21 +364,17 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.LaonTypeItems = _commonService.GetCodesGroups(CodeGroup.EmpType).Select(m => new SelectListItem
-            {
-                Value = m.Code.Trim(),
-                Text = m.ShortDes
-            });
-            ViewBag.LoanStatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
+            ViewBag.LoanTypeItems = _organisationService.GetLoanTypes().Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
-                Text = m.SDes
+                Text = m.Des.Trim(),
             });
             ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
                 Text = m.Nationality
             });
+            ViewBag.LoanStatusItems = _commonService.GetEmpLoanStatuses();
             return View();
         }
         public IActionResult FetchLoanAnalysis(EmpLoanAnalysisFilterModel filterModel)
@@ -393,6 +389,93 @@ namespace Onyx.Controllers
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
                 PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
+
+        #region Leave Analysis
+        public IActionResult LeaveAnalysis()
+        {
+            ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.LeaveTypeItems = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.LeaveStatusItems = _commonService.GetEmpLeaveStatuses();
+            return View();
+        }
+        public IActionResult FetchLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_LeaveAnalysis", loans);
+        }
+        public IActionResult LeaveAnalysisReport(EmpLeaveAnalysisFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape
+            };
+        }
+        #endregion
+
+        #region Expired Doc
+        public IActionResult DocExpired()
+        {
+            ViewBag.EmpDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.ComDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.VehDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return View();
+        }
+        public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel)
+        {
+            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserCd, _loggedInUser.CompanyCd);
+            return PartialView("_DocExpired", loans);
+        }
+        public IActionResult DocExpiredReport(ExpiredDocFilterModel filterModel)
+        {
+            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserCd, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
             };
         }
         #endregion

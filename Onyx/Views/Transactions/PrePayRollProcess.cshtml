@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Pre Payroll Process";
+}
+<div class="card">
+    <div class="card-body">
+        <form id="pre-payroll-frm" method="post" action="SavePrePayRollProcess">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="form-group disabled-container">
+                        <label>Month/Year</label>
+                        <input id="MonthYear" name="MonthYear" value="@ViewBag.currentMonthYear" class="form-control disabled" type="text">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Branch</label>
+                        <select id="Branch" name="Branch" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" onclick="savePrePayroll(this)">Submit</button>
+        </form>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function savePrePayroll(btn) {
+            var frm = $("#pre-payroll-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                frm.submit();
+            }
+        }
+    </script>
+}

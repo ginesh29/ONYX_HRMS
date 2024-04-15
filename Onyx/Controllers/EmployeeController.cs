@@ -59,7 +59,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = m.ShortDes
             });
-            ViewBag.LeaveStatusItems = _commonService.GetLeaveStatusTypes();
+            ViewBag.EmpWorkingStatusItems = _commonService.GetEmpWorkingStatuses();
             ViewBag.EmployeeStatusItems = _commonService.GetSysCodes(SysCode.EmpStatus).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),

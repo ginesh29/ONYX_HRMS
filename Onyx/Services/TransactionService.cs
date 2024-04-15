@@ -1045,7 +1045,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_DocTyp", string.Empty);
-            parameters.Add("v_Typ", string.Empty);
+            parameters.Add("v_Typ", "1");
             parameters.Add("v_SrNo", 0);
             parameters.Add("v_LoginEmpCd", LoginEmpCd);
             parameters.Add("v_EmpUser", EmpUser);
@@ -1075,6 +1075,20 @@ namespace Onyx.Services
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+
+        #region Pre Pay Roll Process
+        public bool ValiatePrePayrollDeno(string type, string CoCd)
+        {
+            var procedureName = "Validate_Prepayroll";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_Typ", type);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result != null;
         }
         #endregion
     }

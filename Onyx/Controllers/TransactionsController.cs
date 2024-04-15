@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -10,6 +11,7 @@ namespace Onyx.Controllers
     [Authorize]
     public class TransactionsController : Controller
     {
+        private readonly DbGatewayService _dbGatewayService;
         private readonly AuthService _authService;
         private readonly CommonService _commonService;
         private readonly SettingService _settingService;
@@ -17,7 +19,7 @@ namespace Onyx.Controllers
         private readonly EmployeeService _employeeService;
         private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
-        public TransactionsController(AuthService authService, CommonService commonService, TransactionService transactionService, SettingService settingService, EmployeeService employeeService, OrganisationService organisationService)
+        public TransactionsController(AuthService authService, CommonService commonService, TransactionService transactionService, SettingService settingService, EmployeeService employeeService, OrganisationService organisationService, DbGatewayService dbGatewayService)
         {
             _authService = authService;
             _commonService = commonService;
@@ -26,6 +28,7 @@ namespace Onyx.Controllers
             _settingService = settingService;
             _employeeService = employeeService;
             _organisationService = organisationService;
+            _dbGatewayService = dbGatewayService;
         }
 
         #region Leave Transaction
@@ -954,6 +957,16 @@ namespace Onyx.Controllers
         }
         public IActionResult DocumentRenew()
         {
+            ViewBag.CompanyItems = _dbGatewayService.GetCompanies().Select(m => new SelectListItem
+            {
+                Text = m.CoName,
+                Value = m.Cd.Trim()
+            });
+            ViewBag.VehicleItems = _organisationService.GetVehicles().Select(m => new SelectListItem
+            {
+                Text = $"{m.Brand} {m.SDes.Trim()}({m.Cd.Trim()})",
+                Value = m.Cd.Trim()
+            });
             return View();
         }
         public IActionResult GetRenewalDocument(string empCd, string docTypeCd, int srNo)
@@ -1012,7 +1025,17 @@ namespace Onyx.Controllers
             var document = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.EmployeeCode.Trim() == empCd && m.DocType.Trim() == docTypeCd && m.SrNo == srNo);
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
-            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
+            ViewBag.EmpDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.ComDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.VehDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
@@ -1034,6 +1057,62 @@ namespace Onyx.Controllers
             {
                 Success = true,
                 Message = $"Document renewal {action} successfully"
+            };
+            return Json(result);
+        }
+        #endregion
+
+        #region Pre Payroll Process
+        public IActionResult PrePayRollProcess()
+        {
+            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            return View();
+        }
+        public IActionResult SavePrePayRollProcess(string MonthYear, string Branch)
+        {
+            var spMonthYear = MonthYear.Split('/');
+            var Period = spMonthYear[0];
+            var Year = spMonthYear[1];
+
+            bool isValidDeno = _transactionService.ValiatePrePayrollDeno(Period, Year);
+
+            //string msg= "Please enter Cash Denomination for "
+            //if (isValidDeno)
+            //{
+            //    lblDisplay.Text = "Please enter Cash Denomination for " + Dataset_RsPrePay.Tables[0].Rows[0]["Des"].ToString();
+            //}
+
+            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollBANK(objPrePayrollBLL);
+            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
+            //{
+            //    lblDisplay.Text = "Please enter Bank Account for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
+            //}
+
+            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollVBANK(objPrePayrollBLL);
+            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
+            //{
+
+            //    lblDisplay.Text = "Please enter Valid Bank Account for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
+            //}
+
+            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollCBANK(objPrePayrollBLL);
+            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
+            //{
+            //    lblDisplay.Text = "Please Net Pay Bank for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
+            //}
+
+            _commonService.PrePayrollProcess(Period, Year, Branch, _loggedInUser.CompanyCd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Pre Payroll Process completed Succesfully"
             };
             return Json(result);
         }

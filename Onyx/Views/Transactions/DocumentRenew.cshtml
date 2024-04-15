@@ -1,16 +1,52 @@
 ﻿@{
     ViewData["Title"] = "Document Renewal";
+    var typeItems = new List<SelectListItem>{
+        new SelectListItem{Value="EMP",Text="Employee",Selected=true},
+        new SelectListItem{Value="COM",Text="Company"},
+        new SelectListItem{Value="VEH",Text="Vehicle"},
+    };
 }
 <div class="card">
     <div class="card-header">
-        <div style="width:350px" class="select2-container float-right">
-            <select id="EmpCd" class="form-control select2">
-                <option value=""></option>
-            </select>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Type</label>
+                    <div>
+                        @foreach (var status in typeItems)
+                        {
+                            <label class="radio-inline mb-0">
+                                <label class="custom-control custom-radio">
+                                    <input type="radio" name="Type" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_@status.Value" value="@status.Value" checked="@status.Selected" onchange="showHideTypeDropdown()">
+                                    <label for="type_@status.Value" class="custom-control-label font-weight-normal">@status.Text</label>
+                                </label>
+                            </label>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Employee</label>
+                    <select id="EmpCd" class="form-control select2">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <select class="form-control select-picker" id="Company" asp-items="ViewBag.CompanyItems">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Vehicle</label>
+                    <select class="form-control select-picker" id="Vehicle" asp-items="ViewBag.VehicleItems">
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
     <div class="card-body">
-        <table class="table table-sm" id="RenewalDocumentsSearchDataTable">
+        <table class="table table-sm d-none" id="RenewalDocumentsSearchDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>

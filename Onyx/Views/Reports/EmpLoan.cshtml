@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Employee Loan Report";
-    var stausItems = new List<SelectListItem>{
+    var statusItems = new List<SelectListItem>{
         new SelectListItem{Value="N",Text="Waiting for Approval",Selected=true},
         new SelectListItem{Value="A",Text="Waiting for Disburse"},
         new SelectListItem{Value="D",Text="Closed"},
@@ -43,7 +43,7 @@
             <div class="form-group">
                 <label asp-for="Status"></label>
                 <div>
-                    @foreach (var status in stausItems)
+                    @foreach (var status in statusItems)
                     {
                         <label class="radio-inline mb-0">
                             <label class="custom-control custom-radio">

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<GetRepo_ExpiredDocument_Result>
+<div class="table-responsive">
+    <table class="table table-sm" id="DocExpiredReportTable" style="font-size:small">
+        <thead class="thead-dark">
+            <tr>
+                <th>Type</th>
+                <th>Cd</th>
+                <th>Name</th>
+                <th>Doc. No</th>
+                <th>OthRefNo</th>
+                <th>IssuePlace</th>
+                <th>Issue Date</th>
+                <th>Expiry Date</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Type</td>
+                <td>@item.Cd</td>
+                <td>@item.Name</td>
+                <td>@item.DocNo</td>
+                <td>@item.OthRefNo</td>
+                <td>@item.IssuePlace</td>
+                <td>@item.IssueDt.FormatDate()</td>
+                <td>@item.ExpDt.FormatDate()</td>
+            </tr>
+        }
+    </table>
+</div>

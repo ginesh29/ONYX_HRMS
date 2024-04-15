@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Employee Leave Analysis";
+}
+@model EmpLeaveAnalysisFilterModel
+<div class="card">
+    <div class="card-body">
+        <form id="filter-frm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.ALLSELECT">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Branch"></label>
+                        <select class="form-control filter-select-picker" asp-for="Branch" asp-items="ViewBag.BranchItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Department"></label>
+                        <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Designation"></label>
+                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Sponsor"></label>
+                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Section"></label>
+                        <select asp-for="Section" class="form-control filter-select-picker" asp-items="ViewBag.LocationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="LeaveType"></label>
+                        <select asp-for="LeaveType" class="form-control filter-select-picker" asp-items="ViewBag.LeaveTypeItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="LeaveStatus"></label>
+                        <select asp-for="LeaveStatus" class="form-control filter-select-picker" asp-items="ViewBag.LeaveStatusItems"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DateRange"></label>
+                    <input asp-for="DateRange" class="form-control" type="text">
+                </div>
+                <div class="report-btn-div">
+                    <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                </div>
+            </div>
+
+        </form>
+        <div id="EmpLeaveAnalysis"></div>
+    </div>
+</div>
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
+        bindEmployeeDropdown();
+        function loadGridData(btn) {
+            loadingButton(btn);
+            var frm = $("#filter-frm").serialize();
+            var url = `/Reports/FetchLeaveAnalysis?${frm}`;
+            $('#EmpLeaveAnalysis').load(url, function () {
+                unloadingButton(btn);
+                window["datatable"] = $('#EmpLeaveAnalysisReportTable').DataTable(dataTableDefaultOptions);
+                if (window["datatable"].data().any())
+                    $("#btn-pdf,#btn-excel").removeClass("d-none");
+            });
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/LeaveAnalysisReport?${frm}`;
+                window.open(url);
+            }
+        }
+    </script>
+}
