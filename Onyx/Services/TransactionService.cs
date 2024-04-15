@@ -132,7 +132,7 @@ namespace Onyx.Services
             parameters.Add("v_EffDate", model.EffDate);
             parameters.Add("v_EndDate", model.EndDate);
             parameters.Add("v_EditBy", model.EntryBy);
-            parameters.Add("v_EditDt", DateTime.Now);
+            parameters.Add("v_EditDt", DateTime.Now.Date);
             var connection = new SqlConnection(connectionString);
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -187,7 +187,7 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_EntryDt", model.EntryDt);
             parameters.Add("v_EditBy", model.EntryBy);
-            parameters.Add("v_EditDt", DateTime.Now);
+            parameters.Add("v_EditDt", DateTime.Now.Date);
             parameters.Add("v_ChgsTyp", model.ChgsTyp);
             var connection = new SqlConnection(connectionString);
             connection.QueryFirstOrDefault<CommonResponse>
@@ -1017,6 +1017,30 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public int ComDocIssueRcpt_NextSrNo(string CoCd, string type)
+        {
+            var procedureName = "CompDocIssueRcpt_NextSrNo";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_DocTyp", type);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public int VehDocIssueRcpt_NextSrNo(string VehCd, string type)
+        {
+            var procedureName = "VehDocIssueRcpt_NextSrNo";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_VehCd", VehCd);
+            parameters.Add("v_DocTyp", type);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public void SaveEmpDocIssueReceipt(EmpDocumentModel model)
         {
             var trnTyp = model.DocStatus == "HDS0001" ? "R" : model.DocStatus == "HDS0002" ? "I" : "P";
@@ -1029,7 +1053,7 @@ namespace Onyx.Services
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
             parameters.Add("v_ExpDt", model.ExpDt);
-            parameters.Add("v_TrnDt", model.TrnDt);
+            parameters.Add("v_TrnDt", DateTime.Now.Date);
             parameters.Add("v_TransTyp", trnTyp);
             parameters.Add("v_DocStatus", model.DocStatus);
             parameters.Add("v_Status", "N");
@@ -1039,14 +1063,58 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public IEnumerable<EmpDocIssueRcpt_GetRow_Result> GetEmpDocIssueRcpt(string LoginEmpCd, string EmpUser)
+        public void SaveComDocIssueReceipt(CompanyDocumentModel model)
+        {
+            var trnTyp = model.DocStatus == "HDS0001" ? "R" : model.DocStatus == "HDS0002" ? "I" : "P";
+            var procedureName = "CompDocIssueRcpt_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_CompCd", model.CompanyCd);
+            parameters.Add("v_DocTyp", model.DocTypCd);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_TrnDt", DateTime.Now.Date);
+            parameters.Add("v_TransTyp", trnTyp);
+            parameters.Add("v_DocStatus", model.DocStatus);
+            parameters.Add("v_Status", "N");
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void SaveVehDocIssueReceipt(VehDocumentModel model)
+        {
+            var trnTyp = model.DocStatus == "HDS0001" ? "R" : model.DocStatus == "HDS0002" ? "I" : "P";
+            var procedureName = "VehDocIssueRcpt_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_SrNo", model.SrNo);
+            parameters.Add("v_VehCd", model.VehCd);
+            parameters.Add("v_DocTyp", model.DocTypCd);
+            parameters.Add("v_DocNo", model.DocNo);
+            parameters.Add("v_IssueDt", model.IssueDt);
+            parameters.Add("v_IssuePlace", model.IssuePlace);
+            parameters.Add("v_ExpDt", model.ExpDt);
+            parameters.Add("v_TrnDt", DateTime.Now.Date);
+            parameters.Add("v_TransTyp", trnTyp);
+            parameters.Add("v_DocStatus", model.DocStatus);
+            parameters.Add("v_Status", "N");
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpDocIssueRcpt_GetRow_Result> GetEmpDocIssueRcpt(string empCd, string docTyp, int srNo, string LoginEmpCd, string EmpUser, string type)
         {
             var procedureName = "EmpDocIssueRcpt_GetRow_N";
             var parameters = new DynamicParameters();
-            parameters.Add("v_EmpCd", string.Empty);
-            parameters.Add("v_DocTyp", string.Empty);
-            parameters.Add("v_Typ", "1");
-            parameters.Add("v_SrNo", 0);
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_DocTyp", docTyp);
+            parameters.Add("v_Typ", type);
+            parameters.Add("v_SrNo", srNo);
             parameters.Add("v_LoginEmpCd", LoginEmpCd);
             parameters.Add("v_EmpUser", EmpUser);
             var connectionString = _dbGatewayService.GetConnectionString();

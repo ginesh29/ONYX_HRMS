@@ -35,6 +35,11 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Document Type")]
         public string DocTypCd { get; set; }
+        public DateTime? TrnDt { get; set; }
+        [Display(Name = "Status")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        public string DocStatus { get; set; }
+        public string Narr { get; set; }
         public IEnumerable<IFormFile> VehicleDocFiles { get; set; }
         public IEnumerable<VehDocImages_GetRow_Result> VehicleDocsPaths { get; set; }
         public string Mode

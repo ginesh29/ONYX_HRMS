@@ -24,5 +24,6 @@
         public string FormatedEditDt { get; set; }
         public string Filter { get; set; }
         public string Partners { get; set; }
+        public string CoCd { get; set; }
     }
 }

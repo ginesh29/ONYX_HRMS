@@ -6,6 +6,7 @@
         public string EmpName { get; set; }
         public decimal SrNo { get; set; }
         public string DocType { get; set; }
+        public string DocTypCd { get; set; }
         public string DocNo { get; set; }
         public DateTime? IssueDt { get; set; }
         public DateTime? ExpDt { get; set; }

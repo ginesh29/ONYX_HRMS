@@ -27,11 +27,11 @@
                 },
                 {
                     data: function (row) {
-                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
-                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showComDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
                                 <i class="fas fa-pen"></i>
-                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehicleDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
                                 <i class="fas fa-pen"></i>
                                 </button>`
                     }, "width": "80px"
@@ -45,18 +45,32 @@ function showDocumentRenewalModal() {
     var url = `/Transactions/DocumentRenew`;
     window.location.href = url;
 }
-function showDocumentModal(empCd, docTypeCd, srNo) {
-    var url = `/Transactions/GetRenewalDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+function showEmpDocumentModal(empCd, docTypeCd, srNo) {
+    var url = `/Transactions/GetRenewalEmpDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
     $('#DocumentRenewModal').load(url, function () {
         parseDynamicForm();
         $("#DocumentRenewModal").modal("show");
     });
 }
-function saveDocumentRenewal(btn) {
+function showComDocumentModal(docTypeCd, divCd) {
+    var url = `/Transactions/GetRenewalComDocument?docTypeCd=${encodeURI(docTypeCd.trim())}&divCd=${divCd.trim()}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function showVehDocumentModal(vehCd, docType) {
+    var url = `/Transactions/GetRenewalVehicleDocument?vehCd=${vehCd}&docType=${docType}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function saveEmpDocumentRenewal(btn) {
     var frm = $("#document-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Transactions/SaveRenewalDocument", frm[0], function (response) {
+        filePostAjax("/Transactions/SaveRenewalEmpDocument", frm[0], function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#DocumentRenewModal").modal("hide");
@@ -70,7 +84,42 @@ function saveDocumentRenewal(btn) {
         });
     }
 }
-
+function saveComDocumentRenewal(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Transactions/SaveRenewalComDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function saveVehDocumentRenewal(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Transactions/SaveRenewalVehDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
 $("#EmpCd").change(function (e) {
     var empCd = e.target.value ? e.target.value : '0';
     bindDocumentRenewalSerachTable(empCd, "EMP");
@@ -145,6 +194,8 @@ function saveDocumentRenewalApproval(btn, reject) {
     }
 }
 function showHideTypeDropdown() {
+    $('#RenewalDocumentsSearchDataTable').DataTable().destroy();
+    $("#RenewalDocumentsSearchDataTable").addClass("d-none");
     var type = $("input[name='Type']:checked").val();
     $("#EmpCd,#Company,#Vehicle").closest('.form-group').addClass("d-none");
     if (type == "EMP")

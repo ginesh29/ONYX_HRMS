@@ -1,4 +1,4 @@
-﻿@model EmpDocumentModel
+﻿@model CompanyDocumentModel
 <div class="modal-dialog modal-md" style="max-width:700px">
     <!-- Modal content-->
     <div class="modal-content">
@@ -9,21 +9,8 @@
         <div class="modal-body">
             <form id="document-frm">
                 <input type="hidden" asp-for="Cd" />
-                <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
-                @if (string.IsNullOrEmpty(Model.EmpCd))
-                {
-                    <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
-                        <label asp-for="EmpCd"></label>
-                        <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
-                            <option value="@Model.EmpCd">@Model.EmpName (@Model.EmpCd)</option>
-                        </select>
-                        <span asp-validation-for="EmpCd" class="text-danger"></span>
-                    </div>
-                }
-                else
-                {
-                    <input type="hidden" asp-for="EmpCd" />
-                }
+                <input type="hidden" asp-for="SrNo" />
+                <input type="hidden" asp-for="CompanyCd" />
                 <div class=" row">
                     <div class="col-md-6">
                         <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
@@ -91,7 +78,7 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-info" onclick="saveDocumentRenewal(this)">Submit</button>
+            <button type="button" class="btn btn-info" onclick="saveComDocumentRenewal(this)">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

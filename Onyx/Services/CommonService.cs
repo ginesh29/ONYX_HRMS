@@ -43,7 +43,10 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<GetMenuWithPermissions_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            data = data.Where(m => m.ProcessId.Trim() == processId && m.Visible == "Y");
+            if (UserCd != "001")
+                data = data.Where(m => m.ProcessId.Trim() == processId && m.Visible == "Y");
+            else
+                data = data.Select(m => { m.UView = "Y"; m.UAdd = "Y"; m.UEdit = "Y"; m.UDelete = "Y"; return m; });
             return data.FirstOrDefault();
         }
         public IEnumerable<UserBranch_GetRow_Result> GetUserBranches(string UserCd, string CoCd)

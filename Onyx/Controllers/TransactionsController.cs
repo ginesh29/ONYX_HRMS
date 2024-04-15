@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System.Xml;
 
 namespace Onyx.Controllers
 {
@@ -969,25 +970,26 @@ namespace Onyx.Controllers
             });
             return View();
         }
-        public IActionResult GetRenewalDocument(string empCd, string docTypeCd, int srNo)
+        public IActionResult GetRenewalEmpDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var empDocument = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
             var model = new EmpDocumentModel();
-            if (document != null)
+            if (empDocument != null)
                 model = new EmpDocumentModel
                 {
-                    Cd = document.EmpCd,
-                    EmpCd = document.EmpCd,
-                    DocNo = document.DocNo,
-                    DocTypSDes = document.DocTypSDes,
-                    DocTypCd = document.DocTypCd.Trim(),
-                    Expiry = document.Expiry,
-                    ExpDt = document.ExpDt,
-                    IssueDt = document.IssueDt,
-                    SrNo = _transactionService.EmpDocIssueRcpt_NextSrNo(empCd, document.DocTypCd),
-                    IssuePlace = document.IssuePlace,
+                    Cd = empDocument.EmpCd,
+                    EmpCd = empDocument.EmpCd,
+                    DocNo = empDocument.DocNo,
+                    DocTypSDes = empDocument.DocTypSDes,
+                    DocTypCd = empDocument.DocTypCd.Trim(),
+                    Expiry = empDocument.Expiry,
+                    ExpDt = empDocument.ExpDt,
+                    IssueDt = empDocument.IssueDt,
+                    SrNo = _transactionService.EmpDocIssueRcpt_NextSrNo(empCd, empDocument.DocTypCd),
+                    IssuePlace = empDocument.IssuePlace,
                     TrnDt = DateTime.Now.Date,
                 };
+
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
@@ -998,9 +1000,79 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            return PartialView("_RenewalDocumentModal", model);
+            return PartialView("_RenewalEmpDocumentModal", model);
         }
-        public IActionResult SaveRenewalDocument(EmpDocumentModel model)
+        public IActionResult GetRenewalComDocument(string docTypeCd, string divCd)
+        {
+            var document = _organisationService.GetDocuments(_loggedInUser.CompanyCd).FirstOrDefault(m => m.DivCd.Trim() == divCd && m.DocTypCd.Trim() == docTypeCd);
+            var model = new CompanyDocumentModel();
+            if (document != null)
+                model = new CompanyDocumentModel
+                {
+                    DocTypCd = document.DocTypCd.Trim().Split(" _")[0],
+                    Cd = document.DocTypCd.Trim().Split(" _")[0],
+                    DivCd = divCd.Trim(),
+                    DivSDes = document.DivSDes,
+                    DocNo = document.DocNo,
+                    DocTypSDes = document.DocTypSDes,
+                    IssueDt = document.IssueDt,
+                    IssuePlace = document.IssuePlace,
+                    RefNo = document.RefNo,
+                    RefDt = document.RefDt,
+                    Narr = document.Narr,
+                    ExpDt = document.ExpDt,
+                    CompanyCd = document.CoCd,
+                    TrnDt = DateTime.Now.Date,
+                    SrNo = _transactionService.ComDocIssueRcpt_NextSrNo(_loggedInUser.CompanyCd, document.DocTypCd),
+                    DocsPaths = _organisationService.GetDocumentFiles(document.DivCd, document.DocTypCd, _loggedInUser.CompanyCd)
+                };
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.CompanyDocType).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DocStatusItems = _settingService.GetCodeGroupItems(CodeGroup.DocStatus).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_RenewalComDocumentModal", model);
+        }
+        public IActionResult GetRenewalVehicleDocument(string vehCd, string docType)
+        {
+            var vehicleDocument = _organisationService.GetVehicleDocuments(vehCd).FirstOrDefault(m => m.DocTypCd.Trim() == docType);
+            var model = new VehDocumentModel();
+            if (vehicleDocument != null)
+                model = new VehDocumentModel
+                {
+                    Cd = vehicleDocument.VehCd,
+                    IssueDt = vehicleDocument.IssueDt,
+                    IssuePlace = vehicleDocument.IssuePlace,
+                    OthRefNo = vehicleDocument.OthRefNo,
+                    DocNo = vehicleDocument.DocNo,
+                    DocTypCd = vehicleDocument.DocTypCd.Trim(),
+                    DocTypSDes = vehicleDocument.DocTypSDes,
+                    VehName = vehicleDocument.VehName,
+                    ExpDt = vehicleDocument.ExpDt,
+                    TrnDt = DateTime.Now.Date,
+                    SrNo = _transactionService.VehDocIssueRcpt_NextSrNo(vehCd, docType),
+                    VehCd = vehCd,
+                    VehicleDocsPaths = _organisationService.GetVehicleDocumentFiles(vehCd)
+                };
+
+            ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.VehicleDocType).Select(m => new SelectListItem
+            {
+                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Value = m.Code.Trim(),
+            });
+            ViewBag.DocStatusItems = _settingService.GetCodeGroupItems(CodeGroup.DocStatus).Select(m => new SelectListItem
+            {
+                Text = m.ShortDes,
+                Value = m.Code.Trim(),
+            });
+            return PartialView("_RenewalVehDocumentModal", model);
+        }
+        public IActionResult SaveRenewalEmpDocument(EmpDocumentModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             _transactionService.SaveEmpDocIssueReceipt(model);
@@ -1011,9 +1083,31 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult SaveRenewalComDocument(CompanyDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveComDocIssueReceipt(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Document renewal requested successfully"
+            };
+            return Json(result);
+        }
+        public IActionResult SaveRenewalVehDocument(VehDocumentModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.SaveVehDocIssueReceipt(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = $"Document renewal requested successfully"
+            };
+            return Json(result);
+        }
         public IActionResult FetchEmpDocRenewalData()
         {
-            var docs = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var docs = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "1");
             CommonResponse result = new()
             {
                 Data = docs,
@@ -1022,7 +1116,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalDocumentApproval(string empCd, string docTypeCd, int srNo)
         {
-            var document = _transactionService.GetEmpDocIssueRcpt(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.EmployeeCode.Trim() == empCd && m.DocType.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _transactionService.GetEmpDocIssueRcpt(empCd, docTypeCd, srNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "2").FirstOrDefault();
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
             ViewBag.EmpDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
@@ -1052,7 +1146,7 @@ namespace Onyx.Controllers
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
             _transactionService.SaveEmpDocIssueRcptAppr(model);
-            var action = model.Status == "0" ? "approved" : "rejected";
+            var action = model.Status == "A" ? "approved" : "rejected";
             var result = new CommonResponse
             {
                 Success = true,

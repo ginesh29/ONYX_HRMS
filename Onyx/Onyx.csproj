@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Models\ViewModels\CompanyDocumentModel.cs~RF1bf977f.TMP" />
 	  <None Remove="Views\Reports\DocExpired.cshtml~RF15d4804.TMP" />
 	</ItemGroup>
 

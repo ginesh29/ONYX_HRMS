@@ -1,4 +1,4 @@
-﻿@model EmpDocIssueRcpt_GetRow_Result
+﻿@model VehDocumentModel
 <div class="modal-dialog modal-md" style="max-width:700px">
     <!-- Modal content-->
     <div class="modal-content">
@@ -8,24 +8,16 @@
         </div>
         <div class="modal-body">
             <form id="document-frm">
+                <input type="hidden" asp-for="Cd" />
                 <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
-                <input type="hidden" asp-for="Current_Approval_Level"/>
-                <input type="hidden" asp-for="Current_Approval" />
-                <input type="hidden" asp-for="Status" />
-                <div class="form-group @(!string.IsNullOrEmpty(Model.EmployeeCode) ? "disabled-container" : "")">
-                    <label asp-for="EmployeeCode"></label>
-                    <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmployeeCode) ? "disabled" : "")">
-                        <option value="@Model.EmployeeCode">@Model.EmpName (@Model.EmployeeCode)</option>
-                    </select>
-                    <span asp-validation-for="EmployeeCode" class="text-danger"></span>
-                </div>
+                <input type="hidden" asp-for="VehCd" />
                 <div class=" row">
                     <div class="col-md-6">
-                        <div class="form-group @(!string.IsNullOrEmpty(Model.DocType) ? "disabled-container" : "")">
-                            <label asp-for="DocType"></label>
-                            <select asp-for="DocType" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DocType) ? "disabled" : "")" asp-items="ViewBag.EmpDocTypeItems">
+                        <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
+                            <label asp-for="DocTypCd"></label>
+                            <select asp-for="DocTypCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled" : "")" asp-items="ViewBag.DocTypeItems">
                             </select>
-                            <span asp-validation-for="DocType" class="text-danger"></span>
+                            <span asp-validation-for="DocTypCd" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -71,10 +63,10 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="DocStat"></label>
-                            <select asp-for="DocStat" class="form-control select-picker" asp-items="ViewBag.DocStatusItems">
+                            <label asp-for="DocStatus"></label>
+                            <select asp-for="DocStatus" class="form-control select-picker" asp-items="ViewBag.DocStatusItems">
                             </select>
-                            <span asp-validation-for="DocStat" class="text-danger"></span>
+                            <span asp-validation-for="DocStatus" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -85,10 +77,9 @@
                 </div>
             </form>
         </div>
-        <div class="modal-footer" style="display:block">
-            <button type="button" class="btn btn-info" onclick="saveDocumentRenewalApproval(this)">Approve</button>
-            <button type="button" class="btn btn-danger" onclick="saveDocumentRenewalApproval(this,true)">Reject</button>
-            <button type="button" class="btn btn-default float-right" data-dismiss="modal">Close</button>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveVehDocumentRenewal(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>
 </div>

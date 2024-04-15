@@ -44,7 +44,14 @@ namespace Onyx.Models.ViewModels
         public DateTime? EditDt { get; set; }
         public string FormatedEditDt { get; set; }
         public string Filter { get; set; }
+        public int SrNo { get; set; }
         public string Partners { get; set; }
+
+        public string CompanyCd { get; set; }
+        public DateTime? TrnDt { get; set; }
+        [Display(Name = "Status")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        public string DocStatus { get; set; }
         public IEnumerable<IFormFile> DocFiles { get; set; }
         public IEnumerable<CompDocImages_GetRow_Result> DocsPaths { get; set; }
         public string Mode
