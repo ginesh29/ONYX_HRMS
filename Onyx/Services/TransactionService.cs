@@ -234,7 +234,7 @@ namespace Onyx.Services
         }
         public bool ExistingLvApplication(string empCd, DateTime? fromDt, DateTime? endDt)
         {
-            var procedureName = "VerifyExistingLvApplication";
+            var procedureName = "VerifyExistingLvApplication_N";
             var parameters = new DynamicParameters();
             parameters.Add("EmpCd", empCd);
             parameters.Add("StartDt", fromDt);
