@@ -34,13 +34,6 @@ function showCalendarEventModal(cd) {
     var url = `/organisation/GetCalendarEvent?cd=${cd}`;
     $('#CalendarEventModal').load(url, function () {
         parseDynamicForm();
-        $("#Dept_Filter,#Designation_Filter,#Branch_Filter,#Location_Filter").on('change', function () {
-            var departments = $("#Dept_Filter").val();
-            var designations = $("#Designation_Filter").val();
-            var branches = $("#Branch_Filter").val();
-            var locations = $("#Location_Filter").val();
-            bindEmployeeMultipleDropdown(departments, designations, branches, locations);
-        })
         showHideInvite();
         $("#Invite").change(function () {
             showHideInvite();
@@ -92,8 +85,16 @@ function saveCalendarEvent(btn) {
 function showHideInvite() {
     $("#invite-div").addClass("d-none");
     var invite = $("#Invite").is(":checked");
-    if (invite)
-        $("#invite-div").removeClass("d-none");
+    if (invite) {
+        $("#invite-div").removeClass("d-none");        
+        $("#Dept_Filter,#Designation_Filter,#Branch_Filter,#Location_Filter").on('change', function () {
+            var departments = $("#Dept_Filter").val();
+            var designations = $("#Designation_Filter").val();
+            var branches = $("#Branch_Filter").val();
+            var locations = $("#Location_Filter").val();
+            bindEmployeeMultipleDropdown(departments, designations, branches, locations);
+        })
+    }
     else {
         var el = $("#invite-div");
         el.find("textarea").val("");

@@ -8,7 +8,8 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-            { data: "transNo" },
+            { data: "empCd", visible: false },
+            { data: "transNo" },            
             {
                 data: function (row) {
                     return `${row.empName}(${row.empCd.trim()})`
@@ -35,6 +36,7 @@
         ],
     }
 );
+bindEmployeeDropdown();
 function showLoanAdjustModal(transNo, close) {
     var status = !close ? "D" : "C";
     var url = `/Transactions/GetEmpLoanAdjustment?transNo=${transNo}&status=${status}`;
@@ -64,3 +66,11 @@ function saveLoanAdjust(btn, transNo, empCd) {
     }
 
 }
+
+$('#EmpCd').on('change', function (e) {
+    var dataTable = window["datatable"];
+    var value = $(this).val();
+    var columnIndex = $(this).attr("data-index");
+    if (dataTable.column(columnIndex).search() !== value)
+        dataTable.column(columnIndex).search(value).draw();
+});

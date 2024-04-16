@@ -2,11 +2,19 @@
     ViewData["Title"] = "Employee Loan Adjustment/Closing";
 }
 <div class="card">
+    <div class="card-header">
+        <div style="width:350px" class="select2-container float-right">
+            <select id="EmpCd" class="form-control select2" data-index="1">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
     <div class="card-body">
         <table class="table table-sm" id="EmployeeLoanAdjustmentDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>
+                    <th></th>
                     <th>Trans. No.</th>
                     <th>Employee</th>
                     <th>Loan Type</th>

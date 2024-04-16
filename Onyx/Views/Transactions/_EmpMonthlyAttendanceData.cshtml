@@ -9,7 +9,8 @@
         <thead class="thead-dark">
             <tr>
                 <th>No.</th>
-                <th width="500">Employee</th>
+                <th class="d-none">EmpCd</th>
+                <th width="500">Employee Name</th>
                 <th>No Of Days</th>
                 <th>Paid</th>
                 <th>Unpaid</th>
@@ -25,8 +26,10 @@
         {
             <tr>
                 <td>@(item.i + 1)</td>
-                <td>@item.value.EmpName (@item.value.Cd.Trim())
-                    <input asp-for="@Model.AttendanceData[item.i].EmpName" type="hidden" value="@item.value.EmpName (@item.value.Cd.Trim())">
+                <td class="d-none">@item.value.Cd</td>
+                <td>
+                    @item.value.EmpName (@item.value.Cd.Trim())
+                    <input asp-for="@Model.AttendanceData[item.i].EmpName" type="hidden" value="@item.value.EmpName">
                     <input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden">
                 </td>
                 <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /><input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden" /></td>

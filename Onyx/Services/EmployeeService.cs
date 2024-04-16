@@ -51,7 +51,7 @@ namespace Onyx.Services
                 TotalCount = empTotalCount
             };
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployeeItems(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployeeItems(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string section = "0", string Desg = "0")
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRowItems_N";
@@ -60,7 +60,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", div ?? "0");
             parameters.Add("v_Dept", dept ?? "0");
-            parameters.Add("v_Sponsor", sponsor ?? "0");
+            parameters.Add("v_Section", section ?? "0");
             parameters.Add("v_Designation", Desg ?? "0");
             parameters.Add("v_Usercd", UserCd);
             var connection = new SqlConnection(connectionString);
@@ -263,14 +263,14 @@ namespace Onyx.Services
         #endregion
 
         #region Document
-        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string type, string UserCd)
+        public IEnumerable<EmpDocuments_GetRow_Result> GetDocuments(string empCd, string docType, int srNo, string type, string UserCd)
         {
             var procedureName = "EmpDocuments_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_DocTyp", string.Empty);
-            parameters.Add("v_SrNo", 0);
-            parameters.Add("v_Typ", type ?? "N");
+            parameters.Add("v_DocTyp", docType);
+            parameters.Add("v_SrNo", srNo);
+            parameters.Add("v_Typ", type);
             parameters.Add("v_Usercd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

@@ -69,13 +69,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
-            var departmentItems = !string.IsNullOrEmpty(departments) ? departments.Split(",") : [];
-            var designationItems = !string.IsNullOrEmpty(designations) ? designations.Split(",") : [];
-            var branchItems = !string.IsNullOrEmpty(branches) ? branches.Split(",") : [];
-            var locationItems = !string.IsNullOrEmpty(locations) ? locations.Split(",") : [];
-            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd);
-            if (departmentItems.Length != 0 || designationItems.Length != 0 | branchItems.Length != 0 || locationItems.Length != 0)
-                employees = employees.Where(e => branchItems.Contains(e.BranchCd?.Trim()) || departmentItems.Contains(e.DepartmentCd?.Trim()) || designationItems.Contains(e.Desg?.Trim()) || locationItems.Contains(e.LocationCd?.Trim()));
+            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd, branches, departments, locations, designations);
             var items = employees.Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),
@@ -419,9 +413,9 @@ namespace Onyx.Controllers
         {
             return View("DocumentContainer");
         }
-        public IActionResult FetchDocuments(string type, string empCd = "")
+        public IActionResult FetchDocuments(string empCd = "")
         {
-            var documents = _employeeService.GetDocuments(empCd, type, _loggedInUser.UserCd);
+            var documents = _employeeService.GetDocuments(empCd, string.Empty, 0, "N", _loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -430,7 +424,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var document = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserCd).FirstOrDefault();
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel
@@ -810,7 +804,7 @@ namespace Onyx.Controllers
                     Narr = calendarEvent.Narr,
                 };
             else
-                model.SrNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
+                model.SrNo = _commonService.GetNext_SrNo("EmpCalendar_N", "SrNo");
             return PartialView("_CalendarEventModal", model);
         }
         [HttpPost]
@@ -836,7 +830,7 @@ namespace Onyx.Controllers
             try
             {
                 var excelData = _employeeService.GetCalendarEventsFromExcel(file, _loggedInUser.CompanyCd);
-                var nextSerialNo = _commonService.GetNext_SrNo("EmpCalendar", "SrNo");
+                var nextSerialNo = _commonService.GetNext_SrNo("EmpCalendar_N", "SrNo");
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
                 string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"

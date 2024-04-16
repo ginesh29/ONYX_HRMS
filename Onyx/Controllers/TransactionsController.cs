@@ -974,7 +974,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalEmpDocument(string empCd, string docTypeCd, int srNo)
         {
-            var empDocument = _employeeService.GetDocuments(string.Empty, null, _loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.DocTypCd.Trim() == docTypeCd && m.SrNo == srNo);
+            var empDocument = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserCd).FirstOrDefault();
             var model = new EmpDocumentModel();
             if (empDocument != null)
                 model = new EmpDocumentModel

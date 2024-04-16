@@ -309,16 +309,18 @@ function bindEmployeeDropdown() {
         });
     })
 }
+$(document).on('select2:open', () => {
+    document.querySelector('.select2-search__field').focus();
+});
 function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
     var el = $("select#Approvals,select#Attendees");
+    el.empty()
     el.select2();
     getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
         el.select2({
             placeholder: "-- Select --",
             allowClear: true,
             data: response
-        }).on('select2:open', function (e) {
-            $('.select2-search__field').focus();
         });
     })
 }
@@ -389,21 +391,19 @@ function initControls() {
         $("textarea.form-control").trigger('input');
     }, 200)
     $('[data-toggle="tooltip"]').tooltip();
-    $('#DateRange')
-        .on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(`${startDate} - ${endDate}`);
-            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
-            $("#Days").text(`(${days} days)`);
-        })
-        .on('change.daterangepicker', function (ev, picker) {
-            $(this).val("");
-            $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
-            $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
-            $(`#${ev.target.id}Days-txt`).text("");
-            $(`#Days`).text("");
-        });
+    $('#DateRange').on('apply.daterangepicker', function (ev, picker) {
+        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+        var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+        $(this).val(`${startDate} - ${endDate}`);
+        var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+        $("#Days").text(`(${days} days)`);
+    }).on('change.daterangepicker', function (ev, picker) {
+        $(this).val("");
+        $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
+        $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
+        $(`#${ev.target.id}Days-txt`).text("");
+        $(`#Days`).text("");
+    });
 }
 function downloadFile(foldername, filename) {
     $.ajax({

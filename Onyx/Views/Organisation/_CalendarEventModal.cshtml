@@ -110,5 +110,7 @@
     </div>
 </div>
 <script>
-    bindEmployeeMultipleDropdown()
+    $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)
+    initControls();
+    bindEmployeeMultipleDropdown('', '', '', '')
 </script>
