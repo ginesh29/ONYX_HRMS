@@ -350,8 +350,6 @@ function showDocumentModal(empCd, docTypeCd, srNo) {
         parseDynamicForm();
         showHideExpiry();
         $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
-        if (!visibleEmpName)
-            $("#EmpCd").closest(".form-group").addClass("d-none");
         $("#DocumentModal").modal("show");
     });
 }

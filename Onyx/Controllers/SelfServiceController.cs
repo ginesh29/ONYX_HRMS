@@ -147,7 +147,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = m.Des.Trim(),
             });
-            ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
+            ViewBag.TransactionNextNo = _transactionService.GetNextEmpFund_TransNo();
             if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();

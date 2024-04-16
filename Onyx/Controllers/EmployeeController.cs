@@ -453,7 +453,9 @@ namespace Onyx.Controllers
                 model.SrNo = _commonService.GetNext_SrNo("EmpDocuments", "srNo");
                 model.Expiry = true;
             }
+            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
             model.EmpCd = empCd;
+            model.EmpName = employee.Name;
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
@@ -554,6 +556,7 @@ namespace Onyx.Controllers
         public IActionResult GetComponent(string empCd, string edCd, string edTyp, int srNo)
         {
             var component = _employeeService.GetComponents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
+            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
             var model = new EmpEarnDedModel();
             if (component != null)
             {
@@ -573,10 +576,10 @@ namespace Onyx.Controllers
                     SrNo = component.SrNo,
                     Type = component.Type
                 };
-                var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
-                model.CurrCd = employee.CurrCd.Trim();
+                model.CurrCd = employee.CurrencyCd.Trim();
             }
             model.EmpCd = empCd;
+            model.Emp = employee.Name;
             ViewBag.ComponentClassTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new
             SelectListItem
             {

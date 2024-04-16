@@ -43,7 +43,7 @@ namespace Onyx.Services
             var procedureName = "EmpLoan_Due";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", EmpCd);
-            parameters.Add("v_Prd", EffDt);
+            parameters.Add("v_Prd", string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<int>
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -151,7 +151,7 @@ namespace Onyx.Services
         }
         public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string EmpCd, string UserOrEmp, string CoCd)
         {
-            var procedureName = "EmpLoan_GetRow";
+            var procedureName = "EmpLoan_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", transNo);
             parameters.Add("v_Typ", "2");
@@ -613,7 +613,7 @@ namespace Onyx.Services
             parameters.Add("v_CancelBy", model.ApprBy);
             parameters.Add("v_CancelDt", DateTime.Now.Date);
             parameters.Add("v_Remarks", model.Remarks);
-            parameters.Add("v_LvSalary", model.Amount);
+            parameters.Add("v_LvSalary", model.Status == "0" ? model.Amount : 0);
             parameters.Add("v_Disburse", "Y");
             parameters.Add("v_Appltyp", model.Type);
             var connection = new SqlConnection(connectionString);
