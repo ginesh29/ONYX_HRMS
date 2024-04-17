@@ -171,7 +171,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
-            parameters.Add("v_ApprAmt", model.ApprAmt ?? 0);
+            parameters.Add("v_ApprAmt", model.ApprAmt);
             parameters.Add("v_LoanApprBy", model.LoanApprBy);
             parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now.Date);
             parameters.Add("v_Status", model.LoanStatus);

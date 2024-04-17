@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
+using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
+using Rotativa.AspNetCore.Options;
+using Rotativa.AspNetCore;
 using System.Xml;
 
 namespace Onyx.Controllers
@@ -571,6 +574,14 @@ namespace Onyx.Controllers
         public IActionResult EmpLoanAdjustment()
         {
             return View();
+        }
+        public IActionResult LoanAdvanceSlip(string transNo,string empCd)
+        {
+            var employees = _transactionService.GetEmpLoanDetail(transNo, empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(employees)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
         }
         public IActionResult FetchEmpLoanAdjustmentData()
         {

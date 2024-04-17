@@ -5,7 +5,7 @@ namespace Onyx.Models.StoredProcedure
     public class EmpLoan_GetRow_Result
     {
         public string TransNo { get; set; }
-        public DateTime? TransDt { get; set; }
+        public DateTime TransDt { get; set; }
         public string FormatedTransDt { get; set; }
         public string EmployeeCode { get; set; }
         public string EmpName { get; set; }
@@ -15,7 +15,7 @@ namespace Onyx.Models.StoredProcedure
         public string DocRef { get; set; }
         public string DocDt { get; set; }
         public string FormatedDocDt { get; set; }
-        public int? Amt { get; set; }
+        public int Amt { get; set; }
         public string Purpose { get; set; }
         [Display(Name = "Narration")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
@@ -31,11 +31,11 @@ namespace Onyx.Models.StoredProcedure
         public string ApplicationStatus { get; set; }
         [Display(Name = "Approved Amount")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        public int? ApprAmt { get; set; }
+        public int ApprAmt { get; set; }
         [Display(Name = "Recovery Mode")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string RecoMode { get; set; }
-        public decimal? RecoPrd { get; set; }        
+        public decimal? RecoPrd { get; set; }
         public decimal? NoInstReq { get; set; }
         [Display(Name = "Deduct. Start Date")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
@@ -75,7 +75,7 @@ namespace Onyx.Models.StoredProcedure
         public string CompanyEmail { get; set; }
         public string CompanyLogo { get; set; }
         public string LoanTypeCd { get; set; }
-        public int? Balance { get; set; }
+        public int Balance { get; set; }
         public decimal DetailSrno { get; set; }
         [Display(Name = "Guarantor Details")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

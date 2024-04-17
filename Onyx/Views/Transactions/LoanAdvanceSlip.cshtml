@@ -1,0 +1,98 @@
+﻿@model EmpLoan_GetRow_Result
+@{
+    ViewData["Title"] = "Loan/Salary Advance Slip";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <h3 class="text-center mb-5">@ViewData["Title"]</h3>
+    <h6 class="text-right"><span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now</h6>
+    <hr />
+    <table>
+        <tr>
+            <th width="300">Trans. No.</th>
+            <td>: @Model.TransNo</td>
+        </tr>
+        <tr>
+            <th>Trans. Date</th>
+            <td>: @Model.TransDt.FormatDate()</td>
+        </tr>
+        <tr>
+            <th>Employee</th>
+            <td>: @Model.EmpName (@Model.EmployeeCode.Trim())</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>: @Model.Loaction</td>
+        </tr>
+        <tr>
+            <th>Sponsor</th>
+            <td>: @Model.Sponsor</td>
+        </tr>
+        <tr>
+            <th>Branch</th>
+            <td>: @Model.EmpBranch</td>
+        </tr>
+        <tr>
+            <th>Loan Type</th>
+            <td>: @Model.LoanType</td>
+        </tr>
+        <tr>
+            <th>Loan Amount</th>
+            <td>: @Model.ApprAmt.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <th>No Of Installments</th>
+            <td>: @Model.NoInst</td>
+        </tr>
+        <tr>
+            <th>Installment Amount</th>
+            <td>: @Model.Amt.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <th>Previous Due Amount</th>
+            <td>: @Model.Balance.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <th>Total Due Amount</th>
+            <td>: @Model.ApprAmt.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <th>Approvals</th>
+            <td>: @Model.Approvals</td>
+        </tr>
+    </table>
+    <hr />
+    <div class="mt-3 mb-3" style="width: 100%; display: table;">
+        <div style="display: table-row">
+            <div class="font-weight-bold" style="width: 35%; display: table-cell;">Sectioned By: <span class="border-bottom">____________________</span></div>
+            <div class="font-weight-bold" style="width: 35%; display: table-cell;">Prepared By: <span class="border-bottom">____________________</span></div>
+            <div class="font-weight-bold" style="display: table-cell;">Issued By: <span class="border-bottom">____________________</span></div>
+        </div>
+    </div>
+    <hr />
+    <h4>Received Advance Amount AED  @ExtensionMethod.NumberToWords(Model.ApprAmt) (AED.@Model.ApprAmt.ToString("0.00"))</h4>
+    <table>
+        <tr>
+            <td width="120px">Employee Name</td>
+            <td width="400px"></td>
+            <td width="120px">Guarantor Name</td>
+            <td width="250px"></td>
+        </tr>
+        <tr>
+            <td width="120px">Signature</td>
+            <td width="400px"></td>
+            <td width="120px">Signature</td>
+            <td width="250px"></td>
+        </tr>
+        <tr>
+            <td width="120px">Date of Issue</td>
+            <td width="400px"></td>
+        </tr>
+    </table>
+</body>
+</html>

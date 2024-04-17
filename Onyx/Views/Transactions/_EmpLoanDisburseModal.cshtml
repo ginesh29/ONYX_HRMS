@@ -16,7 +16,7 @@
                     <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
                     <div><span class="font-weight-bold">Employee: </span>@($"{Model.EmpName}({Model.EmployeeCode.Trim()})")</div>
                     <div><span class="font-weight-bold">Designation: </span>@Model.Desg</div>
-                    <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
+                    <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.FormatDate()</div>
                     <div><span class="font-weight-bold">Loan Type: </span>@Model.LoanType</div>
                     <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt</div>
                     <div><span class="font-weight-bold">Ref Date: </span>@Model.DocRef</div>

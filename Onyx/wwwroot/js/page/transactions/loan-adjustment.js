@@ -9,7 +9,7 @@
                 }
             },
             { data: "empCd", visible: false },
-            { data: "transNo" },            
+            { data: "transNo" },
             {
                 data: function (row) {
                     return `${row.empName}(${row.empCd.trim()})`
@@ -25,13 +25,10 @@
                     return `<button class="btn btn-sm btn-info" onclick="showLoanAdjustModal('${row.transNo.trim()}')">
                                 <i class="fas fa-pencil"></i>
                             </button>
-                            <button class="btn btn-sm btn-success ml-2" onclick="showLoanAdjustModal('${row.transNo.trim()}',true)">
-                                <i class="fa fa-times"></i>
-                            </button>
-                            <button class="btn btn-sm btn-warning ml-2" onclick="printLoanAdjust('${row.transNo.trim()}')">
+                            <button class="btn btn-sm btn-warning ml-2" onclick="printLoanAdjust('${row.transNo.trim()}','${row.empCd.trim()}')">
                                 <i class="fa fa-print"></i>
                             </button>`;
-                }, "width": "120px"
+                }, "width": "80px"
             }
         ],
     }
@@ -66,7 +63,9 @@ function saveLoanAdjust(btn, transNo, empCd) {
     }
 
 }
-
+function printLoanAdjust(transNo, empCd) {
+    window.open(`/Transactions/LoanAdvanceSlip?transNo=${transNo}&empCd=${empCd}`);
+}
 $('#EmpCd').on('change', function (e) {
     var dataTable = window["datatable"];
     var value = $(this).val();
