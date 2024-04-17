@@ -24,7 +24,7 @@ namespace Onyx.Services
             parameters.Add("v_Department", filterModel.Department ?? "All");
             parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
             parameters.Add("v_Desg", filterModel.Designation ?? "All");
-            parameters.Add("v_Age", filterModel.Age);
+            parameters.Add("v_Age", filterModel.Age ?? "0");
             parameters.Add("v_Qualification", filterModel.Qualification ?? "All");
             parameters.Add("v_Status", filterModel.Status ?? "All");
             parameters.Add("v_Nationality", filterModel.Nationality ?? "All");

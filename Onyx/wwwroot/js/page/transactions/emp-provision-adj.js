@@ -64,11 +64,12 @@ function deleteEmpProvisionAdj(transNo) {
         }
     });
 }
-function saveEmpProvisionAdj(btn) {
+function saveEmpProvisionAdj(btn, approval) {
     var frm = $("#emp-provision-adj-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        postAjax("/Transactions/SaveEmpProvisionAdj", frm.serialize(), function (response) {
+        var url = !approval ? "/Transactions/SaveEmpProvisionAdj" : "/Transactions/ApproveEmpProvisionAdj";
+        postAjax(url, frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmpProvisionAdjModal").modal("hide");

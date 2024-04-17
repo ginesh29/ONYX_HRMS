@@ -18,7 +18,7 @@
         public DateTime RefDt { get; set; }
         public string Status { get; set; }
         public DateTime ApprDt { get; set; }
-        public int CurrentApprovalLevel { get; set; }
-        public string CurrentApproval { get; set; }
+        public int Current_Approval_Level { get; set; }
+        public string Current_Approval { get; set; }
     }
 }

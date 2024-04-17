@@ -680,12 +680,12 @@ namespace Onyx.Services
         #endregion
 
         #region Emp Provision Adjustment
-        public IEnumerable<Empprovisionsadj_GetRow_Result> GetEmpProvisionAdjData(string empCd, string empUser)
+        public IEnumerable<Empprovisionsadj_GetRow_Result> GetEmpProvisionAdjData(string transNo, string type, string empCd, string empUser)
         {
-            var procedureName = "Empprovisionsadj_GetRow";
+            var procedureName = "Empprovisionsadj_GetRow_N";
             var parameters = new DynamicParameters();
-            parameters.Add("v_Param", string.Empty);
-            parameters.Add("v_Typ", "6");
+            parameters.Add("v_Param", transNo);
+            parameters.Add("v_Typ", type);
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EmpUser", empUser);
             parameters.Add("v_Usercd", _loggedInUser.UserCd);
@@ -706,7 +706,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveEmpProvisionAdj(EmpprovisionsadjModel model)
         {
-            var procedureName = "Empprovisionsadj_Update";
+            var procedureName = "Empprovisionsadj_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_TransDt", model.TransDt);
@@ -725,14 +725,14 @@ namespace Onyx.Services
 
         public CommonResponse SetEmpprovisionsadjAppr(EmpprovisionsadjModel model)
         {
-            var procedureName = "EmpprovisionsadjAppr_Update";
+            var procedureName = "EmpprovisionsadjAppr_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_ApprLvl", model.CurrentApprovalLevel);
             parameters.Add("v_ApprBy", model.ApprBy);
             parameters.Add("v_ApprDt", model.ApprDt);
-            parameters.Add("v_Status", model.Status);
-            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_Status", "A");
+            parameters.Add("v_Narr", model.Remarks);
             parameters.Add("v_EntryBy", model.EntryBy);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

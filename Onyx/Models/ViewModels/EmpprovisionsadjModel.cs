@@ -31,7 +31,7 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Status { get; set; }
         public string ApprBy { get; set; }
-        public DateTime ApprDt { get; set; }
+        public DateTime? ApprDt { get; set; }
         public string EntryBy { get; set; }
         public DateTime EntryDt { get; set; }
         public string EditBy { get; set; }

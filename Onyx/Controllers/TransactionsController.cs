@@ -575,7 +575,7 @@ namespace Onyx.Controllers
         {
             return View();
         }
-        public IActionResult LoanAdvanceSlip(string transNo,string empCd)
+        public IActionResult LoanAdvanceSlip(string transNo, string empCd)
         {
             var employees = _transactionService.GetEmpLoanDetail(transNo, empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             return new ViewAsPdf(employees)
@@ -638,7 +638,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchProvisionAdjData()
         {
-            var transferData = _transactionService.GetEmpProvisionAdjData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var transferData = _transactionService.GetEmpProvisionAdjData(string.Empty, "6", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = transferData,
@@ -647,14 +647,14 @@ namespace Onyx.Controllers
         }
         public IActionResult GetProvisionAdj(string transNo)
         {
-            var empprovisionsadj = _transactionService.GetEmpProvisionAdjData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var empprovisionsadj = _transactionService.GetEmpProvisionAdjData(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault();
             var model = new EmpprovisionsadjModel();
             if (empprovisionsadj != null)
                 model = new EmpprovisionsadjModel
                 {
                     Amt = empprovisionsadj.Amt,
-                    ApprBy = empprovisionsadj.ApprBy,
-                    ApprDt = empprovisionsadj.ApprDt,
+                    ApprBy = empprovisionsadj.Current_Approval?.Trim(),
+                    ApprDt = DateTime.Now.Date,
                     Days = empprovisionsadj.Days,
                     EmpCd = empprovisionsadj.EmpCd,
                     Narr = empprovisionsadj.Narr,
@@ -665,8 +665,8 @@ namespace Onyx.Controllers
                     Status = empprovisionsadj.Status,
                     TransDt = empprovisionsadj.TransDt,
                     TransNo = empprovisionsadj.TransNo,
-                    CurrentApproval = empprovisionsadj.CurrentApproval,
-                    CurrentApprovalLevel = empprovisionsadj.CurrentApprovalLevel,
+                    CurrentApproval = empprovisionsadj.Current_Approval,
+                    CurrentApprovalLevel = empprovisionsadj.Current_Approval_Level,
                     Name = empprovisionsadj.Name,
                     Prov = empprovisionsadj.Prov
                 };
@@ -694,6 +694,7 @@ namespace Onyx.Controllers
         public IActionResult ApproveEmpProvisionAdj(EmpprovisionsadjModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
             var result = _transactionService.SetEmpprovisionsadjAppr(model);
             return Json(result);
         }
