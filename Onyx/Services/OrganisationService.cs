@@ -697,7 +697,8 @@ namespace Onyx.Services
         }
         public string GetDesignation_SrNo()
         {
-            var query = $"SELECT 'DESG' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DESG', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Designation;";
+            //var query = $"SELECT 'DESG' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DESG', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Designation;";
+            var query = $"SELECT 'DES'+right('00'+ convert(varchar(2),isnull(Max(substring(cd,4,len(trim(cd)))),0)+1),2)  AS NextCode FROM Designation";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>
