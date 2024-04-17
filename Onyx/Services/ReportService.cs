@@ -3,9 +3,6 @@ using System.Data.SqlClient;
 using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using MailKit.Search;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Onyx.Services
 {
@@ -14,20 +11,28 @@ namespace Onyx.Services
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         public IEnumerable<GetRepo_EmpShortList_Result> GetEmpShortList(EmpShortListFilterModel filterModel, string CoCd)
         {
+            var branches = filterModel.Branches != null ? string.Join(",", filterModel.Branches) : null;
+            var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
+            var statuses = filterModel.Statuses != null ? string.Join(",", filterModel.Statuses) : null;
+            var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
+            var nationalities = filterModel.Nationalities != null ? string.Join(",", filterModel.Nationalities) : null;
+
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpShortList_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
-            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Branch", branches ?? "All");
             parameters.Add("v_Location", filterModel.Section ?? "All");
             parameters.Add("v_Department", filterModel.Department ?? "All");
-            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            parameters.Add("v_Sponsor", sponsors ?? "All");
             parameters.Add("v_Desg", filterModel.Designation ?? "All");
             parameters.Add("v_Age", filterModel.Age ?? "0");
             parameters.Add("v_Qualification", filterModel.Qualification ?? "All");
-            parameters.Add("v_Status", filterModel.Status ?? "All");
-            parameters.Add("v_Nationality", filterModel.Nationality ?? "All");
+            parameters.Add("v_Status", statuses ?? "All");
+            parameters.Add("v_Nationality", nationalities ?? "All");
+            parameters.Add("v_EmployeeType", empTypes ?? "All");
+            parameters.Add("v_RowsCnt", filterModel.Active ? "0" : "1");
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpShortList_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

@@ -48,8 +48,7 @@
                 var url = `/Reports/FetchEmpTransactions?${frm.serialize()}`;
                 $('#EmpTransactions').load(url, function () {
                     unloadingButton(btn);
-                    window["datatable"] = $('#EmpTransactionsReportTable').DataTable(dataTableDefaultOptions);
-                    if (window["datatable"].data().any())
+                    if ($("#EmpTransactionsReportTable tr").length > 2)
                         $("#btn-pdf,#btn-excel").removeClass("d-none");
                 });
             }

@@ -33,7 +33,7 @@ namespace Onyx.Controllers
             _fileHelper = new FileHelper();
         }
         public IActionResult Profiles()
-        {
+        {            
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),

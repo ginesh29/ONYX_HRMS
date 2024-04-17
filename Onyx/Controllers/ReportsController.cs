@@ -5,7 +5,6 @@ using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
-using System.Security.Cryptography.Xml;
 
 namespace Onyx.Controllers
 {
@@ -16,8 +15,9 @@ namespace Onyx.Controllers
         private readonly AuthService _authService;
         private readonly OrganisationService _organisationService;
         private readonly SettingService _settingService;
+        private readonly EmployeeService _employeeService;
         private readonly LoggedInUserModel _loggedInUser;
-        public ReportsController(ReportService reportService, AuthService authService, CommonService commonService, OrganisationService organisationService, SettingService settingService)
+        public ReportsController(ReportService reportService, AuthService authService, CommonService commonService, OrganisationService organisationService, SettingService settingService, EmployeeService employeeService)
         {
             _reportService = reportService;
             _authService = authService;
@@ -25,6 +25,7 @@ namespace Onyx.Controllers
             _commonService = commonService;
             _organisationService = organisationService;
             _settingService = settingService;
+            _employeeService = employeeService;
         }
         #region Emp Short List
         public IActionResult EmpShortList()
@@ -110,7 +111,7 @@ namespace Onyx.Controllers
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
             var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
-            return PartialView("_EmpTransactions", transactions);
+            return PartialView("_EmpTransactions", new { Data = transactions });
         }
         public IActionResult EmpTransactionsReport(EmpTransactionFilterModel filterModel)
         {
@@ -118,8 +119,10 @@ namespace Onyx.Controllers
             filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
+            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserCd).Employees.FirstOrDefault();
+            var ReportGeneratedBy = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? employee.Name : _loggedInUser.UserAbbr;
             var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
-            return new ViewAsPdf(transactions)
+            return new ViewAsPdf(new { Data = transactions, ReportGeneratedBy })
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
                 PageOrientation = Orientation.Landscape

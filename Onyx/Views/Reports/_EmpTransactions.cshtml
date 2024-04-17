@@ -1,4 +1,9 @@
-﻿@model IEnumerable<GetRepo_EmpTransactionDetail_Result>
+﻿@model dynamic
+@{
+    var grandTotal = 0;
+    IEnumerable<GetRepo_EmpTransactionDetail_Result> data = Model.Data;
+    var detail = data.FirstOrDefault();
+}
 <div class="table-responsive">
     <table class="table table-sm" id="EmpTransactionsReportTable">
         <thead class="thead-dark">
@@ -21,9 +26,10 @@
                 <th>Net Salary</th>
             </tr>
         </thead>
-        @foreach (var item in Model)
+        @foreach (var item in data)
         {
             var netSalary = item.BasicSalaray + item.Allowance + item.OverTime + item.LastSalary + item.LSA + item.LTA + item.TMFPay - item.TMF + item.StaffAdvGiven - item.StaffAdvCollected + item.StaffFundGiven - item.StaffFundCollected - item.Deductions + item.Pension;
+            grandTotal += netSalary;
             <tr>
                 <th>@item.Month.Substring(0, 3) @item.Yr</th>
                 <td>@item.BasicSalaray</td>
@@ -42,6 +48,37 @@
                 <td>@item.Pension</td>
                 <td>@netSalary</td>
             </tr>
+        }
+        @if (data.Count() > 0)
+        {
+            <tfoot class="table-secondary">
+                <tr>
+                    <th>Grand Total</th>
+                    <td>@data.Sum(m => m.BasicSalaray)</td>
+                    <td>@data.Sum(m => m.Allowance)</td>
+                    <td>@data.Sum(m => m.OverTime)</td>
+                    <td>@data.Sum(m => m.LastSalary)</td>
+                    <td>@data.Sum(m => m.LSA)</td>
+                    <td>@data.Sum(m => m.LTA)</td>
+                    <td>@data.Sum(m => m.TMFPay)</td>
+                    <td>@data.Sum(m => m.TMF)</td>
+                    <td>@data.Sum(m => m.StaffAdvGiven)</td>
+                    <td>@data.Sum(m => m.StaffAdvCollected)</td>
+                    <td>@data.Sum(m => m.StaffFundGiven)</td>
+                    <td>@data.Sum(m => m.StaffFundCollected)</td>
+                    <td>@data.Sum(m => m.Deductions)</td>
+                    <td>@data.Sum(m => m.Pension)</td>
+                    <td>@grandTotal</td>
+                </tr>
+            </tfoot>
+        }
+        else
+        {
+            <tfoot>
+                <tr>
+                    <td>@CommonMessage.EMPTYGRID</td>
+                </tr>
+            </tfoot>
         }
     </table>
 </div>
