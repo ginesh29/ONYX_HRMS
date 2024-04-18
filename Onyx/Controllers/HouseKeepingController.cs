@@ -17,9 +17,9 @@ namespace Onyx.Controllers
         }
         public IActionResult MonthEndProcess()
         {
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult SaveMonthEndProcess(string MonthYear)

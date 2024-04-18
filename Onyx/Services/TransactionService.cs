@@ -17,7 +17,7 @@ namespace Onyx.Services
         public CommonResponse SaveLoan(EmpLoanModel model)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpLoan_Update";
+            var procedureName = "EmpLoan_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_TransDt", model.TransDt);

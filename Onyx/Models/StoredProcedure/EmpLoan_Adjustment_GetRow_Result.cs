@@ -1,4 +1,6 @@
-﻿namespace Onyx.Models.StoredProcedure
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Onyx.Models.StoredProcedure
 {
     public class EmpLoan_Adjustment_GetRow_Result
     {
@@ -11,8 +13,8 @@
         public string DocRef { get; set; }
         public string DocDt { get; set; }
         public string FormatedDocDt { get; set; }
-        public decimal? Amt { get; set; }
-        public decimal? ApprAmt { get; set; }
+        public decimal Amt { get; set; }
+        public decimal ApprAmt { get; set; }
         public string RecoPrd { get; set; }
         public decimal? NoInst { get; set; }
         public string LoanApprBy { get; set; }
@@ -27,9 +29,12 @@
         public string PayMode { get; set; }
         public string ChgsTyp { get; set; }
         public decimal? ChgsPerc { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        [Display(Name = "Recovery Mode")]
         public string RecoMode { get; set; }
         public string Purpose { get; set; }
         public string Narr { get; set; }
         public string EntryBy { get; set; }
+        public bool Closed { get; set; }
     }
 }

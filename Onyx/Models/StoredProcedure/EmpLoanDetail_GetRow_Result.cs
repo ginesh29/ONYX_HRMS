@@ -9,9 +9,9 @@
         public string EdTyp { get; set; }
         public string Typ { get; set; }
         public string RecoTyp { get; set; }
-        public int? AmtVal { get; set; }
+        public decimal AmtVal { get; set; }
         public decimal? ChgsAmt { get; set; }
-        public DateTime? EffDate { get; set; }
+        public DateTime EffDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }

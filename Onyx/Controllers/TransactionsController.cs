@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
-using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
-using Rotativa.AspNetCore.Options;
 using Rotativa.AspNetCore;
-using System.Xml;
 
 namespace Onyx.Controllers
 {
@@ -592,21 +588,32 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult GetEmpLoanAdjustment(string transNo, string status)
+        public IActionResult GetEmpLoanAdjustment(string transNo)
         {
             var loanDetails = _transactionService.GetEmpLoanAdjustmentData(_loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
-            ViewBag.EmpLoanAdjDetail = _transactionService.GetEmpLoanAdjDetail(transNo, status, _loggedInUser.CompanyCd);
-            //var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
-            //loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
-            //loanDetails.EmpBranchCd = empDetail.Div.Trim();
-            //ViewBag.PaymentModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new
-            //SelectListItem
-            //{
-            //    Value = m.Cd.Trim(),
-            //    Text = $"{m.SDes}"
-            //});
-            //ViewBag.LoanStatusItems = _commonService.GetLoanStatus();
+            ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
             return PartialView("_EmpLoanAdjustmentModal", loanDetails);
+        }
+        public IActionResult GetEmpLoanEmi(string transNo, string status, decimal amount)
+        {
+            var empLoanAdjDetail = _transactionService.GetEmpLoanAdjDetail(transNo, status, _loggedInUser.CompanyCd);
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.CurrentMonth = currentMonth;
+            ViewBag.CurrentYear = currentYear;
+            var totalLoan = 1000;
+            var remainingLoan = totalLoan - amount;
+            var noOfInst = 4;
+            decimal emi = remainingLoan / noOfInst;
+            if (amount > 0)
+            {
+                empLoanAdjDetail = empLoanAdjDetail.Select(m => { m.AmtVal = emi; return m; });
+            }
+            return PartialView("_LoanEmiTable", empLoanAdjDetail);
         }
         public IActionResult SaveEmpLoanAdj(IEnumerable<EmpLoanDetail_GetRow_Result> empLoanAdjDetail, string transNo, string type, string empCd, string processId)
         {
@@ -616,7 +623,7 @@ namespace Onyx.Controllers
                 item.EmpCd = empCd;
                 item.Typ = type;
                 item.EntryBy = _loggedInUser.UserAbbr;
-                _transactionService.SaveEmpLoanAdj(item);
+                //_transactionService.SaveEmpLoanAdj(item);
             }
             var ActivityAbbr = "UPD";
             var action = type == "D" ? "adjusted" : "closed";
@@ -725,9 +732,9 @@ namespace Onyx.Controllers
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             ViewBag.WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
             return View();
         }
@@ -815,9 +822,9 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = m.SDes
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchEmpVariablePayDedComponents(VariablePayDedComponentFilterModel model)
@@ -1173,9 +1180,9 @@ namespace Onyx.Controllers
         #region Pre Payroll Process
         public IActionResult PrePayRollProcess()
         {
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),

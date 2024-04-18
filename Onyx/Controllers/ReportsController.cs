@@ -70,9 +70,9 @@ namespace Onyx.Controllers
                 Text = m.ShortDes,
                 Value = m.Code.Trim(),
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchEmpShortListData(EmpShortListFilterModel filterModel)
@@ -99,9 +99,9 @@ namespace Onyx.Controllers
         #region Emp Transactions
         public IActionResult EmpTransactions()
         {
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchEmpTransactions(EmpTransactionFilterModel filterModel)
@@ -160,9 +160,9 @@ namespace Onyx.Controllers
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchProvisions(ProvisionFilterModel filterModel)
@@ -196,9 +196,9 @@ namespace Onyx.Controllers
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchPaySlips(PaySlipFilterModel filterModel)
@@ -300,9 +300,9 @@ namespace Onyx.Controllers
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
             });
-            var currntMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-            var currntYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            ViewBag.currentMonthYear = $"{currntMonth}/{currntYear}";
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             return View();
         }
         public IActionResult FetchEmpLoan(EmpLoanFilterModel filterModel)

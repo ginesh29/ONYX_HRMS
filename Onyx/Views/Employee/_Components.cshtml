@@ -2,6 +2,14 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
 }
+<div class="row">
+    <div class="col-md-2">
+        <div class="form-group">
+            <label name="Basic">Basic</label>
+            <input id="Basic" name="Basic" class="form-control int-input" onchange="saveBasic(this)" value="@ViewBag.Basic">
+        </div>
+    </div>
+</div>
 @if (componentPermission.UView == "Y")
 {
     @if (componentPermission.UAdd == "Y")

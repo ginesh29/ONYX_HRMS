@@ -1,7 +1,6 @@
 ﻿@model EmpLoan_Adjustment_GetRow_Result
 @{
     var dateFormat = ExtensionMethod.GetDateFormat();
-    List<EmpLoanDetail_GetRow_Result> empLoanAdjDetail = ViewBag.EmpLoanAdjDetail;
 }
 <div class="modal-dialog" style="max-width:850px">
     <!-- Modal content-->
@@ -12,16 +11,16 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="col-md-6 form-border-right">
+                <div class="col-md-7 form-border-right">
                     <h5 class="text-primary">Application Details</h5>
                     <div><span class="font-weight-bold">Transaction No: </span>@Model.TransNo</div>
                     <div><span class="font-weight-bold">Employee: </span>@($"{Model.EmpName}({Model.EmpCd.Trim()})")</div>
                     <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Loan Type: </span>@Model.LoanTyp</div>
-                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt</div>
+                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt.ToString("0.00")</div>
                     <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.LoanApprDt).ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Deduct. Start Date: </span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
-                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt</div>
+                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt.ToString("0.00")</div>
                     <div><span class="font-weight-bold">Recovery Mode: </span>@Model.RecoMode</div>
                     <div><span class="font-weight-bold">Recovery Period: </span>@Model.RecoPrd</div>
                     <div><span class="font-weight-bold">No of Installments: </span>@Model.NoInst</div>
@@ -29,44 +28,29 @@
                     <div><span class="font-weight-bold">Interest Rate: </span>@Model.ChgsPerc%</div>
                     <div><span class="font-weight-bold">Loan Balance: </span></div>
                 </div>
-                <div class="col-md-6 pl-3">
+                <div class="col-md-5 pl-3">
                     <form id="loan-adj-frm">
+                        <input type="hidden" asp-for="NoInst" />
+                        <input type="hidden" asp-for="LoanStatus" />
+                        <input type="hidden" asp-for="ApprAmt" value="@Model.ApprAmt.ToString("0.00")" />
+                        <input type="hidden" asp-for="EmpCd" />
+                        <input type="hidden" asp-for="TransNo" />
                         <input type="hidden" asp-for="LoanStatus" />
                         <h5 class="text-primary">Adjustment</h5>
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Ded. Date</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            @foreach (var item in empLoanAdjDetail.Select((value, i) => new { i, value }))
-                            {
-                                <tr>
-                                    <th>
-                                        @(item.i + 1)
-                                        <input asp-for="@empLoanAdjDetail[item.i].SrNo" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].EmpCd" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].EdCd" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].EdTyp" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].RecoTyp" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].AmtVal" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].ChgsAmt" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].EndDate" type="hidden" />
-                                        <input asp-for="@empLoanAdjDetail[item.i].EffDate" type="hidden" />
-                                    </th>
-                                    <th>@Convert.ToDateTime(item.value.EffDate).ToString(dateFormat)</th>
-                                    <th>@item.value.AmtVal</th>
-                                </tr>
-                            }
-                        </table>
+                        <div id="EmpLoanEmi-container"></div>
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox">
-                            <label class="custom-control-label font-weight-normal">Closed</label>
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Closed" onchange="ClosedLoan()">
+                            <label asp-for="Closed" class="custom-control-label font-weight-normal">Closed</label>
                         </div>
-                        <div><span class="font-weight-bold">Balance Amt: </span></div>
-
+                        <div class="row mt-3 d-none" id="RecoMode-container">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label asp-for="RecoMode"></label>
+                                    <select asp-for="RecoMode" type="text" class="form-control select-picker" asp-items="ViewBag.RecModeItems"></select>
+                                    <span asp-validation-for="RecoMode" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

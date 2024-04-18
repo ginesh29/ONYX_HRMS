@@ -414,8 +414,8 @@ namespace Onyx.Services
                 string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
                 if (!string.IsNullOrEmpty(storedProcedureText))
                 {
-                    string filename = item.Contains("_N") ? item : $"{item}_N";
-                    storedProcedureText = storedProcedureText.Replace(item, filename).Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
+                    //string filename = item.Contains("_N") ? item : $"{item}_N";
+                    storedProcedureText = storedProcedureText.Replace(item, item).Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
                     result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #", StringComparison.InvariantCultureIgnoreCase).Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#", StringComparison.InvariantCultureIgnoreCase)} \n Go \n";
                 }
             }

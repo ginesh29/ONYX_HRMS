@@ -1,0 +1,37 @@
+﻿ @model List<EmpLoanDetail_GetRow_Result>
+@{
+    var currentMonth = Convert.ToInt32(ViewBag.CurrentMonth);
+    var currentYear = Convert.ToInt32(ViewBag.CurrentYear);
+}
+<input type="hidden" id="CurrentMonth" value="@currentMonth" />
+<input type="hidden" id="CurrentYear" value="@currentYear" />
+<table class="table table-sm" id="LoanEmiTable">
+    <thead class="thead-dark">
+        <tr>
+            <th>No.</th>
+            <th width="200">Ded. Date</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Select((value, i) => new { i, value }))
+    {
+        var currentMonthYear = item.value.EffDate.Month == currentMonth && item.value.EffDate.Year == currentYear;
+        <tr>
+            <td>
+                @(item.i + 1)
+                <input asp-for="@Model[item.i].SrNo" type="hidden" />
+                <input asp-for="@Model[item.i].EmpCd" type="hidden" />
+                <input asp-for="@Model[item.i].EdCd" type="hidden" />
+                <input asp-for="@Model[item.i].EdTyp" type="hidden" />
+                <input asp-for="@Model[item.i].RecoTyp" type="hidden" />
+                <input asp-for="@Model[item.i].ChgsAmt" type="hidden" />
+                <input asp-for="@Model[item.i].EndDate" type="hidden" />
+                <input asp-for="@Model[item.i].EffDate" type="hidden" />
+            </td>
+            <td>@Convert.ToDateTime(item.value.EffDate).FormatDate()</td>
+            <td>
+                <input type="text" asp-for="@Model[item.i].AmtVal" value="@item.value.AmtVal.ToString("0.00")" class="form-control form-control-sm @(!currentMonthYear ?"disabled":"") amt decimal-input" data-month="@item.value.EffDate.Month" data-year="@item.value.EffDate.Year" data-value="@item.value.AmtVal.ToString("0.00")" onchange="updateEmi(this)" />
+            </td>
+        </tr>
+    }
+</table>

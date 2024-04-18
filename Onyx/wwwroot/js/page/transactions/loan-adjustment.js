@@ -36,14 +36,17 @@
 bindEmployeeDropdown();
 function showLoanAdjustModal(transNo, close) {
     var status = !close ? "D" : "C";
-    var url = `/Transactions/GetEmpLoanAdjustment?transNo=${transNo}&status=${status}`;
+    var url = `/Transactions/GetEmpLoanAdjustment?transNo=${transNo}`;
     $('#EmployeeLoanAdjustModal').load(url, function () {
         parseDynamicForm();
+        loadLoanEmi(transNo, status);
         $("#LoanStatus").val(status);
         $("#EmployeeLoanAdjustModal").modal("show");
     });
 }
-
+function loadLoanEmi(transNo, status, amount) {
+    $("#EmpLoanEmi-container").load(`/Transactions/GetEmpLoanEmi?transNo=${transNo}&status=${status}&amount=${amount}`)
+}
 function saveLoanAdjust(btn, transNo, empCd) {
     var frm = $("#loan-adj-frm");
     if (frm.valid()) {
@@ -73,3 +76,37 @@ $('#EmpCd').on('change', function (e) {
     if (dataTable.column(columnIndex).search() !== value)
         dataTable.column(columnIndex).search(value).draw();
 });
+
+function ClosedLoan() {
+    var closed = $("#Closed").is(":checked");
+    $('.amt').each(function () {
+        if (closed) {
+            $("#RecoMode-container").removeClass("d-none");
+            var currentMonth = $("#CurrentMonth").val();
+            var currentYear = $("#CurrentYear").val();
+            var month = $(this).attr("data-month");
+            var year = $(this).attr("data-year");
+            if (month == currentMonth && year == currentYear) {
+                $(this).removeClass("disabled")
+                var apprAmt = $("#ApprAmt").val();
+                $(this).val(apprAmt);
+            }
+            else {
+                $(this).addClass("disabled");
+                $(this).val("0.00");
+            }
+        }
+        else {
+            $("#RecoMode-container").addClass("d-none");
+            var amt = $(this).attr("data-value");
+            $(this).val(amt)
+        }
+    });
+}
+
+function updateEmi(cur) {
+    var transNo = $("#TransNo").val();
+    var status = $("#LoanStatus").val();
+    var amount = $(cur).val();
+    loadLoanEmi(transNo, status, amount);
+}

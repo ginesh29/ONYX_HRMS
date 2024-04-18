@@ -652,3 +652,11 @@ function deleteAddress(empCd, type) {
 function bindAddresses(empCd) {
     $('#Addresses').load(`/Employee/FetchAddresses?empCd=${encodeURI(empCd)}`);
 }
+
+function saveBasic(cur) {
+    var queryParams = getQueryStringParams(window.location.search);
+    var empCd = queryParams.cd;
+    postAjax(`/Employee/SaveBasic`, { empCd: encodeURI(empCd), basic: cur.value }, function (response) {
+        showSuccessToastr(response.message);
+    })
+}

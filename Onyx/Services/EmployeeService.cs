@@ -130,6 +130,13 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public void SaveBasic(string empCd, int basic)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            string query = $"UPDATE Employee SET Basic = {basic} WHERE Cd = '{empCd}'";
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
+        }
         public CommonResponse RemoveAvatar(string Cd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();

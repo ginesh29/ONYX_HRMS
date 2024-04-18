@@ -33,7 +33,7 @@ namespace Onyx.Controllers
             _fileHelper = new FileHelper();
         }
         public IActionResult Profiles()
-        {            
+        {
             ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
@@ -94,6 +94,7 @@ namespace Onyx.Controllers
         public IActionResult Profile(string Cd)
         {
             var employee = _employeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
+            ViewBag.Basic = employee.Basic;
             if (employee != null)
             {
                 employee.Code = employee.Cd?.Trim();
@@ -458,6 +459,15 @@ namespace Onyx.Controllers
             return PartialView("_DocumentModal", model);
         }
         [HttpPost]
+        public IActionResult SaveBasic(string empCd, int basic)
+        {
+            _employeeService.SaveBasic(empCd, basic);
+            return Json(new CommonResponse
+            {
+                Message = "Basic updated successfully"
+            });
+        }
+        [HttpPost]
         public async Task<IActionResult> SaveDocument(EmpDocumentModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
@@ -534,7 +544,7 @@ namespace Onyx.Controllers
         #endregion
 
         #region Component
-        public IActionResult Components()
+        public IActionResult Components(string empCd)
         {
             return View("ComponentsContainer");
         }
