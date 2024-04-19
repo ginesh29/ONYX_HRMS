@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
@@ -483,7 +484,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanApproval(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
             var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserCd).Employees.FirstOrDefault();
             loanDetails.EmployeeCode = loanDetails.EmployeeCode.Trim();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
@@ -540,7 +541,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanDisburse(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
             var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
             loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
             loanDetails.EmpBranchCd = empDetail.Div.Trim();
@@ -664,6 +665,54 @@ namespace Onyx.Controllers
                 Message = $"Loan {action} successfully"
             };
             return Json(result);
+        }
+        public IActionResult ReceiptVoucher()
+        {
+            ViewBag.LoanTypeItems = _organisationService.GetLoanTypes().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.Sdes.Trim(),
+            });
+            ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
+            return View();
+        }
+        public IActionResult FetchEmpLoanTransactions(string empCd, string type)
+        {
+            var loanData = _transactionService.GetEmpLoanDetail(empCd, type, string.Empty, string.Empty, _loggedInUser.CompanyCd);
+            return Json(type == "6" ? loanData : loanData.FirstOrDefault());
+        }
+        public IActionResult SaveLoanReceiptVoucher(LoanReceiptVoucher model, string processId)
+        {
+            var loanData = _transactionService.GetEmpLoanDetail(model.TransNo, "2", string.Empty, string.Empty, _loggedInUser.CompanyCd).FirstOrDefault();
+            int lastDayOfMonth = DateTime.DaysInMonth(model.PaymentDt.Value.Year, model.PaymentDt.Value.Month);
+            var endDate = new DateTime(model.PaymentDt.Value.Year, model.PaymentDt.Value.Month, lastDayOfMonth);
+            var loanTypeDetail = _organisationService.GetLoanTypes().FirstOrDefault(m => m.Cd.Trim() == model.LoanTypeCd);
+            _transactionService.SaveEmpLoanAdj(new EmpLoanDetail_GetRow_Result
+            {
+                TransNo = model.TransNo,
+                SrNo = loanData.DetailSrno + 1,
+                EmpCd = model.EmployeeCode,
+                EdCd = loanTypeDetail.DedCd,
+                EdTyp = loanTypeDetail.DedTypCd,
+                EffDate = model.PaymentDt.Value,
+                RecoTyp = model.RecoMode,
+                Typ = "D",
+                AmtVal = model.PayAmt,
+                EndDate = endDate,
+                ChgsAmt = 0,
+                EditDt = DateTime.Now,
+                EditBy = _loggedInUser.UserAbbr,
+            });
+            //var ActivityAbbr = "UPD";
+            var action = "adjusted";
+            var Message = $", Loan is {action} With Trans no={model.TransNo}";
+            //_commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            TempData["success"] = $"Loan {action} successfully";
+            return RedirectToAction("ReceiptVoucher");
         }
         #endregion
 

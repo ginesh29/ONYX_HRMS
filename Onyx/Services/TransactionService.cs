@@ -160,7 +160,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string type, string EmpCd, string UserOrEmp, string CoCd)
+        public IEnumerable<EmpLoan_GetRow_Result> GetEmpLoanDetail(string transNo, string type, string EmpCd, string UserOrEmp, string CoCd)
         {
             var procedureName = "EmpLoan_GetRow_N";
             var parameters = new DynamicParameters();
@@ -171,7 +171,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpUser", UserOrEmp);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            var data = connection.QueryFirstOrDefault<EmpLoan_GetRow_Result>
+            var data = connection.Query<EmpLoan_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }

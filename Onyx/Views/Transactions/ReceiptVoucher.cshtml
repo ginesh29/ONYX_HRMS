@@ -1,0 +1,119 @@
+﻿@model LoanReceiptVoucher
+@{
+    ViewData["Title"] = "Loan Receipt Voucher";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="col-md-6 form-border-right">
+            <form id="loan-receipt-voucher-frm" method="post" action="SaveLoanReceiptVoucher">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="EmployeeCode"></label>
+                            <select asp-for="EmployeeCode" class="form-control select2" onchange="bindTransations(this)">
+                                <option value="">@CommonSetting.DEFAULTSELECT</option>
+                            </select>
+                            <span asp-validation-for="EmployeeCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TransNo"></label>
+                            <select asp-for="TransNo" class="form-control select-picker" onchange="getLoanDetail(this)"></select>
+                            <span asp-validation-for="TransNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="disabled-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LoanTypeCd"></label>
+                                <select asp-for="LoanTypeCd" class="form-control select-picker" asp-items="ViewBag.LoanTypeItems"></select>
+                                <span asp-validation-for="LoanTypeCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="RecoMode"></label>
+                                <select asp-for="RecoMode" class="form-control select-picker" asp-items="ViewBag.RecModeItems"></select>
+                                <span asp-validation-for="RecoMode" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ApprAmt"></label>
+                                <input asp-for="ApprAmt" class="form-control decimal-input" />
+                                <span asp-validation-for="ApprAmt" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Balance"></label>
+                                <input asp-for="Balance" class="form-control decimal-input" />
+                                <span asp-validation-for="Balance" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PayAmt"></label>
+                            <input asp-for="PayAmt" class="form-control decimal-input" />
+                            <span asp-validation-for="PayAmt" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PaymentDt"></label>
+                            <input asp-for="PaymentDt" type="text" class="form-control date-input" />
+                            <span asp-validation-for="PaymentDt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-info" onclick="saveLoanReceiptVoucher(this)">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function saveLoanReceiptVoucher(btn) {
+            var frm = $("#loan-receipt-voucher-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                frm.submit();
+            }
+        }
+        function bindTransations(e) {
+            $("#TransNo").empty();
+            getAjax(`/Transactions/FetchEmpLoanTransactions?empCd=${e.value}&type=6`, function (response) {
+                var html = '';
+                if (response.length) {
+                    $.each(response, function (i, item) {
+                        html += `<option value='${item.transNo.trim()}'>${item.transNo.trim()}</option>`
+                    })
+                    $("#TransNo").html(html);
+                    $("#TransNo").attr("title", "-- Select --");
+                    $('.select-picker').selectpicker('refresh');
+                }
+                else
+                    showErrorToastr("No Transaction found")
+            });
+        }
+        function getLoanDetail(e) {
+            getAjax(`/Transactions/FetchEmpLoanTransactions?empCd=${e.value}&type=2`, function (response) {
+                $("#LoanTypeCd").val(response.loanTypeCd.trim());
+                $("#RecoMode").val(response.recoMode.trim());
+                $("#ApprAmt").val(response.apprAmt);
+                $("#Balance").val(response.balance);
+            });
+        }
+        bindEmployeeDropdown();
+    </script>
+}
