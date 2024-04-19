@@ -1,6 +1,6 @@
 ﻿@model EmpLoan_GetRow_Result
 @{
-    var dateFormat = ExtensionMethod.GetDateFormat();    
+    var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <div class="modal-dialog" style="max-width:850px">
     <!-- Modal content-->
@@ -42,6 +42,8 @@
                     <form id="loan-disburse-frm">
                         <input asp-for="TransNo" type="hidden" />
                         <input asp-for="EmpBranchCd" type="hidden" />
+                        <input asp-for="EmployeeCode" type="hidden" />
+                        <input asp-for="ApprAmt" type="hidden" />
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -57,6 +59,15 @@
                                     <span asp-validation-for="LoanStatus" class="text-danger"></span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="UpdateGeneralLedger">
+                            <label asp-for="UpdateGeneralLedger" class="custom-control-label font-weight-normal">Update General Ledger</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="PrintAfterSave">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="PrintAfterSave">
+                            <label asp-for="PrintAfterSave" class="custom-control-label font-weight-normal">Print After Save</label>
                         </div>
                     </form>
                 </div>

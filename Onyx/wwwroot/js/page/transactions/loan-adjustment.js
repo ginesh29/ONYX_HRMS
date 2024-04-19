@@ -79,29 +79,14 @@ $('#EmpCd').on('change', function (e) {
 
 function ClosedLoan() {
     var closed = $("#Closed").is(":checked");
-    $('.amt').each(function () {
-        if (closed) {
-            $("#RecoMode-container").removeClass("d-none");
-            var currentMonth = $("#CurrentMonth").val();
-            var currentYear = $("#CurrentYear").val();
-            var month = $(this).attr("data-month");
-            var year = $(this).attr("data-year");
-            if (month == currentMonth && year == currentYear) {
-                $(this).removeClass("disabled")
-                var apprAmt = $("#ApprAmt").val();
-                $(this).val(apprAmt);
-            }
-            else {
-                $(this).addClass("disabled");
-                $(this).val("0.00");
-            }
-        }
-        else {
-            $("#RecoMode-container").addClass("d-none");
-            var amt = $(this).attr("data-value");
-            $(this).val(amt)
-        }
-    });
+    var remainingLoan = $("#RemainingLoan").val();
+    var transNo = $("#TransNo").val();
+    var status = $("#LoanStatus").val();
+    var amt = closed ? remainingLoan : null;
+    loadLoanEmi(transNo, status, amt);
+    $("#RecoMode-container").addClass("d-none");
+    if (closed)
+        $("#RecoMode-container").removeClass("d-none");
 }
 
 function updateEmi(cur) {
@@ -109,4 +94,5 @@ function updateEmi(cur) {
     var status = $("#LoanStatus").val();
     var amount = $(cur).val();
     loadLoanEmi(transNo, status, amount);
+    $("#RecoMode-error").removeClass("d-none");
 }

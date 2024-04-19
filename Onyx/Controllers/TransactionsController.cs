@@ -556,6 +556,8 @@ namespace Onyx.Controllers
         public IActionResult SaveLoanDisburse(EmpLoan_GetRow_Result model, string processId)
         {
             _transactionService.SaveEmpLoanDisbursement(model);
+            if (model.UpdateGeneralLedger)
+                _transactionService.Update_Loan_GeneralLedger(model.EmployeeCode.Trim(), model.ApprAmt, _loggedInUser.CompanyCd);
             var ActivityAbbr = "UPD";
             var action = model.LoanStatus == "D" ? "disbursed" : "canceled";
             var Message = $", Loan is {action} With Trans no={model.TransNo}";
@@ -563,7 +565,8 @@ namespace Onyx.Controllers
             var result = new CommonResponse
             {
                 Success = true,
-                Message = $"Loan {action} successfully"
+                Message = $"Loan {action} successfully",
+                RedirectUrl = model.LoanStatus == "D" && model.PrintAfterSave ? Url.Action("LoanAdvanceSlip", new { transNo = model.TransNo.Trim(), empCd = model.EmployeeCode.Trim() }) : string.Empty
             };
             return Json(result);
         }
@@ -598,32 +601,58 @@ namespace Onyx.Controllers
             });
             return PartialView("_EmpLoanAdjustmentModal", loanDetails);
         }
-        public IActionResult GetEmpLoanEmi(string transNo, string status, decimal amount)
+        public IActionResult GetEmpLoanEmi(string transNo, string status, decimal? amount)
         {
-            var empLoanAdjDetail = _transactionService.GetEmpLoanAdjDetail(transNo, status, _loggedInUser.CompanyCd);
+            var empLoanAdjDetail = _transactionService.GetEmpLoanAdjDetail(transNo, status, _loggedInUser.CompanyCd).ToList();
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
             ViewBag.CurrentMonth = currentMonth;
             ViewBag.CurrentYear = currentYear;
-            var totalLoan = 1000;
-            var remainingLoan = totalLoan - amount;
-            var noOfInst = 4;
-            decimal emi = remainingLoan / noOfInst;
-            if (amount > 0)
+            var totalLoan = empLoanAdjDetail.Sum(m => m.AmtVal);
+            ViewBag.TotalLoan = totalLoan;
+            var paidLoan = empLoanAdjDetail.Where(m => m.EffDate.Month < Convert.ToInt32(currentMonth)).Sum(m => m.AmtVal);
+            var totalEmi = empLoanAdjDetail.Count;
+            var paidEmi = empLoanAdjDetail.Count(m => m.EffDate.Month < Convert.ToInt32(currentMonth));
+            var remaIningNoOfInst = totalEmi - paidEmi - 1;
+            var remainingLoan = totalLoan - (paidLoan + Convert.ToDecimal(amount));
+            decimal emi = remainingLoan / remaIningNoOfInst;
+            emi = emi > 0 ? emi : 0;
+            if (amount != null)
             {
-                empLoanAdjDetail = empLoanAdjDetail.Select(m => { m.AmtVal = emi; return m; });
+                var currentEmi = empLoanAdjDetail.FirstOrDefault(m => m.EffDate.Month == Convert.ToInt32(currentMonth) && m.EffDate.Year == Convert.ToInt32(currentYear))?.AmtVal;
+                ViewBag.CurrentEmi = amount;
+                var lastEmpLoanAdjDetail = empLoanAdjDetail.LastOrDefault();
+                empLoanAdjDetail = empLoanAdjDetail.Select(m => { m.AmtVal = m.EffDate.Month == Convert.ToInt32(currentMonth) && m.EffDate.Year == Convert.ToInt32(currentYear) ? Convert.ToDecimal(amount) : m.AmtVal; return m; }).ToList();
+                if (amount < currentEmi)
+                    empLoanAdjDetail.Add(new EmpLoanDetail_GetRow_Result
+                    {
+                        SrNo = lastEmpLoanAdjDetail.SrNo + 1,
+                        AmtVal = currentEmi.Value - Convert.ToDecimal(amount),
+                        EffDate = lastEmpLoanAdjDetail.EffDate.AddMonths(1),
+                        ChgsAmt = lastEmpLoanAdjDetail.ChgsAmt,
+                        EdCd = lastEmpLoanAdjDetail.EdCd,
+                        EdTyp = lastEmpLoanAdjDetail.EdTyp,
+                        EndDate = lastEmpLoanAdjDetail.EndDate,
+                        RecoTyp = lastEmpLoanAdjDetail.RecoTyp,
+                        EmpCd = lastEmpLoanAdjDetail.EmpCd,
+                        TransNo = lastEmpLoanAdjDetail.TransNo,
+                        Typ = lastEmpLoanAdjDetail.Typ
+                    });
+                else if (amount > currentEmi)
+                    empLoanAdjDetail = empLoanAdjDetail.Select(m => { m.AmtVal = m.EffDate.Month > Convert.ToInt32(currentMonth) ? emi : m.AmtVal; return m; }).ToList();
             }
             return PartialView("_LoanEmiTable", empLoanAdjDetail);
         }
         public IActionResult SaveEmpLoanAdj(IEnumerable<EmpLoanDetail_GetRow_Result> empLoanAdjDetail, string transNo, string type, string empCd, string processId)
         {
+            _transactionService.DeleteEmpLoanDetailsAdj(transNo, type);
             foreach (var item in empLoanAdjDetail)
             {
                 item.TransNo = transNo;
                 item.EmpCd = empCd;
                 item.Typ = type;
                 item.EntryBy = _loggedInUser.UserAbbr;
-                //_transactionService.SaveEmpLoanAdj(item);
+                _transactionService.SaveEmpLoanAdj(item);
             }
             var ActivityAbbr = "UPD";
             var action = type == "D" ? "adjusted" : "closed";

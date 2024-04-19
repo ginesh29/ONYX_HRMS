@@ -85,6 +85,8 @@ namespace Onyx.Models.StoredProcedure
         public string Desg { get; set; }
         public string Mobile { get; set; }
         public int Salary { get; set; }
+        public bool UpdateGeneralLedger { get; set; }
+        public bool PrintAfterSave { get; set; }
         public string EntryBy { get; set; }
     }
 }

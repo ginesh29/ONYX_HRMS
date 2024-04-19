@@ -68,6 +68,8 @@ function saveLoanDisburse(btn) {
                 showSuccessToastr(response.message);
                 $("#EmployeeLoanDisburseModal").modal("hide");
                 reloadDatatable();
+                if (response.redirectUrl)
+                    window.open(response.redirectUrl)
             }
             else {
                 showErrorToastr(response.message);

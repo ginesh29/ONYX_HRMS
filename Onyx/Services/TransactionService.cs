@@ -137,6 +137,17 @@ namespace Onyx.Services
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
+        public void DeleteEmpLoanDetailsAdj(string transNo, string type)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "EmpLoanDetail_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", transNo);
+            parameters.Add("v_Typ", type);
+            var connection = new SqlConnection(connectionString);
+            connection.QueryFirstOrDefault<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         public int GetEmpLoan_Due(string empCd, DateTime EffDt)
         {
             var procedureName = "EmpLoan_Due";
@@ -202,6 +213,18 @@ namespace Onyx.Services
             parameters.Add("v_LoanStatus", model.LoanStatus);
             parameters.Add("v_PayMode", model.PayMode);
             parameters.Add("v_HrDiv", model.EmpBranchCd);
+            var connection = new SqlConnection(connectionString);
+            connection.QueryFirstOrDefault<CommonResponse>
+              (procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void Update_Loan_GeneralLedger(string empCd, int loanAmt, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "Update_Loan_GeneralLedger";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_LoanAmt", loanAmt);
             var connection = new SqlConnection(connectionString);
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);

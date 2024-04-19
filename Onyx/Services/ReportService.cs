@@ -212,5 +212,18 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public IEnumerable<EmpLeaveMaster_GetRow_Result> GetPayAnalysis(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_FixedEarnDed";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_LvTyp", string.Empty);
+            parameters.Add("v_Cocd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<EmpLeaveMaster_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }
