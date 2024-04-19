@@ -251,6 +251,22 @@ namespace Onyx.Controllers
             return Json(pwd);
         }
         [HttpPost]
+        public IActionResult SaveBasicSalary(string empCd, int basic)
+        {
+            _employeeService.SaveBasicSalary(empCd, basic);
+            var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
+            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserCd);
+            var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
+            var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
+            var TotalSalary = employee.Basic + totalIncome - totalDeductions;
+            var Currency = employee.BasicCurr.Trim();
+            return Json(new CommonResponse
+            {
+                Data = new { TotalSalary, Currency },
+                Message = "Basic updated successfully"
+            }); ;
+        }
+        [HttpPost]
         public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
@@ -464,15 +480,6 @@ namespace Onyx.Controllers
             return PartialView("_DocumentModal", model);
         }
         [HttpPost]
-        public IActionResult SaveBasic(string empCd, int basic)
-        {
-            _employeeService.SaveBasic(empCd, basic);
-            return Json(new CommonResponse
-            {
-                Message = "Basic updated successfully"
-            });
-        }
-        [HttpPost]
         public async Task<IActionResult> SaveDocument(EmpDocumentModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
@@ -571,6 +578,7 @@ namespace Onyx.Controllers
             {
                 model = new EmpEarnDedModel
                 {
+                    Cd = empCd,
                     Amt = component.Amt,
                     Basic = component.Basic,
                     Currency = component.Currency,
@@ -615,7 +623,13 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveComponent(EmpEarnDedModel model)
         {
+            var employee = _employeeService.FindEmployee(model.EmpCd, _loggedInUser.CompanyCd);
             model.EntryBy = _loggedInUser.UserAbbr;
+            if (model.Mode == "I")
+            {
+                model.SrNo = _employeeService.EmpEarnDed_SrNo(model.EmpCd, model.EdCd, model.EdTyp);
+                model.CurrCd = employee.CurrCd;
+            }
             var result = _employeeService.SaveComponent(model);
             return Json(result);
         }

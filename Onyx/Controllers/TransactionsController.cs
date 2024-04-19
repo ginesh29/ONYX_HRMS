@@ -483,7 +483,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanApproval(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserCd).Employees.FirstOrDefault();
             loanDetails.EmployeeCode = loanDetails.EmployeeCode.Trim();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
@@ -540,7 +540,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanDisburse(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
             loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
             loanDetails.EmpBranchCd = empDetail.Div.Trim();
@@ -576,7 +576,7 @@ namespace Onyx.Controllers
         }
         public IActionResult LoanAdvanceSlip(string transNo, string empCd)
         {
-            var employees = _transactionService.GetEmpLoanDetail(transNo, empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var employees = _transactionService.GetEmpLoanDetail(transNo, "5", empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             return new ViewAsPdf(employees)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

@@ -23,7 +23,7 @@ namespace Onyx.Models.StoredProcedure
         public string LoanApprBy { get; set; }
         [Display(Name = "No of Installments")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
-        public decimal? NoInst { get; set; }
+        public int NoInst { get; set; }
         [Display(Name = "Approved Date")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? LoanApprDt { get; set; }
@@ -36,7 +36,7 @@ namespace Onyx.Models.StoredProcedure
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string RecoMode { get; set; }
         public decimal? RecoPrd { get; set; }
-        public decimal? NoInstReq { get; set; }
+        public int NoInstReq { get; set; }
         [Display(Name = "Deduct. Start Date")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public DateTime? DedStartDt { get; set; }

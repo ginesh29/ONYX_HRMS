@@ -160,12 +160,12 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string EmpCd, string UserOrEmp, string CoCd)
+        public EmpLoan_GetRow_Result GetEmpLoanDetail(string transNo, string type, string EmpCd, string UserOrEmp, string CoCd)
         {
             var procedureName = "EmpLoan_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", transNo);
-            parameters.Add("v_Typ", "2");
+            parameters.Add("v_Typ", type);
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", UserOrEmp);
@@ -191,7 +191,7 @@ namespace Onyx.Services
             parameters.Add("v_RecoMode", model.RecoMode);
             parameters.Add("v_DedStartDt", model.DedStartDt ?? Convert.ToDateTime("01/01/1900"));
             parameters.Add("v_RecoPrd", model.Reco_Prd ?? "0");
-            parameters.Add("v_NoInst", model.NoInst ?? 0);
+            parameters.Add("v_NoInst", model.NoInst);
             parameters.Add("v_Guarantor", model.Guarantor);
             parameters.Add("v_GuarantorDetails", model.GuarantorDetails);
             parameters.Add("v_Narr", model.Narr);

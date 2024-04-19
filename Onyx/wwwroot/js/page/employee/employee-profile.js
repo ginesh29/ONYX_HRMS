@@ -556,6 +556,7 @@ function deleteComponent(empCd, edCd, edTyp, srNo) {
             deleteAjax(`/Employee/DeleteComponent?empCd=${empCd}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
+                $("#BasicSalary").change();
             });
         }
     });
@@ -569,6 +570,7 @@ function saveComponent(btn) {
                 showSuccessToastr(response.message);
                 $("#ComponentModal").modal("hide");
                 reloadDatatable();
+                $("#BasicSalary").change();
             }
             else {
                 showErrorToastr(response.message);
@@ -579,17 +581,15 @@ function saveComponent(btn) {
     }
 }
 function changePercentageAmt() {
-    var val = $("#PercAmt_Cd").val();
+    var val = $("#PercAmt").val();
+    $("#PercVal").closest(".form-group").addClass("d-none");
+    $("#Amt").closest(".form-group").addClass("d-none");
     if (val)
         if (val == "A") {
-            $("#Perc_Val").removeClass("percentage-input").addClass("decimal-input");
-            $('.decimal-input').attr("placeholder", "0.00");
-            $('.decimal-input').inputmask(decimalMaskOptions);
+            $("#Amt").closest(".form-group").removeClass("d-none");
         }
         else {
-            $("#Perc_Val").removeClass("decimal-input").addClass("percentage-input");
-            $('.percentage-input').attr("placeholder", "0.00 %");
-            $('.percentage-input').inputmask(percentageMaskOptions);
+            $("#PercVal").closest(".form-group").removeClass("d-none");
         }
 }
 
@@ -654,10 +654,13 @@ function bindAddresses(empCd) {
     $('#Addresses').load(`/Employee/FetchAddresses?empCd=${encodeURI(empCd)}`);
 }
 
-function saveBasic(cur) {
+function saveBasicSalary(cur) {
     var queryParams = getQueryStringParams(window.location.search);
     var empCd = queryParams.cd;
-    postAjax(`/Employee/SaveBasic`, { empCd: encodeURI(empCd), basic: cur.value }, function (response) {
-        showSuccessToastr(response.message);
+    postAjax(`/Employee/SaveBasicSalary`, { empCd: encodeURI(empCd), basic: cur.value }, function (response) {
+        if (response.message) {
+            showSuccessToastr(response.message);
+            $("#TotalSalary").val(`${response.data.currency} ${response.data.totalSalary}`)
+        }
     })
 }

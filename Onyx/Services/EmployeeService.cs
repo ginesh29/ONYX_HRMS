@@ -130,7 +130,7 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public void SaveBasic(string empCd, int basic)
+        public void SaveBasicSalary(string empCd, int basic)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             string query = $"UPDATE Employee SET Basic = {basic} WHERE Cd = '{empCd}'";
@@ -383,7 +383,19 @@ namespace Onyx.Services
                 (query);
             return data;
         }
-
+        public int EmpEarnDed_SrNo(string empCd, string edCd, string edType)
+        {
+            var procedureName = "EmpEarnDedSrNo_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EdCd", edCd);
+            parameters.Add("v_EdTyp", edType);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+               (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public CommonResponse SaveComponent(EmpEarnDedModel model)
         {
             var procedureName = "EmpEarnDed_Update_N";

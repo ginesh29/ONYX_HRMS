@@ -11,8 +11,10 @@ namespace Onyx.Models.ViewModels
         public string Type { get; set; }
         public string Description { get; set; }
         public string Currency { get; set; }
-        public decimal? Amt { get; set; }
         [Display(Name = "Amount Value")]
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        public decimal? Amt { get; set; }
+        [Display(Name = "Percentage Value")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public decimal? PercVal { get; set; }
         public decimal? Basic { get; set; }
@@ -35,5 +37,13 @@ namespace Onyx.Models.ViewModels
         public int SrNo { get; set; }
         public string ComponentClass { get; set; }
         public string EntryBy { get; set; }
+        public string Cd { get; set; }
+        public string Mode
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Cd) ? "U" : "I";
+            }
+        }
     }
 }

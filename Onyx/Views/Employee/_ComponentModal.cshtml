@@ -8,7 +8,8 @@
         </div>
         <div class="modal-body">
             <form id="component-frm">
-                <input type="hidden" asp-for="SrNo" />
+                <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
+                <input type="hidden" asp-for="Cd" />
                 <input type="hidden" asp-for="CurrCd" />
                 <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
                     <label asp-for="EmpCd"></label>
@@ -46,8 +47,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label asp-for="Amt"></label>
+                            <input asp-for="Amt" class="form-control int-input" />
+                            <span asp-validation-for="Amt" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
                             <label asp-for="PercVal"></label>
-                            <input asp-for="PercVal" class="form-control" />
+                            <input asp-for="PercVal" class="form-control percentage-input" />
                             <span asp-validation-for="PercVal" class="text-danger"></span>
                         </div>
                     </div>

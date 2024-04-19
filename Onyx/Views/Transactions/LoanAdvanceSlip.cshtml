@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Loan/Salary Advance Slip";
     Layout = null;
+    var installmentAmt = Model.ApprAmt / Model.NoInstReq;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +52,7 @@
         </tr>
         <tr>
             <th>Installment Amount</th>
-            <td>: @Model.Amt.ToString("0.00")</td>
+            <td>: @installmentAmt.ToString("0.00")</td>
         </tr>
         <tr>
             <th>Previous Due Amount</th>
@@ -63,7 +64,7 @@
         </tr>
         <tr>
             <th>Approvals</th>
-            <td>: @Model.Approvals</td>
+            <td>: @Model.PrintApproval</td>
         </tr>
     </table>
     <hr />

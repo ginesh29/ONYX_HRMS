@@ -7,8 +7,8 @@
         public string Type { get; set; }
         public string Description { get; set; }
         public string Currency { get; set; }
-        public decimal? Amt { get; set; }
-        public decimal? PercVal { get; set; }
+        public decimal Amt { get; set; }
+        public decimal PercVal { get; set; }
         public decimal? Basic { get; set; }
         public DateTime? EffDt { get; set; }
         public string FormatedEffDt { get; set; }
