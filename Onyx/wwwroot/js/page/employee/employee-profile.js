@@ -487,6 +487,7 @@ function saveEditFile() {
         },
     });
 }
+var totalSalary = 0;
 function bindComponentDataTable() {
     empCode = empCode ? empCode : "";
     if (!$.fn.DataTable.isDataTable('#ComponentsDataTable'))

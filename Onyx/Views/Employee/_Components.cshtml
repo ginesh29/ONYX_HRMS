@@ -1,12 +1,19 @@
 ﻿@{
     var loggedInUser = _authService.GetLoggedInUser();
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
+    var totalSalary = $"{ViewBag.Currency} {ViewBag.TotalSalary.ToString("0.00")}";
 }
 <div class="row">
     <div class="col-md-2">
         <div class="form-group">
             <label name="Basic">Basic</label>
             <input id="Basic" name="Basic" class="form-control int-input" onchange="saveBasic(this)" value="@ViewBag.Basic">
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label>Total Salary</label>
+            <input class="form-control disabled text-right" value="@totalSalary">
         </div>
     </div>
 </div>

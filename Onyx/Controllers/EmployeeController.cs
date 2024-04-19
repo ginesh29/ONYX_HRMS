@@ -95,6 +95,11 @@ namespace Onyx.Controllers
         {
             var employee = _employeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
             ViewBag.Basic = employee.Basic;
+            var components = _employeeService.GetComponents(Cd, _loggedInUser.UserCd);
+            var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
+            var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
+            ViewBag.TotalSalary = employee.Basic + totalIncome - totalDeductions;
+            ViewBag.Currency = employee.BasicCurr.Trim();
             if (employee != null)
             {
                 employee.Code = employee.Cd?.Trim();
@@ -544,7 +549,7 @@ namespace Onyx.Controllers
         #endregion
 
         #region Component
-        public IActionResult Components(string empCd)
+        public IActionResult Components()
         {
             return View("ComponentsContainer");
         }
