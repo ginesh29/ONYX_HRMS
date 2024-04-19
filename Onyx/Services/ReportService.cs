@@ -32,7 +32,7 @@ namespace Onyx.Services
             parameters.Add("v_Status", statuses ?? "All");
             parameters.Add("v_Nationality", nationalities ?? "All");
             parameters.Add("v_EmployeeType", empTypes ?? "All");
-            parameters.Add("v_RowsCnt", filterModel.Active ? "0" : "1");
+            parameters.Add("v_RowsCnt", filterModel.Active ? "Y" : "N");
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpShortList_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

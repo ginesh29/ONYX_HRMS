@@ -13,7 +13,7 @@ namespace Onyx.Services
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "Employee_Find";
+            var procedureName = "Employee_Find_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Param", Cd);
             parameters.Add("v_Typ", "2");
