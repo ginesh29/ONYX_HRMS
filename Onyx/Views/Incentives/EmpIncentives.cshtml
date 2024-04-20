@@ -1,10 +1,10 @@
-﻿@model AttendanceFilterModel
+﻿@model IncentiveFilterModel
 @{
-    ViewData["Title"] = "Employee Monthly Attendance";
+    ViewData["Title"] = "Employee Incentives";
 }
 <div class="card">
     <div class="card-body">
-        <form id="emp-monthly-attendance-filter-frm">
+        <form id="emp-incentive-filter-frm">
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -15,8 +15,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="Department"></label>
-                        <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems">
+                        <label asp-for="Designation"></label>
+                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems">
                         </select>
                     </div>
                 </div>
@@ -29,24 +29,25 @@
                         <span asp-validation-for="EmpCd" class="text-danger"></span>
                     </div>
                 </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="EmpType"></label>
+                        <select asp-for="EmpType" class="form-control filter-select-picker" asp-items="ViewBag.EmpTypeItems">
+                        </select>
+                    </div>
+                </div>
                 <div class="col-md-1">
                     <div class="form-group">
                         <label asp-for="MonthYear"></label>
                         <input asp-for="MonthYear" value="@ViewBag.currentMonthYear" class="form-control month-year-input" type="text" data-toggle="datetimepicker">
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2 d-flex align-items-center">
                     <div class="form-group">
-                        <label asp-for="WorkingHrDay"></label>
-                        <input asp-for="WorkingHrDay" value="@ViewBag.WorkingHrDay" class="form-control disabled" type="text">
+                        <button type="button" class="btn btn-warning mt-2" onclick="searchIncentive(this)" id="btn-search"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn btn-outline-info mt-2 ml-1 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                        <button class="btn btn-secondary mt-2 ml-1 d-none" type="button" id="btn-clear" onclick="clearSearch(this)">Clear</button>
                     </div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center">
-                <div class="form-group">
-                    <button type="button" class="btn btn-warning mt-2" onclick="searchAttendance(this)" id="btn-search"><i class="fa fa-search"></i></button>
-                    <button type="button" class="btn btn-outline-info mt-2 ml-1 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
-                    <button class="btn btn-secondary mt-2 ml-1 d-none" type="button" id="btn-clear" onclick="clearSearch(this)">Clear</button>
                 </div>
             </div>
             <h5 class="mt-2 mb-4 side-separator-container"><span class="side-separator">OR</span></h5>
@@ -56,13 +57,12 @@
                         <input type="file" id="import-file" name="file" onchange="uploadFile(event)" class="custom-file-input">
                         <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
                     </div>
-                    <a href="/formats/Emp_Attendance_Import_Sample.xlsx?@DateTime.Now">Download Sample File</a>  |
-                    <a href="/formats/Emp_Attendance2_Import_Sample.xlsx?@DateTime.Now">Download Sample File 2</a>
+                    <a href="/formats/Emp_Incentive_Import_Sample.xlsx?@DateTime.Now">Download Sample File</a>
                 </div>
             </div>
         </form>
         <div id="excel-import-data"></div>
-        <div id="EmpMonthlyAttendanceData"></div>
+        <div id="EmpIncentiveData"></div>
     </div>
 </div>
 <style>
@@ -74,18 +74,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
-        function searchAttendance(btn) {
-            var frm = $("#emp-monthly-attendance-filter-frm");
+        function searchIncentive(btn) {
+            var frm = $("#emp-incentive-filter-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                postAjax(`/Transactions/FetchEmpMonthlyAttendance`, frm.serialize(), function (response) {
+                postAjax(`/Incentives/FetchEmpIncentives`, frm.serialize(), function (response) {
                     $("#btn-excel").addClass("d-none");
                     $("#import-file").val("");
-                    $("#EmpMonthlyAttendanceData").html(response);
+                    $("#EmpIncentiveData").html(response);
                     $("#excel-import-data").empty();
                     $("#btn-clear").removeClass("d-none");
                     $("#btn-excel").addClass("d-none");
-                    if (!$("#EmpMonthlyAttendanceData tfoot").length)
+                    if (!$("#EmpIncentiveTable tfoot").length)
                         $("#btn-excel").removeClass("d-none");
                     unloadingButton(btn);
                 });
@@ -94,26 +94,25 @@
                 showErrorToastr("Please provide highlighted field");
         }
         function clearSearch(btn) {
-            var frm = $("#emp-monthly-attendance-filter-frm");
+            var frm = $("#emp-ncentive-filter-frm");
             frm.find("input").val("");
             frm.find(".select-picker").selectpicker('val', '');
             frm.find(".filter-select-picker").selectpicker('val', '');
             $("#MonthYear").val('@ViewBag.currentMonthYear');
-            $("#WorkingHrDay").val('@ViewBag.WorkingHrDay');
-            $("#EmpMonthlyAttendanceData").empty();
+            $("#EmpIncentiveData").empty();
             $("#excel-import-data").empty();
             $("#btn-clear").addClass("d-none");
             $("#btn-excel").addClass("d-none");
         }
-        function updateAttendance(btn) {
-            var frm = $("#attendance-frm");
+        function updateIncentive(btn) {
+            var frm = $("#incentive-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                var url = `/Transactions/SaveEmpMonthlyAttendance`;
+                var url = `/Incentives/SaveEmpIncentive`;
                 postAjax(url, decodeURI(frm.serialize()), function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
-                        searchAttendance();
+                        searchIncentive();
                     }
                     else {
                         showErrorToastr(response.message);
@@ -122,48 +121,21 @@
                 });
             }
         }
-        function deleteAttendance(btn) {
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You want to Delete?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    loadingButton(btn);
-                    deleteAjax(`/Transactions/DeleteEmpMonthlyAttendance?${$("#emp-monthly-attendance-filter-frm").serialize()}`, function (response) {
-                        showSuccessToastr(response.message);
-                        searchAttendance();
-                        unloadingButton(btn);
-                    });
-                }
-            });
-        }
-        function updateNHrs(curr, W_days, P_HDays, index) {
-            var workingHrDay = $("#WorkingHrDay").val();
-            var NHrs = parseInt((W_days - curr.value - P_HDays) * parseFloat(workingHrDay));
-            $(`#AttendanceData_${index}__NHrs`).val(NHrs);
-            var payable = parseInt(W_days - curr.value);
-            $(`#AttendanceData_${index}__Payable`).val(payable);
-        }
         $('#btn-excel').on('click', function (e) {
             e.preventDefault();
-            exportTableToExcel("EmpMonthlyAttendanceTable", '@ViewData["Title"]');
-            searchAttendance();
+            exportTableToExcel("EmpIncentiveTable", '@ViewData["Title"]');
+            searchIncentive();
         });
         function uploadFile(event) {
             var ext = event.target.files[0].name.split('.').pop().toLowerCase();
             if (excelExtensions.includes(ext)) {
-                var frm = $("#emp-monthly-attendance-filter-frm");
+                var frm = $("#emp-incentive-filter-frm");
                 if (frm.valid()) {
                     loadingPage();
-                    filePostAjax('/Transactions/ImportAttendance', frm[0], function (response) {
+                    filePostAjax('/Incentives/ImportIncentive', frm[0], function (response) {
                         $("#import-file").val("");
                         if (!response.includes("not supported")) {
-                            $("#EmpMonthlyAttendanceData").empty();
+                            $("#EmpIncentiveData").empty();
                             $("#excel-import-data").html(response);
                             var tableRowCnt = $("#ExecelData tbody tr").length;
                             if (tableRowCnt == 0)
@@ -183,5 +155,32 @@
                 showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
         bindEmployeeDropdown();
+        function changeCheckbox(cur) {
+            $(cur).closest("tr").find("input").addClass("disabled");
+            $(cur).closest("tr").removeClass("table-primary");
+            if ($(cur).is(":checked")) {
+                $(cur).closest("tr").find("input").removeClass("disabled");
+                $(cur).closest("tr").addClass("table-primary");
+            }
+            var totalCheckbox = $(".chk").length;
+            var totalCheckedCheckbox = $(".chk:checked").length;
+            if (totalCheckbox == totalCheckedCheckbox)
+                $("#check-all").prop("checked", true);
+            else
+                $("#check-all").prop("checked", false);
+        }
+        function checkAll(cur) {
+            var checked = $(cur).is(":checked");
+            if (checked) {
+                $("#EmpIncentiveData table tbody tr").addClass("table-primary");
+                $("#EmpIncentiveData table tbody tr").find("input").removeClass("disabled");
+                $(".chk").prop("checked", true);
+            }
+            else {
+                $(".chk").prop("checked", false);
+                $("#EmpIncentiveData table tbody tr").find("input").addClass("disabled");
+                $("#EmpIncentiveData table tbody tr").removeClass("table-primary");
+            }
+        }
     </script>
 }

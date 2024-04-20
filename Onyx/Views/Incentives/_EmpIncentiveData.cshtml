@@ -1,0 +1,78 @@
+﻿@model IncentiveModel
+@{
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+}
+<form id="incentive-frm">
+    <input type="hidden" asp-for="FilterModel.Branch" />
+    <input type="hidden" asp-for="FilterModel.Designation" />
+    <input type="hidden" asp-for="FilterModel.EmpType" />
+    <input type="hidden" asp-for="FilterModel.EmpCd" />
+    <input type="hidden" asp-for="FilterModel.MonthYear" />
+    <input type="hidden" asp-for="FilterModel.Prd" />
+    <input type="hidden" asp-for="FilterModel.Year" />
+    <table class="table table-sm mt-3" id="EmpIncentiveTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    <div class="custom-control custom-checkbox">
+                        <input id="check-all" class="custom-control-input custom-control-input-white custom-control-input-outline" type="checkbox" onchange="checkAll(this)">
+                        <label for="check-all" class="custom-control-label font-weight-normal"></label>
+                    </div>
+                </th>
+                <th>No.</th>
+                <th>Image</th>
+                <th width="300">Employee</th>
+                <th>Branch</th>
+                <th>Designation</th>
+                <th>Emp. Type</th>
+                <th>Curr. Sal</th>
+                <th>Elig. Sales</th>
+                <th>Incentive</th>
+                <th>Manager. Incentive</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.IncentiveData.Select((value, i) => new { i, value }))
+        {
+            var avatarFileExist = item.value.Image.FileExist("emp-photo", companyCd);
+            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.value.Image) ? $"/uploads/{companyCd}/emp-photo/{item.value.Image}" : "/images/avatar.png";
+            <tr>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input asp-for="@Model.IncentiveData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
+                        <label for="@($"IncentiveData_{item.i}__Active")" class=" custom-control-label font-weight-normal"></label>
+                    </div>
+                </td>
+                <td>@(item.i + 1) <input asp-for="@Model.IncentiveData[item.i].SrNo" type="hidden" value="@(item.i + 1)"></td>
+                <td><img src="@avatarImage" class="img-size-50 mr-3 img-circle border"></td>
+                <td>@item.value.EmpName (@item.value.Cd.Trim())</td>
+                <td>@item.value.Branch</td>
+                <td>@item.value.Dept</td>
+                <td>@item.value.SalTyp</td>
+                <td>@item.value.Salary.ToString("0.00")</td>
+                <td>
+                    <input asp-for="@Model.IncentiveData[item.i].Cd" type="hidden">
+                    <input asp-for="@Model.IncentiveData[item.i].SalesAmt" type="text" class="form-control form-control-sm decimal-input disabled">
+                </td>
+                <td>
+                    <input asp-for="@Model.IncentiveData[item.i].Amt" type="text" class="form-control form-control-sm decimal-input disabled">
+                </td>
+                <td><input asp-for="@Model.IncentiveData[item.i].Amt1" type="text" class="form-control form-control-sm decimal-input disabled"></td>
+            </tr>
+        }
+        @if (!Model.IncentiveData.Any())
+        {
+            <tfoot>
+                <tr>
+                    <td>@CommonMessage.EMPTYGRID</td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+    @if (Model.IncentiveData.Any())
+    {
+        <hr />
+        <div class="body-footer">
+            <button class="btn btn-info" type="button" onclick="updateIncentive(this)">Update</button>
+        </div>
+    }
+</form>

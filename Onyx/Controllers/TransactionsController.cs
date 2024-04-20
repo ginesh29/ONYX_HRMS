@@ -685,7 +685,7 @@ namespace Onyx.Controllers
             var loanData = _transactionService.GetEmpLoanDetail(empCd, type, string.Empty, string.Empty, _loggedInUser.CompanyCd);
             return Json(type == "6" ? loanData : loanData.FirstOrDefault());
         }
-        public IActionResult SaveLoanReceiptVoucher(LoanReceiptVoucher model, string processId)
+        public IActionResult SaveLoanReceiptVoucher(LoanReceiptVoucher model)
         {
             var loanData = _transactionService.GetEmpLoanDetail(model.TransNo, "2", string.Empty, string.Empty, _loggedInUser.CompanyCd).FirstOrDefault();
             int lastDayOfMonth = DateTime.DaysInMonth(model.PaymentDt.Value.Year, model.PaymentDt.Value.Month);

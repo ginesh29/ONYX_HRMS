@@ -921,7 +921,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_EdCd", PayCode);
             parameters.Add("v_EdTyp", PayType);
-            parameters.Add("v_Div", Branch);
+            parameters.Add("v_Div", Branch ?? "0");
             parameters.Add("v_DocRef", string.Empty);
             parameters.Add("v_Empcd", empCd);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -1180,6 +1180,136 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             var result = connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result != null;
+        }
+        #endregion
+
+        #region Emp Monthly Incentive
+        public IEnumerable<EmpTrans_Incentives_GetRow_Result> GetEmpIncentiveData(IncentiveFilterModel model)
+        {
+            var procedureName = "EmpTrans_Incentives_GetRow_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("DivCd", model.Branch ?? "0");
+            parameters.Add("DeptCd", model.Designation ?? "0");
+            parameters.Add("v_EdCd", string.Empty);
+            parameters.Add("v_EdTyp", "HEDT01");
+            parameters.Add("v_FromDt", model.FromDt);
+            parameters.Add("v_ToDt", model.ToDt);
+            parameters.Add("v_RPrd", model.Prd);
+            parameters.Add("v_RYear", model.Year);
+            parameters.Add("v_Empcd", model.EmpCd ?? string.Empty);
+            parameters.Add("v_EmpTyp", model.EmpType ?? "0");
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpTrans_Incentives_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public bool ValidHeaderIncentiveExcel(IFormFile file)
+        {
+            var result = true;
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            reader.Read();
+            var headers = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+                headers.Add(Convert.ToString(reader.GetValue(i)));
+            headers = headers.Where(m => !string.IsNullOrEmpty(m)).ToList();
+            var expectedHeaders = new List<string> { "Employee Code", "Sales Incentive", "Incentive", "Manager Incentive" };
+            if (!headers.SequenceEqual(expectedHeaders))
+                result = false;
+            return result;
+        }
+        public IEnumerable<EmpTrans_Incentives_GetRow_Result> GetIncentiveFromExcel(IFormFile file, string CoCd)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<EmpTrans_Incentives_GetRow_Result>();
+            reader.Read();
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(Convert.ToString(reader.GetValue(i))))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                var empCd = Convert.ToString(reader.GetValue(0));
+                bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
+                string errorMessage = "<ul class='text-left ml-0'>";
+                if (!validEmployee)
+                    errorMessage += "<li>Employee Code is empty or not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int salesIncentive))
+                    errorMessage += "<li>Sales Incentive is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(2)), out int incentive))
+                    errorMessage += "<li>Incentive is not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(3)), out int managerIncentive))
+                    errorMessage += "<li>Manager Incentive is not valid</li>";
+                errorMessage += "</ul>";
+                var excelData = new EmpTrans_Incentives_GetRow_Result
+                {
+                    IsValid = validEmployee,
+                    ErrorMessage = errorMessage,
+                    Cd = empCd,
+                    SalesAmt = salesIncentive,
+                    Amt = incentive,
+                    Amt1 = managerIncentive
+                };
+                result.Add(excelData);
+            }
+            return result;
+        }
+        public void ImportIncentiveExcelData(IEnumerable<EmpTrans_Incentives_GetRow_Result> excelData, IncentiveFilterModel model)
+        {
+            var spYearMonth = model.MonthYear.Split("/");
+            model.Prd = spYearMonth[0];
+            model.Year = spYearMonth[1];
+            int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(model.Year), Convert.ToInt32(model.Prd));
+            model.FromDt = new DateTime(Convert.ToInt32(model.Year), Convert.ToInt32(model.Prd), 1);
+            model.ToDt = new DateTime(Convert.ToInt32(model.Year), Convert.ToInt32(model.Prd), lastDayOfMonth);
+            var filterModel = new VariablePayDedComponentFilterModel
+            {
+                Branch = model.Branch ?? "0",
+                Department = model.Designation ?? "0",
+                EmpCd = model.EmpCd ?? string.Empty,
+                FromDt = model.FromDt,
+                ToDt = model.ToDt,
+                PayType = "HEDT01",
+                EntryBy = _loggedInUser.UserAbbr,
+            };
+            foreach (var item in excelData)
+            {
+                var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
+                var data = new EmpTrans_VarCompFixAmt_GetRow_Result()
+                {
+                    Cd = item.Cd,
+                    Curr = employeeDetail.BasicCurr.Trim(),
+                    SrNo = item.SrNo,
+                };
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i == 0)
+                    {
+                        filterModel.PayCode = "207";
+                        data.Amt = item.SalesAmt;
+                    }
+                    else if (i == 1)
+                    {
+                        filterModel.PayCode = "207";
+                        data.Amt = item.Amt;
+                    }
+                    else
+                    {
+                        filterModel.PayCode = "MGRIN";
+                        data.Amt = item.Amt1;
+                    }
+                    EmpTrans_Update(data, filterModel);
+                }
+            }
         }
         #endregion
     }
