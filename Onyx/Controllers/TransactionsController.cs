@@ -704,14 +704,9 @@ namespace Onyx.Controllers
                 AmtVal = model.PayAmt,
                 EndDate = endDate,
                 ChgsAmt = 0,
-                EditDt = DateTime.Now,
-                EditBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserAbbr,
             });
-            //var ActivityAbbr = "UPD";
-            var action = "adjusted";
-            var Message = $", Loan is {action} With Trans no={model.TransNo}";
-            //_commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
-            TempData["success"] = $"Loan {action} successfully";
+            TempData["success"] = $"Loan adjusted successfully";
             return RedirectToAction("ReceiptVoucher");
         }
         #endregion
