@@ -93,14 +93,9 @@ namespace Onyx.Controllers
                     Curr = employeeDetail.BasicCurr.Trim(),
                     SrNo = item.SrNo,
                 };
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 2; i++)
                 {
-                    if (i == 0)
-                    {
-                        filterModel.PayCode = "207";
-                        data.Amt = item.SalesAmt;
-                    }
-                    else if (i == 1)
+                    if (i == 1)
                     {
                         filterModel.PayCode = "207";
                         data.Amt = item.Amt;
@@ -112,11 +107,13 @@ namespace Onyx.Controllers
                     }
                     _transactionService.EmpTrans_Update(data, filterModel);
                 }
+                data.Amt = item.SalesAmt;
+                _transactionService.UpdateEmpSalesData(data, filterModel);
             }
             var result = new CommonResponse
             {
                 Success = true,
-                Message = $"{model.IncentiveData.Count} record(s) {CommonMessage.UPDATED}" 
+                Message = $"{model.IncentiveData.Count} record(s) {CommonMessage.UPDATED}"
             };
             return Json(result);
         }

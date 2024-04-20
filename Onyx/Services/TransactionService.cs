@@ -1184,6 +1184,19 @@ namespace Onyx.Services
         #endregion
 
         #region Emp Monthly Incentive
+        public void UpdateEmpSalesData(EmpTrans_VarCompFixAmt_GetRow_Result model, VariablePayDedComponentFilterModel filterModel)
+        {
+            var procedureName = "EmpIncSales_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("DivCd", filterModel.Branch);
+            parameters.Add("v_FromDt", filterModel.FromDt);
+            parameters.Add("v_ToDt", filterModel.ToDt);
+            parameters.Add("v_Empcd", model.Cd);
+            parameters.Add("v_SalAmt", model.Amt);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         public IEnumerable<EmpTrans_Incentives_GetRow_Result> GetEmpIncentiveData(IncentiveFilterModel model)
         {
             var procedureName = "EmpTrans_Incentives_GetRow_N";
@@ -1290,14 +1303,9 @@ namespace Onyx.Services
                     Curr = employeeDetail.BasicCurr.Trim(),
                     SrNo = item.SrNo,
                 };
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 2; i++)
                 {
-                    if (i == 0)
-                    {
-                        filterModel.PayCode = "207";
-                        data.Amt = item.SalesAmt;
-                    }
-                    else if (i == 1)
+                    if (i == 1)
                     {
                         filterModel.PayCode = "207";
                         data.Amt = item.Amt;
@@ -1309,6 +1317,8 @@ namespace Onyx.Services
                     }
                     EmpTrans_Update(data, filterModel);
                 }
+                data.Amt = item.SalesAmt;
+                UpdateEmpSalesData(data, filterModel);
             }
         }
         #endregion
