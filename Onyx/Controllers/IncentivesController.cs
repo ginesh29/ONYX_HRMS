@@ -95,7 +95,7 @@ namespace Onyx.Controllers
                 };
                 for (int i = 0; i < 2; i++)
                 {
-                    if (i == 1)
+                    if (i == 0)
                     {
                         filterModel.PayCode = "207";
                         data.Amt = item.Amt;
