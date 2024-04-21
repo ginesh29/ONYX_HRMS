@@ -3,12 +3,12 @@
 }
 @model CompanyProcessApprovalModel
 <div class="card">
-    <div class="card-body">        
+    <div class="card-body">
         <div class="row">
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="ProcessIdCd"></label>
-                    <select asp-for="ProcessIdCd" class="form-control filter-select-picker" asp-items="ViewBag.TypeItems" onchange="bindDocTypeByType(this)" data-index="1">
+                    <select asp-for="ProcessIdCd" class="form-control filter-select-picker" asp-items="ViewBag.TypeItems" onchange="bindDocTypeByType(this)" data-index="1" data-target="ApplTypCd-Filter">
                     </select>
                     <span asp-validation-for="ProcessIdCd" class="text-danger"></span>
                 </div>
@@ -16,7 +16,7 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="ApplTypCd"></label>
-                    <select asp-for="ApplTypCd" class="form-control filter-select-picker" asp-items="ViewBag.DocumentTypeItems" data-index="2">
+                    <select asp-for="ApplTypCd" class="form-control filter-select-picker" asp-items="ViewBag.DocumentTypeItems" data-index="2" id="ApplTypCd-Filter">
                     </select>
                     <span asp-validation-for="ApplTypCd" class="text-danger"></span>
                 </div>

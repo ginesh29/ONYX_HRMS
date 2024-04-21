@@ -97,16 +97,10 @@ function saveLeaveApproval(btn) {
 }
 function ValidateLeaveApprovalDateRange() {
     var isValid = false;
-    var WpDateRangeDays = $("#WpDateRangeDays").val();
-    var WopDateRangeDays = $("#WopDateRangeDays").val();
-    var totalLvDays = $("#TotalLvDays").val();
-    var calculatedTotalLvDays = Number(WpDateRangeDays) + Number(WopDateRangeDays);
     var WpDateRange = $("#WpDateRange").val();
     var WopDateRange = $("#WopDateRange").val();
     if (checkRangesOverlap(WpDateRange, WopDateRange))
         $("#errorContainer").text("Date Range (WP) & (WOP) is ovelaped");
-    else if (Number(totalLvDays) != calculatedTotalLvDays)
-        $("#errorContainer").text("Total Leaves not matched with Date Range (WP) & (WOP)");
     else {
         isValid = true;
         $("#errorContainer").text("");

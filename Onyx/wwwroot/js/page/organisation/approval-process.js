@@ -73,14 +73,15 @@ function saveApprovalProcess(btn) {
     }
 }
 function bindDocTypeByType(e) {
-    $("#ApplTypCd").empty();
+    var target = $(e).attr("data-target");
+    $(`#${target}`).empty();
     getAjax(`/Organisation/FetchDocTypeByType?proccessId=${e.value}`, function (response) {
         var html = '';
         $.each(response, function (i, item) {
             html += `<option value='${item.value}'>${item.text}</option>`
         })
-        $("#ApplTypCd").html(html);
-        $("#ApplTypCd").attr("title", "-- Select --");
+        $(`#${target}`).html(html);
+        $(`#${target}`).attr("title", "-- Select --");
         $('.select-picker').selectpicker('refresh');
     });
 }
