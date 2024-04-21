@@ -320,7 +320,6 @@ namespace Onyx.Controllers
                 };
             else
             {
-                model.SrNo = _transactionService.GetEmpTransferSrNo(empCd);
                 model.TransferDt = DateTime.Now.Date;
             }
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new
@@ -351,6 +350,8 @@ namespace Onyx.Controllers
         public IActionResult SaveEmpTransfer(EmpTransferModel model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
+            if (model.Mode == "I")
+                model.SrNo = _transactionService.GetEmpTransferSrNo(model.EmpCd);
             var result = _transactionService.SaveEmpTransfer(model);
             return Json(result);
         }

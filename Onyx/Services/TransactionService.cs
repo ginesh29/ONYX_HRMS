@@ -660,7 +660,7 @@ namespace Onyx.Services
         }
         public CommonResponse SaveEmpTransfer(EmpTransferModel model)
         {
-            var procedureName = "EmpTransfers_Update";
+            var procedureName = "EmpTransfers_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Empcd", model.EmpCd);
             parameters.Add("v_Srno", model.SrNo);

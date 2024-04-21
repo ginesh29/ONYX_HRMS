@@ -94,12 +94,6 @@ namespace Onyx.Controllers
         public IActionResult Profile(string Cd)
         {
             var employee = _employeeService.FindEmployee(Cd, _loggedInUser.CompanyCd);
-            ViewBag.Basic = employee.Basic;
-            var components = _employeeService.GetComponents(Cd, _loggedInUser.UserCd);
-            var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
-            var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
-            ViewBag.TotalSalary = employee.Basic + totalIncome - totalDeductions;
-            ViewBag.Currency = employee.BasicCurr.Trim();
             if (employee != null)
             {
                 employee.Code = employee.Cd?.Trim();
@@ -139,6 +133,12 @@ namespace Onyx.Controllers
                 ViewBag.SignatureFileExist = signatureFileExist;
                 ViewBag.AvatarPath = avatarImage;
                 ViewBag.SignaturePath = signatureImage;
+                ViewBag.Basic = employee?.Basic;
+                var components = _employeeService.GetComponents(Cd, _loggedInUser.UserCd);
+                var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
+                var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
+                ViewBag.TotalSalary = employee.Basic + totalIncome - totalDeductions;
+                ViewBag.Currency = employee.BasicCurr.Trim();
             }
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
@@ -264,7 +264,7 @@ namespace Onyx.Controllers
             {
                 Data = new { TotalSalary, Currency },
                 Message = "Basic updated successfully"
-            }); ;
+            });
         }
         [HttpPost]
         public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)
