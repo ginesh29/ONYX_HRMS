@@ -1305,5 +1305,10 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        public IActionResult EmpSepration()
+        {
+            return View();
+        }
     }
 }
