@@ -1,7 +1,7 @@
 ﻿@model EmpShortListReportModel
 @{
     var dateFormat = ExtensionMethod.GetDateFormat();
-    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirate Id", "Phone No.", "Email Id", "Nationality" };
+    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirates Id", "Emirates IdExp", "Phone No.", "Email Id", "Nationality" };
 }
 <div class="@ViewBag.TableResponsiveClass">
     <table class="table table-sm" id="EmpShortListReportTable" style="font-size:x-small">
@@ -105,17 +105,21 @@
                 }
                 @if (Model.VisibleColumns.Contains("21"))
                 {
-                    <td>@item.EmiratedId</td>
+                    <td>@item.EmiratesId</td>
                 }
                 @if (Model.VisibleColumns.Contains("22"))
                 {
-                    <td>@item.PhoneNo</td>
+                    <td>@item.EmiratesIdExpDt</td>
                 }
                 @if (Model.VisibleColumns.Contains("23"))
                 {
-                    <td>@item.EmailId</td>
+                    <td>@item.PhoneNo</td>
                 }
                 @if (Model.VisibleColumns.Contains("24"))
+                {
+                    <td>@item.EmailId</td>
+                }
+                @if (Model.VisibleColumns.Contains("25"))
                 {
                     <td>@item.Nationality</td>
                 }

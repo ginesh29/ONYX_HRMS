@@ -36,5 +36,7 @@
         public string EmailId { get; set; }
         public string CoName { get; set; }
         public string EmpTyp { get; set; }
+        public string EmiratesId { get; set; }
+        public string EmiratesIdExpDt { get; set; }
     }
 }
