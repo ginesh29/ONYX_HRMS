@@ -1,8 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Employee Profile";
-    ViewData["AdditionLinkWithTitle"] = "Employees_/Employee/Profiles";
-    string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Components", "Addresses" };
     var processId = Context.Request.Query["processId"];
+    ViewData["AdditionLinkWithTitle"] = $"Employees_/Employee/Profiles?processId={processId}";
+    string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Components", "Addresses" };
     var loggedInUser = _authService.GetLoggedInUser();
     var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
@@ -95,18 +95,6 @@
 <div id="ComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="AddressModal" class="modal fade" role="dialog" tabindex='-1'></div>
 <div id="PreviewModal" class="modal fade" role="dialog" tabindex='-1'></div>
-<style>
-    .bootstrap-select:focus {
-        border-color: #80bdff; /* Adjust to your desired focus color */
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Adjust to your desired focus shadow */
-    }
-
-        /* Optional: Change focus style for the dropdown toggle */
-        .bootstrap-select:focus .dropdown-toggle {
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Adjust to your desired focus shadow */
-        }
-</style>
 @section scripts {
     <script src="~/plugins/bs-stepper/js/bs-stepper.min.js"></script>
     <script src="~/js/page/employee/employee-profile.js" asp-append-version="true"></script>

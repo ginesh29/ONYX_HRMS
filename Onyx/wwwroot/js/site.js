@@ -314,8 +314,6 @@ $(document).on('select2:open', () => {
 });
 function bindEmployeeMultipleDropdown(departments, designations, branches, locations) {
     var el = $("select#Approvals,select#Attendees");
-    el.empty()
-    el.select2();
     getAjax(`/Employee/FetchEmployeeItems?departments=${departments}&designations=${designations}&branches=${branches}&locations=${locations}`, function (response) {
         el.select2({
             placeholder: "-- Select --",

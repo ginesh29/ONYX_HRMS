@@ -15,7 +15,7 @@
             <div class="col-md-4">
                 <div class="form-group @(!string.IsNullOrEmpty(Model.Cd) ? "disabled-container" : "")">
                     <label asp-for="Cd"></label>
-                    <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")">
+                    <input asp-for="Cd" class="form-control @(!string.IsNullOrEmpty(Model.Cd) ? "disabled" : "")" maxlength="10">
                     <span asp-validation-for="Cd" class="text-danger"></span>
                 </div>
                 <div class="form-group">

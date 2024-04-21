@@ -52,10 +52,10 @@
                     <select asp-for="Approvals" class="form-control" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%" title="@CommonSetting.DEFAULTSELECT">
                         @if (Model.ApprovalLevels != null)
                         {
-                            @for (int i = 0; i < Model.ApprovalLevels.Count(); i++)
+                            @foreach (var item in Model.ApprovalLevels)
                             {
-                                <option value="@Model.ApprovalLevels[i].EmpCd.Trim()" selected>@Model.ApprovalLevels[i].EmpName.Trim() (@Model.ApprovalLevels[i].EmpCd.Trim())</option>
-                            }
+                                <option value="@item.EmpCd.Trim()" selected>@item.EmpName.Trim() (@item.EmpCd.Trim())</option>
+                            }                            
                         }
                     </select>
                     <span asp-validation-for="ApprovalLevels" class="text-danger"></span>
@@ -69,5 +69,5 @@
     </div>
 </div>
 <script>
-    bindEmployeeMultipleDropdown();
+    bindEmployeeMultipleDropdown('', '', '', '')
 </script>

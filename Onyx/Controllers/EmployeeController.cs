@@ -138,7 +138,7 @@ namespace Onyx.Controllers
                 var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
                 var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
                 ViewBag.TotalSalary = employee.Basic + totalIncome - totalDeductions;
-                ViewBag.Currency = employee.BasicCurr.Trim();
+                ViewBag.Currency = employee.BasicCurr?.Trim();
             }
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
@@ -282,6 +282,7 @@ namespace Onyx.Controllers
                 model.ImageSign = filePath;
             }
             var result = _employeeService.SaveEmployee(model, _loggedInUser.CompanyCd);
+            result.Data = new { EmpCd = model.Cd.Trim() };
             return Json(result);
         }
         [HttpDelete]

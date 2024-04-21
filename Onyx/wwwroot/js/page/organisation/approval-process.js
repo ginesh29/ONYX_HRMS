@@ -18,7 +18,6 @@
             { data: "dept" },
             {
                 data: function (row) {
-                    console.log(row)
                     return `<button class="btn btn-sm btn-info" onclick="showApprovalProcessModal('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteApprovalProcess('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">

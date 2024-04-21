@@ -11,7 +11,6 @@ var calendar = new Calendar(calendarEl, {
     eventDidMount: function (info) {
         var eventElement = info.el;
         var event = info.event;
-        console.log(event.id)
         var color = event.allDay ? "white" : "dark";
         $(eventElement).find(".fc-event-title").append(`<span class='fc-event-icons float-right'><button class='btn btn-icon btn-sm p-0 mr-1 edit-event'><i class='fas fa-pencil-alt text-${color}'></i></button><button class='btn btn-icon btn-sm p-0 delete-event mr-2'><i class='fa fa-trash text-${color}'></i></button></span>`);
         $(eventElement).find(".edit-event").click(function () {

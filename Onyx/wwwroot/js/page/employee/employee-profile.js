@@ -74,6 +74,11 @@ function GoToNextPrev(btn, back) {
                 saveBasicDetail(btn);
                 if (activeStepIndex == 1)
                     bindEducationDataTable();
+                else {
+                    var empCd = $("#Cd").val()
+                    history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${empCd}`);
+                    $("#Cd").addClass("disabled");
+                }
             }
             else if (activeStepIndex == 2)
                 bindExperienceDataTable();
