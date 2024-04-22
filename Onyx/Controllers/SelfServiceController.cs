@@ -37,30 +37,23 @@ namespace Onyx.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SaveLoanApplication(EmpLoanModel model, string processId)
+        public IActionResult SaveLoanApplication(EmpLoanModel model, string processId, bool confirmed = false)
         {
             var LoanDue = _transactionService.GetEmpLoan_Due(model.EmployeeCode, model.TransDt);
-            if (LoanDue <= 0)
+            model.EntryBy = _loggedInUser.UserAbbr;
+            if (LoanDue == 0 || confirmed)
             {
-                model.EntryBy = _loggedInUser.UserAbbr;
                 var result = _transactionService.SaveLoan(model);
-                if (result.Success)
-                {
-                    var ActivityAbbr = "INS";
-                    var Message = $", Loan is applied With Trans no={model.TransNo}";
-                    _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
-                }
+                var ActivityAbbr = "INS";
+                var Message = $", Loan is applied With Trans no={model.TransNo}";
+                _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
                 return Json(result);
             }
-            else
+            return Json(new CommonResponse
             {
-                return Json(new CommonResponse
-                {
-                    Success = false,
-                    Message = $"PREVIOUS LOAN BALANCE UNSETTLED ({LoanDue} AED). SO YOU ARE NOT ELIGIBLE FOR NEW LOAN"
-                });
-            }
-
+                Success = false,
+                Message = $"PREVIOUS LOAN BALANCE UNSETTLED ({LoanDue} AED)."
+            });
         }
         #endregion
 

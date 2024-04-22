@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
@@ -167,7 +166,7 @@ namespace Onyx.Controllers
                     EmpCd = leaveData.EmpCd,
                     Emp = leaveData.Emp,
                     Designation = leaveData.Designation,
-                    Branch = leaveData.Branch,
+                    Branch = leaveData.Div,
                     AppDt = leaveData.AppDt,
                     LvTyp = leaveData.LvTyp,
                     FromDt = leaveData.FromDt,
@@ -578,7 +577,7 @@ namespace Onyx.Controllers
         }
         public IActionResult LoanAdvanceSlip(string transNo, string empCd)
         {
-            var employees = _transactionService.GetEmpLoanDetail(transNo, "5", empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var employees = _transactionService.GetEmpLoanDetail(transNo, "5", empCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
             return new ViewAsPdf(employees)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
@@ -615,7 +614,8 @@ namespace Onyx.Controllers
             var paidLoan = empLoanAdjDetail.Where(m => m.EffDate.Month < Convert.ToInt32(currentMonth)).Sum(m => m.AmtVal);
             var totalEmi = empLoanAdjDetail.Count;
             var paidEmi = empLoanAdjDetail.Count(m => m.EffDate.Month < Convert.ToInt32(currentMonth));
-            var remaIningNoOfInst = totalEmi - paidEmi - 1;
+            var emi1 = totalEmi != 1 ? 1 : 0;
+            var remaIningNoOfInst = totalEmi - paidEmi - emi1;
             var remainingLoan = totalLoan - (paidLoan + Convert.ToDecimal(amount));
             decimal emi = remainingLoan / remaIningNoOfInst;
             emi = emi > 0 ? emi : 0;

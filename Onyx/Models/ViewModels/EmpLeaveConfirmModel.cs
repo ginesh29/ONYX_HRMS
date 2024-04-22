@@ -48,5 +48,7 @@ namespace Onyx.Models.ViewModels
         public decimal? Ticket { get; set; }
         [Display(Name = "Leave Salary")]
         public decimal? LvSalary { get; set; }
+        public bool SinglePayroll { get; set; }
+        public bool PrintAfterSave { get; set; }
     }
 }

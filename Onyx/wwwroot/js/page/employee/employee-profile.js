@@ -77,7 +77,7 @@ function GoToNextPrev(btn, back) {
                 else {
                     var empCd = $("#Cd").val()
                     history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${empCd}`);
-                    $("#Cd").addClass("disabled");
+                    reloadPageAfterSometime();
                 }
             }
             else if (activeStepIndex == 2)

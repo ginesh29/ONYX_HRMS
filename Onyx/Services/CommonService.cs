@@ -9,9 +9,10 @@ using System.Net.Sockets;
 
 namespace Onyx.Services
 {
-    public class CommonService(DbGatewayService dbGatewayService)
+    public class CommonService(DbGatewayService dbGatewayService, AuthService authService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
+        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public IEnumerable<Branch_UserCo_GetRow_Result> GetUserCompanies(string UserCd)
         {
             var procedureName = "Branch_UserCo_GetRow";
@@ -133,7 +134,7 @@ namespace Onyx.Services
         }
         public int SetActivityLogHead(ActivityLogModel model)
         {
-            var ip = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
+            var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
             var os = Environment.OSVersion.Platform.ToString();
             var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
@@ -142,7 +143,7 @@ namespace Onyx.Services
             parameters.Add("v_ActivityId", "");
             parameters.Add("v_SessionId", "");
             parameters.Add("v_UserCd", model.UserCd);
-            parameters.Add("v_IP", ip);
+            parameters.Add("v_IP", ipAddress);
             parameters.Add("v_OS", os);
             parameters.Add("v_Browser", model.Browser);
             parameters.Add("v_StartTime", DateTime.Now);
@@ -155,6 +156,9 @@ namespace Onyx.Services
         }
         public int SetActivityLogDetail(string ActivityId, string ProcessId, string ActivityAbbr, string Message)
         {
+            string UserIdWithName = _loggedInUser.UserCd != _loggedInUser.UserAbbr ? $"{_loggedInUser.UserAbbr}({_loggedInUser.UserCd})" : _loggedInUser.UserAbbr;
+            var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
+            Message = $"[{DateTime.Now}] {UserIdWithName} {Message} ({ipAddress})";
             var procedureName = "ActivityLogDetail_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_ActivityId", ActivityId);

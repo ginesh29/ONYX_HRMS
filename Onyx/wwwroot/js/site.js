@@ -351,7 +351,7 @@ function initControls() {
         locale: {
             format: CommonSetting.DisplayDateFormat
         },
-        autoUpdateInput: false,
+        //autoUpdateInput: false,
         autoApply: true,
         singleDatePicker: true,
         showDropdowns: true,

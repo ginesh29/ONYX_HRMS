@@ -31,6 +31,7 @@
         public string FormatedApprDt { get; set; }
         public int? ApprDays { get; set; }
         public string Branch { get; set; }
+        public string Div { get; set; }
         public string Designation { get; set; }
     }
 }

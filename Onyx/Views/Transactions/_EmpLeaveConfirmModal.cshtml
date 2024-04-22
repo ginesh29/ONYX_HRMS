@@ -59,7 +59,7 @@
                                         <span asp-validation-for="DateRange" class="text-danger"></span>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                            
                             <div class="row form-group revise-div d-none">
                                 <div class="col-md-6">
                                     <div class="form-group mb-0">
@@ -91,11 +91,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="SinglePayroll">
+                                <label asp-for="SinglePayroll" class="custom-control-label font-weight-normal">Single Payroll</label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Remark"></label>
                             <textarea asp-for="Remark" class="form-control"></textarea>
                             <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="PrintAfterSave">
+                            <label asp-for="PrintAfterSave" class="custom-control-label font-weight-normal">Print After Save</label>
                         </div>
                         <div class="row revise-div confirm-div d-none">
                             <span class="font-weight-bold">Total Leave Days:</span><span id="totalLvDays"> @Model.ApprDays</span>

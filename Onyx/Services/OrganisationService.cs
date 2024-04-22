@@ -62,7 +62,7 @@ namespace Onyx.Services
         #endregion
 
         #region Loan Type
-        public IEnumerable<CompanyLoanTypes_GetRow_Result> GetLoanTypes()
+        public IEnumerable<CompanyLoanTypes_GetRow_Result> GetLoanTypes(bool showInActive = false)
         {
             var procedureName = "CompanyLoanTypes_GetRow_N";
             var parameters = new DynamicParameters();
@@ -71,7 +71,7 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyLoanTypes_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
+            return showInActive == true ? data : data.Where(m => m.Active);
         }
         public CommonResponse SaveLoanType(LoanTypeModel model)
         {

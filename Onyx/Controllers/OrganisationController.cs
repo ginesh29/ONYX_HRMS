@@ -106,7 +106,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetLoanType(string cd)
         {
-            var loanType = _organisationService.GetLoanTypes().FirstOrDefault(m => m.Cd.Trim() == cd);
+            var loanType = _organisationService.GetLoanTypes(true).FirstOrDefault(m => m.Cd.Trim() == cd);
             var model = new LoanTypeModel();
             if (loanType != null)
                 model = new LoanTypeModel
@@ -143,7 +143,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchLoanTypes()
         {
-            var loanTypes = _organisationService.GetLoanTypes();
+            var loanTypes = _organisationService.GetLoanTypes(true);
             CommonResponse result = new()
             {
                 Data = loanTypes,

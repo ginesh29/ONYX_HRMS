@@ -116,11 +116,10 @@ function changeType(e) {
     $(".revise-div").addClass("d-none");
     if (e.value == LeaveConfirmTypesEnum.Confirm) {
         $(".confirm-div").removeClass("d-none");
-        $(".revise-div input").val("");
+        $(".revise-div:not(.confirm-div) input").val("");
     }
     else if (e.value == LeaveConfirmTypesEnum.Revise) {
         $(".revise-div").removeClass("d-none");
-        $(".confirm-div input").val("");
     }
 }
 function saveLeaveConfirm(btn) {
