@@ -191,7 +191,6 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpLeaveConfirmModal", model);
         }
-
         public IActionResult EmpDutyResumption()
         {
             return View();

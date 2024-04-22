@@ -133,9 +133,10 @@ function setActiveMenu() {
     var el2 = el.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
     el2.closest('.nav-treeview').closest('.nav-item').addClass('menu-open').find('> .nav-link').addClass('active');
 }
-function reloadPageAfterSometime() {
+function reloadPageAfterSometime(callback) {
     setTimeout(function () {
         location.reload();
+        callback();
     }, 1000);
 }
 function reloadDatatable() {

@@ -77,8 +77,14 @@ function GoToNextPrev(btn, back) {
                 else {
                     var empCd = $("#Cd").val()
                     history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${empCd}`);
-                    reloadPageAfterSometime();
+                    var queryString = getQueryStringParams(window.location.search);
+                    if (!queryString.cd)
+                        reloadPageAfterSometime();
                 }
+                setTimeout(function () {
+                    stepper.next();
+                    unloadingButton(btn);
+                }, 1000);
             }
             else if (activeStepIndex == 2)
                 bindExperienceDataTable();
@@ -136,9 +142,6 @@ function saveBasicDetail(btn) {
         filePostAjax("/Employee/SavePersonalDetail", frm[0], function (response) {
             if (response.success) {
                 $("#btn-avatar-delete").removeClass("d-none");
-                setTimeout(function () {
-                    stepper.next();
-                }, 1000);
             }
             else
                 showErrorToastr(response.message);
