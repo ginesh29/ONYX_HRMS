@@ -76,35 +76,36 @@ namespace Onyx.Controllers
             var leaveType = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
             return Json(leaveType);
         }
-        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
+        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId, bool confirmed = false)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
             var dateSp = model.DateRange.Split(" - ");
             model.FromDt = Convert.ToDateTime(dateSp[0]);
             model.ToDt = Convert.ToDateTime(dateSp[1]);
+            var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            if (!lvExist && maxLeave >= model.LvTaken)
+            if (!lvExist)
             {
-                _transactionService.SaveLeave(model);
-                var ActivityAbbr = "INS";
-                var Message = $", Leave is applied With Trans no={model.TransNo}";
-                _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
-                var result = new CommonResponse
+                if (maxLeave >= lvDays || confirmed)
                 {
-                    Success = true,
-                    Message = "Leave applied successfully"
-                };
-                return Json(result);
+                    _transactionService.SaveLeave(model);
+                    var ActivityAbbr = "INS";
+                    var Message = $", Leave is applied With Trans no={model.TransNo}";
+                    _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+                    var result = new CommonResponse
+                    {
+                        Success = true,
+                        Message = "Leave applied successfully"
+                    };
+                    return Json(result);
+                }
             }
-            else
+            return Json(new CommonResponse
             {
-                return Json(new CommonResponse
-                {
-                    Success = false,
-                    Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : "Leave Application Maximum Limit Exceeded"
-                });
-            }
+                Success = false,
+                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : "Leave Application Maximum Limit Exceeded"
+            });
         }
         #endregion
 
