@@ -47,7 +47,7 @@ $('#EmpCd').on('select2:open', function () {
     $('.select2-search__field').off('input');
     $('.select2-search__field').on('input', function (e) {
         searchText = $(this).val();
-        $(this).val(searchText.trim());
+        $(this).val(searchText);
         BindEmployeeGrid();
     });
 });
