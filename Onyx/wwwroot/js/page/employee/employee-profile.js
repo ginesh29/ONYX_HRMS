@@ -7,6 +7,8 @@
     }
 })
 
+var empCode = $("#Cd").val();
+var visibleEmpName = !empCode ? true : false;
 function previewAvatar(event) {
     var reader = new FileReader();
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
@@ -76,6 +78,7 @@ function GoToNextPrev(btn, back) {
                     bindEducationDataTable();
                 else {
                     var empCd = $("#Cd").val()
+                    empCode = empCd;
                     history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${empCd}`);
                     var queryString = getQueryStringParams(window.location.search);
                     if (!queryString.cd)
@@ -106,8 +109,6 @@ function GoToNextPrev(btn, back) {
     else
         stepper.previous()
 }
-var empCode = $("#Cd").val();
-var visibleEmpName = !empCode ? true : false;
 $('.step[data-target="#education-detail-part"] .step-trigger').on('click', function (e) {
     e.preventDefault();
     bindEducationDataTable();

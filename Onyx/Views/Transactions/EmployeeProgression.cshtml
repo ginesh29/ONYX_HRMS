@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Employee Progression";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showEmpProgressionModal('')">New Progression</button>
+        </div>
+        <table class="table table-sm" id="EmployeeProgressionDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Trans. No.</th>
+                    <th>Employee</th>
+                    <th>Tran Dt</th>
+                    <th>Progression Type</th>
+                    <th>From Desg.</th>
+                    <th>To Desg.</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="EmpProgressionModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/transactions/emp-progression.js" asp-append-version="true"></script>
+}

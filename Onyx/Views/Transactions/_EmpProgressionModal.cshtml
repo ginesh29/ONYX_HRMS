@@ -1,0 +1,161 @@
+﻿@model EmpProgressionHeadModel
+@{
+    var percentageAmtTypes = new List<SelectListItem>()
+            {
+                new() {Text="AMOUNT", Value="AMOUNT"},
+                new() { Text="PERCENTAGE", Value="PERCENTAGE"},
+            };
+}
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.EmpCode) ? "Approve" : "Add") Employee Progression</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="emp-prograssion-frm">
+                <input type="hidden" asp-for="Current_Approval_Level" />
+                <input type="hidden" asp-for="ApprBy" />
+                <div class="@(!string.IsNullOrEmpty(Model?.EmpCode) ? "disabled-container" : "")">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group disabled-container">
+                                <label asp-for="TransNo"></label>
+                                <input asp-for="TransNo" class="form-control disabled" value="@Model.TransNo" />
+                                <span asp-validation-for="TransNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="TransDt"></label>
+                                <input asp-for="TransDt" class="form-control date-input" type="text" />
+                                <span asp-validation-for="TransDt" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label asp-for="EmpCode"></label>
+                                <select asp-for="EmpCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmpCode) ? "disabled" : "")" id="EmpCd" onchange="getEmpDesignation(this)">
+                                    <option value="@Model.EmpCode">@Model.Name</option>
+                                </select>
+                                <span asp-validation-for="EmpCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="DesigFromCd"></label>
+                                <select asp-for="DesigFromCd" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
+                                </select>
+                                <span asp-validation-for="DesigFromCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="DesigToCd"></label>
+                                <select asp-for="DesigToCd" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
+                                </select>
+                                <span asp-validation-for="DesigToCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="EP_TypeCd"></label>
+                                <select asp-for="EP_TypeCd" class="form-control select-picker" asp-items="ViewBag.ProgressionTypeItems" onchange="showHideComponent(this)">
+                                </select>
+                                <span asp-validation-for="EP_TypeCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="component-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="EffDt"></label>
+                                    <input asp-for="EffDt" class="form-control date-input" type="text" />
+                                    <span asp-validation-for="EffDt" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="PayTypCd"></label>
+                                    <select asp-for="PayTypCd" class="form-control select-picker" asp-items="ViewBag.ComponentClassTypeItems" onchange="bindComponentClass(this)">
+                                    </select>
+                                    <span asp-validation-for="PayTypCd" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="PayCodeCd"></label>
+                                    <select asp-for="PayCodeCd" class="form-control select-picker" asp-items="ViewBag.ComponentClassItems" onchange="getCurrentAmt()">
+                                    </select>
+                                    <span asp-validation-for="PayCodeCd" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="PercAmt"></label>
+                                    <select asp-for="PercAmt" class="form-control select-picker" asp-items="percentageAmtTypes" onchange="changePercentageAmt()">
+                                    </select>
+                                    <span asp-validation-for="PercAmt" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="CurrentAmt"></label>
+                                    <input asp-for="CurrentAmt" class="form-control decimal-input" type="text" />
+                                    <span asp-validation-for="CurrentAmt" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="RevisedAmt"></label>
+                                    <input asp-for="RevisedAmt" class="form-control decimal-input" type="text" />
+                                    <span asp-validation-for="RevisedAmt" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Narr"></label>
+                                    <textarea asp-for="Narr" class="form-control"></textarea>
+                                    <span asp-validation-for="Narr" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model?.EmpCode))
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ApprDt"></label>
+                                <input asp-for="ApprDt" class="form-control date-input" type="text" />
+                                <span asp-validation-for="ApprDt" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Remarks"></label>
+                                <textarea asp-for="Remarks" class="form-control"></textarea>
+                                <span asp-validation-for="Remarks" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="btn-submit" class="btn btn-info" onclick="saveEmpPrgression(this,'@(!string.IsNullOrEmpty(Model?.EmpCode) ?"true":null)')">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

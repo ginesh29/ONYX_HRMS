@@ -1306,6 +1306,129 @@ namespace Onyx.Controllers
         }
         #endregion
 
+        #region Employee Progression
+        public IActionResult EmployeeProgression()
+        {
+            return View();
+        }
+        public IActionResult FetchEmployeeProgressionData()
+        {
+            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            CommonResponse result = new()
+            {
+                Data = progressionData,
+            };
+            return Json(result);
+        }
+        public IActionResult GetEmployeeProgression(string transNo)
+        {
+            var empProgressionHead = _transactionService.GetEmpProgressionData(transNo, "1", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault();
+            var model = new EmpProgressionHeadModel();
+            if (empProgressionHead != null)
+            {
+                model = new EmpProgressionHeadModel
+                {
+                    TransNo = transNo,
+                    TransDt = empProgressionHead.TransDt,
+                    DesigFrom = empProgressionHead.DesigFrom,
+                    DesigTo = empProgressionHead.DesigTo,
+                    DesigFromCd = empProgressionHead.DesigFromCd.Trim(),
+                    DesigToCd = empProgressionHead.DesigToCd.Trim(),
+                    EmpCode = empProgressionHead.EmpCode,
+                    Name = empProgressionHead.Name,
+                    ApprBy = empProgressionHead.Current_Approval,
+                    Current_Approval_Level = empProgressionHead.Current_Approval_Level,
+                    EP_Typ = empProgressionHead.EP_Typ,
+                    EP_TypeCd = empProgressionHead.EP_TypeCd.Trim(),
+                    Remarks = empProgressionHead.Remarks,
+                };
+                var empProgressionDetail = _transactionService.GetEmpProgressionDetail(transNo);
+                if (empProgressionDetail != null)
+                {
+                    model.PayTypCd = empProgressionDetail.PayTypCd.Trim();
+                    model.PayCodeCd = empProgressionDetail.PayCodeCd.Trim();
+                    model.PercAmt = empProgressionDetail.PercAmt;
+                    model.CurrentAmt = empProgressionDetail.Current;
+                    model.RevisedAmt = empProgressionDetail.Incremented;
+                    model.Narr = empProgressionDetail.Narr;
+                }
+            }
+            else
+            {
+                model.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
+                model.TransDt = DateTime.Now.Date;
+            }
+            ViewBag.ProgressionTypeItems = _commonService.GetSysCodes(SysCode.EmpProgression).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.ComponentClassTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new
+            SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.ComponentClassItems = _employeeService.GetComponentClasses(model.PayTypCd?.Trim()).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
+            ViewBag.PercentageAmtItems = _commonService.GetPercentageAmtTypes();
+            return PartialView("_EmpProgressionModal", model);
+        }
+        public IActionResult GetCurrentAmt(string empCd, string edTypeDes, string edCdDes)
+        {
+            var result = _transactionService.GetCurrentAmt(empCd, edTypeDes, edCdDes);
+            result.PercAmt = result.PercAmt == "A" ? "AMOUNT" : "PERCENTAGE";
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult SaveEmployeeProgression(EmpProgressionHeadModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            _transactionService.UpdateEmpProgHead(model);
+            if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
+                _transactionService.UpdateEmpProgDetail(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Emp Progression requested successfully"
+            };
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult ApproveEmployeeProgression(EmpProgressionHeadModel model)
+        {
+            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
+            _transactionService.UpdateEmpProgAppr(model);
+            if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
+                _transactionService.UpdateEmpProgDetail(model);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Emp Progression approved successfully"
+            };
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteEmployeeProgression(string transNo)
+        {
+            _transactionService.DeleteEmpPrgression(transNo);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
         public IActionResult EmpSepration()
         {
             return View();

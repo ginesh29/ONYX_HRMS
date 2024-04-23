@@ -49,7 +49,7 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public string GetNextLoanTransNo(string CoCd, string tableId)
+        public string GetNextToolTransNo(string CoCd, string tableId)
         {
             var procedureName = "Tool_Generate_No";
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -1320,6 +1320,152 @@ namespace Onyx.Services
                 data.Amt = item.SalesAmt;
                 UpdateEmpSalesData(data, filterModel);
             }
+        }
+        #endregion
+
+        #region Emp Provision Adjustment
+        public IEnumerable<EmpProgressionHead_GetRow_Result> GetEmpProgressionData(string transNo, string type, string empCd, string empUser)
+        {
+            var procedureName = "EmpProgressionHead_GetRow_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Param", transNo);
+            parameters.Add("v_Typ", type);
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EmpUser", empUser);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<EmpProgressionHead_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public EmpProgressionDetail_GetRow_Result GetEmpProgressionDetail(string transNo)
+        {
+            var procedureName = "EmpProgressionDetail_GetRow_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", transNo);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<EmpProgressionDetail_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void UpdateEmpProgHead(EmpProgressionHeadModel model)
+        {
+            var procedureName = "EmpProgressionHead_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_TransDt", model.TransDt);
+            parameters.Add("v_EmpCd", model.EmpCode);
+            parameters.Add("v_DesigFr", model.DesigFromCd);
+            parameters.Add("v_DesigTo", model.DesigToCd);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            parameters.Add("v_ApprDt", model.ApprDt);
+            parameters.Add("v_Remarks", model.Remarks);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_Status", "E");
+            parameters.Add("v_Typ", model.EP_TypeCd);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void UpdateEmpProgAppr(EmpProgressionHeadModel model)
+        {
+            var procedureName = "EmpProgressionAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            parameters.Add("v_ApprDt", model.ApprDt);
+            parameters.Add("v_Status", "A");
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_EditBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void UpdateEmpProgDetail(EmpProgressionHeadModel model)
+        {
+            var procedureName = "EmpProgressionDetail_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_SrNo", "1");
+            parameters.Add("v_EdCd", model.PayCodeCd);
+            parameters.Add("v_EdTyp", model.PayTypCd);
+            parameters.Add("v_EffDate", model.EffDt);
+            parameters.Add("v_PercAmt", model.PercAmt);
+            parameters.Add("v_Val", model.CurrentAmt);
+            parameters.Add("v_ApprVal", model.RevisedAmt);
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public EmpEarnDed2_GetRow_Result GetCurrentAmt(string empCd, string edTypeDes, string edCdDes)
+        {
+            var procedureName = "EmpEarnDed2_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_EdTypSDes", edTypeDes);
+            parameters.Add("v_EdCdSDes", edCdDes);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<EmpEarnDed2_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        //public string GetEmpProvisionAdjSrNo()
+        //{
+        //    var procedureName = "Empprovisionsadj_TransNo";
+        //    var parameters = new DynamicParameters();
+        //    var connectionString = _dbGatewayService.GetConnectionString();
+        //    var connection = new SqlConnection(connectionString);
+        //    var result = connection.QueryFirstOrDefault<string>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        //    return result;
+        //}
+        //public CommonResponse SaveEmpProvisionAdj(EmpprovisionsadjModel model)
+        //{
+        //    var procedureName = "Empprovisionsadj_Update_N";
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("v_TransNo", model.TransNo);
+        //    parameters.Add("v_TransDt", model.TransDt);
+        //    parameters.Add("v_EmpCd", model.EmpCd);
+        //    parameters.Add("v_ProvTyp", model.ProvTyp);
+        //    parameters.Add("v_Days", model.Days);
+        //    parameters.Add("v_Amt", model.Amt);
+        //    parameters.Add("v_Purpose", model.Purpose);
+        //    parameters.Add("v_Narr", model.Narr);
+        //    parameters.Add("v_EntryBy", model.EntryBy);
+        //    var connectionString = _dbGatewayService.GetConnectionString();
+        //    var connection = new SqlConnection(connectionString);
+        //    var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        //    return result;
+        //}
+
+        //public CommonResponse SetEmpprovisionsadjAppr(EmpprovisionsadjModel model)
+        //{
+        //    var procedureName = "EmpprovisionsadjAppr_Update_N";
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("v_TransNo", model.TransNo);
+        //    parameters.Add("v_ApprLvl", model.CurrentApprovalLevel);
+        //    parameters.Add("v_ApprBy", model.ApprBy);
+        //    parameters.Add("v_ApprDt", model.ApprDt);
+        //    parameters.Add("v_Status", "A");
+        //    parameters.Add("v_Narr", model.Remarks);
+        //    parameters.Add("v_EntryBy", model.EntryBy);
+        //    var connectionString = _dbGatewayService.GetConnectionString();
+        //    var connection = new SqlConnection(connectionString);
+        //    var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        //    return result;
+        //}
+        public void DeleteEmpPrgression(string transNo)
+        {
+            var procedureName = "EmpProgressionHead_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", transNo);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
     }

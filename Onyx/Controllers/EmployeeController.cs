@@ -245,6 +245,11 @@ namespace Onyx.Controllers
             ViewBag.CalulationBasisTypeItems = _commonService.GetCalulationBasisTypes();
             return View("ProfileUpsert", employee ?? new Employee_Find_Result());
         }
+        public IActionResult GetEmployeeDetail(string empCd)
+        {
+            var result = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
+            return Json(result);
+        }
         public IActionResult GetUserPwd(string empCd)
         {
             var pwd = _userService.GetUsers(empCd).FirstOrDefault().UPwd.Decrypt();
@@ -259,10 +264,10 @@ namespace Onyx.Controllers
             var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
             var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
             var TotalSalary = employee.Basic + totalIncome - totalDeductions;
-            var Currency = employee.BasicCurr.Trim();
+            var Currency = employee.BasicCurr?.Trim();
             return Json(new CommonResponse
             {
-                Data = new { TotalSalary, Currency },
+                Data = new { TotalSalary, Currency = Currency ?? string.Empty },
                 Message = "Basic updated successfully"
             });
         }
@@ -328,6 +333,7 @@ namespace Onyx.Controllers
                 };
             else
                 model.SrNo = _employeeService.GetEmpQualification_SrNo(empCd);
+            model.EmpCd = empCd;
             ViewBag.QualificationItems = _settingService.GetCodeGroupItems(CodeGroup.Qualification).Select(m => new SelectListItem
             {
                 Text = m.ShortDes,
@@ -396,6 +402,7 @@ namespace Onyx.Controllers
                 };
             else
                 model.Srno = _employeeService.GetEmpExperience_SrNo(empCd);
+            model.EmpCd = empCd;
             ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
             {
                 Text = m.SDes,
@@ -573,7 +580,7 @@ namespace Onyx.Controllers
         public IActionResult GetComponent(string empCd, string edCd, string edTyp, int srNo)
         {
             var component = _employeeService.GetComponents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
-            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
+            var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
             var model = new EmpEarnDedModel();
             if (component != null)
             {
@@ -594,7 +601,7 @@ namespace Onyx.Controllers
                     SrNo = component.SrNo,
                     Type = component.Type
                 };
-                model.CurrCd = employee.CurrencyCd.Trim();
+                model.CurrCd = employee.CurrCd.Trim();
             }
             model.EmpCd = empCd;
             model.Emp = employee.Name;

@@ -219,7 +219,7 @@ namespace Onyx.Services
         public IEnumerable<EmpExperience_GetRow_Result> GetEmpExperiences(string empCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "EmpExperience_GetRow";
+            var procedureName = "EmpExperience_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_SrNo", 0);

@@ -38,7 +38,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="LeaveType"></label> <span class="ml-2" id="TotalLeave"></span>
-                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems" onchange="getTotalLeave(this)"></select>
+                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems"></select>
                             <span asp-validation-for="LeaveType" class="text-danger"></span>
                         </div>
                     </div>
@@ -122,10 +122,5 @@
             }
         }
         bindEmployeeDropdown();
-        function getTotalLeave(e) {
-            getAjax(`/SelfService/GetLeaveType?cd=${e.value}`, function (response) {
-                $("#TotalLeave").text(response.lvMax);
-            });
-        }
     </script>
 }

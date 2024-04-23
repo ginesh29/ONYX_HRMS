@@ -31,7 +31,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = m.Sdes.Trim(),
             });
-            ViewBag.TransactionNextNo = _transactionService.GetNextLoanTransNo(_loggedInUser.CompanyCd, "EMPLOAN");
+            ViewBag.TransactionNextNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EMPLOAN");
             if (_loggedInUser.UserOrEmployee == "E")
                 ViewBag.EmpCd = _loggedInUser.UserAbbr;
             return View();
