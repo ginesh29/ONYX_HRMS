@@ -79,7 +79,7 @@ function GoToNextPrev(btn, back) {
                 else {
                     var empCd = $("#Cd").val()
                     empCode = empCd;
-                    history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${empCd}`);
+                    history.pushState(null, '', `/Employee/Profile?processId=HRPE1&cd=${encodeURI(empCd)}`);
                     var queryString = getQueryStringParams(window.location.search);
                     if (!queryString.cd)
                         reloadPageAfterSometime();
@@ -154,7 +154,7 @@ function bindEducationDataTable() {
     if (!$.fn.DataTable.isDataTable('#EducationsDataTable'))
         window["datatable"] = $('#EducationsDataTable').DataTable(
             {
-                ajax: `/Employee/FetchEducations?empCd=${empCode}`,
+                ajax: `/Employee/FetchEducations?empCd=${encodeURI(empCode)}`,
                 ordering: false,
                 columns: [
                     {
@@ -228,7 +228,7 @@ function bindExperienceDataTable() {
     if (!$.fn.DataTable.isDataTable('#ExperiencesDataTable'))
         window["datatable"] = $('#ExperiencesDataTable').DataTable(
             {
-                ajax: `/Employee/FetchExperiences?empCd=${empCode}`,
+                ajax: `/Employee/FetchExperiences?empCd=${encodeURI(empCode)}`,
                 ordering: false,
                 columns: [
                     {
@@ -562,7 +562,7 @@ function deleteComponent(empCd, edCd, edTyp, srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Employee/DeleteComponent?empCd=${empCd}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`, function (response) {
+            deleteAjax(`/Employee/DeleteComponent?empCd=${encodeURI(empCd)}& edCd=${edCd}& edTyp=${edTyp}& srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
                 $("#BasicSalary").change();

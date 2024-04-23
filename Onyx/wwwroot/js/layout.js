@@ -73,14 +73,13 @@ function saveLeaveApproval(btn) {
     var frm = $("#leave-approval-frm");
     if (frm.valid() && ValidateLeaveApprovalDateRange()) {
         loadingButton(btn);
-        postAjax("/Transactions/SaveLeaveApproval", frm.serialize(), function (response) {
+        postAjax("/Transactions/SaveLeaveApproval?processId=HRPT11", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmployeeLeaveApprovalModal").modal("hide");
                 reloadDatatable();
-                var transNo = $("#TransNo").val();
                 if ($("#leave-approvals-notifications").length)
-                    $(`#transNo-${transNo}`).remove();
+                    reloadPageAfterSometime();
             }
             else {
                 showErrorToastr(response.message);
@@ -150,11 +149,13 @@ function saveLeaveSalaryApproval(btn) {
     var frm = $("#leave-salary-approval-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        postAjax("/Transactions/SaveLeaveSalaryApproval", frm.serialize(), function (response) {
+        postAjax("/Transactions/SaveLeaveSalaryApproval?processId=HRPT101", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmployeeLeaveSalaryApprovalModal").modal("hide");
                 reloadDatatable();
+                if ($("#leave-sal-approvals-notifications").length)
+                    reloadPageAfterSometime();
             }
             else {
                 showErrorToastr(response.message);
@@ -200,11 +201,13 @@ function saveLoanApproval(btn) {
     var frm = $("#loan-approval-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        postAjax("/Transactions/SaveLoanApproval", frm.serialize(), function (response) {
+        postAjax("/Transactions/SaveLoanApproval?processId=HRPT21", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmployeeLoanApprovalModal").modal("hide");
                 reloadDatatable();
+                if ($("#loan-approvals-notifications").length)
+                    reloadPageAfterSometime();
             }
             else {
                 showErrorToastr(response.message);
@@ -246,11 +249,13 @@ function saveFundAppraval(btn) {
     var frm = $("#fund-approval-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        postAjax("/Transactions/SaveEmpFundApproval", frm.serialize(), function (response) {
+        postAjax("/Transactions/SaveEmpFundApproval?processId=HREFA", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 $("#EmpFundApprovalModal").modal("hide");
                 reloadDatatable();
+                if ($("#fund-approvals-notifications").length)
+                    reloadPageAfterSometime();
             }
             else {
                 showErrorToastr(response.message);
