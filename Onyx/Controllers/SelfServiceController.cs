@@ -39,7 +39,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveLoanApplication(EmpLoanModel model, string processId, bool confirmed = false)
         {
-            var LoanDue = _transactionService.GetEmpLoan_Due(model.EmployeeCode, model.TransDt);
+            var LoanDue = _transactionService.GetEmpLoan_Due(model.EmployeeCode);
             model.EntryBy = _loggedInUser.UserAbbr;
             if (LoanDue == 0 || confirmed)
             {

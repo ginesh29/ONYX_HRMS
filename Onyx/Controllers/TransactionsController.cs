@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -134,6 +135,70 @@ namespace Onyx.Controllers
             }
             else
                 _transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
+            if (model.SinglePayroll)
+            {
+                var employee = _employeeService.FindEmployee(model.EmpCd, _loggedInUser.CompanyCd);
+                var WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
+                var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+                var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+                foreach (var item in model.Salary_SinglePayrollAttendanceData)
+                {
+                    var attendance = new EmpAttendance_Getrow_Result
+                    {
+                        Cd = model.EmpCd,
+                        Up_HDays = item.Up_HDays,
+                        W_days = item.NoOfDays,
+                        NHrs = Convert.ToInt32((item.NoOfDays - item.Up_HDays - item.P_HDays) * float.Parse(WorkingHrDay)),
+                        Payable = item.Payable,
+                    };
+                    var attendanceFilter = new AttendanceFilterModel
+                    {
+                        Branch = item.DivCd,
+                        Department = employee.Dept,
+                        EmpCd = model.EmpCd,
+                        MonthYear = $"{currentYear}{currentMonth}",
+                        WorkingHrDay = WorkingHrDay,
+                        EntryBy = _loggedInUser.UserAbbr
+                    };
+                    _transactionService.UpdateEmpMonthlyAttendance(attendance, attendanceFilter);
+                }
+                int srNo = 1;
+                foreach (var item in model.Component_SinglePayrollAttendanceData)
+                {
+                    var payComponent = new EmpTrans_VarCompFixAmt_GetRow_Result
+                    {
+                        Amt = item.UpdatedAmt,
+                        Branch = employee.Div,
+                        Cd = model.EmpCd,
+                        Curr = employee.CurrCd,
+                        Dept = employee.Dept,
+                        SrNo = srNo,
+                        Narr = "SinglePayroll",
+                        TransId = "*S"
+                    };
+                    var EdTyp = item.DesCd[..6];
+                    var EdCd = item.DesCd.Substring(6, 3);
+                    int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth));
+                    var payComponentFilter = new VariablePayDedComponentFilterModel
+                    {
+                        Branch = employee.Div,
+                        Department = employee.Dept,
+                        EmpCd = model.EmpCd,
+                        EntryBy = _loggedInUser.UserAbbr,
+                        MonthYear = $"{currentYear}{currentMonth}",
+                        PayType = EdTyp,
+                        PayCode = EdCd,
+                        FromDt = new DateTime(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth), 1),
+                        ToDt = new DateTime(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth), lastDayOfMonth),
+                    };
+                    _transactionService.EmpTrans_Update(payComponent, payComponentFilter);
+                    srNo++;
+                }
+            }
+            //if (model.PrintAfterSave)
+            //{
+
+            //}
             var ActivityAbbr = "UPD";
             var action = model.Type == (int)LeaveCofirmTypeEnum.Confirm ? "confirmed" : model.Type == (int)LeaveCofirmTypeEnum.Revise ? "revised" : "canceled";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
@@ -156,10 +221,22 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLeaveConfirm(string transNo)
         {
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
             var model = new EmpLeaveConfirmModel();
             var leaveData = _transactionService.GetEmpLeaveData(transNo).FirstOrDefault();
             if (leaveData != null)
             {
+                var prd = $"{leaveData.FromDt.Year}{leaveData.FromDt.Month:00}";
+                var empSinglePayroll = _transactionService.GetEmpAttendance_Salary_SinglePayroll(leaveData.EmpCd, prd, _loggedInUser.CompanyCd);
+                foreach (var item in empSinglePayroll.Salary_SinglePayrollAttendanceData)
+                    item.Payable = item.NoOfDays - item.P_HDays - item.Up_HDays;
+                var totalWDays = empSinglePayroll.Salary_SinglePayrollAttendanceData.Sum(m => m.NoOfDays);
+                var totalPayable = empSinglePayroll.Salary_SinglePayrollAttendanceData.Sum(m => m.Payable);
+                foreach (var item in empSinglePayroll.Component_SinglePayrollAttendanceData)
+                    item.UpdatedAmt = Convert.ToDecimal(item.Amt / totalWDays) * totalPayable;
+                bool singlePayroll = leaveData.FromDt.Year == Convert.ToInt32(currentYear) && leaveData.FromDt.Month == Convert.ToInt32(currentMonth);
+                ViewBag.SinglePayroll = singlePayroll;
                 model = new EmpLeaveConfirmModel()
                 {
                     TransNo = transNo,
@@ -183,7 +260,9 @@ namespace Onyx.Controllers
                     WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo) : 0,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
-                    ApprDt = DateTime.Now.Date
+                    ApprDt = DateTime.Now.Date,
+                    Salary_SinglePayrollAttendanceData = empSinglePayroll.Salary_SinglePayrollAttendanceData,
+                    Component_SinglePayrollAttendanceData = empSinglePayroll.Component_SinglePayrollAttendanceData,
                 };
                 var allowance = _transactionService.GetEmpLeave_Allowances(model, _loggedInUser.CompanyCd);
                 model.Ticket = allowance?.FareAmount;
@@ -492,7 +571,7 @@ namespace Onyx.Controllers
             loanDetails.NoInst = loanDetails.NoInstReq;
             loanDetails.LoanApprDt = DateTime.Now.Date;
             loanDetails.ChgsPerc ??= 0;
-            loanDetails.Balance = _transactionService.GetEmpLoan_Due(loanDetails.EmployeeCode.Trim(), loanDetails.LoanApprDt);
+            loanDetails.Balance = _transactionService.GetEmpLoan_Due(loanDetails.EmployeeCode.Trim());
             ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
@@ -928,6 +1007,8 @@ namespace Onyx.Controllers
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
                 item.Curr = employeeDetail.BasicCurr.Trim();
+                item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
+                item.TransId = "M";
                 _transactionService.EmpTrans_Update(item, model.FilterModel);
             }
 
@@ -1269,7 +1350,7 @@ namespace Onyx.Controllers
             var Period = spMonthYear[0];
             var Year = spMonthYear[1];
 
-            bool isValidDeno = _transactionService.ValiatePrePayrollDeno(Period, Year);
+            //bool isValidDeno = _transactionService.ValiatePrePayrollDeno(Period, Year);
 
             //string msg= "Please enter Cash Denomination for "
             //if (isValidDeno)

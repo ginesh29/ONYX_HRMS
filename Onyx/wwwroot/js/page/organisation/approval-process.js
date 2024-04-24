@@ -84,11 +84,3 @@ function bindDocTypeByType(e) {
         $('.select-picker').selectpicker('refresh');
     });
 }
-
-$('#ProcessIdCd, #ApplTypCd, #BranchCd, #DeptCd').on('change', function (e) {
-    var dataTable = window["datatable"];
-    var value = $(this).val();
-    var columnIndex = $(this).attr("data-index");
-    if (dataTable.column(columnIndex).search() !== value)
-        dataTable.column(columnIndex).search(value).draw();
-});

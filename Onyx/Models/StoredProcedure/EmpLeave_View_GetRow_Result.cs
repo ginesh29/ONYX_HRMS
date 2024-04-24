@@ -12,7 +12,7 @@
         public DateTime? DocDt { get; set; }
         public string FormatedDocDt { get; set; }
         public string Substitute { get; set; }
-        public DateTime? FromDt { get; set; }
+        public DateTime FromDt { get; set; }
         public string FormatedFromDt { get; set; }
         public string DateRange { get; set; }
         public DateTime? ToDt { get; set; }

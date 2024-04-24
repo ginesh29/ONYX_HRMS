@@ -599,9 +599,9 @@ namespace Onyx.Controllers
                     PercAmt = component.PercAmt,
                     PercVal = component.PercVal,
                     SrNo = component.SrNo,
-                    Type = component.Type
+                    Type = component.Type,
+                    CurrCd = employee.CurrCd.Trim()
                 };
-                model.CurrCd = employee.CurrCd.Trim();
             }
             model.EmpCd = empCd;
             model.Emp = employee.Name;

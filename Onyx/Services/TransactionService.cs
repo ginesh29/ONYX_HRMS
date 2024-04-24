@@ -37,7 +37,7 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public int GetEmpLoan_Due(string EmpCd, DateTime? EffDt)
+        public int GetEmpLoan_Due(string EmpCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "EmpLoan_Due";
@@ -382,6 +382,25 @@ namespace Onyx.Services
                (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public EmpLeaveSinglePayrollModel GetEmpAttendance_Salary_SinglePayroll(string empCd, string yearMonth, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "EmpAttendance_Salary_SinglePayroll";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            parameters.Add("v_Prd", yearMonth);
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var attendance = multiResult.Read<EmpAttendance_Salary_SinglePayroll_Result>();
+            var basicComponents = multiResult.Read<EmpComponent_Salary_SinglePayroll_Result>();
+            var components = multiResult.Read<EmpComponent_Salary_SinglePayroll_Result>();
+            return new EmpLeaveSinglePayrollModel
+            {
+                Salary_SinglePayrollAttendanceData = attendance.ToList(),
+                Component_SinglePayrollAttendanceData = basicComponents.Concat(components).ToList()
+            };
+        }
         public CommonResponse SaveLeaveConfirm(EmpLeaveConfirmModel model, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -671,8 +690,8 @@ namespace Onyx.Services
             parameters.Add("v_LocTo", model.LocTo);
             parameters.Add("v_BrFr", model.BrFrom);
             parameters.Add("v_BrTo", model.BrTo);
-            parameters.Add("v_BU_From", string.Empty);
-            parameters.Add("v_BU_To", string.Empty);
+            parameters.Add("v_BU_From", model.BrFrom);
+            parameters.Add("v_BU_To", model.BrTo);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Narr", model.Narration);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -930,7 +949,6 @@ namespace Onyx.Services
         }
         public void EmpTrans_Update(EmpTrans_VarCompFixAmt_GetRow_Result model, VariablePayDedComponentFilterModel filterModel)
         {
-            var narr = $"Variable Pay Component {model.Curr}: {model.Amt}";
             var procedureName = "EmpTrans_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", model.Cd.Trim());
@@ -940,12 +958,12 @@ namespace Onyx.Services
             parameters.Add("v_Curr", model.Curr);
             parameters.Add("v_ExRate", 1);
             parameters.Add("v_Amt", model.Amt);
-            parameters.Add("v_Narr", narr);
+            parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", filterModel.EntryBy);
             parameters.Add("v_SrNo", model.SrNo);
             parameters.Add("v_FromDt", filterModel.FromDt);
             parameters.Add("v_ToDt", filterModel.ToDt);
-            parameters.Add("v_TrnInd", "M");
+            parameters.Add("v_TrnInd", model.TransId);
             parameters.Add("v_EmpDiv", filterModel.Branch);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
@@ -1021,7 +1039,8 @@ namespace Onyx.Services
                     filterModel.ToDt = new DateTime(year, month, lastDayOfMonth);
                 }
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, CoCd); item.Curr = employeeDetail.BasicCurr.Trim();
-
+                item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
+                item.TransId = "M";
                 EmpTrans_Update(item, filterModel);
             }
         }
@@ -1315,6 +1334,8 @@ namespace Onyx.Services
                         filterModel.PayCode = "MGRIN";
                         data.Amt = item.Amt1;
                     }
+                    data.Narr = $"Variable Pay Component {data.Curr}: {data.Amt}";
+                    data.TransId = "M";
                     EmpTrans_Update(data, filterModel);
                 }
                 data.Amt = item.SalesAmt;

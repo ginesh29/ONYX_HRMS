@@ -245,7 +245,7 @@ function showFundApprovalModal(transNo, reject) {
     });
 }
 
-function saveFundAppraval(btn) {
+function saveFundApproval(btn) {
     var frm = $("#fund-approval-frm");
     if (frm.valid()) {
         loadingButton(btn);
@@ -264,3 +264,11 @@ function saveFundAppraval(btn) {
         });
     }
 }
+
+$('.filter-select-picker').on('change', function (e) {
+    var dataTable = window["datatable"];
+    var value = $(this).val();
+    var columnIndex = $(this).attr("data-index");
+    if (dataTable.column(columnIndex).search() !== value)
+        dataTable.column(columnIndex).search(value).draw();
+});

@@ -12,5 +12,7 @@
         public string Curr { get; set; }
         public bool IsValid { get; set; }
         public string ErrorMessage { get; set; }
+        public string Narr { get; set; }
+        public string TransId { get; set; }
     }
 }

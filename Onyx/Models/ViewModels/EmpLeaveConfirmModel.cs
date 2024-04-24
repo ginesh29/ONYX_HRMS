@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Onyx.Models.StoredProcedure;
+using System.ComponentModel.DataAnnotations;
 
 namespace Onyx.Models.ViewModels
 {
@@ -50,5 +51,7 @@ namespace Onyx.Models.ViewModels
         public decimal? LvSalary { get; set; }
         public bool SinglePayroll { get; set; }
         public bool PrintAfterSave { get; set; }
+        public List<EmpAttendance_Salary_SinglePayroll_Result> Salary_SinglePayrollAttendanceData { get; set; }
+        public List<EmpComponent_Salary_SinglePayroll_Result> Component_SinglePayrollAttendanceData { get; set; }
     }
 }

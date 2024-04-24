@@ -8,33 +8,29 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="ProcessIdCd"></label>
-                    <select asp-for="ProcessIdCd" class="form-control filter-select-picker" asp-items="ViewBag.TypeItems" onchange="bindDocTypeByType(this)" data-index="1" data-target="ApplTypCd-Filter">
+                    <select id="ProcessIdCd-Filter" class="form-control filter-select-picker" asp-items="ViewBag.TypeItems" onchange="bindDocTypeByType(this)" data-index="1" data-target="ApplTypCd-Filter">
                     </select>
-                    <span asp-validation-for="ProcessIdCd" class="text-danger"></span>
                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
                     <label asp-for="ApplTypCd"></label>
-                    <select asp-for="ApplTypCd" class="form-control filter-select-picker" asp-items="ViewBag.DocumentTypeItems" data-index="2" id="ApplTypCd-Filter">
+                    <select class="form-control filter-select-picker" asp-items="ViewBag.DocumentTypeItems" data-index="2" id="ApplTypCd-Filter">
                     </select>
-                    <span asp-validation-for="ApplTypCd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="BranchCd"></label>
                     <select asp-for="BranchCd" class="form-control filter-select-picker" asp-items="ViewBag.BranchItems" data-index="3">
                     </select>
-                    <span asp-validation-for="BranchCd" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="form-group">
                     <label asp-for="DeptCd"></label>
                     <select asp-for="DeptCd" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems" data-index="4">
                     </select>
-                    <span asp-validation-for="DeptCd" class="text-danger"></span>
                 </div>
             </div>
         </div>

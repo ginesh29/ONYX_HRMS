@@ -114,6 +114,8 @@ function ValidateDateRange() {
 function changeType(e) {
     $(".confirm-div").addClass("d-none");
     $(".revise-div").addClass("d-none");
+    $("#single-payroll-container").addClass("d-none");
+    $(".single-payroll-div").addClass("d-none");
     if (e.value == LeaveConfirmTypesEnum.Confirm) {
         $(".confirm-div").removeClass("d-none");
         $(".revise-div:not(.confirm-div) input").val("");
@@ -161,4 +163,46 @@ function saveDutyResumption(btn) {
             unloadingButton(btn);
         });
     }
+}
+
+function changeSinglePayroll() {
+    $("#single-payroll-container").addClass("d-none");
+    $(".single-payroll-div").addClass("d-none");
+    var checked = $("#SinglePayroll").is(":checked");
+    if (checked) {
+        $("#single-payroll-container").removeClass("d-none");
+        $(".single-payroll-div").removeClass("d-none");
+    }
+}
+function LvPaidUpdate(cur, i) {
+    var unpaid = cur.value;
+    var totalDays = $(`#Salary_SinglePayrollAttendanceData_${i}__NoOfDays`).val();
+    var paidDays = $(`#Salary_SinglePayrollAttendanceData_${i}__P_HDays`).val();
+    var payable = totalDays - paidDays - unpaid;
+    if (payable >= 0) {
+        $(`#Salary_SinglePayrollAttendanceData_${i}__Payable`).val(payable);
+        var payabletotal = getTotalPayable();
+        updateComponentAmount(payabletotal);
+    }
+    else
+        $(`#Salary_SinglePayrollAttendanceData_${i}__Payable`).val(payable - totalDays);
+}
+
+function getTotalPayable() {
+    var total = 0;
+    $("[id$=__Payable").each(function () {
+        var val = $(this).val();
+        total += Number(val);
+    })
+    return total;
+}
+
+function updateComponentAmount(totalPayable) {
+    $("[id$=__UpdatedAmt").each(function () {
+        var itemAmt = parseFloat($(this).attr("data-val"));
+        var totalWDays = parseInt($('#TotalWDays').val());
+        var totalPayableDays = parseFloat(totalPayable);
+        var updatedAmt = (itemAmt / totalWDays) * totalPayableDays;
+        $(this).val(updatedAmt)
+    })
 }
