@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
@@ -35,6 +34,16 @@ namespace Onyx.Controllers
         #region Leave Transaction
         public IActionResult EmpLeaveApprovals()
         {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
             return View();
         }
         public IActionResult FetchEmpLeaveApprovalData()
@@ -114,6 +123,16 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpLeaveConfirmReviseCancel()
         {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
             return View();
         }
         public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model, string processId)
@@ -272,6 +291,16 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpDutyResumption()
         {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
             return View();
         }
         public IActionResult GetDutyResumption(string transNo)

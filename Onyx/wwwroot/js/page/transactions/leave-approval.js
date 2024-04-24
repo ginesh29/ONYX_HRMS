@@ -8,6 +8,9 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
+            { data: "empCd", visible: false },
+            { data: "div", visible: false },
+            { data: "deptCd", visible: false },
             {
                 data: function (row) {
                     return `${row.emp}(${row.empCd.trim()})`
@@ -49,3 +52,4 @@
 var isAdmin = $("#IsAdmin").val() == 1;
 if (isAdmin)
     window["datatable"].column(8).visible(false);
+bindEmployeeDropdown();

@@ -35,5 +35,8 @@
         public int Current_Approval_Level { get; set; }
         public string Current_Approval { get; set; }
         public string ImagePath { get; set; }
+        public string Div { get; set; }
+        public string Dept { get; set; }
+        public string DeptCd { get; set; }
     }
 }

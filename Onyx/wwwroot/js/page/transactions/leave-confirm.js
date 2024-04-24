@@ -1,4 +1,5 @@
 ﻿var type = $("#Type").val();
+type = type ? type : '';
 window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
     {
         ajax: `/Transactions/FetchEmpLeaveData?type=${type}`,
@@ -9,6 +10,9 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
+            { data: "empCd", visible: false },
+            { data: "div", visible: false },
+            { data: "dept", visible: false },
             {
                 data: function (row) {
                     return `${row.emp}(${row.empCd.trim()})`
@@ -110,6 +114,7 @@ function ValidateDateRange() {
     }
     return isValid;
 }
+bindEmployeeDropdown();
 
 function changeType(e) {
     $(".confirm-div").addClass("d-none");

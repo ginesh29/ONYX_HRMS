@@ -265,7 +265,7 @@ function saveFundApproval(btn) {
     }
 }
 
-$('.filter-select-picker').on('change', function (e) {
+$('.filter-select-picker,.filter-select2').on('change', function (e) {
     var dataTable = window["datatable"];
     var value = $(this).val();
     var columnIndex = $(this).attr("data-index");

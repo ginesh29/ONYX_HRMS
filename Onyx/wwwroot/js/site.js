@@ -299,7 +299,7 @@ $('#btn-excel').on('click', function (e) {
         exportExcel(window["datatable"], title)
 });
 function bindEmployeeDropdown() {
-    var el = $("select#EmpCd,select#EmployeeCode,select#DriverCd");
+    var el = $("select#EmpCd,select#EmployeeCode,select#DriverCd,select#EmpCd-Filter");
     var id = $(el).attr("id");
     getAjax(`/Employee/FetchEmployeeItems`, function (response) {
         el.select2({

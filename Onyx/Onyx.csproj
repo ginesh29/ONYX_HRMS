@@ -7,6 +7,7 @@
 
 	<ItemGroup>
 	  <None Remove="Controllers\TransactionsController.cs~RF20a6b42.TMP" />
+	  <None Remove="Views\Transactions\EmpLeaveApprovals.cshtml~RF5876bd6.TMP" />
 	</ItemGroup>
 
 	<ItemGroup>

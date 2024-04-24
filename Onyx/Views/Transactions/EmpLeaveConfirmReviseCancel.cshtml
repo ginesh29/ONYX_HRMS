@@ -1,13 +1,41 @@
 ﻿@{
     ViewData["Title"] = "Employee Leave Confirm/Revise/Cancel";
 }
-<input type="hidden" id="Type" value="" />
 <div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Employee</label>
+                    <select id="EmpCd-Filter" class="form-control select2 filter-select2" data-index="1">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Branch</label>
+                    <select class="form-control filter-select-picker" asp-items="ViewBag.BranchItems" data-index="2" id="Branch-Filter">
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Department</label>
+                    <select id="Department-Filter" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems" data-index="3">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card-body">
         <table class="table table-sm" id="EmployeeLeavesDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th>Employee</th>
                     <th>Date Range</th>
                     <th>Leave Type</th>

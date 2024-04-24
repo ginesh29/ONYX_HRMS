@@ -33,5 +33,6 @@
         public string Branch { get; set; }
         public string Div { get; set; }
         public string Designation { get; set; }
+        public string Dept { get; set; }
     }
 }
