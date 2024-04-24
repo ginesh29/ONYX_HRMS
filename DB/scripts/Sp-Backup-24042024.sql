@@ -1,3 +1,70 @@
+CREATE OR ALTER procedure [dbo].[VehDocIssueRcpt_Update]
+	@v_SrNo			char(5)
+,	@v_VehCd		Char(10)
+,	@v_DocTyp		Char(10)
+,	@v_DocNo		Char(20)
+,	@v_IssueDt		Datetime
+,	@v_IssuePlace	VarChar(30)
+,	@v_ExpDt		Datetime
+,	@v_TrnDt		datetime
+,	@v_TransTyp  	char(1)
+,	@v_DocStatus	char(10)
+,	@v_Narr			varchar(100)
+,	@v_EntryBy		Char(5)
+,	@v_Status		Char(1)
+--,	@v_ApprBy		Char(10)
+as  --drop procedure [dbo].[VehDocIssueRcpt_Update]
+begin
+set nocount on
+Declare @err int
+IF (SELECT COUNT(*) FROM VehDocIssueRcpt WHERE VehCd = @v_VehCd and DocTyp=@v_DocTyp and SrNo=@v_SrNo) = 0
+	Begin
+	insert into VehDocIssueRcpt(VehCd, DocTyp,DocNo,IssueDt,IssuePlace,ExpDt, SrNo, TrnTyp, Narr, TrnDt, DocStat, EntryBy, EntryDt,Stat)
+	values
+	(
+          @v_VehCd
+	,     @v_DocTyp
+	,	  @v_DocNo
+	,	  @v_IssueDt
+	,	  @v_IssuePlace
+	,	  @v_ExpDt
+	,     @v_SrNo
+	,     @v_TransTyp
+	,     @v_Narr
+	,     @v_TrnDt
+	,     @v_DocStatus
+	,     @v_EntryBy
+	,     getdate()
+	,	  @v_Status
+        )
+        
+	If @@error != 0
+	Print 'error'
+	GoTo errorHandler
+end
+Else
+    Begin
+        Update VehDocIssueRcpt
+          Set
+	 TrnTyp=@v_TransTyp
+	,Narr=	@v_Narr
+	,DocStat=@v_DocStatus
+	,EditBy=@v_EntryBy
+	,EditDt=getdate()
+	,Stat=@v_Status
+
+        WHERE VehCd = @v_VehCd and DocTyp=@v_DocTyp and SrNo=@v_SrNo
+    End
+Select @err = @@error
+	If @err != 0 
+		GoTo errorHandler
+		Return
+errorHandler:
+	Return 1
+End
+
+ 
+ Go 
 
 
 

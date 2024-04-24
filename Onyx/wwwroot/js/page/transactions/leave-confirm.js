@@ -139,9 +139,8 @@ function saveLeaveConfirm(btn) {
                 $("#EmployeeLeaveConfirmModal").modal("hide");
                 reloadDatatable();
             }
-            else {
+            else
                 showErrorToastr(response.message);
-            }
             unloadingButton(btn);
         });
     }
@@ -162,9 +161,8 @@ function saveDutyResumption(btn) {
                 $("#EmployeeLeaveConfirmModal").modal("hide");
                 reloadDatatable();
             }
-            else {
+            else 
                 showErrorToastr(response.message);
-            }
             unloadingButton(btn);
         });
     }

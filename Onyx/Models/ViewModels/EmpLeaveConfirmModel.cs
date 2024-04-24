@@ -8,6 +8,7 @@ namespace Onyx.Models.ViewModels
         public string TransNo { get; set; }
         public DateTime? AppDt { get; set; }
         public string FormatedTransDt { get; set; }
+        [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string EmpCd { get; set; }
         public string Emp { get; set; }
         public string LvTyp { get; set; }

@@ -1534,6 +1534,113 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        public IActionResult SinglePayroll()
+        {
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.CurrentMonth = currentMonth;
+            ViewBag.CurrentYear = currentYear;
+            return View();
+        }
+        public IActionResult SinglePayrollSalaryAttendance(string EmpCd, string DateRange)
+        {
+            var DateSp = DateRange.Split(" - ");
+            var FromDt = Convert.ToDateTime(DateSp[0]);
+            var prd = $"{FromDt.Year}{FromDt.Month:00}";
+            var empSinglePayroll = _transactionService.GetEmpAttendance_Salary_SinglePayroll(EmpCd, prd, _loggedInUser.CompanyCd);
+            foreach (var item in empSinglePayroll.Salary_SinglePayrollAttendanceData)
+                item.Payable = item.NoOfDays - item.P_HDays - item.Up_HDays;
+            var totalWDays = empSinglePayroll.Salary_SinglePayrollAttendanceData.Sum(m => m.NoOfDays);
+            var totalPayable = empSinglePayroll.Salary_SinglePayrollAttendanceData.Sum(m => m.Payable);
+            foreach (var item in empSinglePayroll.Component_SinglePayrollAttendanceData)
+                item.UpdatedAmt = Convert.ToDecimal(item.Amt / totalWDays) * totalPayable;
+            return PartialView("_SinglePayrollConfirm", new EmpLeaveConfirmModel
+            {
+                Salary_SinglePayrollAttendanceData = empSinglePayroll.Salary_SinglePayrollAttendanceData,
+                Component_SinglePayrollAttendanceData = empSinglePayroll.Component_SinglePayrollAttendanceData
+            });
+        }
+        public IActionResult SaveSinglePayroll(EmpLeaveConfirmModel model, string processId)
+        {
+            //model.ApprBy = _loggedInUser.UserAbbr;
+            //model.ApprDays = model.LvDays + model.WopLvDays;
+            //model.Type = 0;
+            //_transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
+            if (model.SinglePayroll)
+            {
+                var employee = _employeeService.FindEmployee(model.EmpCd, _loggedInUser.CompanyCd);
+                var WorkingHrDay = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "WORKHRS").Val;
+                var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+                var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+                foreach (var item in model.Salary_SinglePayrollAttendanceData)
+                {
+                    var attendance = new EmpAttendance_Getrow_Result
+                    {
+                        Cd = model.EmpCd,
+                        Up_HDays = item.Up_HDays,
+                        W_days = item.NoOfDays,
+                        NHrs = Convert.ToInt32((item.NoOfDays - item.Up_HDays - item.P_HDays) * float.Parse(WorkingHrDay)),
+                        Payable = item.Payable,
+                    };
+                    var attendanceFilter = new AttendanceFilterModel
+                    {
+                        Branch = item.DivCd,
+                        Department = employee.Dept,
+                        EmpCd = model.EmpCd,
+                        MonthYear = $"{currentYear}{currentMonth}",
+                        WorkingHrDay = WorkingHrDay,
+                        EntryBy = _loggedInUser.UserAbbr
+                    };
+                    _transactionService.UpdateEmpMonthlyAttendance(attendance, attendanceFilter);
+                }
+                int srNo = 1;
+                foreach (var item in model.Component_SinglePayrollAttendanceData)
+                {
+                    var payComponent = new EmpTrans_VarCompFixAmt_GetRow_Result
+                    {
+                        Amt = item.UpdatedAmt,
+                        Branch = employee.Div,
+                        Cd = model.EmpCd,
+                        Curr = employee.CurrCd,
+                        Dept = employee.Dept,
+                        SrNo = srNo,
+                        Narr = "SinglePayroll",
+                        TransId = "*S"
+                    };
+                    var EdTyp = item.DesCd[..6];
+                    var EdCd = item.DesCd.Substring(6, 3);
+                    int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth));
+                    var payComponentFilter = new VariablePayDedComponentFilterModel
+                    {
+                        Branch = employee.Div,
+                        Department = employee.Dept,
+                        EmpCd = model.EmpCd,
+                        EntryBy = _loggedInUser.UserAbbr,
+                        MonthYear = $"{currentYear}{currentMonth}",
+                        PayType = EdTyp,
+                        PayCode = EdCd,
+                        FromDt = new DateTime(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth), 1),
+                        ToDt = new DateTime(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth), lastDayOfMonth),
+                    };
+                    _transactionService.EmpTrans_Update(payComponent, payComponentFilter);
+                    srNo++;
+                }
+            }
+            //if (model.PrintAfterSave)
+            //{
+
+            //}
+            var ActivityAbbr = "UPD";
+            var Message = $", Single Payroll submitted With Trans no={model.TransNo}";
+            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Single Payroll submitted successfully"
+            };
+            return Json(result);
+        }
         public IActionResult EmpSepration()
         {
             return View();

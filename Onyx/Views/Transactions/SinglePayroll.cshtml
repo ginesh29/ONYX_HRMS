@@ -1,0 +1,130 @@
+﻿@model EmpLeaveConfirmModel
+@{
+    ViewData["Title"] = "Single Payroll";
+}
+<div class="card">
+    <div class="card-body">
+        <form id="single-payroll-frm">
+            <input type="hidden" id="CurrentMonth" value="@ViewBag.CurrentMonth" />
+            <input type="hidden" id="CurrentYear" value="@ViewBag.CurrentYear" />
+            <h4 class="text-primary">Application Details</h4>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="EmpCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="DateRange"></label><span id="Days"></span>
+                        <input asp-for="DateRange" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div id="single-payroll-container" class="d-none">
+                <h4 class="text-primary">Confirmation</h4>
+                <div class="custom-control custom-checkbox confirm-div mb-2" id="single-payroll-checkbox">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="SinglePayroll" onchange="changeSinglePayroll()">
+                    <label asp-for="SinglePayroll" class="custom-control-label font-weight-normal">Single Payroll</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div id="single-payroll-table"></div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" onclick="saveLeaveConfirm(this)">Submit</button>
+        </form>
+    </div>
+</div>
+@section scripts {
+    <script>
+        bindEmployeeDropdown();
+        $('#DateRange').daterangepicker(dateRangePickerDefaultOptions).on('apply.daterangepicker', function (ev, picker) {
+            setTimeout(function () {
+                checkSamePeriod();
+                changeSinglePayroll();
+            }, 0)
+        });
+        $('#EmpCd').change(function () {
+            checkSamePeriod();
+            changeSinglePayroll();
+        })
+        function changeSinglePayroll() {
+            var checked = $("#SinglePayroll").is(":checked");
+            if (checked)
+                bindSinglePayData();
+            else
+                $("#single-payroll-table").empty();
+        }
+        function bindSinglePayData() {
+            var frm = $("#single-payroll-frm").serialize();
+            $("#single-payroll-table").load(`/Transactions/SinglePayrollSalaryAttendance?${frm}`,
+                function () {
+                    $(".single-payroll-div").removeClass("d-none");
+                });
+        }
+        function checkSamePeriod() {
+            var picker = $('#DateRange').data('daterangepicker')
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            var currentMonth = $("#CurrentMonth").val();
+            var currentYear = $("#CurrentYear").val();
+            $("#SinglePayroll").prop("checked", false)
+            $("#single-payroll-container").addClass("d-none");
+            var frm = $("#single-payroll-frm");
+            if (frm.valid() && picker.startDate.month() + 1 == currentMonth && picker.startDate.year() == currentYear)
+                $("#single-payroll-container").removeClass("d-none");
+        }
+
+        function LvPaidUpdate(cur, i) {
+            var unpaid = cur.value;
+            var totalDays = $(`#Salary_SinglePayrollAttendanceData_${i}__NoOfDays`).val();
+            var paidDays = $(`#Salary_SinglePayrollAttendanceData_${i}__P_HDays`).val();
+            var payable = totalDays - paidDays - unpaid;
+            if (payable >= 0) {
+                $(`#Salary_SinglePayrollAttendanceData_${i}__Payable`).val(payable);
+                var payabletotal = getTotalPayable();
+                updateComponentAmount(payabletotal);
+            }
+            else
+                $(`#Salary_SinglePayrollAttendanceData_${i}__Payable`).val(payable - totalDays);
+        }
+        function getTotalPayable() {
+            var total = 0;
+            $("[id$=__Payable").each(function () {
+                var val = $(this).val();
+                total += Number(val);
+            })
+            return total;
+        }
+        function updateComponentAmount(totalPayable) {
+            $("[id$=__UpdatedAmt").each(function () {
+                var itemAmt = parseFloat($(this).attr("data-val"));
+                var totalWDays = parseInt($('#TotalWDays').val());
+                var totalPayableDays = parseFloat(totalPayable);
+                var updatedAmt = (itemAmt / totalWDays) * totalPayableDays;
+                $(this).val(updatedAmt)
+            })
+        }
+        function saveLeaveConfirm(btn) {
+            var frm = $("#single-payroll-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                postAjax("/Transactions/SaveSinglePayroll", frm.serialize(), function (response) {
+                    if (response.success) {
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                    else
+                        showErrorToastr(response.message);
+                    unloadingButton(btn);
+                });
+            }
+        }
+    </script>
+}

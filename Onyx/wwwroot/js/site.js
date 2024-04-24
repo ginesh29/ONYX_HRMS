@@ -360,10 +360,6 @@ function initControls() {
         var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
         $(this).val(startDate);
     });
-    $('.date-input').each(function (i, item) {
-        var date = $(this).val().replace(" 00:00:00", "");
-        $(this).val(date);
-    })
     $('.month-year-input').attr("placeholder", "mm/yyyy");
     $('.month-year-input').datetimepicker({
         viewMode: 'months',
