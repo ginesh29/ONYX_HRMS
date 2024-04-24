@@ -25,7 +25,7 @@ begin
 	,	e.FName+' '+e.Mname+' '+e.Lname[Emp]    
 	-- , (select SDes from Designation where Cd=e.Desg)[Desg]    
 	-- , (select SDes from Branch where Cd=e.Div)[Div]    
-	-- , (select SDes from Dept where Cd=e.Dept)[Dept]    
+	, e.Dept[Dept]    
 	,	c.Sdes[LvTyp]    
 	,	cast(el.LvTaken as int)[LvTaken]     
 	,	el.DocDt[DocDt]   
@@ -114,7 +114,7 @@ begin
 	,	e.FName+' '+e.Mname+' '+e.Lname[Emp]    
 	-- , (select SDes from Designation where Cd=e.Desg)[Desg]    
 	-- , (select SDes from Branch where Cd=e.Div)[Div]    
-	-- , (select SDes from Dept where Cd=e.Dept)[Dept]    
+	, (select SDes from Dept where Cd=e.Dept)[Dept]    
 	,	c.Sdes[LvTyp]    
 	,	el.LvTaken[LvTaken]     
 	,	el.DocDt[DocDt]    
@@ -178,6 +178,7 @@ begin
 	,	Div
 	,	(select des from branch where cd=(select div from Employee where cd=el.EmpCd))[Branch]
 	,	(select des from Designation where cd=Desg)[Designation]
+	,	Dept[DeptCd]
 		from    
 		EmpLeave el    
 	,	CompanyLeave c    
@@ -198,6 +199,565 @@ begin
 End
  
  
+ Go 
+
+
+
+CREATE OR ALTER   Procedure [dbo].[EmpLeave_Approval_GetRow_N]
+	@v_Param		Varchar(30)
+,	@v_Typ			Char(1)
+,	@v_CoCd			Char(5)
+,	@v_EmpCd		Char(10)
+,	@v_EmpUser		Char(1)
+,	@v_Div			char(5)='0'
+,	@v_Dept			char(10)='0'
+,	@v_EmpCd1		varchar(40)=''
+,	@v_Usercd		varchar(10)
+As		-- Drop Procedure [dbo].[EmpLeave_Approval_GetRow_N] '','3','01','HR','U','0','0','145'  -- List all New Leave Applications for approval(Here @v_Type=3)
+Begin	
+	Declare @FinalAuth Char(10)
+	Select @FinalAuth=Val from Parameters where Cd='LV_APPR_AUTH' and Appcd='HR' and Cocd=@v_CoCd
+	Select
+		TransNo[TransNo]
+	,	TransDt[TransDt] 
+	,	CONVERT(varchar(20),TransDt,103)[FormatedTransDt]
+	,	EL.EmpCd[EmpCd]  
+	,	Rtrim(FName)+' '+Rtrim(MName)+' '+Rtrim(LName) [Emp]
+	,	(select des from Designation where cd=Desg)[Desg]
+	,	C.des [LvTyp]  
+	,	EL.LvTyp [LvTypCd]
+	,	EL.FromDt [LvFrom]
+	,	CONVERT(varchar(20),EL.FromDt,103)[FormatedFromDt]
+	,	EL.ToDt [LvTo]
+	,	CONVERT(varchar(20),EL.ToDt,103)[FormatedToDt]
+	
+	,	Cast(EL.LvTaken As Int) [LvTaken]
+	,	EL.DocRef [DocRef]
+	,	EL.DocDt [DocDt]
+	,	CONVERT(varchar(20),EL.DocDt,103)[FormatedDocDt]
+	,	EL.SubStitute [SubCd]
+	,	(select rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName) from Employee where cd=EL.SubStitute) [SubName]
+	,	(select Imagefile from Employee where cd= EL.EmpCd) [ImagePath]
+	,	EL.Reason [Reason]
+	
+	,	case WP_FromDt
+		when '01/01/1900' then null  
+		else WP_FromDt
+		end [WP_FromDt]
+		
+	,	case WP_FromDt
+		when '01/01/1900' then null  
+		else CONVERT(varchar(20),WP_FromDt,103)
+		end [FormatedWPFromDt]
+		
+	,	case WP_ToDt
+		when '01/01/1900' then null
+		else WP_ToDt
+		end [WP_ToDt]
+		
+	,	case WP_ToDt
+		when '01/01/1900' then null
+		else CONVERT(varchar(20),WP_ToDt,103)
+		end [FormatedWPToDt]
+		
+	,	case WOP_FromDt
+		when '01/01/1900' then null
+		else WOP_FromDt
+		end [WOP_FromDt]
+		
+	,	case WOP_FromDt
+		when '01/01/1900' then null
+		else CONVERT(varchar(20),WOP_FromDt,103)
+		end [FormatedWOPFromDt]
+		
+	,	case WOP_ToDt
+		when '01/01/1900' then null
+		else WOP_ToDt
+		end [WOP_ToDt]
+		
+	,	case WOP_ToDt
+		when '01/01/1900' then null
+		else CONVERT(varchar(20),WOP_ToDt,103)
+		end [FormatedWOPToDt]
+		
+	,	case when @v_Typ in ('1','4','3')
+		then
+		(select SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPSS2' 
+			and CPAD.ApplTyp=EL.LvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
+			and CPAD.CoCd=@v_CoCd
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		end[Current_Approval_Level]
+		
+	,	case when @v_Typ in ('1','4','3')
+		then
+		(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPSS2' 
+			and CPAD.ApplTyp=EL.LvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
+			and CPAD.CoCd=@v_CoCd
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		end[Current_Approval]
+		
+	,	case when @v_Typ in ('1','4','3')
+		then
+		(Case when((select SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPSS2' 
+			and CPAD.ApplTyp=EL.LvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
+			and CPAD.CoCd=@v_CoCd
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+			=(select Top 1 SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPSS2' 
+			and CPAD.ApplTyp=EL.LvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
+			and CPAD.CoCd=@v_CoCd order by SrNo Desc))
+			then 
+				(STUFF((SELECT ', ' + CAST((Select Fname From Employee where Cd=EmpCd) AS VARCHAR(10)) [text()]
+				FROM CompanyProcessApprovalDetail as CPAD
+				WHERE CPAD.ProcessId='HRPSS2' 
+				and CPAD.ApplTyp=EL.LvTyp
+				and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
+				and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
+				and CPAD.CoCd=@v_CoCd
+				FOR XML PATH(''), TYPE)
+				.value('.','NVARCHAR(MAX)'),1,2,' '))
+			End
+		)
+		end[Approvals]
+	,	EL.Narr[ContactNumber]
+	
+	,	(select des from branch where cd=(select div from Employee where cd=el.EmpCd))[Branch]
+	,	Div
+	,	(select des from Dept where cd=(select Dept from Employee where cd=el.EmpCd))[Dept]
+	,	Dept[DeptCd]
+	,	DATEDIFF(dd,EL.FromDt,getdate())[Tobegin]
+	
+	into #LeaveApproval	
+	From	-- Modified by Rasheed( otherwise list all employees)
+		EmpLeave EL left outer join CompanyLeave C on EL.LvTyp=c.Cd  left outer join Employee Emp on EL.empcd=Emp.Cd
+	Where	-- Modified by Rasheed (Need to show only new applications for approval)
+		C.Cd= EL.LvTyp and Emp.Cd=EL.EmpCd and Emp.CoCd=@v_CoCd
+	
+	and (EL.JoinDt is null or Typ='S')
+	and (@v_Typ='0' and ltrim(str(month(TransDt)))=@v_Param and EL.LvStatus = 'N'  or
+		@v_Typ='1' and TransNo=@v_Param and EL.LvStatus = 'N'  or
+		@v_Typ='2' and EL.empcd=@v_Param and EL.LvStatus = 'N'  or
+		@v_Typ='4' and TransNo=@v_Param and EL.LvStatus = 'F'  or
+		@v_Typ='3' and EL.LvStatus = 'N' and TransNo in( select TransNo as LeaveApproval  from EmpLeave
+				inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EL.LvTyp  and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+				where 
+				LvStatus='N' 
+				and emp.CoCd=@v_CoCd
+				and emp.Status='HSTATPM   '
+				and ((LvApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
+					or (LvApprBy is not null
+						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EL.LvTyp and Div=emp.Div and Dept=emp.Dept and EmpCd=LvApprBy ) +1
+						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
+			
+	)
+	and emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
+	and emp.Cd in(select cd from employee where Div=@v_Div or @v_Div='0')
+	and emp.Cd in(select cd from employee where Dept=@v_Dept or @v_Dept='0')
+	and (
+	emp.Cd in 
+	(select cd from Employee Emp where Emp.FName like ltrim(rtrim(@v_EmpCd1))  or Emp.MName like  ltrim(rtrim(@v_EmpCd1)) or Emp.LName like ltrim(rtrim(@v_EmpCd1)) or Emp.Cd like ltrim(rtrim(@v_EmpCd1)))
+	or ltrim(rtrim(@v_EmpCd1))='')
+	--Order By
+	--	TransNo
+
+	select * from #LeaveApproval	 ORDER BY ABS( DATEDIFF(DD,LvFrom, getdate()) ) 
+	drop table #LeaveApproval
+End
+ 
+ 
+ Go 
+CREATE OR ALTER     Procedure [dbo].[Codes_GetRow_N]
+	@v_Cd		Char(10)
+--,	@v_CoCd		Char(10)
+As		-- Drop Procedure dbo.Codes_GetRow_N 'Bank','02' select * from CodeGroups
+Begin
+	Select
+		CG.sDes[CodeGrpSDes]
+	,	CG.AddOn_Fields  --syed
+	,	Right(rTrim(C.Cd),Len(rtrim(C.Cd))-Len(Rtrim(C.Typ)))[Code]
+	,	C.Typ
+	,	C.Abbr
+	,	C.sDes
+	,	C.Des
+	,	C.EntryBy
+	,	C.EntryDt
+	,	C.Editby
+	,	C.EditDt
+	,	C.Cd
+	,	C.Active
+	From 
+		Codes C
+	,	CodeGroups CG 
+--	,	Parameters Param
+	Where
+		(@v_cd = '' or C.Cd=@v_Cd)
+	and	CG.Cd=C.Typ and CG.Typ='U'
+--	and	CG.AppCd=param.AppCd
+--	and	Param.val='Y' and Param.cd='ACTIVE'
+--	and	Param.CoCd=@v_CoCd
+	and	CG.AppCd in (Select AppCd From Parameters Where Val='Y' and Cd='ACTIVE') and CG.active='1'
+	Order by
+		C.Cd
+End 
+ Go 
+CREATE OR ALTER Procedure [dbo].[CodeGroups_GetRow]
+	@v_CoCd		Char(5)
+As		-- Drop Procedure dbo.CodeGroups_GetRow '01'
+Begin
+	Select
+		Cd
+	,	SDes[ShortDes]
+	,	AppCd 
+	From
+		CodeGroups		-- select * from codegroups
+	Where
+		Typ='U'
+	and	AppCd in (Select AppCd From Parameters Where Val='Y' and Cd='ACTIVE' and (CoCd=@v_CoCd or Rtrim(@v_CoCd)='')) and active='1'
+End 
+ Go 
+
+ CREATE OR ALTER PROCEDURE [dbo].[EmpProgressionDetail_GetRow]  
+ @v_TransNo  Char(10)  
+As -- Drop PROCEDURE [dbo].[EmpProgressionDetail_GetRow]  
+Begin  
+ Select   
+  EPD.SrNo  
+ , (Select SDes From SysCodes Where Cd=EPD.EdTyp)[PayTyp]  
+ , (Select Cd From SysCodes Where Cd=EPD.EdTyp)[PayTypCd]  
+ , (Select SDes From CompanyEarnDed Where Cd=EPD.EdCd and Typ=EPD.EdTyp)[PayCd]  
+ , (Select Cd From CompanyEarnDed Where Cd=EPD.EdCd and Typ=EPD.EdTyp)[PayCodeCd]  
+ , EPD.EffDt  
+ , CONVERT(varchar(10), EPD.EffDt ,103)[FormatedEffDt]
+ , Case EPD.PercAmt  
+  When 'P' then 'PERCENT'  
+  Else 'AMOUNT'  
+  End [Perc / Amt]  
+ , EPD.Val[Current]  
+ , EPD.ApprVal[Incremented]  
+ , EPD.Narr  
+ , EPD.TransNo  
+ From   
+  EmpProgressionDetail EPD  
+ Where   
+  EPD.TransNo=@v_TransNo  
+End   
+ Go 
+
+ CREATE OR ALTER PROCEDURE [dbo].[EmpProgressionDetail_GetRow_N]  
+ @v_TransNo  Char(10)  
+As -- Drop PROCEDURE [dbo].[EmpProgressionDetail_GetRow]  
+Begin  
+ Select   
+  EPD.SrNo  
+ , (Select SDes From SysCodes Where Cd=EPD.EdTyp)[PayTyp]  
+ , (Select Cd From SysCodes Where Cd=EPD.EdTyp)[PayTypCd]  
+ , (Select SDes From CompanyEarnDed Where Cd=EPD.EdCd and Typ=EPD.EdTyp)[PayCd]  
+ , (Select Cd From CompanyEarnDed Where Cd=EPD.EdCd and Typ=EPD.EdTyp)[PayCodeCd]  
+ , EPD.EffDt  
+ , CONVERT(varchar(10), EPD.EffDt ,101)[FormatedEffDt]
+ , Case EPD.PercAmt  
+  When 'P' then 'PERCENT'  
+  Else 'AMOUNT'  
+  End [PercAmt]  
+ , EPD.Val[Current]  
+ , EPD.ApprVal[Incremented]  
+ , EPD.Narr  
+ , EPD.TransNo  
+ From   
+  EmpProgressionDetail EPD  
+ Where   
+  EPD.TransNo=@v_TransNo  
+End   
+ Go 
+CREATE OR ALTER Procedure [dbo].[EmpProgressionHead_GetRow_N]
+	@v_Param	Varchar(30)=null
+,	@v_Typ		Char(1)=''
+,	@v_EmpCd		Char(10)
+,	@v_EmpUser		Char(1)
+As	-- Drop Procedure [EmpProgressionHead_GetRow] '','','HR3'	,'U'
+/*
+	Declare	@v_Param varchar(30)
+	Declare	@v_Typ Char(1)
+	Declare	@v_EmpCd Char(10)
+	Declare	@v_EmpUser Char(1)
+
+	Set @v_Param = '3'
+	Set	@v_Typ = '0'
+	Set @v_EmpCd = 'HR3'
+	Set	@v_EmpUser = 'U'
+*/
+Begin
+	Select
+		EP.TransNo[TransNo]
+	,	EP.TransDt[TransDt]
+	,	CONVERT(varchar(10), EP.TransDt,103)[FormatedTransDt]
+	,	EP.EmpCd[EmpCode]
+	,	Emp.FName[EmpName]
+	,	(select Sdes From Designation where Designation.Cd=EP.FromDesg)[DesigFrom]
+	,	(select Sdes From Designation where Designation.Cd =EP.ToDesg)[DesigTo]
+	,	(select Cd From Designation where Designation.Cd=EP.FromDesg)[DesigFromCd]
+	,	(select Cd From Designation where Designation.Cd =EP.ToDesg)[DesigToCd]
+	,	(select Rtrim(FName)+' '+RTrim(MName)+' '+Rtrim(LName) from Employee where cd=Emp.Cd)[Name]
+	,	(select Rtrim(FName)+' '+RTrim(MName)+' '+Rtrim(LName) from Employee where cd=EP.ApprBy)[ApprName]
+	,	EP.ApprBy
+	,	case EP.ApprDt
+			when '01/01/1900' then ''
+			else EP.ApprDt end[ApprDt]
+	,	case EP.ApprDt
+			when '01/01/1900' then ''
+			else CONVERT(varchar(10),EP.ApprDt,103)end[FormatedApprDt]
+			
+	,	EP.Remarks
+	,	case EP.Status
+		when 'E' then 'Enter'
+		when 'A' then 'Approve'
+		when 'R' then 'Reject'
+		end[Status]
+	,	EP.Status[StatusCd]
+	,	Emp.MName[MiddleName]
+	,	Emp.LName[LastName]
+	,	(Select SDes From SysCodes Where Cd=EP.Typ)[EP_Typ]
+	,	Typ[EP_TypeCd]
+	
+	,	case when @v_Typ = '1'
+		then
+		(select SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT6' 
+			and CPAD.ApplTyp=EP.Typ
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval_Level]
+	,	case when @v_Typ = '1'
+		then
+		(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT6' 
+			and CPAD.ApplTyp=EP.Typ
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval]
+		
+	From
+		EmpProgressionHead EP	-- select *from EmpProgressionHead
+	,	Employee Emp
+	Where
+		Emp.cd=EP.EmpCd
+	and	(@v_Typ='0' and ltrim(str(month(EP.TransDt)))=@v_Param or
+		@v_Typ='1' and EP.TransNo=@v_Param or
+		@v_Typ='2' and EP.EmpCd=@v_Param or 
+		@v_Typ='3' and EP.Status='E' or 
+		@v_Typ='4' and EP.Status='A'  or
+		@v_Typ ='' and TransNo in( select TransNo  from EmpProgressionHead
+				inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
+				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EP.Typ  and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+				where 
+				EmpProgressionHead.Status='E' 
+				and emp.Status='HSTATPM   '
+				and ((ApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
+					or (ApprBy is not null
+						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail CPA where ProcessId='HRPT6' and CPA.ApplTyp=EP.Typ and Div=emp.Div and Dept=emp.Dept and EmpCd=ApprBy ) +1
+						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
+			)
+
+	Order by
+		EP.TransNo Desc
+End 
+ Go 
+CREATE OR ALTER Procedure [dbo].[EmpProgressionHead_GetRow]
+	@v_Param	Varchar(30)=null
+,	@v_Typ		Char(1)=''
+,	@v_EmpCd		Char(10)
+,	@v_EmpUser		Char(1)
+As	-- Drop Procedure [EmpProgressionHead_GetRow] '','','HR3'	,'U'
+/*
+	Declare	@v_Param varchar(30)
+	Declare	@v_Typ Char(1)
+	Declare	@v_EmpCd Char(10)
+	Declare	@v_EmpUser Char(1)
+
+	Set @v_Param = '3'
+	Set	@v_Typ = '0'
+	Set @v_EmpCd = 'HR3'
+	Set	@v_EmpUser = 'U'
+*/
+Begin
+	Select
+		EP.TransNo[TransNo]
+	,	EP.TransDt[TransDt]
+	,	CONVERT(varchar(10), EP.TransDt,103)[FormatedTransDt]
+	,	EP.EmpCd[EmpCode]
+	,	Emp.FName[EmpName]
+	,	(select Sdes From Designation where Designation.Cd=EP.FromDesg)[DesigFrom]
+	,	(select Sdes From Designation where Designation.Cd =EP.ToDesg)[DesigTo]
+	,	(select Cd From Designation where Designation.Cd=EP.FromDesg)[DesigFromCd]
+	,	(select Cd From Designation where Designation.Cd =EP.ToDesg)[DesigToCd]
+	,	(select Rtrim(FName)+' '+RTrim(MName)+' '+Rtrim(LName) from Employee where cd=Emp.Cd)[Name]
+	,	(select Rtrim(FName)+' '+RTrim(MName)+' '+Rtrim(LName) from Employee where cd=EP.ApprBy)[ApprName]
+	,	EP.ApprBy
+	,	case EP.ApprDt
+			when '01/01/1900' then ''
+			else EP.ApprDt end[ApprDt]
+	,	case EP.ApprDt
+			when '01/01/1900' then ''
+			else CONVERT(varchar(10),EP.ApprDt,103)end[FormatedApprDt]
+			
+	,	EP.Remarks
+	,	case EP.Status
+		when 'E' then 'Enter'
+		when 'A' then 'Approve'
+		when 'R' then 'Reject'
+		end[Status]
+	,	EP.Status[StatusCd]
+	,	Emp.MName[MiddleName]
+	,	Emp.LName[LastName]
+	,	(Select SDes From SysCodes Where Cd=EP.Typ)[EP_Typ]
+	,	Typ[EP_TypeCd]
+	
+	,	case when @v_Typ = '1'
+		then
+		(select SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT6' 
+			and CPAD.ApplTyp=EP.Typ
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval_Level]
+	,	case when @v_Typ = '1'
+		then
+		(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT6' 
+			and CPAD.ApplTyp=EP.Typ
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval]
+		
+	From
+		EmpProgressionHead EP	-- select *from EmpProgressionHead
+	,	Employee Emp
+	Where
+		Emp.cd=EP.EmpCd
+	and	(@v_Typ='0' and ltrim(str(month(EP.TransDt)))=@v_Param or
+		@v_Typ='1' and EP.TransNo=@v_Param or
+		@v_Typ='2' and EP.EmpCd=@v_Param or 
+		@v_Typ='3' and EP.Status='E' or 
+		@v_Typ='4' and EP.Status='A'  or
+		@v_Typ ='' and TransNo in( select TransNo  from EmpProgressionHead
+				inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
+				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EP.Typ  and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+				where 
+				EmpProgressionHead.Status='E' 
+				and emp.Status='HSTATPM   '
+				and ((ApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
+					or (ApprBy is not null
+						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail CPA where ProcessId='HRPT6' and CPA.ApplTyp=EP.Typ and Div=emp.Div and Dept=emp.Dept and EmpCd=ApprBy ) +1
+						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
+			)
+
+	Order by
+		EP.TransNo Desc
+End 
+ Go 
+CREATE OR ALTER     Procedure [dbo].[CompanyProcessApproval_Update_N]
+	@v_CoCd				Char(5)
+,	@v_ProcessId		Varchar(10)
+,	@v_ApplTyp			char(10)
+,	@v_Div				Char(5)
+,	@v_Dept				Char(10)
+As		-- Drop Procedure [dbo].[CompanyProcessApproval_Update_N]'01','HRPE2','1','10','B','HDTYP0001','Passport first'
+Begin	
+	Declare @v_Div1				char(5)
+	Declare @v_Dept1				char(5)
+		if(@v_Div='0' and @v_Dept='0')		
+		Begin
+			DECLARE db_cursor CURSOR FOR 
+			select Distinct cd from branch order by Cd
+			OPEN db_cursor  
+			FETCH NEXT FROM db_cursor INTO @v_Div1 
+			WHILE @@FETCH_STATUS = 0  
+			BEGIN  
+					DECLARE db_cursor_Dept CURSOR FOR 
+					select Distinct cd from Dept order by Cd
+					OPEN db_cursor_Dept  
+					FETCH NEXT FROM db_cursor_Dept INTO @v_Dept1 
+					WHILE @@FETCH_STATUS = 0  
+					BEGIN 
+						IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div1 and Dept=@v_Dept1) = 0
+						Begin
+							Insert into CompanyProcessApproval
+							values(
+								@v_CoCd
+							,	@v_ProcessId
+							,	@v_ApplTyp
+							,	@v_Div1
+							,	@v_Dept1)
+						End
+						FETCH NEXT FROM db_cursor_Dept INTO  @v_Dept1 
+						END 
+						CLOSE db_cursor_Dept  
+						DEALLOCATE db_cursor_Dept
+
+			FETCH NEXT FROM db_cursor INTO @v_Div1
+			END 
+			CLOSE db_cursor  
+			DEALLOCATE db_cursor 
+		End	
+	if(@v_Div<>'0' and @v_Dept='0')		
+		Begin	
+			DECLARE db_cursor_Dept CURSOR FOR 
+			select Distinct cd from Dept order by Cd
+			OPEN db_cursor_Dept  
+			FETCH NEXT FROM db_cursor_Dept INTO @v_Dept1 
+			WHILE @@FETCH_STATUS = 0  
+			BEGIN 
+				IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div and Dept=@v_Dept1) = 0
+						Begin
+							Insert into CompanyProcessApproval
+							values(
+								@v_CoCd
+							,	@v_ProcessId
+							,	@v_ApplTyp
+							,	@v_Div
+							,	@v_Dept1)
+						End
+			FETCH NEXT FROM db_cursor_Dept INTO  @v_Dept1 
+			END 
+			CLOSE db_cursor_Dept  
+			DEALLOCATE db_cursor_Dept
+		End	
+	If(@v_Div<>'0' and @v_Dept<>'0')
+		Begin
+			IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div and Dept=@v_Dept) = 0
+						Begin
+							Insert into CompanyProcessApproval
+							values(
+								@v_CoCd
+							,	@v_ProcessId
+							,	@v_ApplTyp
+							,	@v_Div
+							,	@v_Dept)
+						End
+		End
+End 
  Go 
 CREATE OR ALTER   procedure [dbo].[Employee_Find_N]
 @v_Param	varchar(40),
@@ -3551,181 +4111,6 @@ End
  
  
  Go 
-
-
-
-CREATE OR ALTER   Procedure [dbo].[EmpLeave_Approval_GetRow_N]
-	@v_Param		Varchar(30)
-,	@v_Typ			Char(1)
-,	@v_CoCd			Char(5)
-,	@v_EmpCd		Char(10)
-,	@v_EmpUser		Char(1)
-,	@v_Div			char(5)='0'
-,	@v_Dept			char(10)='0'
-,	@v_EmpCd1		varchar(40)=''
-,	@v_Usercd		varchar(10)
-As		-- Drop Procedure [dbo].[EmpLeave_Approval_GetRow_N] '','3','01','HR','U','0','0','145'  -- List all New Leave Applications for approval(Here @v_Type=3)
-Begin	
-	Declare @FinalAuth Char(10)
-	Select @FinalAuth=Val from Parameters where Cd='LV_APPR_AUTH' and Appcd='HR' and Cocd=@v_CoCd
-	Select
-		TransNo[TransNo]
-	,	TransDt[TransDt] 
-	,	CONVERT(varchar(20),TransDt,103)[FormatedTransDt]
-	,	EL.EmpCd[EmpCd]  
-	,	Rtrim(FName)+' '+Rtrim(MName)+' '+Rtrim(LName) [Emp] 
-	,	 (select des from designation where cd=Emp.Desg)[Desg]
-	,	C.des [LvTyp]  
-	,	EL.LvTyp [LvTypCd]
-	,	EL.FromDt [LvFrom]
-	,	CONVERT(varchar(20),EL.FromDt,103)[FormatedFromDt]
-	,	EL.ToDt [LvTo]
-	,	CONVERT(varchar(20),EL.ToDt,103)[FormatedToDt]
-	
-	,	Cast(EL.LvTaken As Int) [LvTaken]
-	,	EL.DocRef [DocRef]
-	,	EL.DocDt [DocDt]
-	,	CONVERT(varchar(20),EL.DocDt,103)[FormatedDocDt]
-	,	EL.SubStitute [SubCd]
-	,	(select rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName) from Employee where cd=EL.SubStitute) [SubName]
-	,	(select Imagefile from Employee where cd= EL.EmpCd) [ImagePath]
-	,	EL.Reason [Reason]
-	
-	,	case WP_FromDt
-		when '01/01/1900' then null  
-		else WP_FromDt
-		end [WP_FromDt]
-		
-	,	case WP_FromDt
-		when '01/01/1900' then null  
-		else CONVERT(varchar(20),WP_FromDt,103)
-		end [FormatedWPFromDt]
-		
-	,	case WP_ToDt
-		when '01/01/1900' then null
-		else WP_ToDt
-		end [WP_ToDt]
-		
-	,	case WP_ToDt
-		when '01/01/1900' then null
-		else CONVERT(varchar(20),WP_ToDt,103)
-		end [FormatedWPToDt]
-		
-	,	case WOP_FromDt
-		when '01/01/1900' then null
-		else WOP_FromDt
-		end [WOP_FromDt]
-		
-	,	case WOP_FromDt
-		when '01/01/1900' then null
-		else CONVERT(varchar(20),WOP_FromDt,103)
-		end [FormatedWOPFromDt]
-		
-	,	case WOP_ToDt
-		when '01/01/1900' then null
-		else WOP_ToDt
-		end [WOP_ToDt]
-		
-	,	case WOP_ToDt
-		when '01/01/1900' then null
-		else CONVERT(varchar(20),WOP_ToDt,103)
-		end [FormatedWOPToDt]
-		
-	,	case when @v_Typ in ('1','4','3')
-		then
-		(select SrNo From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPSS2' 
-			and CPAD.ApplTyp=EL.LvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
-			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
-			and CPAD.CoCd=@v_CoCd
-			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
-		end[Current_Approval_Level]
-		
-	,	case when @v_Typ in ('1','4','3')
-		then
-		(select EmpCd From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPSS2' 
-			and CPAD.ApplTyp=EL.LvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
-			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
-			and CPAD.CoCd=@v_CoCd
-			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
-		end[Current_Approval]
-		
-	,	case when @v_Typ in ('1','4','3')
-		then
-		(Case when((select SrNo From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPSS2' 
-			and CPAD.ApplTyp=EL.LvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
-			and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
-			and CPAD.CoCd=@v_CoCd
-			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
-			=(select Top 1 SrNo From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPSS2' 
-			and CPAD.ApplTyp=EL.LvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
-			and CPAD.CoCd=@v_CoCd order by SrNo Desc))
-			then 
-				(STUFF((SELECT ', ' + CAST((Select Fname From Employee where Cd=EmpCd) AS VARCHAR(10)) [text()]
-				FROM CompanyProcessApprovalDetail as CPAD
-				WHERE CPAD.ProcessId='HRPSS2' 
-				and CPAD.ApplTyp=EL.LvTyp
-				and CPAD.Div=(select Div from Employee where Cd=EL.EmpCd)
-				and CPAD.Dept=(select Dept from Employee where Cd=EL.EmpCd)
-				and CPAD.CoCd=@v_CoCd
-				FOR XML PATH(''), TYPE)
-				.value('.','NVARCHAR(MAX)'),1,2,' '))
-			End
-		)
-		end[Approvals]
-	,	EL.Narr[ContactNumber]
-	
-	,	(select des from branch where cd=(select div from Employee where cd=el.EmpCd))[Branch]
-	,	DATEDIFF(dd,EL.FromDt,getdate())[Tobegin]
-	
-	into #LeaveApproval	
-	From	-- Modified by Rasheed( otherwise list all employees)
-		EmpLeave EL left outer join CompanyLeave C on EL.LvTyp=c.Cd  left outer join Employee Emp on EL.empcd=Emp.Cd
-	Where	-- Modified by Rasheed (Need to show only new applications for approval)
-		C.Cd= EL.LvTyp and Emp.Cd=EL.EmpCd and Emp.CoCd=@v_CoCd
-	
-	and (EL.JoinDt is null or Typ='S')
-	and (@v_Typ='0' and ltrim(str(month(TransDt)))=@v_Param and EL.LvStatus = 'N'  or
-		@v_Typ='1' and TransNo=@v_Param and EL.LvStatus = 'N'  or
-		@v_Typ='2' and EL.empcd=@v_Param and EL.LvStatus = 'N'  or
-		@v_Typ='4' and TransNo=@v_Param and EL.LvStatus = 'F'  or
-		@v_Typ='3' and EL.LvStatus = 'N' and TransNo in( select TransNo as LeaveApproval  from EmpLeave
-				inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
-				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EL.LvTyp  and CPA.Div=emp.Div and CPA.Dept=emp.Dept
-				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
-				where 
-				LvStatus='N' 
-				and emp.CoCd=@v_CoCd
-				and emp.Status='HSTATPM   '
-				and ((LvApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
-					or (LvApprBy is not null
-						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EL.LvTyp and Div=emp.Div and Dept=emp.Dept and EmpCd=LvApprBy ) +1
-						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
-			
-	)
-	and emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
-	and emp.Cd in(select cd from employee where Div=@v_Div or @v_Div='0')
-	and emp.Cd in(select cd from employee where Dept=@v_Dept or @v_Dept='0')
-	and (
-	emp.Cd in 
-	(select cd from Employee Emp where Emp.FName like ltrim(rtrim(@v_EmpCd1))  or Emp.MName like  ltrim(rtrim(@v_EmpCd1)) or Emp.LName like ltrim(rtrim(@v_EmpCd1)) or Emp.Cd like ltrim(rtrim(@v_EmpCd1)))
-	or ltrim(rtrim(@v_EmpCd1))='')
-	--Order By
-	--	TransNo
-
-	select * from #LeaveApproval	 ORDER BY ABS( DATEDIFF(DD,LvFrom, getdate()) ) 
-	drop table #LeaveApproval
-End
- 
- 
- Go 
 CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpTransactionDetail_N]    
 	@v_CoCd   Char(5)   
 ,	@v_EmpCd char(10)   
@@ -5666,42 +6051,6 @@ End
  
  
  Go 
-CREATE OR ALTER   Procedure [dbo].[Codes_GetRow_N]
-	@v_Cd		Char(10)
---,	@v_CoCd		Char(10)
-As		-- Drop Procedure dbo.Codes_GetRow_N 'Bank','02' select * from CodeGroups
-Begin
-	Select
-		CG.sDes[CodeGrpSDes]
-	,	CG.AddOn_Fields  --syed
-	,	Right(rTrim(C.Cd),Len(rtrim(C.Cd))-Len(Rtrim(C.Typ)))[Code]
-	,	C.Typ
-	,	C.Abbr
-	,	C.sDes
-	,	C.Des
-	,	C.EntryBy
-	,	C.EntryDt
-	,	C.Editby
-	,	C.EditDt
-	,	C.Cd
-	,	Active
-	From 
-		Codes C
-	,	CodeGroups CG 
---	,	Parameters Param
-	Where
-		(@v_cd = '' or C.Cd=@v_Cd)
-	and	CG.Cd=C.Typ and CG.Typ='U'
---	and	CG.AppCd=param.AppCd
---	and	Param.val='Y' and Param.cd='ACTIVE'
---	and	Param.CoCd=@v_CoCd
-	and	CG.AppCd in (Select AppCd From Parameters Where Val='Y' and Cd='ACTIVE')
-	Order by
-		C.Cd
-End
- 
- 
- Go 
 CREATE OR ALTER   Procedure [dbo].[Codes_Auto_GetRow_N]
 	@v_Typ	char(5)      
 As		-- Drop Procedure dbo.Codes_Auto_GetRow_N 'BANK'
@@ -6116,18 +6465,6 @@ END
  
  
  Go 
-
-CREATE OR ALTER   PROCEDURE GetEmployees_N
-	@v_CoCd varchar(5)
-AS
-BEGIN
-	
-	SET NOCOUNT ON;
-	select * from Employee where CoCd= @v_CoCd
-END
- 
- 
- Go 
 CREATE OR ALTER   Procedure [dbo].[Notification_GetSrNo_N]
 	@v_CoCd				Char(5)
 ,	@v_ProcessId		Varchar(10)
@@ -6143,6 +6480,18 @@ Begin
 	and		Processid=@v_ProcessId
 	and		@v_Typ=0 or (@v_Typ=1 and DocTyp=@v_DocTyp)
 End
+ 
+ 
+ Go 
+
+CREATE OR ALTER   PROCEDURE GetEmployees_N
+	@v_CoCd varchar(5)
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+	select * from Employee where CoCd= @v_CoCd
+END
  
  
  Go 
@@ -7088,15 +7437,6 @@ End
  
  
  Go 
-CREATE OR ALTER   procedure [dbo].[Designation_Delete_N]
-	@v_Cd varChar(10)
-As
-Begin
-	Delete from Designation where Cd = @v_Cd
-End
- 
- 
- Go 
 CREATE OR ALTER   Procedure [dbo].[Designation_GetRow_N]
 	@v_Cd varChar(10)
 As		-- Drop Procedure [dbo].[Designation_GetRow_N] ''
@@ -7116,6 +7456,15 @@ Begin
 		@v_Cd = '' or Cd = @v_Cd
 	Order by
 		cast(REPLACE(trim(Cd), 'DESG', '') as int)  asc
+End
+ 
+ 
+ Go 
+CREATE OR ALTER   procedure [dbo].[Designation_Delete_N]
+	@v_Cd varChar(10)
+As
+Begin
+	Delete from Designation where Cd = @v_Cd
 End
  
  
@@ -8611,90 +8960,6 @@ Begin	-- Select * from CompanyLeave
 			LvCd=@v_Cd and CoCd=@v_CoCd
 			exec GetMessage 1,'Updated successfully'
 	   End
-End
- 
- 
- Go 
-CREATE OR ALTER   Procedure [dbo].[CompanyProcessApproval_Update_N]
-	@v_CoCd				Char(5)
-,	@v_ProcessId		Varchar(10)
-,	@v_ApplTyp			char(10)
-,	@v_Div				Char(5)
-,	@v_Dept				Char(10)
-As		-- Drop Procedure [dbo].[CompanyProcessApproval_Update_N]'01','HRPE2','1','10','B','HDTYP0001','Passport first'
-Begin	
-	Declare @v_Div1				char(5)
-	Declare @v_Dept1				char(5)
-		if(@v_Div='0' and @v_Dept='0')		
-		Begin
-			DECLARE db_cursor CURSOR FOR 
-			select Distinct cd from branch order by Cd
-			OPEN db_cursor  
-			FETCH NEXT FROM db_cursor INTO @v_Div1 
-			WHILE @@FETCH_STATUS = 0  
-			BEGIN  
-					DECLARE db_cursor_Dept CURSOR FOR 
-					select Distinct cd from Dept order by Cd
-					OPEN db_cursor_Dept  
-					FETCH NEXT FROM db_cursor_Dept INTO @v_Dept1 
-					WHILE @@FETCH_STATUS = 0  
-					BEGIN 
-						IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div and Dept=@v_Dept) = 0
-						Begin
-							Insert into CompanyProcessApproval
-							values(
-								@v_CoCd
-							,	@v_ProcessId
-							,	@v_ApplTyp
-							,	@v_Div1
-							,	@v_Dept1)
-						End
-						FETCH NEXT FROM db_cursor_Dept INTO  @v_Dept1 
-						END 
-						CLOSE db_cursor_Dept  
-						DEALLOCATE db_cursor_Dept
-
-			FETCH NEXT FROM db_cursor INTO @v_Div1
-			END 
-			CLOSE db_cursor  
-			DEALLOCATE db_cursor 
-		End	
-	if(@v_Div<>'0' and @v_Dept='0')		
-		Begin	
-			DECLARE db_cursor_Dept CURSOR FOR 
-			select Distinct cd from Dept order by Cd
-			OPEN db_cursor_Dept  
-			FETCH NEXT FROM db_cursor_Dept INTO @v_Dept1 
-			WHILE @@FETCH_STATUS = 0  
-			BEGIN 
-				IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div and Dept=@v_Dept) = 0
-						Begin
-							Insert into CompanyProcessApproval
-							values(
-								@v_CoCd
-							,	@v_ProcessId
-							,	@v_ApplTyp
-							,	@v_Div
-							,	@v_Dept1)
-						End
-			FETCH NEXT FROM db_cursor_Dept INTO  @v_Dept1 
-			END 
-			CLOSE db_cursor_Dept  
-			DEALLOCATE db_cursor_Dept
-		End	
-	If(@v_Div<>'0' and @v_Dept<>'0')
-		Begin
-			IF (SELECT COUNT(*) FROM CompanyProcessApproval WHERE CoCd = @v_CoCd and ProcessId=@v_ProcessId and ApplTyp=@v_ApplTyp and Div=@v_Div and Dept=@v_Dept) = 0
-						Begin
-							Insert into CompanyProcessApproval
-							values(
-								@v_CoCd
-							,	@v_ProcessId
-							,	@v_ApplTyp
-							,	@v_Div
-							,	@v_Dept)
-						End
-		End
 End
  
  
@@ -10788,355 +11053,4 @@ Begin
 End
 
  
- Go 
-
-CREATE OR ALTER Procedure [dbo].[GetRepo_EmpLeave]
- 	@v_CoCd			Char(5)	
-,   @v_Employee     Char(10)	
-,   @v_Branch       char(5)
-,   @v_Location     char(10)
-,   @v_Department   Char(10)
-,   @v_Sponsor      Char(10)
-,	@v_LvStat		char(1)
-,	@v_Typ			char(5)
-,	@v_Dt1			Date
-,	@v_Dt2			Date
-,	@orderBy		varchar(100)
-As	-- Drop Procedure [GetRepo_EmpLeave] '100','00185','All','All','All','All'
-/*
-	Declare @v_CoCd		char(5)
-	Set @v_CoCd = '01'sp_help EmpLeave
-*/
-
-CREATE table #Temp
-(
-TransNo Char(10),
-Remarks varchar(1000)
-)
-insert into #Temp
-select TransNo,
-(Select LTrim(RTrim(FName)) from Employee where Cd=empleaveappr.LvApprBy)
-+' - '+convert(varchar(20),empleaveappr.LvApprDt,103)
-from empleaveappr where TransNo in (select TransNo from EmpLeave where LvStatus in ('N','Y','R','J','F','C'))
-order by TransNo,empleaveappr.LvApprDt desc
-
-if @v_Dt2='' set @v_dt2=getdate()
-
-if @v_Dt1='' set @v_dt1='01/01/1900'
-
-declare @sql varchar(max)
-
-Begin
-	Select 
-	 	TransNo
-	,	TransDt
-	,	LvTyp
-	,   CASE 
-		WHEN LvStatus = 'N' THEN 'Unapproved'
-		WHEN LvStatus = 'R' THEN 'Rejected'
-		WHEN LvStatus = 'Y' THEN 'Approved'
-		WHEN LvStatus = 'F' THEN 'Confrimed' 
-		WHEN LvStatus = 'V' THEN 'Revised'
-		WHEN LvStatus = 'C' THEN 'Cancelled'
-		WHEN LvStatus = 'J' THEN 'Rejoined'
-		END[Caption]
-	,   CASE 
-		WHEN LvStatus = 'N' and LvApprBy='' THEN 
-			'No One Is Approved'
-		WHEN LvStatus = 'N' and LvApprBy<>'' THEN 
-			
-				(select distinct
-				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
-				from #Temp t1
-				where t.[TransNo] = t1.[TransNo]
-				FOR XML PATH(''), TYPE
-				).value('.', 'NVARCHAR(MAX)') 
-				,1,2,'') department
-				from #Temp t where TransNo=EmpLeave.TransNo)
-		WHEN LvStatus = 'R' THEN 
-			'Rejected By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=(select LvApprBy From EmpLeaveAppr where TransNo=EmpLeave.TransNo and Status='R'))
-		WHEN LvStatus = 'Y' THEN 
-			'Approved By ' +--(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=LvApprBy)
-			(select distinct
-				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
-				from #Temp t1
-				where t.[TransNo] = t1.[TransNo]
-				FOR XML PATH(''), TYPE
-				).value('.', 'NVARCHAR(MAX)') 
-				,1,2,'') department
-				from #Temp t where TransNo=EmpLeave.TransNo)
-		WHEN LvStatus = 'F' THEN 
-			'Confirmed By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		WHEN LvStatus = 'V' THEN 
-			'Revised By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		WHEN LvStatus = 'C' THEN 
-			'Cancelled By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		END[Remarks]
-	,	(Select SDes from CompanyLeave where Cd=LvTyp)[LeaveType]
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=(LvApprBy))[LastApprName]
-	,	convert(varchar(20),LvApprDt,103)[FormatedLvApprDt]
-	,	convert(varchar(20),JoinDt,103)[FormatedJoinDt]
-	,	EmpCd
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=EmpCd)[Employee]
-	,	(Select SDes from Branch where Cd=(select Div from Employee where Cd=EmpCd))[Branch]
-	,	(Select SDes from Codes where Cd=(select LocCd from Employee where Cd=EmpCd) and Typ='HLOC')[Location]
-	,	(Select SDes from CC where Cd=(select CC from Employee where Cd=EmpCd))[CC]
-	,	(Select SDes from Dept where Cd=(select Dept from Employee where Cd=EmpCd))[Dept]
-	,	CancelBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=CancelBy)[CancelByName]
-	,	CancelDt
-	,	CancelRemarks
-	,	ConfirmBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)[ConfirmByName]
-	,	ConfirmDt
-	,	ConfirmRemarks
-	,	ReviseBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ReviseBy)[ReviseByName]
-	,	ReviseDt
-	,	ReviseRemarks
-	,	convert(varchar(20),FromDt,103)[FromDt]
-	,	convert(varchar(20),ToDt,103)[ToDt]
-	,	DocRef
-	,	DocDt
-	,	LvStatus
-	,	LvInter
-	,	case WP_FromDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WP_FromDt,103) end[FormatedWP_FromDt]
-	,	case WP_ToDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WP_ToDt,103) end[FormatedWP_ToDt]
-	,	case WOP_FromDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WOP_FromDt,103) end[FormatedWOP_FromDt]
-	,	case WOP_ToDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WOP_ToDt,103) end[FormatedWOP_ToDt]
-	,	Reason
-	,	Narr
-	,	(Select CoName from Company where Cd=@v_CoCd)[CoName]	
-	,	(Select count(*) from EmpLeaveAppr where EmpLeaveAppr.TransNo=EmpLeave.TransNo and Status='Y')[Count]
-	,	JoinDt
-	,	SysTransNo
-	,	isnull(lvsalary,0)[lvsalary]
-	,	isnull(lvfare,0)[lvfare]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='GT'),103),0)[GT]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LS'),103),0)[LS]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LT'),103),0)[LT]
-	--,	LvTaken[Days]
-	,	DATEDIFF(DD,FromDt,JoinDt) [Days]
-	,	FromDt[LvFromDt]
-	,	ToDt[LvToDt]
-	into #TempLeave
-	From
-		EmpLeave
-		,	Employee	  Emp	
-		inner join 	Branch    Br on Br.Cd=Emp.Div	
-		inner join   Codes    Cod on Cod.Cd=Emp.LocCd  
-		inner join Dept       Dep on Dep.Cd=Emp.Dept
-		inner join   Codes    Cod1 on Cod1.Cd=Emp.Sponsor
-		Where		
-			Emp.cd=EmpLeave.EmpCd
-		and	Isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
-		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
-		and (@v_Branch='All' or @v_Branch<>'' and br.Cd=@v_Branch)
-		and (@v_location='All' or @v_location<>'' and Cod.Cd=@v_location)
-		and (@v_Department='All' or @v_Department<>'' and Dep.Cd=@v_Department)
-		and (@v_Sponsor='All' or @v_Sponsor<>'' and Cod1.Cd=@v_Sponsor)			
-		and (LvTyp=@v_Typ or @v_Typ='')
-		and (LvStatus=@v_LvStat or @v_LvStat='')--complete leave between two dates		
-		--and (@v_LvStat<>'' and (
-		--(@v_LvStat='A'  and LvApprDt>= @v_Dt1 and LvApprDt<=@v_Dt2 or 
-		--@v_LvStat='R' or
-		--@v_LvStat='J' and JoinDt >= @v_Dt1 and JoinDt<=@v_Dt2 or
-		--@v_LvStat='F' and ConfirmDt>= @v_Dt1 and ConfirmDt<=@v_Dt2 
-		--)))
-		--order by ToDt
-if @orderBy<>''
-		set @sql=' select * from #TempLeave order by '+@orderBy
-	else
-		set @sql=' select * from #TempLeave'
-
-	exec (@sql)
-
-Drop table #Temp
-drop table #TempLeave
-
-End
- 
- Go 
-CREATE OR ALTER Procedure [dbo].[GetRepo_EmpTransactionDetail]    
-	@v_CoCd   Char(5)   
-,	@v_EmpCd char(10)   
-,	@v_RFrmPrd  Char(6)   
-,	@v_RToPrd  Char(6)   
-As    -- Drop Procedure [GetRepo_EmpTransactionDetail] '01','523','202110','202310'  
-Begin     
-
-/*
-declare @v_CoCd   Char(5)   
-declare @v_EmpCd char(10)   
-declare @v_RFrmPrd  Char(6)   
-declare @v_RToPrd  Char(6)
-Select @v_CoCd   ='01' 
-Select @v_EmpCd ='001' 
-Select @v_RFrmPrd  ='201001'   
-Select @v_RToPrd  ='201506'
-*/
-
-Declare @Prd int   
-Declare @Year int   
-Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd='01'   
-Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd='01'         
-	--Select Cd[Cd]     
-	--, rtrim(Fname) +' '+rtrim(MName) +' '+rtrim(Lname)[EmpName]    
-	--, (select SDes from Branch where Cd=Employee.Div) [Branch]
-	--, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	--  +left(@v_RFrmPrd,4)     
-	--  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	--  +left(@v_RToPrd,4)[Period]  
-	--from Employee    
-	--where Cd=@v_EmpCd               
-	
-If @Year *100 +@Prd between @v_RFrmPrd and @v_RToPrd    
-Begin
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,@Prd), 0 ) - 1 ))[Month]    
-	, @Year[Yr]    
-	, convert(char(4),@Year)+ +right ('00'+ltrim(str( @Prd)),2 )[Prd]
-		, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	,	round((select isnull(sum(amt),0) from emptrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd ),2)[BasicSalaray]
-	--,	round(IsNull((Select isnull(sum(Amt),0) from EmpTrans where EdTyp in('HEDT01 ','HEDT03') and edcd<>'STFFP' and TrnInd='M' and EmpCd=EmT.Empcd ),0),2)[ExtraMnthly]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ') and EdTyp='HEDT02' and EmpCd=EmT.Empcd ),0),2)[Deductions]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='004' and EdTyp='HEDT02' and EmpCd=EmT.Empcd ),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[TMF]
-
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in ('MGRIN','207' )  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[Incentives]
-
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='053'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd  ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('LTA','008  ')   and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[Pension]
-	into #EmpTrans
-	From     EmpTrans EmT, Employee Emp     
-	where	emp.Cd=@v_EmpCd 
-			and emt.EmpCd=@v_EmpCd     
-	group by emt.EmpCd,emp.Basic,emp.Cd  ,emp.Fname,emp.Mname,emp.Lname,emp.Div 
-	
-	
-union       
-	
-
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, EmT.Prd  [Prd] 
-	, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	--, Isnull(Emp.Basic,0)+ IsNull((Select sum(Amt) from EmpTransYtd where EdCd<>'001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Eligible]    
-	--, Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LOP]
-	--, IsNull((select Amt from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LS]   
-	--, IsNull((select Amt from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LT]     
-	--, IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd in ('004','205','209','204') and EmpCd=@v_EmpCd and Prd=EmT.Prd),0)[Recovery]    
-	--, IsNull((select sum(Amt) from EmpLoan where datepart(YYYY,LoanApprDt)*100+datepart(MM,LoanApprDt)=EmT.Prd and EmpCd=@v_EmpCd),0)[Advance]    
-	,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and Prd=EmT.Prd),2)[BasicSalaray]
-
-	--,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdTyp in('HEDT01 ','HEDT03') and edcd<>'STFFP'   and TrnInd='M' and EmpCd=EmT.Empcd ),0),2)[ExtraMnthly]
-	,	round(IsNull((select sum(Amt) from EmpTransYtd where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ') and EdTyp='HEDT02'  and EmpCd=EmT.Empcd and Prd=EmT.Prd),0),2)[Deductions]
-	--,	round(IsNull((select sum(Amt) from EmpTransYtd where EdCd='004' and EdTyp='HEDT02'  and EmpCd=EmT.Empcd    and Prd=EmT.Prd),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  and prd=EmT.Prd),0),2)[TMF]
-
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('207  ','MGRIN')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Incentives]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='053  '  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('LTA','008  ')  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Pension]
-	From     EmpTransYtd EmT     , Employee Emp     
-	where emp.Cd=@v_EmpCd and emt.EmpCd=@v_EmpCd and EmT.Prd between @v_RFrmPrd and @v_RToPrd     
-	group by EmT.EmpCd,Prd,emp.Basic,emp.Cd  ,emp.Fname,emp.Mname,emp.Lname,emp.Div 
-	order by  Prd asc
-	select *,[Month]+' '+cast(Yr as char(4))[Decsription] from  #EmpTrans
-	drop table #EmpTrans
-	End
-else       
-Begin
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, emt.Prd    [Prd]
-	, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	--,format( Isnull(Emp.Basic,0),'###,###,###.###')[Eligible]    
-	--, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
-	--, format(IsNull((select Amt from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LS]   
-	--, format(IsNull((select Amt from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LT]   
-	--, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd in ('004','205','209','204') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[Recovery]    
-	--, IsNull((select sum(Amt) from EmpLoan where datepart(YYYY,LoanApprDt)*100+datepart(MM,LoanApprDt)=EmT.Prd and EmpCd=@v_EmpCd),0)[Advance]    
-	,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and Prd=EmT.Prd),2)[BasicSalaray]
-	--,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdTyp in('HEDT01 ','HEDT03') and edcd not in('STFFP','MGRIN','208') and TrnInd='M' and EmpCd=EmT.Empcd and  Prd=EmT.Prd),0),2)[ExtraMnthly]
-	,	round(IsNull((select sum(Amt) from EmpTransYtd where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ')and EdTyp='HEDT02'  and EmpCd=EmT.Empcd and Prd=EmT.Prd),0),2)[Deductions]
-	--,	round(IsNull((select sum(Amt) from EmpTransYtd where EdCd='004' and EdTyp='HEDT02'   and EmpCd=EmT.Empcd    and Prd=EmT.Prd),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  and prd=EmT.Prd ),0),2)[TMF]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('207  ','MGRIN')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Incentives]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='053  '  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('LTA','008  ')  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Pension]
-	into #EmpTransYtd
-	From     EmpTransYtd EmT     , Employee Emp     
-	where emp.Cd=@v_EmpCd and emt.EmpCd=@v_EmpCd and emt.Prd between @v_RFrmPrd and @v_RToPrd     
-	group by emt.EmpCd,Prd,emp.Basic,emp.Cd   ,emp.Fname,emp.Mname,emp.Lname ,emp.Div 
-	order by Prd asc 
-	select *,[Month]+' '+cast(Yr as char(4))[Decsription] from #EmpTransYtd
-	drop table #EmpTransYtd
-	--EdCd ='004' and
-ENd
-End 
  Go 
