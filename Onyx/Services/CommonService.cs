@@ -406,7 +406,7 @@ namespace Onyx.Services
         {
             var modifiedSpQuery = @"SELECT name,  modify_date 
 	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-01-01'
+	                                WHERE type = 'P' and CAST(modify_date AS DATE) =  CAST(getdate() AS DATE)
 	                                ORDER BY modify_date DESC";
             var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
@@ -423,7 +423,7 @@ namespace Onyx.Services
                     result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #", StringComparison.InvariantCultureIgnoreCase).Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#", StringComparison.InvariantCultureIgnoreCase)} \n Go \n";
                 }
             }
-            string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now:ddMMyyyy_HHmms}.sql";
+            string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{DateTime.Now:ddMMyyyy}.sql";
             File.WriteAllText(filePath, result);
         }
     }

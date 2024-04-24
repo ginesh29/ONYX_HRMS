@@ -1373,46 +1373,41 @@ namespace Onyx.Controllers
             });
             return View();
         }
-        public IActionResult SavePrePayRollProcess(string MonthYear, string Branch)
+        public IActionResult SavePrePayRollProcess(string MonthYear, string Branch, bool confirmed = false)
         {
             var spMonthYear = MonthYear.Split('/');
-            var Period = spMonthYear[0];
+            var Period = Convert.ToInt32(spMonthYear[0]).ToString("00");
             var Year = spMonthYear[1];
+            bool isValidDeno = _transactionService.ValiatePrePayrollDeno("DENO", _loggedInUser.CompanyCd);
+            bool isValidBank = _transactionService.ValiatePrePayrollDeno("BANK", _loggedInUser.CompanyCd);
+            bool isValidVBank = _transactionService.ValiatePrePayrollDeno("VBANK", _loggedInUser.CompanyCd);
+            bool isValidCBank = _transactionService.ValiatePrePayrollDeno("CBANK", _loggedInUser.CompanyCd);
 
-            //bool isValidDeno = _transactionService.ValiatePrePayrollDeno(Period, Year);
-
-            //string msg= "Please enter Cash Denomination for "
-            //if (isValidDeno)
-            //{
-            //    lblDisplay.Text = "Please enter Cash Denomination for " + Dataset_RsPrePay.Tables[0].Rows[0]["Des"].ToString();
-            //}
-
-            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollBANK(objPrePayrollBLL);
-            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
-            //{
-            //    lblDisplay.Text = "Please enter Bank Account for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
-            //}
-
-            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollVBANK(objPrePayrollBLL);
-            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
-            //{
-
-            //    lblDisplay.Text = "Please enter Valid Bank Account for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
-            //}
-
-            //Dataset_RsPrePay = objPrePayrollBLL.ValiatePrePayrollCBANK(objPrePayrollBLL);
-            //if (Dataset_RsPrePay.Tables[0].Rows.Count != 0)
-            //{
-            //    lblDisplay.Text = "Please Net Pay Bank for " + Dataset_RsPrePay.Tables[0].Rows[0]["column1"].ToString();
-            //}
-
-            _commonService.PrePayrollProcess(Period, Year, Branch, _loggedInUser.CompanyCd);
-            var result = new CommonResponse
+            string msg = "<ul class='text-left'>";
+            if (isValidDeno)
+                msg += "<li>Please enter Cash Denomination</li>";
+            if (isValidBank)
+                msg += "<li>Please enter Bank Account</li>";
+            if (isValidVBank)
+                msg += "<li>Please enter Bank CAccount</li>";
+            if (isValidCBank)
+                msg += "<li>Please Net Pay Bank</li>";
+            msg += "</ul>";
+            if (confirmed)
             {
-                Success = true,
-                Message = "Pre Payroll Process completed Succesfully"
-            };
-            return Json(result);
+                _commonService.PrePayrollProcess(Period, Year, Branch, _loggedInUser.CompanyCd);
+                var result = new CommonResponse
+                {
+                    Success = true,
+                    Message = "Pre Payroll Process completed Succesfully"
+                };
+                return Json(result);
+            }
+            return Json(new CommonResponse
+            {
+                Success = false,
+                Message = msg
+            });
         }
         #endregion
 
