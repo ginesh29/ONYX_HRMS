@@ -1,4 +1,4 @@
-﻿@model IncentiveFilterModel
+﻿@model EmpSeprationFilterModel
 @{
     ViewData["Title"] = "Employee Sepration";
 }
@@ -6,20 +6,6 @@
     <div class="card-body">
         <form id="emp-sepration-frm">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="Branch"></label>
-                        <select asp-for="Branch" class="form-control select-picker" asp-items="ViewBag.BranchItems">
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="Designation"></label>
-                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems">
-                        </select>
-                    </div>
-                </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="EmpCd"></label>
@@ -31,40 +17,50 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="EmpType"></label>
-                        <select asp-for="EmpType" class="form-control filter-select-picker" asp-items="ViewBag.EmpTypeItems">
+                        <label asp-for="SeprationType"></label>
+                        <select asp-for="SeprationType" class="form-control select-picker" asp-items="ViewBag.SeprationTypeItems">
                         </select>
+                        <span asp-validation-for="SeprationType" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group">
-                        <label asp-for="MonthYear"></label>
-                        <input asp-for="MonthYear" value="@ViewBag.currentMonthYear" class="form-control month-year-input" type="text" data-toggle="datetimepicker">
+                        <label asp-for="SeprationDate"></label>
+                        <input asp-for="SeprationDate" class="form-control date-input" type="text">
+                        <span asp-validation-for="SeprationDate" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-2 d-flex align-items-center">
-                    <div class="form-group">
-                        <button type="button" class="btn btn-warning mt-2" onclick="searchIncentive(this)" id="btn-search"><i class="fa fa-search"></i></button>
-                        <button type="button" class="btn btn-outline-info mt-2 ml-1 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
-                        <button class="btn btn-secondary mt-2 ml-1 d-none" type="button" id="btn-clear" onclick="clearSearch(this)">Clear</button>
-                    </div>
-                </div>
-            </div>
-            <h5 class="mt-2 mb-4 side-separator-container"><span class="side-separator">OR</span></h5>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="custom-file">
-                        <input type="file" id="import-file" name="file" onchange="uploadFile(event)" class="custom-file-input">
-                        <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
-                    </div>
-                    <a href="/formats/Emp_Incentive_Import_Sample.xlsx?@DateTime.Now">Download Sample File</a>
+                <div class="report-btn-div">
+                    <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
                 </div>
             </div>
         </form>
+        <div id="settlementLetter"></div>
     </div>
 </div>
-<style>
-    .tooltip-inner {
-        max-width: 300px;
-    }
-</style>
+@section scripts {
+    <script>
+        bindEmployeeDropdown();
+        function loadGridData(btn) {
+            var frm = $("#emp-sepration-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                var url = `/Transactions/EmpSeprationLetter?${frm.serialize()}`;
+                $('#settlementLetter').load(url, function () {
+                    unloadingButton(btn);
+                    if ($("#settlement-letter").length)
+                        $("#btn-pdf").removeClass("d-none");
+                });
+            }
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#emp-sepration-frm");
+                var url = `/Transactions/EmpSeprationLetter?${frm.serialize()}&pdf=true`;
+                window.open(url);
+            }
+        }
+    </script>
+}

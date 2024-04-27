@@ -18,5 +18,6 @@
         public string CoName { get; set; }
         public string Type { get; set; }
         public string BrCd { get; set; }
+        public int NoOfDays { get; set; }
     }
 }

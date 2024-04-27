@@ -269,6 +269,7 @@ $('.filter-select-picker,.filter-select2').on('change', function (e) {
     var dataTable = window["datatable"];
     var value = $(this).val();
     var columnIndex = $(this).attr("data-index");
-    if (dataTable.column(columnIndex).search() !== value)
-        dataTable.column(columnIndex).search(value).draw();
+    if (columnIndex)
+        if (dataTable.column(columnIndex).search() !== value)
+            dataTable.column(columnIndex).search(value).draw();
 });

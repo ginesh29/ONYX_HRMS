@@ -1,0 +1,161 @@
+﻿@model GetRepo_EmpFinalSettlement_Result
+@{
+    var total = Model.Basic + Model.Allowance;
+}
+<div id="settlement-letter">
+    <h4 class="text-center mb-5">EMPLOYEE FINAL SETTLEMENT</h4>
+    <div style="width: 100%; display: table;">
+        <div style="display: table-row">
+            <div style="width: 75%; display: table-cell;">
+                <table>
+                    <tr>
+                        <th width="100">Employee</th>
+                        <td>: @Model.Name (@Model.Cd.Trim())</td>
+                    </tr>
+                    <tr>
+                        <th>Joined Date</th>
+                        <td>: @Model.DOJ.FormatDate()</td>
+                    </tr>
+                    <tr>
+                        <th>Designation</th>
+                        <td>: @Model.Designation</td>
+                    </tr>
+                    <tr>
+                        <th>Nationality</th>
+                        <td>: @Model.Nationality</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: table-cell;">
+                <table>
+                    <tr>
+                        <th width="100">Basic Salary</th>
+                        <td>: @Model.Basic.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Allowance</th>
+                        <td>: @Model.Allowance.ToString("0.00")</td>
+                    </tr>
+                    <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <td>: @total.ToString("0.00")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div style="width: 100%; display: table;">
+        <div style="display: table-row">
+            <div style="width: 70%; display: table-cell;" class="form-border-right">
+                <h5>History of Employee</h5>
+                <table>
+                    <tr>
+                        <th width="280">Date of last working</th>
+                        <td width="100">: @Model.Lastworking.FormatDate()</td>
+                        <th width="150">Eligible Leave days</th>
+                        <td>: </td>
+                    </tr>
+                    <tr>
+                        <th>Last month working days</th>
+                        <td>: @Model.LastMonthworkingDays</td>
+                        <th>Balance Leave days</th>
+                        <td>: @Model.LvOpBal</td>
+                    </tr>
+                    <tr>
+                        <th>Total days with company</th>
+                        <td>: @Model.DaysWorked</td>
+                        <th>Eligible LS days</th>
+                        <td>: @Model.LSProv_OpDays.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Apprd.Ls Days per year(365 Days)</th>
+                        <td>: @Model.AnnLv.ToString("0.00")</td>
+                        <th>Balance LS days</th>
+                        <td>: @Model.LSProv_Days.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Total LS taken by days</th>
+                        <td>: </td>
+                        <th>Eligible A.T Nos</th>
+                        <td>: </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Apprd.AT amount per year(365 days)
+                        </th>
+                        <td>: @Model.LTProv_OpAmt.ToString("0.00")</td>
+                        <th>Balance A.T Nos</th>
+                        <td>: </td>
+                    </tr>
+                </table>
+            </div>
+            <div style="display: table-cell;" class="pl-5">
+                <h5>Payment Details</h5>
+                <table>
+                    <tr>
+                        <th width="100">Leave Salary</th>
+                        <td>: @Model.LSProv_Amt.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Air Ticket</th>
+                        <td>: @Model.LTProv_OpAmt.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Gratuity</th>
+                        <td>: </td>
+                    </tr>
+                    <tr>
+                        <th>Salary</th>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <th>Loan</th>
+                        <td>:</td>
+                    </tr>
+                    <tfoot>
+                        <tr>
+                            <th>Net Payable</th>
+                            <td>:</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <table>
+        <tr>
+            <th width="200">Rule for 365 Days</th>
+            <td>: 21 Days of Basic</td>
+        </tr>
+        <tr>
+            <th>Gratuity Eligible Days</th>
+            <td>: @Model.PayableDays.ToString("0.00")</td>
+        </tr>
+        <tr>
+            <th>Based On Working Days</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th>Gratuity Amount</th>
+            <td></td>
+        </tr>
+    </table>
+    <div style="margin-top:630px">
+        <div class="mt-3 mb-3" style="width: 100%; display: table;">
+            <div style="display: table-row">
+                <div class="font-weight-bold" style="width: 30%; display: table-cell;">HR Department</div>
+                <div class="font-weight-bold" style="width: 30%; display: table-cell;">Accounts Department</div>
+                <div class="font-weight-bold" style="width: 30%; display: table-cell;">AGM/Directors</div>
+                <div class="font-weight-bold" style="display: table-cell;">Employee</div>
+            </div>
+        </div>
+        <p class="mt-5">
+            Confirmation : I, @Model.Name have received my all dues with the company including
+            Gratuity and Salary & Leave Salary upto my last working day.
+        </p>
+    </div>
+</div>

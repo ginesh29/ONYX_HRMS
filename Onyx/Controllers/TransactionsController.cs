@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
+using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
+using Rotativa.AspNetCore.Options;
 
 namespace Onyx.Controllers
 {
@@ -1563,10 +1565,6 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveSinglePayroll(EmpLeaveConfirmModel model, string processId)
         {
-            //model.ApprBy = _loggedInUser.UserAbbr;
-            //model.ApprDays = model.LvDays + model.WopLvDays;
-            //model.Type = 0;
-            //_transactionService.SaveLeaveConfirm(model, _loggedInUser.CompanyCd);
             if (model.SinglePayroll)
             {
                 var employee = _employeeService.FindEmployee(model.EmpCd, _loggedInUser.CompanyCd);
@@ -1643,7 +1641,22 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpSepration()
         {
+            ViewBag.SeprationTypeItems = _commonService.GetSysCodes(SysCode.SeprationType).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = m.SDes
+            });
             return View();
+        }
+        public IActionResult EmpSeprationLetter(EmpSeprationFilterModel filterModel, bool pdf)
+        {
+            var seprationData = _transactionService.GetEmpSeprationDetail(filterModel);
+            if (pdf)
+                return new ViewAsPdf("EmpSeprationReport", seprationData)
+                {
+                    PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                };
+            return PartialView("_EmpSettlementLetter", seprationData);
         }
     }
 }

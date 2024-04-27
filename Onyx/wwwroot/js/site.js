@@ -327,12 +327,11 @@ function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();
 }
-
 function initControls() {
     $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)
     $(".select-picker").attr("title", "-- Select --");
     $(".filter-select-picker").attr("title", "-- All --");
-    $(".select-picker,.filter-select-picker").selectpicker();
+    $(".select-picker,.filter-select-picker,.dashboard-select-picker").selectpicker();
     $("select.select-picker,select.filter-select-picker").not("#user-company-dropdown").not("[multiple]").each(function () {
         var curr = this;
         var val = $(curr).val();

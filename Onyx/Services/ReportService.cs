@@ -201,8 +201,8 @@ namespace Onyx.Services
             var procedureName = "GetRepo_ExpiredDocument_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cocd", CoCd);
-            parameters.Add("v_FromDate", string.Empty ?? string.Empty);
-            parameters.Add("v_ToDate", string.Empty ?? string.Empty);
+            parameters.Add("v_FromDate", filterModel.StartDate.Value.ToString(CommonSetting.InputDateFormat) ?? string.Empty);
+            parameters.Add("v_ToDate", filterModel.EndDate.Value.ToString(CommonSetting.InputDateFormat) ?? string.Empty);
             parameters.Add("v_Employee", "All");
             parameters.Add("v_DocTyp", filterModel.DocType ?? "All");
             parameters.Add("v_Typ", filterModel.Type);

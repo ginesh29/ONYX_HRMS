@@ -1435,50 +1435,6 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<EmpEarnDed2_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        //public string GetEmpProvisionAdjSrNo()
-        //{
-        //    var procedureName = "Empprovisionsadj_TransNo";
-        //    var parameters = new DynamicParameters();
-        //    var connectionString = _dbGatewayService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    var result = connection.QueryFirstOrDefault<string>(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //    return result;
-        //}
-        //public CommonResponse SaveEmpProvisionAdj(EmpprovisionsadjModel model)
-        //{
-        //    var procedureName = "Empprovisionsadj_Update_N";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_TransNo", model.TransNo);
-        //    parameters.Add("v_TransDt", model.TransDt);
-        //    parameters.Add("v_EmpCd", model.EmpCd);
-        //    parameters.Add("v_ProvTyp", model.ProvTyp);
-        //    parameters.Add("v_Days", model.Days);
-        //    parameters.Add("v_Amt", model.Amt);
-        //    parameters.Add("v_Purpose", model.Purpose);
-        //    parameters.Add("v_Narr", model.Narr);
-        //    parameters.Add("v_EntryBy", model.EntryBy);
-        //    var connectionString = _dbGatewayService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //    return result;
-        //}
-
-        //public CommonResponse SetEmpprovisionsadjAppr(EmpprovisionsadjModel model)
-        //{
-        //    var procedureName = "EmpprovisionsadjAppr_Update_N";
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("v_TransNo", model.TransNo);
-        //    parameters.Add("v_ApprLvl", model.CurrentApprovalLevel);
-        //    parameters.Add("v_ApprBy", model.ApprBy);
-        //    parameters.Add("v_ApprDt", model.ApprDt);
-        //    parameters.Add("v_Status", "A");
-        //    parameters.Add("v_Narr", model.Remarks);
-        //    parameters.Add("v_EntryBy", model.EntryBy);
-        //    var connectionString = _dbGatewayService.GetConnectionString();
-        //    var connection = new SqlConnection(connectionString);
-        //    var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        //    return result;
-        //}
         public void DeleteEmpPrgression(string transNo)
         {
             var procedureName = "EmpProgressionHead_Delete";
@@ -1487,6 +1443,22 @@ namespace Onyx.Services
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        #endregion
+
+        #region Emp Sepration
+        public GetRepo_EmpFinalSettlement_Result GetEmpSeprationDetail(EmpSeprationFilterModel model)
+        {
+            var procedureName = "GetRepo_EmpFinalSettlement";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", model.EmpCd);
+            parameters.Add("v_SepDt", model.SeprationDate);
+            parameters.Add("v_SepTyp", model.SeprationType);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<GetRepo_EmpFinalSettlement_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
         #endregion
     }

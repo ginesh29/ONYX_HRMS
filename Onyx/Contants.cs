@@ -19,6 +19,7 @@
         public const string RecMode = "HLREC";
         public const string RecPrd = "HLRI";
         public const string EmpStatus = "HSTAT";
+        public const string SeprationType = "HREOS";
     }
     public class CodeGroup
     {

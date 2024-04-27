@@ -3,8 +3,8 @@
     <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
             <a href="/" class="nav-link home-link">
-                <i class="nav-icon fas fa-home"></i>
-                <p>Home</p>
+                <i class="nav-icon fas fa-dashboard"></i>
+                <p>Dashboard</p>
             </a>
         </li>
         @foreach (var item in Model.Where(m => m.Prnt == 0))
@@ -12,7 +12,7 @@
             var children = Model.Where(m => m.Prnt == item.MenuId);
             var icon = item.Caption.Contains("settings", StringComparison.OrdinalIgnoreCase) ? "cog" : item.Caption.Contains("organisation", StringComparison.OrdinalIgnoreCase) ? "building" : item.Caption.Contains("employee", StringComparison.OrdinalIgnoreCase) ? "users" : item.Caption.Contains("transaction", StringComparison.OrdinalIgnoreCase) ? "right-left" : item.Caption.Contains("report", StringComparison.OrdinalIgnoreCase) ? "chart-simple" : item.Caption.Contains("house", StringComparison.OrdinalIgnoreCase) ? "person-shelter" : item.Caption.Contains("service", StringComparison.OrdinalIgnoreCase) ? "hand-holding-heart" : "money-bill-1-wave";
             <li class="nav-item">
-                <a href="@item.Frm?processId=@item.ProcessId" class="nav-link">                   
+                <a href="@item.Frm?processId=@item.ProcessId" class="nav-link">
                     <i class="nav-icon fas fa-@icon"></i>
                     <p>
                         @item.Caption

@@ -46,7 +46,7 @@ window["datatable-2"] = $('#VehicleDocumentsDataTable').DataTable(
             { data: "issuePlace" },
             {
                 data: function (row) {
-                    return row.issueDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
+                    return row.expDt && moment(row.expDt).format(CommonSetting.DisplayDateFormat);
                 },
             },
             {
