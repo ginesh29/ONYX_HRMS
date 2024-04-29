@@ -1576,16 +1576,14 @@ namespace Onyx.Controllers
             bool validHeader = _transactionService.ValidHeaderVariblePayComponentsExcel(file);
             if (!validHeader)
             {
-                excelData = null;
-                Message = "Headers are not matched. Download again & refill data";
-            }
-            if (!validHeader)
                 return Json(new CommonResponse
                 {
                     Success = false,
-                    Message = Message,
+                    Message = "Headers are not matched. Download again & refill data"
                 });
-            return PartialView("_EmpProgressionData", excelData);
+            }
+            else
+                return PartialView("_EmpProgressionData", excelData);
         }
         [HttpPost]
         public IActionResult SaveBulkEmployeeProgression(List<EmpProgressionHeadModel> model, EmpProgressionHeadModel filterModel)

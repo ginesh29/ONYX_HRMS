@@ -171,12 +171,8 @@ function uploadFile(event) {
                 $("#EmpProgressions-Table").html(response);
                 $("#modal-loader").addClass("d-none");
                 $("#btn-bulk-submit").removeClass("d-none");
-
-                //if (response.success) {
-
-                //}
-                //else
-                //    showErrorToastr(response);
+                if (response.message)
+                    showErrorToastr(response.message);
                 unloadingPage();
             });
         }
