@@ -361,7 +361,7 @@ textarea {
 .disabled-container input,
 .disabled-container .dropdown-toggle,
 .disabled-container .select2-selection {
-    background-color: #e9ecef !important;
+    background-color: #eee !important;
     opacity: 1;
     pointer-events: none;
 }

@@ -1344,7 +1344,7 @@ namespace Onyx.Services
         }
         #endregion
 
-        #region Emp Provision Adjustment
+        #region Emp Progression
         public IEnumerable<EmpProgressionHead_GetRow_Result> GetEmpProgressionData(string transNo, string type, string empCd, string empUser)
         {
             var procedureName = "EmpProgressionHead_GetRow_N";
@@ -1388,23 +1388,7 @@ namespace Onyx.Services
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }
-        public void UpdateEmpProgAppr(EmpProgressionHeadModel model)
-        {
-            var procedureName = "EmpProgressionAppr_Update";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_TransNo", model.TransNo);
-            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
-            parameters.Add("v_ApprBy", model.ApprBy);
-            parameters.Add("v_ApprDt", model.ApprDt);
-            parameters.Add("v_Status", "A");
-            parameters.Add("v_Narr", model.Narr);
-            parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_EditBy", model.EntryBy);
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }
+        }        
         public void UpdateEmpProgDetail(EmpProgressionHeadModel model)
         {
             var procedureName = "EmpProgressionDetail_Update";
@@ -1419,6 +1403,22 @@ namespace Onyx.Services
             parameters.Add("v_ApprVal", model.RevisedAmt);
             parameters.Add("v_Narr", model.Narr);
             parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void UpdateEmpProgAppr(EmpProgressionHeadModel model)
+        {
+            var procedureName = "EmpProgressionAppr_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_TransNo", model.TransNo);
+            parameters.Add("v_ApprLvl", model.Current_Approval_Level);
+            parameters.Add("v_ApprBy", model.ApprBy);
+            parameters.Add("v_ApprDt", model.ApprDt);
+            parameters.Add("v_Status", "A");
+            parameters.Add("v_Narr", model.Narr);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            parameters.Add("v_EditBy", model.EntryBy);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -1443,6 +1443,46 @@ namespace Onyx.Services
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public IEnumerable<EmpProgressionHeadModel> GetProgressionFromExcel(IFormFile file, string CoCd)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<EmpProgressionHeadModel>();
+            reader.Read();
+            int cnt = 1;
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(Convert.ToString(reader.GetValue(i))))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                var empCd = Convert.ToString(reader.GetValue(0));
+                bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
+                string errorMessage = "<ul class='text-left ml-0'>";
+                if (!validEmployee)
+                    errorMessage += "<li>Employee Code is empty or not valid</li>";
+                if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int amt))
+                    errorMessage += "<li>Amount is not valid</li>";
+                errorMessage += "</ul>";
+                var excelData = new EmpProgressionHeadModel
+                {
+                    IsValid = validEmployee,
+                    ErrorMessage = errorMessage,
+                    EmpCode = empCd,
+                    RevisedAmt = amt
+                };
+                result.Add(excelData);
+                cnt++;
+            }
+            return result;
         }
         #endregion
 

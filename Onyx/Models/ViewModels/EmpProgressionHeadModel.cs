@@ -64,5 +64,7 @@ namespace Onyx.Models.ViewModels
         public string EntryBy { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Narr { get; set; }
+        public bool IsValid { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

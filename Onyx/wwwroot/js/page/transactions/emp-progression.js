@@ -69,15 +69,27 @@ function saveEmpPrgression(btn, approval) {
         loadingButton(btn);
         var url = !approval ? "/Transactions/SaveEmployeeProgression" : "/Transactions/ApproveEmployeeProgression";
         postAjax(url, frm.serialize(), function (response) {
-            if (response.success) {
-                showSuccessToastr(response.message);
-                $("#EmpProgressionModal").modal("hide");
-                reloadDatatable();
-            }
-            else {
-                showErrorToastr(response.message);
-                $("#EmpProgressionModal").modal("hide");
-            }
+            showSuccessToastr(response.message);
+            $("#EmpProgressionModal").modal("hide");
+            reloadDatatable();
+            //if (!response.success) {
+            //    showErrorToastr(response.message);
+            //    $("#EmpProgressionModal").modal("hide");
+            //}
+            unloadingButton(btn);
+        });
+    }
+}
+
+function saveBulkEmpPrgression(btn) {
+    var frm = $("#emp-prograssion-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        var url = "/Transactions/SaveBulkEmployeeProgression";
+        postAjax(url, frm.serialize(), function (response) {
+            showSuccessToastr(response.message);
+            $("#EmpProgressionModal").modal("hide");
+            reloadDatatable();
             unloadingButton(btn);
         });
     }
@@ -105,14 +117,16 @@ function getEmpDesignation() {
 }
 function getCurrentAmt() {
     var empCd = $("#EmpCd").val();
-    var edTypeDes = $("#PayTypCd").find("option:selected").text();
-    var edCdDes = $("#PayCodeCd").find("option:selected").text();
-    getAjax(`/Transactions/GetCurrentAmt?empCd=${encodeURI(empCd)}&edTypeDes=${edTypeDes.split("(")[0]}&edCdDes=${edCdDes.split("(")[0]}`, function (response) {
-        $("#CurrentAmt").val(response.amount);
-        $("#CurrentAmt").addClass("disabled");
-        $("#PercAmt").val(response.percAmt);
-        $("#PercAmt").addClass("disabled");
-    })
+    if (empCd) {
+        var edTypeDes = $("#PayTypCd").find("option:selected").text();
+        var edCdDes = $("#PayCodeCd").find("option:selected").text();
+        getAjax(`/Transactions/GetCurrentAmt?empCd=${encodeURI(empCd)}&edTypeDes=${edTypeDes.split("(")[0]}&edCdDes=${edCdDes.split("(")[0]}`, function (response) {
+            $("#CurrentAmt").val(response.amount);
+            $("#CurrentAmt").addClass("disabled");
+            $("#PercAmt").val(response.percAmt);
+            $("#PercAmt").addClass("disabled");
+        })
+    }
 }
 
 function showHideComponent() {
@@ -120,4 +134,36 @@ function showHideComponent() {
     $("#component-container").addClass("d-none");
     if (type == "HREP02" || type == "HREP04" || type == "HREP05")
         $("#component-container").removeClass("d-none");
+}
+
+function uploadFile(event) {
+    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+    if (excelExtensions.includes(ext)) {
+        var frm = $("#emp-prograssion-frm");
+        $("#EmpCd").prop("disabled", true);
+        $("#DesigFromCd").prop("disabled", true);
+        $("#DesigToCd").prop("disabled", true);
+        $("#CurrentAmt").prop("disabled", true);
+        $("#RevisedAmt").prop("disabled", true);
+        $("#EffDt").prop("disabled", true);
+        $(".select-picker").selectpicker('refresh')
+        $("#btn-submit").addClass("d-none");
+        $("#btn-bulk-submit").removeClass("d-none");
+        if (frm.valid()) {
+            loadingPage();
+            filePostAjax('/Transactions/ImportEmployeeProgression', frm[0], function (response) {
+                $("#import-file").val("");
+                $("#EmpProgressions-Table").html(response);
+                //if (response.success) {
+                    
+                //}
+                //else
+                //    showErrorToastr(response);
+                unloadingPage();
+            });
+        }
+        $("#import-file").val("");
+    }
+    else
+        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
 }
