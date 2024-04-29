@@ -118,8 +118,8 @@ function getEmpDesignation() {
 function getCurrentAmt() {
     var empCd = $("#EmpCd").val();
     if (empCd) {
-        var edTypeDes = $("#PayTypCd").find("option:selected").value();
-        var edCdDes = $("#PayCodeCd").find("option:selected").value();
+        var edTypeDes = $("#PayTypCd").find("option:selected").val();
+        var edCdDes = $("#PayCodeCd").find("option:selected").val();
         getAjax(`/Transactions/GetCurrentAmt?empCd=${encodeURI(empCd)}&edTypeDes=${edTypeDes.split("(")[0]}&edCdDes=${edCdDes.split("(")[0]}`, function (response) {
             $("#CurrentAmt").val(response.amount);
             $("#CurrentAmt").addClass("disabled");
