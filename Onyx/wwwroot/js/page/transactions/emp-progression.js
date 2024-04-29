@@ -42,6 +42,9 @@ function showEmpProgressionModal(transNo) {
         parseDynamicForm();
         bindEmployeeDropdown();
         showHideComponent();
+        $("#DesigFromCd").addClass("disabled");
+        $("#DesigToCd").addClass("disabled");
+        $("#RevisedAmt").addClass("disabled");
         $("#EmpProgressionModal").modal("show");
     });
 }
@@ -87,7 +90,10 @@ function saveBulkEmpPrgression(btn) {
         loadingButton(btn);
         var url = "/Transactions/SaveBulkEmployeeProgression";
         postAjax(url, frm.serialize(), function (response) {
-            showSuccessToastr(response.message);
+            if (response.success)
+                showSuccessToastr(response.message);
+            else
+                showErrorToastr(response.message)
             $("#EmpProgressionModal").modal("hide");
             reloadDatatable();
             unloadingButton(btn);
@@ -109,10 +115,16 @@ function bindComponentClass(e) {
 
 function getEmpDesignation() {
     var empCd = $("#EmpCd").val();
+
     getAjax(`/Employee/GetEmployeeDetail?empCd=${encodeURI(empCd)}`, function (response) {
-        $("#DesigFromCd").selectpicker('val', response.desg.trim());
-        $("#DesigToCd").selectpicker('val', response.desg.trim());
-        $("#DesigFromCd").addClass("disabled");
+        if (response && response.desg) {
+            $("#DesigFromCd").selectpicker('val', response.desg.trim());
+            $("#DesigToCd").selectpicker('val', response.desg.trim());
+            $("#DesigToCd").removeClass("disabled");
+            $("#DesigToCd").parent().removeClass("disabled");
+            $("#RevisedAmt").removeClass("disabled");
+            $(".select-picker").selectpicker('refresh');
+        }
     })
 }
 function getCurrentAmt() {
@@ -143,11 +155,14 @@ function uploadFile(event) {
         $("#EmpCd").prop("disabled", true);
         $("#DesigFromCd").prop("disabled", true);
         $("#DesigToCd").prop("disabled", true);
-        $("#CurrentAmt").prop("disabled", true);
-        $("#RevisedAmt").prop("disabled", true);
+        $("#CurrentAmt").addClass("disabled");
+        $("#RevisedAmt").addClass("disabled");
         $(".select-picker").selectpicker('refresh')
         $("#btn-submit").addClass("d-none");
         $("#btn-bulk-submit").removeClass("d-none");
+        $("#DesigFromCd").selectpicker('val', '');
+        $("#DesigToCd").selectpicker('val', '');
+        $("#EmpCd").val('').change();
         if (frm.valid()) {
             $("#modal-loader").removeClass("d-none");
             $("#btn-bulk-submit").addClass("d-none");
@@ -156,6 +171,7 @@ function uploadFile(event) {
                 $("#EmpProgressions-Table").html(response);
                 $("#modal-loader").addClass("d-none");
                 $("#btn-bulk-submit").removeClass("d-none");
+
                 //if (response.success) {
 
                 //}

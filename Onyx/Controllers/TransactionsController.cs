@@ -1546,11 +1546,14 @@ namespace Onyx.Controllers
             var excelData = _transactionService.GetProgressionFromExcel(file, _loggedInUser.CompanyCd);
             foreach (var excel in excelData)
             {
-                var employee = _employeeService.FindEmployee(excel.EmpCode, _loggedInUser.CompanyCd);
                 excel.TransDt = model.TransDt;
-                excel.EmpName = employee.Name;
-                excel.DesigFromCd = employee.Desg.Trim();
-                excel.DesigToCd = employee.Desg.Trim();
+                var employee = _employeeService.FindEmployee(excel.EmpCode, _loggedInUser.CompanyCd);
+                if (employee != null)
+                {
+                    excel.EmpName = employee.Name;
+                    excel.DesigFromCd = employee.Desg.Trim();
+                    excel.DesigToCd = employee.Desg.Trim();
+                }
                 if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
                 {
                     excel.EP_TypeCd = model.EP_TypeCd;
@@ -1576,19 +1579,19 @@ namespace Onyx.Controllers
                 excelData = null;
                 Message = "Headers are not matched. Download again & refill data";
             }
-            if (validData.Any() && validHeader)
-                return PartialView("_EmpProgressionData", excelData);
-            else
+            if (!validHeader)
                 return Json(new CommonResponse
                 {
                     Success = false,
                     Message = Message,
                 });
+            return PartialView("_EmpProgressionData", excelData);
         }
         [HttpPost]
         public IActionResult SaveBulkEmployeeProgression(List<EmpProgressionHeadModel> model, EmpProgressionHeadModel filterModel)
         {
-            foreach (var item in model)
+            var validData = model.Where(m => m.IsValid);
+            foreach (var item in validData)
             {
                 item.EntryBy = _loggedInUser.UserAbbr;
                 item.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
@@ -1604,8 +1607,13 @@ namespace Onyx.Controllers
             var result = new CommonResponse
             {
                 Success = true,
-                Message = "Bulk Emp Progression requested successfully"
+                Message = $"{validData} records Emp Progression requested successfully"
             };
+            if (!validData.Any())
+            {
+                result.Success = false;
+                result.Message = "No record found to import";
+            }
             return Json(result);
         }
         #endregion

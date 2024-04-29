@@ -61,6 +61,27 @@ CREATE TABLE [dbo].[CalendarEventAttendees] (
 
 Go 
 
+CREATE TABLE [dbo].[CompanyCalendar_N] (
+  [Cd] [VARCHAR](5) NOT NULL
+ ,[Date] [DATETIME] NOT NULL
+ ,[Invite] [BIT] NULL
+ ,[Holiday] [BIT] NOT NULL
+ ,[MessageBody] [VARCHAR](500) NULL
+ ,[Title] [VARCHAR](100) NULL
+ ,[EmailSubject] [VARCHAR](100) NULL
+ ,[CoCd] [VARCHAR](5) NULL
+ ,[EntryBy] [VARCHAR](50) NULL
+ ,[EntryDt] [DATETIME] NULL
+ ,[EditBy] [VARCHAR](50) NULL
+ ,[EditDt] [DATETIME] NULL
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[CompanyCalendar_N]
+ADD CONSTRAINT [PK_CompanyCalendar_N] PRIMARY KEY CLUSTERED ([Cd])
+
+Go
+
 ALTER TABLE [dbo].[CodeGroups]
   ADD [Active] [bit] NULL
 
