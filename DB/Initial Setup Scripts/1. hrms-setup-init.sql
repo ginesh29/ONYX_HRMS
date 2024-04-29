@@ -54,6 +54,13 @@ ADD CONSTRAINT [FK_UserGroupMasters_UserGroups1] FOREIGN KEY ([UserCd]) REFERENC
 
 Go 
 
+CREATE TABLE [dbo].[CalendarEventAttendees] (
+  [EventCd] [VARCHAR](5) NOT NULL
+ ,[EmpCd] [VARCHAR](10) NOT NULL
+) ON [PRIMARY]
+
+Go 
+
 ALTER TABLE [dbo].[CodeGroups]
   ADD [Active] [bit] NULL
 

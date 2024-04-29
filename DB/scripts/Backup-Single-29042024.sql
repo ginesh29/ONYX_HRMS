@@ -1,3 +1,202 @@
+CREATE OR ALTER procedure [dbo].[EmpProgressionHead_Update_N]
+	@v_TransNo		Char(10)
+,	@v_TransDt		Datetime
+,	@v_EmpCd		Char(10)=''
+--,	@v_DesigFrDes	VarChar(20) --comment by Syed
+--,	@v_DesigToDes	VarChar(20)
+,	@v_DesigFr	Char(5)=''
+,	@v_DesigTo	Char(5)=''
+,	@v_ApprBy		Char(10) = ''
+,	@v_ApprDt		Char(10) = ''
+,	@v_Remarks		Varchar(50)=''
+,	@v_EntryBy		Char(5) = ''
+,	@v_Status       Char(1) = ''
+--,	@v_TypDes		Char(20) --comment by Syed
+,	@v_Typ		Char(10)=''
+
+As		-- Drop Procedure [dbo].[EmpProgressionHead_Update]
+Begin
+	IF (SELECT COUNT(*) FROM EmpProgressionHead WHERE TransNo=@v_TransNo ) = 0
+	  Begin
+		insert into EmpProgressionHead(TransNo,TransDt,EmpCd,FromDesg,ToDesg,Remarks,EntryBy,EntryDt,Status,Typ) 
+		values (
+			@v_TransNo
+		,	@v_TransDt	
+		,	@v_EmpCd	
+		,	@v_DesigFr	
+		,	@v_DesigTo	
+		,	@v_Remarks	
+		,	@v_EntryBy
+		,	getdate()
+		,	@v_Status
+		,	@v_Typ)
+		if((select COUNT(*) From CompanyProcessApprovalDetail as CPAD
+						where CPAD.ProcessId='HRPT6' 
+						and CPAD.ApplTyp=(select Typ from EmpProgressionHead where TransNo=@v_TransNo)
+						and CPAD.Div=(select Div from Employee where Cd=@v_EmpCd)
+						and CPAD.Dept=(select Dept from Employee where Cd=@v_EmpCd)
+						and CPAD.CoCd=(select CoCd from Employee where Cd=@v_EmpCd))=0)
+		BEGIN
+				Update EmpProgressionHead Set
+				TransNo=@v_TransNo
+			,	TransDt=@v_TransDt
+			,	EmpCd=@v_EmpCd	
+			,	ToDesg=@v_DesigTo
+			,	ApprBy=@v_EntryBy	
+			,	ApprDt=getdate()
+			,	Remarks=@v_Remarks	
+			,	EditBy=@v_EntryBy
+			,	EditDt=getdate()
+			,	Status='A'
+			,	Typ=@v_Typ
+			where	TransNo=@v_TransNo
+		END
+						
+	  End
+	Else
+	  Begin
+		Update EmpProgressionHead Set
+			TransNo=@v_TransNo
+		,	TransDt=@v_TransDt
+		,	EmpCd=@v_EmpCd	
+		,	ToDesg=@v_DesigTo
+		,	ApprBy=@v_ApprBy	
+		,	ApprDt=@v_ApprDt
+		,	Remarks=@v_Remarks	
+		,	EditBy=@v_EntryBy
+		,	EditDt=getdate()
+		,	Status=@v_Status
+		,	Typ=@v_Typ
+		where	TransNo=@v_TransNo
+		
+	  End
+	
+End
+ 
+ Go 
+--Drop Procedure EmpProgressionDetail_Update
+CREATE OR ALTER procedure [dbo].[EmpProgressionDetail_Update_N]
+		@v_TransNo      char(10)  
+	,	@v_SrNo        	numeric(5)   
+	--,	@v_EdCdDes      varchar(20)
+	,	@v_EdCd			Char(5)
+	--,	@v_EdTypDes	varchar(20)
+	,	@v_EdTyp		Char(10)	
+	,	@v_EffDate	datetime     
+	,	@v_PercAmt	Char(1)
+	,	@v_Val		numeric(15,4)
+	,	@v_ApprVal	numeric(15,4)
+	,	@v_Narr		Varchar(50)
+	,	@v_EntryBy	Char(5)
+as
+begin
+	--declare @v_EdCd Char(5)
+	--declare @v_EdTyp Char(10)
+	--select 	@v_EdTyp=cd from  Syscodes where SDes=@v_EdTypDes and Typ='HEDT'
+	--select  @v_EdCd=cd from CompanyEarnDed  where SDes=@v_EdCdDes and Typ=@v_EdTyp 
+
+	
+IF (SELECT COUNT(*) FROM EmpProgressionDetail WHERE  SrNo=@v_SrNo and TransNo=@v_TransNo) = 0
+	Begin
+	insert into EmpProgressionDetail
+	values
+	(
+		@v_TransNo     
+	,	@v_SrNo        
+	,	@v_EdCd
+	,	@v_EdTyp
+	,	@v_EffDate	
+	,	@v_PercAmt	
+	,	@v_Val	
+	,	@v_ApprVal	
+	,	@v_Narr		
+	,	@v_EntryBy	
+	,     getdate()
+	,     null
+	,     null
+
+        )
+end
+Else
+    Begin
+        Update EmpProgressionDetail
+          Set
+		EdCd=@v_EdCd
+	,	EdTyp=@v_EdTyp
+	,	EffDt=@v_EffDate	
+	,	PercAmt=@v_PercAmt
+	,       Val=@v_Val
+	,	ApprVal=@v_ApprVal
+	,	Narr=@v_Narr
+	where   SrNo=@v_SrNo and TransNo=@v_TransNo
+    End
+End
+ 
+ Go 
+CREATE OR ALTER Procedure [dbo].[EmpEarnDed2_GetRow_N]
+	@v_EmpCd			Char(10)
+,	@v_EdTyp		Varchar(20)
+,	@v_EdCd			Varchar(20)
+As	    -- Drop Procedure EmpEarnDed2_GetRow 'MHM/005','Allowances/Earnings','OTHER ALLOWANCE' -- 'BASIC' 
+Begin	-- EmpEarnDed2_GetRow 'MHM/005','Allowances/Earnings','BASIC'
+	Declare @v_CoCd			Char(5)
+	--Declare @v_EdTyp		Char(10)	-- sp_help CompanyEarnDed Syscodes select * from Syscodes Where typ='HEDT'
+	--Declare @v_EdCd			Char(5)
+	Declare @v_BasicCd		Char(5)
+	Declare @v_St_Prd		Char(10)
+	Declare @v_St_Dt		Char(10)
+	Declare @v_CUR_MONTH	Numeric(2)
+	Declare @v_CUR_YEAR		Numeric(4)
+	Declare @v_SrNo			Numeric(5,0)		-- select * from EmpEarnDed			select * from CompanyEarnDed
+
+	Select @v_CoCd	= CoCd From Employee Where Cd=@v_EmpCd
+	--Select @v_EdTyp	= Cd From SysCodes Where Typ='HEDT' and SDes=@v_EdTypSDes
+	--Select @v_EdCd	= Cd From CompanyEarnDed Where Typ=@v_EdTyp and SDes=@v_EdCdSDes
+	Select @v_BasicCd=RTrim(Isnull(Val,'')) From Parameters Where CoCd='#' and Cd='BASIC'
+	Select @v_St_Prd=RTrim(Isnull(Val,'')) From Parameters Where CoCd=@v_CoCd and Cd='HR_ST_PRD'
+	Set @v_St_Dt=Left(@v_St_Prd,4)+'/'+Substring(@v_St_Prd,5,2)+'/01'
+	Select @v_CUR_MONTH=Cast(RTrim(Val) as Int) From Parameters Where CoCd=@v_CoCd and Cd='CUR_MONTH'
+	Select @v_CUR_YEAR=Cast(RTrim(Val) as Int) From Parameters Where CoCd=@v_CoCd and Cd='CUR_YEAR'
+	Select @v_SrNo=Count(1) From EmpEarnDed Where EmpCd=@v_EmpCd and EdTyp=@v_EdTyp and EdCd=@v_EdCd
+	Select @v_SrNo=SrNo From EmpEarnDed Where EmpCd=@v_EmpCd and EdTyp=@v_EdTyp and EdCd=@v_EdCd and SrNo>=@v_SrNo
+	Select
+--	,	Max(PercAmt)[PercAmt]
+--	,	Max(EffDate)[Eff.Date]
+--	,	Isnull(Max(PercVal),0)[Percent]
+--	,	Isnull(Max(AmtVal),0)[Amount]
+		PercAmt
+	,	EffDate
+	,	Isnull(PercVal,0)[Percent]
+	,	Isnull(AmtVal,0)[Amount]
+	From
+		EmpEarnDed
+	Where
+		EmpCd=@v_EmpCd and EdTyp=@v_EdTyp and EdCd=@v_EdCd and SrNo=@v_SrNo
+--	Group By
+--		EmpCd
+--	,	EdTyp
+--	,	EdCd
+--	Having
+--		(EmpCd +EdTyp +EdCd) in (Select (EmpCd +EdTyp +EdCd) From EmpEarnDed Where EffDate=Max(EffDate))
+--	and (select Count(1) from EmpEarnDed where EmpCd=@v_EmpCd and EdTyp=@v_EdTyp and EdCd=@v_EdCd)<>0
+	Union
+	Select
+--		Cd[EmpCd]
+--	,	''[EdTyp]
+--	,	''[EdCd]
+		'A'[PercAmt]
+	,	@v_St_Dt[EffDate]
+	,	0[Percent]
+	,	[Basic][Amount]
+	From
+		Employee
+	Where
+		Cd=@v_EmpCd and @v_EdCd=@v_BasicCd
+	and	(Select Count(1) From EmpEarnDed Where EmpCd=@v_EmpCd and EdTyp=@v_EdTyp and EdCd=@v_BasicCd) =0
+	Order By
+		EffDate
+End 
+ Go 
 CREATE OR ALTER Trigger [dbo].[Trigger_Veh_DocIssueRcpt] on [dbo].[VehDocIssueRcpt] for insert,update
 as --drop  Trigger [dbo].[Trigger_Veh_DocIssueRcpt]
 begin 

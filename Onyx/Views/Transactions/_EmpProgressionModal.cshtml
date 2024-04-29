@@ -156,10 +156,11 @@
                     <div class="col-md-4">
                         <div class="custom-file">
                             <input type="file" id="import-file" name="file" onchange="uploadFile(event)" class="custom-file-input">
-                            <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
+                            <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>                           
                         </div>
                         <a href="/formats/Emp_Progression_Import_Sample.xlsx?@DateTime.Now">Download Sample File</a>
                     </div>
+                    <h4><i class="fas fa-spinner fa-spin d-none" id="modal-loader"></i></h4>
                 </div>
                 <div class="table-responsive" id="EmpProgressions-Table"></div>
             </form>

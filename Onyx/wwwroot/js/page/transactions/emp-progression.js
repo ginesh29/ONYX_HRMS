@@ -145,17 +145,19 @@ function uploadFile(event) {
         $("#DesigToCd").prop("disabled", true);
         $("#CurrentAmt").prop("disabled", true);
         $("#RevisedAmt").prop("disabled", true);
-        $("#EffDt").prop("disabled", true);
         $(".select-picker").selectpicker('refresh')
         $("#btn-submit").addClass("d-none");
         $("#btn-bulk-submit").removeClass("d-none");
         if (frm.valid()) {
-            loadingPage();
+            $("#modal-loader").removeClass("d-none");
+            $("#btn-bulk-submit").addClass("d-none");
             filePostAjax('/Transactions/ImportEmployeeProgression', frm[0], function (response) {
                 $("#import-file").val("");
                 $("#EmpProgressions-Table").html(response);
+                $("#modal-loader").addClass("d-none");
+                $("#btn-bulk-submit").removeClass("d-none");
                 //if (response.success) {
-                    
+
                 //}
                 //else
                 //    showErrorToastr(response);
