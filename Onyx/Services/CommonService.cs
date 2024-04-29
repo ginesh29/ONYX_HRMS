@@ -409,26 +409,26 @@ namespace Onyx.Services
         }
         public void GenerateModifiedSp()
         {
-            var modifiedSpQuery = @"SELECT name,  modify_date 
-	                                FROM sys.objects
-	                                WHERE type = 'P' and modify_date > '2024-04-23'
-	                                ORDER BY modify_date DESC";
-            var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
-            var connection = new SqlConnection(connectionString);
-            var sps = connection.Query<SpModel>(modifiedSpQuery);
-            var result = string.Empty;
-            foreach (var item in sps)
-            {
-                string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.name.Trim()}')) AS Definition";
-                string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
-                if (!string.IsNullOrEmpty(storedProcedureText))
-                {
-                    storedProcedureText = storedProcedureText.Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
-                    result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #", StringComparison.InvariantCultureIgnoreCase).Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#", StringComparison.InvariantCultureIgnoreCase)} \n Go \n";
-                }
-                string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{item.modify_date:ddMMyyyy}.sql";
-                File.WriteAllText(filePath, result);
-            }            
+            //var modifiedSpQuery = @"SELECT name,  modify_date 
+	           //                     FROM sys.objects
+	           //                     WHERE type = 'P' and modify_date > '2024-04-23'
+	           //                     ORDER BY modify_date DESC";
+            //var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
+            //var connection = new SqlConnection(connectionString);
+            //var sps = connection.Query<SpModel>(modifiedSpQuery);
+            //var result = string.Empty;
+            //foreach (var item in sps)
+            //{
+            //    string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.name.Trim()}')) AS Definition";
+            //    string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
+            //    if (!string.IsNullOrEmpty(storedProcedureText))
+            //    {
+            //        storedProcedureText = storedProcedureText.Replace("CREATE", "CREATE OR ALTER", StringComparison.InvariantCultureIgnoreCase);
+            //        result += $"{storedProcedureText.Replace("CREATE OR ALTER table #", "CREATE table #", StringComparison.InvariantCultureIgnoreCase).Replace("CREATE OR ALTER TABLE dbo.#", "CREATE table dbo.#", StringComparison.InvariantCultureIgnoreCase)} \n Go \n";
+            //    }
+            //    string filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\Sp-Backup-{item.modify_date:ddMMyyyy}.sql";
+            //    File.WriteAllText(filePath, result);
+            //}            
         }
     }
 }
