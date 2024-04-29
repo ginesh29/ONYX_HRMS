@@ -1425,11 +1425,11 @@ namespace Onyx.Services
         }
         public EmpEarnDed2_GetRow_Result GetCurrentAmt(string empCd, string edTypeDes, string edCdDes)
         {
-            var procedureName = "EmpEarnDed2_GetRow";
+            var procedureName = "EmpEarnDed2_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_EdTypSDes", edTypeDes);
-            parameters.Add("v_EdCdSDes", edCdDes);
+            parameters.Add("v_EdTyp", edTypeDes);
+            parameters.Add("v_EdCd", edCdDes);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<EmpEarnDed2_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
