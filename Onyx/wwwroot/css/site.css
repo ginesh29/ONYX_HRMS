@@ -357,8 +357,11 @@ textarea {
     border: 1px solid #000;
 }
 
-.form-control.disabled, .form-control[readonly] {
-    background-color: #e9ecef;
+.form-control.disabled, .form-control[readonly],
+.disabled-container input,
+.disabled-container .dropdown-toggle,
+.disabled-container .select2-selection {
+    background-color: #e9ecef !important;
     opacity: 1;
     pointer-events: none;
 }
@@ -469,9 +472,11 @@ textarea {
     width: 100%;
     padding: 6px 6px;
 }
+
 .new-page {
     page-break-before: always;
 }
+
 @media (max-width: 991.98px) {
     body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
         margin-left: 0;

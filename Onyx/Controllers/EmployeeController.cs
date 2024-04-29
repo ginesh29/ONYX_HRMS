@@ -604,14 +604,14 @@ namespace Onyx.Controllers
                 };
             }
             model.EmpCd = empCd;
-            model.Emp = employee.Name;
+            model.Emp = employee?.Name;
             ViewBag.ComponentClassTypeItems = _commonService.GetSysCodes(SysCode.ComponentClass).Select(m => new
             SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.ComponentClassItems = _employeeService.GetComponentClasses(model.EdTyp?.Trim()).Select(m => new SelectListItem
+            ViewBag.ComponentClassItems = _employeeService.GetComponentClasses(model.EdTyp?.Trim()).Where(m => m.Cd.Trim() != "001").Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = m.SDes
@@ -621,7 +621,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchComponentClassItems(string type)
         {
-            var payCodeItems = _employeeService.GetComponentClasses(type).Select(m => new SelectListItem
+            var payCodeItems = _employeeService.GetComponentClasses(type).Where(m => m.Cd.Trim() != "001").Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = m.SDes

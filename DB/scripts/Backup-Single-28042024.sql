@@ -1,3 +1,574 @@
+CREATE OR ALTER Trigger [dbo].[Trigger_Veh_DocIssueRcpt] on [dbo].[VehDocIssueRcpt] for insert,update
+as --drop  Trigger [dbo].[Trigger_Veh_DocIssueRcpt]
+begin 
+
+	
+			
+declare @ApprBy	char(10)
+declare @Stat	char(1)
+--declare @VehCd	char(10)
+--declare @DocTyp	Char(10)
+--declare @SrNo	numeric(5,0)
+
+--declare @Flag int 
+
+--declare @recipients varchar(MAX) 
+--declare @body varchar(MAX) 
+--declare @ProfileName varchar(100)  
+ 
+--		CREATE table #Temp(
+--		 EmailId varchar(40) ,
+--		 Body varchar(500) ,
+--		 SNo int )
+		 
+-----Assigning Values--------------
+--select @Flag=1
+--select @ApprBy=ApprBy from inserted
+--select @Stat=Stat from inserted
+--select @VehCd=VehCd from inserted
+--select @DocTyp=DocTyp from inserted
+--select @SrNo=SrNo from inserted
+
+--set @ProfileName = ( select Val from Parameters where Cd='EMAIL_PROFILE       ' and AppCd='HR' and CoCd='#')
+---------Updating------------------
+
+
+--if @Stat='A'
+--	BEGIN
+	 
+--			if((select Top 1 Docstat from VehDocIssueRcpt where VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo) ='HDS0003')
+--			begin
+--				insert into VehDocuments(VehCd,DocTyp,SrNo,DocNo,OthRefNo,IssueDt,IssuePlace,ExpDt,EntryBy,EntryDt)
+--					values(
+--						@VehCd
+--					,	@DocTyp
+--					,	(select Top 1 SrNo+1 from VehDocuments where VehCd=@VehCd and DocTyp=@DocTyp order by SrNo desc) 
+--					,	(select Top 1 DocNo from VehDocIssueRcpt where VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo)
+--					,	(select Top 1 OthRefNo from VehDocuments where VehCd=@VehCd and DocTyp=@DocTyp order by SrNo desc) 
+--					,	(select Top 1 IssueDt from VehDocIssueRcpt where VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo)
+--					,	(select Top 1 IssuePlace from VehDocIssueRcpt where VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo)
+--					,	(select Top 1 ExpDt from VehDocIssueRcpt where VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo)
+--					,	@ApprBy
+--					,	getdate())
+--			End
+	
+--			insert into #Temp
+--			select distinct VehA.Email,
+--				('The '+ C.Des +' which you '
+--				+ case when Vehl.DocStat='HDS0002' then 'issue from 'else ' return to ' end
+--				+ 'company for ' +Vehl.Narr
+--					+' on '+ CONVERT(varchar(20),Vehl.TrnDt,103)
+--					+' is approved.'),
+--					@Flag
+--			from VehDocIssueRcpt as Vehl
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			--inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			--inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo
+--			set @Flag=@Flag+1
+			
+			
+--	END
+
+	
+--else if @Stat='R'
+--	BEGIN
+--			insert into #Temp
+--			select distinct VehA.Email,
+--				('The '+ C.Des +' which you '
+--				+ case when Vehl.DocStat='HDS0002' then 'issue from 'else ' return to ' end
+--				+ 'company for ' +Vehl.Narr
+--					+' on '+ CONVERT(varchar(20),Vehl.TrnDt,103)
+--					+' is rejected.'),
+--					@Flag
+--			from VehDocIssueRcpt as Vehl
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo
+--			set @Flag=@Flag+1
+--	END		
+
+			
+--else if @Stat='N' and @ApprBy is null
+--	BEGIN
+--			insert into #Temp
+--			select (select Email from VehAddress where VehCd=(select VehCd From CompanyProcessApprovalDetail as CPAD
+--			where CPAD.ProcessId='HRPT8' 
+--			and CPAD.Div=(select Div from Vehloyee where Cd=Vehl.VehCd)
+--			and CPAD.Dept=(select Dept from Vehloyee where Cd=Vehl.VehCd)
+--			and SrNo='1') and AddTyp='HADD0001')
+--			,((select Veh.Fname+Veh.Mname+Veh.Lname from Vehloyee as Veh where Veh.Cd=Vehl.VehCd)
+--				+ ' applied to ' +
+--				+ case when Vehl.DocStat='HDS0002' then ' issue 'else ' return ' end
+--				+ case when (select Veh.Sex from Vehloyee where Cd=Vehl.VehCd)='M' then ' his 'else ' her ' end 
+--				+ C.Des 
+--				+ case when Vehl.DocStat='HDS0002' then ' from 'else ' to ' end
+--				+ 'company for ' +Vehl.Narr
+--					+' on '+ CONVERT(varchar(20),Vehl.TrnDt,103)
+--					+' is waiting for an approval from you.'),
+--					@Flag
+--				from VehDocIssueRcpt as Vehl
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd	
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo
+--			set @Flag=@Flag+1
+			
+			
+--			insert into #Temp
+--			select VehA.Email,
+--					('The application to '
+--					+ case when Vehl.DocStat='HDS0002' then 'issue 'else ' return ' end
+--					+ ' your ' + C.Des 
+--					+ case when Vehl.DocStat='HDS0002' then ' from 'else ' to ' end
+--					+'company wants to be approved by '
+--					+ (select Veh.Fname+Veh.Mname+Veh.Lname from Vehloyee as Veh where Veh.Cd=
+--						(select CPAD.VehCd From CompanyProcessApprovalDetail as CPAD
+--						where CPAD.ProcessId='HRPT8' 
+--						and CPAD.Div=(select Div from Vehloyee where Cd=Vehl.VehCd)
+--						and CPAD.Dept=(select Dept from Vehloyee where Cd=Vehl.VehCd)
+--						and CPAD.SrNo='1'))),
+--					@Flag
+--				from VehDocIssueRcpt as Vehl 
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd	
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo
+--			set @Flag=@Flag+1
+--	END		
+			
+--else if @Stat='N' and @ApprBy is not null	
+--	BEGIN
+--			insert into #Temp
+--			select (select Email from VehAddress where VehCd=(select VehCd From CompanyProcessApprovalDetail as CPAD
+--			where CPAD.ProcessId='HRPT8' 
+--			and CPAD.Div=(select Div from Vehloyee where Cd=Vehl.VehCd)
+--			and CPAD.Dept=(select Dept from Vehloyee where Cd=Vehl.VehCd)
+--			and SrNo=((select ApprLvl from VehDocIssueRcptAppr where VehCd=Vehl.VehCd and DocTyp=Vehl.DocTyp and SrNo=Vehl.SrNo )+1) 
+--				and AddTyp='HADD0001'))
+--			,((select Veh.Fname+Veh.Mname+Veh.Lname from Vehloyee as Veh where Veh.Cd=Vehl.VehCd)
+--				+ ' applied to ' +
+--				+ case when Vehl.DocStat='HDS0002' then ' issue 'else ' return ' end
+--				+ case when (select Veh.Sex from Vehloyee where Cd=Vehl.VehCd)='M' then ' his 'else ' her ' end 
+--				+ C.Des 
+--				+ case when Vehl.DocStat='HDS0002' then ' from 'else ' to ' end
+--				+ 'company for ' +Vehl.Narr
+--					+' on '+ CONVERT(varchar(20),Vehl.TrnDt,103)
+--					+' is waiting for an approval from you.'),
+--					@Flag
+--				from VehDocIssueRcpt as Vehl
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd	
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo
+--			set @Flag=@Flag+1
+			
+--			insert into #Temp
+--			select VehA.Email,
+--					('The application to '
+--					+ case when Vehl.DocStat='HDS0002' then 'issue 'else ' return ' end
+--					+ ' your ' + C.Des 
+--					+ case when Vehl.DocStat='HDS0002' then ' from 'else ' to ' end
+--					+'company wants to be approved by '
+--					+ (select Veh.Fname+Veh.Mname+Veh.Lname from Vehloyee as Veh where Veh.Cd=
+--						(select CPAD.VehCd From CompanyProcessApprovalDetail as CPAD
+--						where CPAD.ProcessId='HRPT8' 
+--						and CPAD.Div=(select Div from Vehloyee where Cd=Vehl.VehCd)
+--						and CPAD.Dept=(select Dept from Vehloyee where Cd=Vehl.VehCd)
+--						and CPAD.SrNo=(select ApprLvl+1 from VehDocIssueRcptAppr where VehCd=Vehl.VehCd and DocTyp=Vehl.DocTyp and SrNo=Vehl.SrNo )))),
+--					@Flag
+--				from VehDocIssueRcpt as Vehl
+--			inner join Codes as c on C.Cd=Vehl.DocTyp and C.Typ='HDTYP'
+--			inner join VehAddress as VehA on Vehl.VehCd=VehA.VehCd and VehA.AddTyp='HADD0001'
+--			inner join Vehloyee as Veh on Veh.Cd=Vehl.VehCd	
+--			where Vehl.VehCd=@VehCd and DocTyp=@DocTyp and SrNo=@SrNo	
+--			set @Flag=@Flag+1
+--	END		
+
+--		declare @Count numeric(3,0)
+--		declare @RowNo numeric(3,0)
+--		set @RowNo=1
+--		set @Count=(select COUNT(EmailId) from #Temp)
+--		while(@RowNo<=@Count)
+--		begin
+		
+--			set @recipients=(select EmailId from #Temp where SNo=@RowNo)
+--			set @body=(select Body from #Temp where SNo=@RowNo )
+--			if @recipients !=''
+--				BEGIN
+--					EXEC msdb.dbo.sp_send_dbmail 
+--					@profile_name =@ProfileName,
+--					@recipients = @recipients,
+--					@subject ='HRMS Document Issue',
+--					@body = @body, 
+--					@body_format = 'TEXT';
+--				END
+--			set @RowNo=@RowNo+1
+--		end
+--		Drop table #Temp
+		
+	
+
+	end
+ 
+ Go 
+
+
+CREATE OR ALTER Procedure [dbo].[EmplLoanAndLeaveApproval_N]
+	@v_CoCd		char(5)
+,	@v_EmpCd	Char(10)
+,	@v_Typ		Char(1)
+AS
+--Drop Procedure [dbo].[EmplLoanAndLeaveApproval]'01','HR','U'
+
+--select COUNT(TransNo) as OnLeave from EmpLeave
+--inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+--where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd and emp.Status='HSTATPM   '
+
+--select COUNT(TransNo) as LeaveApproval  from EmpLeave
+--inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EmpLeave.LvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LvStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LvApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LvApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EmpLeave.LvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LvApprBy or (select UserCd from Employee where Cd=EmpCd)=LvApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LeaveSalaryTicketApproval  from EmpLeaveSalaryTicket ELST
+--inner join Employee as emp on emp.Cd=ELST.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS3' and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	ELST.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS3' and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LoanApproval  from EmpLoan
+--inner join Employee as emp on emp.Cd=EmpLoan.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS1' and CPA.ApplTyp=EmpLoan.LoanTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LoanStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LoanApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LoanApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS1' and ApplTyp=EmpLoan.LoanTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LoanApprBy or (select UserCd from Employee where Cd=EmpCd)=LoanApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+		
+--select COUNT(EDI.EmpCd) as  DocumentIssue from EmpDocIssueRcpt as EDI
+--inner join  Employee as emp on emp.Cd=EDI.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT8' and CPA.ApplTyp=EDI.DocTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EDI.Stat='N' 
+--	and emp.CoCd=@v_CoCd 
+--	and emp.Status='HSTATPM   '   
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT8' and ApplTyp=EDI.DocTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+--select COUNT(EmpProgressionHead.EmpCd) as EmpProgression  from EmpProgressionHead
+--inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EmpProgressionHead.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EmpProgressionHead.Status='E' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT6' and ApplTyp=EmpProgressionHead.Typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+	
+--select COUNT(empprovisionsadj.EmpCd) as ProvAdj  from empprovisionsadj
+--inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=empprovisionsadj.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	empprovisionsadj.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and ApplTyp=empprovisionsadj.ProvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+			 
+	
+select SysCodes.Cd[Cd],SysCodes.Des,COUNT(Emp.Cd) as HeadCount from Employee as Emp 
+right   join SysCodes on Emp.Status=SysCodes.Cd  
+group by  SysCodes.Des,typ,emp.CoCd,SysCodes.Cd 
+having  typ='HSTAT ' or emp.CoCd=@v_CoCd
+
+
+declare @CurMonth int
+set @CurMonth=(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_MONTH           ')
+
+
+--order by Abbr
+--or Prd=
+--(select (CONVERT(varchar(10),(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')))+
+--(CONVERT(varchar(10),(select right ('00'+ltrim(str( (@CurMonth-1) )),2 ))))) 
+
+--select * from syscodes where typ='HEDT ' and cd<>'HEDT04    '
+declare @monthname as varchar(50)
+set @monthname=
+ case @CurMonth
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+select @monthname +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+
+declare @monthnameminusone as varchar(50)
+set @monthnameminusone=
+case @CurMonth-1
+when 0 then 'December' 
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+if( @monthnameminusone = 'December' )
+begin
+select @monthnameminusone +' '+
+(select CONVERT(varchar, CONVERT(int, Val)-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')
+end
+else
+begin
+select @monthnameminusone +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+end
+
+select SysCodes.Des,isnull(CONVERT(decimal(18,2), SUM(Amt)),0) as  PayElementDetailsCount  
+from EmpTransDetailYtd
+right  join SysCodes on EmpTransDetailYtd.EdTyp=SysCodes.Cd  
+where Prd=(select Val*100+(@CurMonth-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR')
+group by  SysCodes.Des,typ,cd,Abbr--,Prd
+having typ='HEDT ' and cd<>'HEDT04    '
+--and Prd=(select Val++convert(varchar(10),RIGHT('00' + CONVERT(VARCHAR,@CurMonth-1), 2)) from  Parameters where CoCd='03' and Cd='CUR_YEAR')
+
+
+select COUNT(TransNo) as FundApproval  from EmpFund
+inner join Employee as emp on emp.Cd=EmpFund.EmpCd
+inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS4' and CPA.ApplTyp=EmpFund.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+where 
+	EmpFund.[Status]='N' 
+	and emp.CoCd=@v_CoCd
+	and emp.Status='HSTATPM'
+	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+		or (ApprBy is not null
+			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS4' and ApplTyp=EmpFund.typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+
+
+
+ 
+ Go 
+
+CREATE OR ALTER PROCEDURE [dbo].[EmployeeWiseForChart_N]
+--drop PROCEDURE [dbo].[EmployeeWiseForChart]'Branch'
+@v_Typ Varchar(30)
+AS
+if @v_Typ='Dept' 
+begin
+select dept.Des[Des],COUNT(Emp.Cd)[Count] from Employee as Emp 
+inner join  Dept on Emp.Dept=dept.Cd
+group by  dept.Des
+end
+else if @v_Typ='Branch'
+begin
+select Branch.SDes[Des],COUNT(Emp.Cd)[Count] from Employee as Emp --select * from Employee where cd='PH   '
+inner join Branch on Emp.Div=Branch.Cd
+group by  Branch.sdes
+end
+else if @v_Typ='Nationality'
+begin
+select Country.Nat[Des],COUNT(Emp.Cd)[Count] from Employee as Emp 
+inner join Country  on Emp.Nat=Country.Cd
+group by  Country.Nat
+end
+else if @v_Typ='Location'
+begin
+select Codes.SDes[Des],COUNT(Emp.Cd)[Count] from Employee as Emp 
+inner join Codes on Emp.LocCd=Codes.Cd and typ='HLOC '
+group by  Codes.SDes
+end
+else if @v_Typ='Status'
+begin
+select SysCodes.SDes[Des],COUNT(Emp.Cd)[Count] from Employee as Emp 
+inner join SysCodes on Emp.Status=SysCodes.Cd and typ='HSTAT '
+group by  SysCodes.SDes
+end
+ 
+ Go 
+
+CREATE OR ALTER Procedure [dbo].[EmpLeave_GetRow]  
+@v_Param varchar(30),  
+@v_Typ  char(1),  
+@v_CoCd  Char(5)  
+as  --Drop Procedure [dbo].[EmpLeave_GetRow]'90','4','100'  
+ select  
+  TransNo[TransNo]  
+ , TransDt[Trans Dt.]  
+ , el.EmpCd[Employee Code]  
+ , rtrim(E.FName)+' '+rtrim(E.MName)+' '+rtrim(E.LName)[Employee Name]  
+ , c.SDes[Leave Type]  
+ , el.FromDt
+ , CONVERT(varchar(10), el.FromDt,103) [FormatedFromDt] 
+ , el.ToDt  
+ , CONVERT(varchar(10), el.ToDt,103) [FormatedToDt] 
+ , el.LvTaken   
+ , el.DocRef  
+ , Case el.DocDt  
+   When '01/01/1900' Then ''  
+   Else el.DocDt  
+  end[docDt]  
+ , el.SubStitute[Subtitute Code]  
+ , (select  
+   rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName)  
+  from  
+   Employee Emp  
+  where  
+   Emp.cd=el.SubStitute  
+  )[Substitute Name]  
+ , el.Reason  
+ , el.Narr  
+ , el.LvApprBy  
+ , case el.LvStatus  
+   when 'Y' then 'Yes'  
+   else 'No'  
+  end[LvStatus]  
+ , el.LvInter [Leave.Type]  
+ , Typ  
+ , DATEDIFF(dd,el.FromDt,GETDATE())[Joining days]
+ , DATEDIFF(dd,el.ToDt,GETDATE())[Returning days]
+ from  
+  EmpLeave el  
+ , CompanyLeave  c  
+ , Employee e  
+ where  
+  C.cd=el.LvTyp  
+ and e.cd=el.EmpCd  
+ and (el.JoinDt is null or Typ='S')  
+ and e.CoCd =@v_CoCd  
+ and (
+  (@v_Typ='0' and ltrim(str(month(TransDt)))=@v_Param and LvStatus <> 'C' ) or  
+  (@v_Typ='1' and TransNo=@v_Param and LvStatus <> 'C' ) or  
+  (@v_Typ='2' and el.empcd=@v_Param and LvStatus <> 'C' ) or  
+  (@v_Typ='3' and el.FromDt between convert (date,getdate()) and  convert (date,DATEADD(DD,cast(@v_Param as int),getdate())) and el.LvStatus='Y') or
+  (@v_Typ='4' and el.ToDt between convert (date,getdate()) and convert (date,DATEADD(DD,cast(@v_Param as int),getdate())) and el.LvStatus='F')
+  ) 
+ --order by 
+ 
+ order by case when @v_Typ='3' then el.FromDt 
+			   when @v_Typ='4' then el.ToDt 
+			   else TransNo end
+  
+ -- TransNo  
+  
+   
+ Go 
+CREATE OR ALTER procedure [dbo].[VehDocIssueRcpt_Update]
+	@v_SrNo			char(5)
+,	@v_VehCd		Char(10)
+,	@v_DocTyp		Char(10)
+,	@v_DocNo		Char(20)
+,	@v_IssueDt		Datetime
+,	@v_IssuePlace	VarChar(30)
+,	@v_ExpDt		Datetime
+,	@v_TrnDt		datetime
+,	@v_TransTyp  	char(1)
+,	@v_DocStatus	char(10)
+,	@v_Narr			varchar(100)
+,	@v_EntryBy		Char(5)
+,	@v_Status		Char(1)
+--,	@v_ApprBy		Char(10)
+as  --drop procedure [dbo].[VehDocIssueRcpt_Update]
+begin
+set nocount on
+Declare @err int
+IF (SELECT COUNT(*) FROM VehDocIssueRcpt WHERE VehCd = @v_VehCd and DocTyp=@v_DocTyp and SrNo=@v_SrNo) = 0
+	Begin
+	insert into VehDocIssueRcpt(VehCd, DocTyp,DocNo,IssueDt,IssuePlace,ExpDt, SrNo, TrnTyp, Narr, TrnDt, DocStat, EntryBy, EntryDt,Stat)
+	values
+	(
+          @v_VehCd
+	,     @v_DocTyp
+	,	  @v_DocNo
+	,	  @v_IssueDt
+	,	  @v_IssuePlace
+	,	  @v_ExpDt
+	,     @v_SrNo
+	,     @v_TransTyp
+	,     @v_Narr
+	,     @v_TrnDt
+	,     @v_DocStatus
+	,     @v_EntryBy
+	,     getdate()
+	,	  @v_Status
+        )
+        
+	If @@error != 0
+	Print 'error'
+	GoTo errorHandler
+end
+Else
+    Begin
+        Update VehDocIssueRcpt
+          Set
+	 TrnTyp=@v_TransTyp
+	,Narr=	@v_Narr
+	,DocStat=@v_DocStatus
+	,EditBy=@v_EntryBy
+	,EditDt=getdate()
+	,Stat=@v_Status
+
+        WHERE VehCd = @v_VehCd and DocTyp=@v_DocTyp and SrNo=@v_SrNo
+    End
+Select @err = @@error
+	If @err != 0 
+		GoTo errorHandler
+		Return
+errorHandler:
+	Return 1
+End
+
+ 
+ Go 
 
 
 
@@ -758,6 +1329,201 @@ Begin
 						End
 		End
 End 
+ Go 
+CREATE OR ALTER Trigger [dbo].[Trigger_Emp_ProgressionHead] on [dbo].[EmpProgressionHead] for insert,update
+as --drop  Trigger [dbo].[Trigger_Emp_ProgressionHead]
+begin 
+	
+			
+declare @ApprBy		char(10)
+declare @Stat		char(1)
+declare @TransNo	char(10)
+declare @Typ		char(10)
+
+declare @Flag int 
+
+declare @recipients varchar(MAX) 
+declare @body varchar(MAX) 
+declare @ProfileName varchar(100)  
+ 
+		CREATE table #Temp(
+		 EmailId varchar(40) ,
+		 Body varchar(500) ,
+		 SNo int )
+		 
+---Assigning Values--------------
+select @Flag=1
+select @ApprBy=ApprBy from inserted
+select @Stat=Status from inserted
+select @TransNo=TransNo from inserted 
+select @Typ=Typ from inserted
+set @ProfileName = ( select Val from Parameters where Cd='EMAIL_PROFILE       ' and AppCd='HR' and CoCd='#')
+-------Updating------------------
+
+
+if @Stat='A'
+	BEGIN
+			insert into #Temp
+			select distinct EmpA.Email,
+				('The application for '
+				+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' is approved.'),
+					@Flag
+			from EmpProgressionHead as Empl
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+	END
+
+	
+else if @Stat='R'
+	BEGIN
+			insert into #Temp
+			select distinct EmpA.Email,
+				('The application for '
+				+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' is rejected.'),
+					@Flag
+			from EmpProgressionHead as Empl
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+	END		
+
+			
+else if @Stat='E' and @ApprBy is null
+	BEGIN
+			insert into #Temp
+			select (select Email from EmpAddress where EmpCd=(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT8' 
+			and CPAD.ApplTyp=@Typ
+			and CPAD.Div=(select Div from Employee where Cd=Empl.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=Empl.EmpCd)
+			and SrNo='1') and AddTyp='HADD0001')
+			,((select Emp.Fname+Emp.Mname+Emp.Lname from Employee as Emp where Emp.Cd=Empl.EmpCd)
+				+ ' applied to ' +
+				+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' is waiting for an approval from you.'),
+					@Flag
+				from EmpProgressionHead as Empl
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd	
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+			
+			
+			insert into #Temp
+			select EmpA.Email,
+					('Your application to '
+					+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' wants to be approved by '
+					+ (select Emp.Fname+Emp.Mname+Emp.Lname from Employee as Emp where Emp.Cd=
+						(select CPAD.EmpCd From CompanyProcessApprovalDetail as CPAD
+						where CPAD.ProcessId='HRPT8'  
+						and CPAD.ApplTyp=@Typ
+						and CPAD.Div=(select Div from Employee where Cd=Empl.EmpCd)
+						and CPAD.Dept=(select Dept from Employee where Cd=Empl.EmpCd)
+						and CPAD.SrNo='1'))),
+					@Flag
+				from EmpProgressionHead as Empl 
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd	
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+	END		
+			
+else if @Stat='E' and @ApprBy is not null	
+	BEGIN
+			insert into #Temp
+			select (select Email from EmpAddress where EmpCd=(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT8'  
+			and CPAD.ApplTyp=@Typ
+			and CPAD.Div=(select Div from Employee where Cd=Empl.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=Empl.EmpCd)
+			and SrNo=((select Top 1 ApprLvl from EmpProgressionAppr where TransNo=Empl.TransNo order by ApprLvl Desc)+1) 
+				and AddTyp='HADD0001'))
+			,((select Emp.Fname+Emp.Mname+Emp.Lname from Employee as Emp where Emp.Cd=Empl.EmpCd)
+				+ ' applied to ' +
+				+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' is waiting for an approval from you.'),
+					@Flag
+				from EmpProgressionHead as Empl
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd	
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+			
+			insert into #Temp
+			select EmpA.Email,
+					('Your application to '
+				+ (select Des from SysCodes where Typ='HREP' and Cd=Empl.Typ)
+				+ ' with changing ' 
+				+(select Des from CompanyEarnDed where Cd=EmpD.EdCd and Typ=EmpD.EdTyp)
+				+' from '+ CAST(val AS VARCHAR(100))+' to '+ CAST(ApprVal AS VARCHAR(100))
+					+' wants to be approved by '
+					+ (select Emp.Fname+Emp.Mname+Emp.Lname from Employee as Emp where Emp.Cd=
+						(select CPAD.EmpCd From CompanyProcessApprovalDetail as CPAD
+						where CPAD.ProcessId='HRPT8'  
+						and CPAD.ApplTyp=@Typ
+						and CPAD.Div=(select Div from Employee where Cd=Empl.EmpCd)
+						and CPAD.Dept=(select Dept from Employee where Cd=Empl.EmpCd)
+						and CPAD.SrNo=((select Top 1 ApprLvl from EmpProgressionAppr where TransNo=Empl.TransNo order by ApprLvl Desc)+1 )))),
+					@Flag
+				from EmpProgressionHead as Empl
+			inner join EmpProgressionDetail as EmpD on EmpD.TransNo=Empl.TransNo
+			inner join EmpAddress as EmpA on Empl.EmpCd=EmpA.EmpCd and EmpA.AddTyp='HADD0001'
+			inner join Employee as Emp on Emp.Cd=Empl.EmpCd		
+			where Empl.TransNo=@TransNo
+			set @Flag=@Flag+1
+	END		
+
+		--declare @Count numeric(3,0)
+		--declare @RowNo numeric(3,0)
+		--set @RowNo=1
+		--set @Count=(select COUNT(EmailId) from #Temp)
+		--while(@RowNo<=@Count)
+		--begin
+		
+		--	set @recipients=(select EmailId from #Temp where SNo=@RowNo)
+		--	set @body=(select Body from #Temp where SNo=@RowNo )
+		--	if @recipients !=''
+		--		BEGIN
+		--			EXEC msdb.dbo.sp_send_dbmail 
+		--			@profile_name =@ProfileName,
+		--			@recipients = @recipients,
+		--			@subject ='HRMS Employee Progression',
+		--			@body = @body, 
+		--			@body_format = 'TEXT';
+		--		END
+		--	set @RowNo=@RowNo+1
+		--end
+		Drop table #Temp
+	end
+
+
+ 
  Go 
 CREATE OR ALTER   procedure [dbo].[Employee_Find_N]
 @v_Param	varchar(40),
@@ -5929,6 +6695,27 @@ End
  
  
  Go 
+-- select * from users userbranch sp_help users
+CREATE OR ALTER   Procedure [dbo].[Users_Delete_N]
+	@v_cd		Varchar(10)
+As		-- Drop Procedure Users_Delete_N '001'
+Begin
+	Begin Transaction
+	Delete from UserMenu where UserCd=@v_cd
+	Delete from UserPermission where UserCd =@v_cd
+	Delete from UserBranch where UserCd =@v_cd
+	Delete from Users where cd=@v_cd
+	If @@error =0
+		Commit Transaction
+	Else
+	  Begin
+		Rollback Transaction	
+		RAISERROR ('Can not Delete', 16,1)
+	  End
+End
+ 
+ 
+ Go 
 
 CREATE OR ALTER   procedure [dbo].[CompanyWHrs_GetRow_N]
 	@v_Cd		Char(5)
@@ -5968,27 +6755,6 @@ As		-- Drop Procedure [CompanyWHrs_GetRow_N]
 	and 	(@v_CoCd = '' or @v_CoCd <> '' and CoCd=@v_CoCd)
    End
 
- 
- 
- Go 
--- select * from users userbranch sp_help users
-CREATE OR ALTER   Procedure [dbo].[Users_Delete_N]
-	@v_cd		Varchar(10)
-As		-- Drop Procedure Users_Delete_N '001'
-Begin
-	Begin Transaction
-	Delete from UserMenu where UserCd=@v_cd
-	Delete from UserPermission where UserCd =@v_cd
-	Delete from UserBranch where UserCd =@v_cd
-	Delete from Users where cd=@v_cd
-	If @@error =0
-		Commit Transaction
-	Else
-	  Begin
-		Rollback Transaction	
-		RAISERROR ('Can not Delete', 16,1)
-	  End
-End
  
  
  Go 
@@ -6465,6 +7231,18 @@ END
  
  
  Go 
+
+CREATE OR ALTER   PROCEDURE GetEmployees_N
+	@v_CoCd varchar(5)
+AS
+BEGIN
+	
+	SET NOCOUNT ON;
+	select * from Employee where CoCd= @v_CoCd
+END
+ 
+ 
+ Go 
 CREATE OR ALTER   Procedure [dbo].[Notification_GetSrNo_N]
 	@v_CoCd				Char(5)
 ,	@v_ProcessId		Varchar(10)
@@ -6480,18 +7258,6 @@ Begin
 	and		Processid=@v_ProcessId
 	and		@v_Typ=0 or (@v_Typ=1 and DocTyp=@v_DocTyp)
 End
- 
- 
- Go 
-
-CREATE OR ALTER   PROCEDURE GetEmployees_N
-	@v_CoCd varchar(5)
-AS
-BEGIN
-	
-	SET NOCOUNT ON;
-	select * from Employee where CoCd= @v_CoCd
-END
  
  
  Go 
@@ -7437,6 +8203,15 @@ End
  
  
  Go 
+CREATE OR ALTER   procedure [dbo].[Designation_Delete_N]
+	@v_Cd varChar(10)
+As
+Begin
+	Delete from Designation where Cd = @v_Cd
+End
+ 
+ 
+ Go 
 CREATE OR ALTER   Procedure [dbo].[Designation_GetRow_N]
 	@v_Cd varChar(10)
 As		-- Drop Procedure [dbo].[Designation_GetRow_N] ''
@@ -7456,15 +8231,6 @@ Begin
 		@v_Cd = '' or Cd = @v_Cd
 	Order by
 		cast(REPLACE(trim(Cd), 'DESG', '') as int)  asc
-End
- 
- 
- Go 
-CREATE OR ALTER   procedure [dbo].[Designation_Delete_N]
-	@v_Cd varChar(10)
-As
-Begin
-	Delete from Designation where Cd = @v_Cd
 End
  
  
@@ -8795,6 +9561,24 @@ end
  
  
  Go 
+CREATE OR ALTER   PROCEDURE [dbo].[CompanyCalendar_Delete_N] 
+	-- Add the parameters for the stored procedure here
+	@v_Cd varchar(10)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	IF NOT EXISTS (select 1 from CalendarEventAttendees where EventCd=@v_Cd)
+		BEGIN
+			Delete from CompanyCalendar_N where Cd = @v_Cd
+		exec GetMessage 1,'Deleted successfully'
+		END
+	ELSE
+		exec GetMessage 0,'Can not delete'
+		
+	End
+ 
+ 
+ Go 
 CREATE OR ALTER   Procedure [dbo].[CompanyCalendar_Update_N]
 @v_CoCd 	varchar(5),
 @v_Cd 		varchar(5),
@@ -8838,24 +9622,6 @@ as
 			Cd =@v_Cd
 		and 	CoCd=@v_CoCd
 		exec GetMessage 1,'Updated successfully'
- 
- 
- Go 
-CREATE OR ALTER   PROCEDURE [dbo].[CompanyCalendar_Delete_N] 
-	-- Add the parameters for the stored procedure here
-	@v_Cd varchar(10)
-AS
-BEGIN
-	SET NOCOUNT ON;
-	IF NOT EXISTS (select 1 from CalendarEventAttendees where EventCd=@v_Cd)
-		BEGIN
-			Delete from CompanyCalendar_N where Cd = @v_Cd
-		exec GetMessage 1,'Deleted successfully'
-		END
-	ELSE
-		exec GetMessage 0,'Can not delete'
-		
-	End
  
  
  Go 

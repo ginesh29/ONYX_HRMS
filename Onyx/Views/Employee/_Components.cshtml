@@ -3,20 +3,23 @@
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
     var totalSalary = $"{ViewBag.Currency} {ViewBag.TotalSalary?.ToString("0")}";
 }
-<div class="row">
-    <div class="col-md-2">
-        <div class="form-group">
-            <label name="Basic">Basic</label>
-            <input id="BasicSalary" name="BasicSalary" class="form-control int-input" onchange="saveBasicSalary(this)" value="@ViewBag.Basic">
+@if (ViewBag.Basic != null)
+{
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label name="Basic">Basic</label>
+                <input id="BasicSalary" name="BasicSalary" class="form-control int-input" onchange="saveBasicSalary(this)" value="@ViewBag.Basic">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Total Salary</label>
+                <input id="TotalSalary" class="form-control disabled text-right" value="@totalSalary">
+            </div>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="form-group">
-            <label>Total Salary</label>
-            <input id="TotalSalary" class="form-control disabled text-right" value="@totalSalary">
-        </div>
-    </div>
-</div>
+}
 @if (componentPermission.UView == "Y")
 {
     @if (componentPermission.UAdd == "Y")
