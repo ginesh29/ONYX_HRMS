@@ -1372,7 +1372,7 @@ namespace Onyx.Services
         }
         public void UpdateEmpProgHead(EmpProgressionHeadModel model)
         {
-            var procedureName = "EmpProgressionHead_Update";
+            var procedureName = "EmpProgressionHead_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_TransDt", model.TransDt);
@@ -1391,7 +1391,7 @@ namespace Onyx.Services
         }        
         public void UpdateEmpProgDetail(EmpProgressionHeadModel model)
         {
-            var procedureName = "EmpProgressionDetail_Update";
+            var procedureName = "EmpProgressionDetail_Update_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_SrNo", "1");
