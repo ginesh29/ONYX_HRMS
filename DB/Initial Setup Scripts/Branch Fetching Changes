@@ -100,4 +100,17 @@ Begin	-- Select * from Branch
 End
  
  
+USE [LSHRMS]
+GO
+/****** Object:  StoredProcedure [dbo].[Branch_Count]    Script Date: 29/04/2024 11:39:32 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER Procedure [dbo].[Branch_Count]
+@v_CoCd char(5)
+As		-- Drop Procedure [dbo].[Branch_Count]'0'
+Begin
+    select COUNT(1) from branch where (@v_CoCd='' or CoCd=@v_CoCd) and isnull(Active,0)=1
+End
 
