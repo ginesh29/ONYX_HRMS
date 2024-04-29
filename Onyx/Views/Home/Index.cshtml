@@ -194,10 +194,88 @@
                             <td>@item.HeadCount</td>
                         </tr>
                     }
-                </table>                
+                </table>
             </div>
             <!-- /.card-body -->
         </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <h4 class="card-label text-primary">
+                        Head Count
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Description</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
+                    {
+                        <tr>
+                            <td>@item.Des</td>
+                            <td>@item.HeadCount</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <h4 class="card-label text-primary">
+                        Last Month Salary (@EmplLoanAndLeaveApproval.LastMonth)
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
+                    {
+                        <tr>
+                            <td>@item.Des</td>
+                            <td>@item.PayElementDetailsCount</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="AllEmployeeTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Image</th>
+                    <th>Employee</th>
+                    <th>Branch</th>
+                    <th>Department</th>
+                    <th>Date Of Birth</th>
+                    <th>Date Of Join</th>
+                    <th>Marital Status</th>
+                    <th>Nationality</th>
+                    <th>Religion</th>
+                </tr>
+            </thead>
+        </table>
     </div>
 </div>
 @section scripts {

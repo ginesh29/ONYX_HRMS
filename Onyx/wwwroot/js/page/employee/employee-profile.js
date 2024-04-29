@@ -562,7 +562,7 @@ function deleteComponent(empCd, edCd, edTyp, srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Employee/DeleteComponent?empCd=${encodeURI(empCd)}& edCd=${edCd}& edTyp=${edTyp}& srNo=${srNo}`, function (response) {
+            deleteAjax(`/Employee/DeleteComponent?empCd=${encodeURI(empCd)}&edCd=${edCd}&edTyp=${edTyp}&srNo=${srNo}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
                 $("#BasicSalary").change();
