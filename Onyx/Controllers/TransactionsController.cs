@@ -1535,6 +1535,79 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult ImportEmployeeProgression(IFormFile file, EmpProgressionHeadModel model)
+        {
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            model.EntryBy = _loggedInUser.UserAbbr;
+            var excelData = _transactionService.GetProgressionFromExcel(file, _loggedInUser.CompanyCd);
+            foreach (var excel in excelData)
+            {
+                var employee = _employeeService.FindEmployee(excel.EmpCode, _loggedInUser.CompanyCd);
+                excel.TransDt = model.TransDt;
+                excel.EmpName = employee.Name;
+                excel.DesigFromCd = employee.Desg.Trim();
+                excel.DesigToCd = employee.Desg.Trim();
+                if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
+                {
+                    excel.EP_TypeCd = model.EP_TypeCd;
+                    excel.EffDt = model.EffDt;
+                    excel.PayTypCd = model.PayTypCd;
+                    excel.PayCodeCd = model.PayCodeCd;
+                    excel.PercAmt = model.PercAmt;
+                    var CurrentAmt = _transactionService.GetCurrentAmt(excel.EmpCode, model.PayTypCd, model.PayCodeCd);
+                    if (CurrentAmt != null)
+                    {
+                        excel.CurrentAmt = CurrentAmt.Amount;
+                        excel.PercAmt = CurrentAmt.PercAmt;
+                    }
+                    excel.Narr = model.Narr;
+                }
+            }
+            var validData = excelData.Where(m => m.IsValid);
+            var invalidData = excelData.Where(m => !m.IsValid);
+            string Message = string.Empty;
+            bool validHeader = _transactionService.ValidHeaderVariblePayComponentsExcel(file);
+            if (!validHeader)
+            {
+                excelData = null;
+                Message = "Headers are not matched. Download again & refill data";
+            }
+            if (validData.Any() && validHeader)
+                return PartialView("_EmpProgressionData", excelData);
+            else
+                return Json(new CommonResponse
+                {
+                    Success = false,
+                    Message = Message,
+                });
+        }
+        [HttpPost]
+        public IActionResult SaveBulkEmployeeProgression(List<EmpProgressionHeadModel> model, EmpProgressionHeadModel filterModel)
+        {
+            foreach (var item in model)
+            {
+                item.EntryBy = _loggedInUser.UserAbbr;
+                item.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
+                item.TransDt = DateTime.Now.Date;
+                item.PayCodeCd = filterModel.PayCodeCd;
+                item.PayTypCd = filterModel.PayTypCd;
+                item.EP_TypeCd = filterModel.EP_TypeCd;
+                item.Narr = filterModel.Narr;
+                _transactionService.UpdateEmpProgHead(item);
+                if (item.EP_TypeCd == "HREP02" || item.EP_TypeCd == "HREP04" || item.EP_TypeCd == "HREP05")
+                    _transactionService.UpdateEmpProgDetail(item);
+            }
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = "Bulk Emp Progression requested successfully"
+            };
+            return Json(result);
+        }
         #endregion
 
         public IActionResult SinglePayroll()

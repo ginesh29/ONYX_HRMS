@@ -46,6 +46,14 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
+                                <label asp-for="EP_TypeCd"></label>
+                                <select asp-for="EP_TypeCd" class="form-control select-picker" asp-items="ViewBag.ProgressionTypeItems" onchange="showHideComponent(this)">
+                                </select>
+                                <span asp-validation-for="EP_TypeCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 <label asp-for="DesigFromCd"></label>
                                 <select asp-for="DesigFromCd" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
                                 </select>
@@ -58,14 +66,6 @@
                                 <select asp-for="DesigToCd" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
                                 </select>
                                 <span asp-validation-for="DesigToCd" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="EP_TypeCd"></label>
-                                <select asp-for="EP_TypeCd" class="form-control select-picker" asp-items="ViewBag.ProgressionTypeItems" onchange="showHideComponent(this)">
-                                </select>
-                                <span asp-validation-for="EP_TypeCd" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label asp-for="PercAmt"></label>
-                                    <select asp-for="PercAmt" class="form-control select-picker" asp-items="percentageAmtTypes" onchange="changePercentageAmt()">
+                                    <select asp-for="PercAmt" class="form-control select-picker" asp-items="percentageAmtTypes">
                                     </select>
                                     <span asp-validation-for="PercAmt" class="text-danger"></span>
                                 </div>
@@ -151,10 +151,22 @@
                         </div>
                     </div>
                 }
+                <h5 class="mt-2 mb-4 side-separator-container"><span class="side-separator">OR</span></h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="custom-file">
+                            <input type="file" id="import-file" name="file" onchange="uploadFile(event)" class="custom-file-input">
+                            <label class="custom-file-label" id="image-file-label" for="import-file">Choose file</label>
+                        </div>
+                        <a href="/formats/Emp_Progression_Import_Sample.xlsx?@DateTime.Now">Download Sample File</a>
+                    </div>
+                </div>
+                <div class="table-responsive" id="EmpProgressions-Table"></div>
             </form>
         </div>
         <div class="modal-footer">
             <button type="button" id="btn-submit" class="btn btn-info" onclick="saveEmpPrgression(this,'@(!string.IsNullOrEmpty(Model?.EmpCode) ?"true":null)')">Submit</button>
+            <button type="button" id="btn-bulk-submit" class="btn btn-info d-none" onclick="saveBulkEmpPrgression(this,'@(!string.IsNullOrEmpty(Model?.EmpCode) ?"true":null)')">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

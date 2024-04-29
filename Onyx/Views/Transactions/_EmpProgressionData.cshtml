@@ -1,0 +1,37 @@
+﻿@model List<EmpProgressionHeadModel>
+@if (Model != null)
+{
+    <table class="table table-sm mt-3" id="ExecelData">
+        <thead class="thead-dark">
+            <tr>
+                <th>Employee</th>
+                <th>Effective date</th>
+                <th>From Designation</th>
+                <th>To Designation</th>
+                <th>Current</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Select((value, i) => new { i, value }))
+        {
+            <tr>
+                <td>
+                    @item.value.EmpName (@item.value.EmpCode)
+                    <input type="hidden" asp-for="@Model[item.i].EmpCode" class="form-control" />
+                    <input type="hidden" asp-for="@Model[item.i].PercAmt" class="form-control" />
+                </td>
+                <td><input type="text" asp-for="@Model[item.i].EffDt" class="form-control date-input" /></td>
+                <td>
+                    <select asp-for="@Model[item.i].DesigFromCd" class="form-control select-picker disabled" asp-items="ViewBag.DesignationItems">
+                    </select>
+                </td>
+                <td>
+                    <select asp-for="@Model[item.i].DesigToCd" class="form-control select-picker" asp-items="ViewBag.DesignationItems">
+                    </select>
+                </td>
+                <td><input type="text" asp-for="@Model[item.i].CurrentAmt" class="form-control int-input disabled" /></td>
+                <td><input type="text" asp-for="@Model[item.i].RevisedAmt" class="form-control int-input" /></td>
+            </tr>
+        }
+    </table>
+}
