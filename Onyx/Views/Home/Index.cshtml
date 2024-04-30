@@ -9,6 +9,42 @@
     var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
     EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval = ViewBag.EmplLoanAndLeaveApproval;
 }
+<link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-white">
+            <div class="inner">
+                <h3>@EmplLoanAndLeaveApproval.Working</h3>
+                <p>Present Employee</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-white">
+            <div class="inner">
+                <h3>@EmplLoanAndLeaveApproval.OnLeave</h3>
+                <p>Employee on Leave</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-white">
+            <div class="inner">
+                <h3>@EmplLoanAndLeaveApproval.LeaveApplied</h3>
+                <p>Employee Leave Applied</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-7">
         <div class="card">
@@ -229,29 +265,33 @@
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-sm" id="AllEmployeeTable">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>No.</th>
-                        <th>Image</th>
-                        <th>Employee</th>
-                        <th>Branch</th>
-                        <th>Department</th>
-                        <th>Date Of Birth</th>
-                        <th>Date Of Join</th>
-                        <th>Marital Status</th>
-                        <th>Nationality</th>
-                        <th>Religion</th>
-                    </tr>
-                </thead>
-            </table>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <h4 class="card-label text-primary">
+                        Birthday/Work Anniversary Calendar
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
         </div>
     </div>
 </div>
+<style>
+    .tooltip-inner {
+        max-width: 300px;
+    }
+
+    .fc-list-event-time {
+        display: none;
+    }
+</style>
 @section scripts {
     <script src="~/plugins/chart.js/chart.min.js"></script>
+    <script src="~/plugins/fullcalendar/main.js"></script>
     <script src="~/js/page/dashboard.js" asp-append-version="true"></script>
 }

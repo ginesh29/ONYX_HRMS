@@ -16,7 +16,7 @@
     @if (leaveApprovalData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@leaveApprovalData.Count()</span>
                 <img src="~/images/leave.png" height="40px" />
             </a>
@@ -67,7 +67,7 @@
     @if (leaveSalaryApprovalData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave Salary/Ticket to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 3px;">@leaveSalaryApprovalData.Count()</span>
                 <img src="~/images/ticket-flight.png" height="40px" />
             </a>
@@ -118,7 +118,7 @@
     @if (loanApprovalData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Loan to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@loanApprovalData.Count()</span>
                 <img src="~/images/loan.png" height="40px" />
             </a>
@@ -140,7 +140,7 @@
                                             @item.EmpName.Trim() (@item.EmployeeCode.Trim())
                                         </h3>
                                         <p class="text-sm">
-                                            Type: @item.LoanType | Amount: @item.Amt | No of Inst.: @item.NoInstReq
+                                            Type: @item.LoanType | Amount: @item.Amt | Inst.: @item.NoInstReq
                                             <span>
                                                 <button class="btn btn-sm btn-info ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()')">
                                                     <i class="fas fa-check"></i>
@@ -166,7 +166,7 @@
     @if (fundApprovalData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Fund to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@fundApprovalData.Count()</span>
                 <img src="~/images/funding.png" height="40px" />
             </a>
@@ -217,7 +217,7 @@
     @if (progressionData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Progression to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@progressionData.Count()</span>
                 <img src="~/images/progress.png" height="40px" />
             </a>
@@ -269,7 +269,7 @@
     @if (docRenewalData.Count() > 0)
     {
         <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Document Renewal to be Approve">
                 <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@docRenewalData.Count()</span>
                 <img src="~/images/documents.png" height="40px" />
             </a>

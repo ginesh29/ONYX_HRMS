@@ -657,54 +657,5 @@ namespace Onyx.Services
             connection.Execute(query);
         }
         #endregion
-
-        #region Dashboard
-        public IEnumerable<EmpLeave_GetRow_Result> GetRowEmpLeave(string param, string type, string CoCd)
-        {
-            var procedureName = "EmpLeave_GetRow_N";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Param", param);
-            parameters.Add("v_Typ", type);
-            parameters.Add("v_CoCd", CoCd);
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<EmpLeave_GetRow_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-        public IEnumerable<EmployeeWiseForChart_Result> EmployeeWiseForChart(string type)
-        {
-            var procedureName = "EmployeeWiseForChart_N";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_Typ", type);
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var data = connection.Query<EmployeeWiseForChart_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-        public EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval(string empCd, string type, string CoCd)
-        {
-            var procedureName = "EmplLoanAndLeaveApproval_N";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_Typ", type);
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
-            var headCount = multiResult.Read<HeadCountModel>();
-            var currentMonth = multiResult.ReadFirstOrDefault<string>();
-            var lastMonth = multiResult.ReadFirstOrDefault<string>();
-            var salaryDetails = multiResult.Read<SalaryDetailModel>();
-            return new EmplLoanAndLeaveApproval
-            {
-                HeadCounts = headCount,
-                CurrentMonth = currentMonth,
-                LastMonth = lastMonth,
-                SalaryDetails = salaryDetails
-            };
-        }
-        #endregion
     }
 }

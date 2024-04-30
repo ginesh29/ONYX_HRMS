@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
+using System.Linq;
 
 namespace Onyx.Controllers
 {
@@ -10,20 +11,20 @@ namespace Onyx.Controllers
     public class HomeController : Controller
     {
         private readonly AuthService _authService;
-        private readonly EmployeeService _employeeService;
+        private readonly CommonService _commonService;
         private readonly ReportService _reportService;
         private readonly LoggedInUserModel _loggedInUser;
 
-        public HomeController(AuthService authService, ReportService reportService, EmployeeService employeeService)
+        public HomeController(AuthService authService, ReportService reportService, CommonService commonService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _reportService = reportService;
-            _employeeService = employeeService;
+            _commonService = commonService;
         }
         public IActionResult Index()
         {
-            var EmplLoanAndLeaveApproval = _employeeService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             EmplLoanAndLeaveApproval.HeadCounts = EmplLoanAndLeaveApproval.HeadCounts.Where(m => m.HeadCount > 0);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
             return View();
@@ -65,7 +66,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaves(string days, string type)
         {
-            var leaves = _employeeService.GetRowEmpLeave(days, type, _loggedInUser.CompanyCd);
+            var leaves = _commonService.GetRowEmpLeave(days, type, _loggedInUser.CompanyCd);
             leaves = leaves.Select(m => { m.NoOfDays = (m.ToDt - DateTime.Now.Date).Days; return m; }).ToList();
             CommonResponse result = new()
             {
@@ -75,13 +76,29 @@ namespace Onyx.Controllers
         }
         public IActionResult EmployeeWiseForChart(string type)
         {
-            var data = _employeeService.EmployeeWiseForChart(type);
+            var data = _commonService.EmployeeWiseForChart(type);
             var result = new ChartModel
             {
                 xAxis = data.Select(m => m.Des).ToArray(),
                 yAxis = data.Select(m => m.Count).ToArray(),
             };
             return Json(result);
+        }
+        public IActionResult FetchCalendarEvents(DateTime start, DateTime end)
+        {
+            int year = start.Year;
+            bool isLeapYear = year % 4 == 0;
+            var events = _commonService.GetCalendarEvents(_loggedInUser.UserCd)
+                .Select(m => new CalendarModel
+                {
+                    Id = m.SrNo.ToString(),
+                    AllDay = true,
+                    BackgroundColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
+                    BorderColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
+                    Start = !isLeapYear && m.Date.Day == 29 && m.Date.Month == 2 ? DateTime.MinValue.ToString("yyyy-MM-ddTHH:mm:ss") : new DateTime(year, m.Date.Month, m.Date.Day).ToString("yyyy-MM-ddTHH:mm:ss"),
+                    Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}".Replace("ANNIVERSARY", "WORK ANNIVERSARY"),
+                }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
+            return Json(events);
         }
         #endregion
     }

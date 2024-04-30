@@ -106,3 +106,20 @@ function showChart(init) {
     })
 }
 showChart(true);
+
+function loadCalendar() {
+    var Calendar = FullCalendar.Calendar;
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new Calendar(calendarEl, {
+        headerToolbar: {
+            left: 'today',
+            center: 'title',
+            right: 'prev,next'
+        },
+        initialView: 'listWeek',
+        themeSystem: 'bootstrap',
+        events: '/Home/FetchCalendarEvents',
+    });
+    calendar.render();
+}
+loadCalendar();
