@@ -26,7 +26,7 @@
                 },
                 {
                     data: function (row) {
-                        return row.noOfDays > 0 ? `<label class="badge badge-danger">${row.noOfDays} day(s)</lable>` : `<label class="badge badge-danger">Expired Today</label>`;
+                        return `<label class="badge badge-info">${row.noOfDays} day(s)</lable>`;
                     },
                 },
             ],
@@ -65,7 +65,7 @@ function showEmpLeave(type) {
                     },
                     {
                         data: function (row) {
-                            return row.noOfDays > 0 ? `<label class="badge badge-danger">${row.noOfDays} day(s)</lable>` : `<label class="badge badge-danger">Expired Today</label>`;
+                            return `<label class="badge badge-info">${row.noOfDays} day(s)</lable>`;
                         },
                     },
                 ],
