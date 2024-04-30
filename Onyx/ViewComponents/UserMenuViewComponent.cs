@@ -37,10 +37,19 @@ namespace Onyx.ViewComponents
             var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             var leaveSalaryData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            foreach (var item in progressionData)
+            {
+                item.EP_TypeCd = item.EP_TypeCd.Trim();
+                item.Detail = _transactionService.GetEmpProgressionDetail(item.TransNo.Trim());
+            }
+            var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "1");
             ViewBag.LeaveApprovalData = leaveData;
             ViewBag.LoanApprovalData = loanData;
             ViewBag.LeaveSalaryApprovalData = leaveSalaryData;
             ViewBag.FundApprovalData = fundData;
+            ViewBag.ProgressionData = progressionData;
+            ViewBag.DocRenewalData = docRenewalData;
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,

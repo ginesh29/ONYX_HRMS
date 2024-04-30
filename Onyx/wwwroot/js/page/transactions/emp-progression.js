@@ -36,54 +36,6 @@
     }
 );
 
-function showEmpProgressionModal(transNo) {
-    var url = `/Transactions/GetEmployeeProgression?transNo=${transNo}`;
-    $('#EmpProgressionModal').load(url, function () {
-        parseDynamicForm();
-        bindEmployeeDropdown();
-        showHideComponent();
-        $("#DesigFromCd").addClass("disabled");
-        $("#DesigToCd").addClass("disabled");
-        $("#RevisedAmt").addClass("disabled");
-        $("#EmpProgressionModal").modal("show");
-    });
-}
-function deleteEmpProgression(transNo) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "You want to Delete?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            deleteAjax(`/Transactions/DeleteEmployeeProgression?transNo=${transNo}`, function (response) {
-                showSuccessToastr(response.message);
-                reloadDatatable();
-            });
-        }
-    });
-}
-function saveEmpPrgression(btn, approval) {
-    var frm = $("#emp-prograssion-frm");
-    if (frm.valid()) {
-        loadingButton(btn);
-        var url = !approval ? "/Transactions/SaveEmployeeProgression" : "/Transactions/ApproveEmployeeProgression";
-        postAjax(url, frm.serialize(), function (response) {
-            showSuccessToastr(response.message);
-            $("#EmpProgressionModal").modal("hide");
-            reloadDatatable();
-            //if (!response.success) {
-            //    showErrorToastr(response.message);
-            //    $("#EmpProgressionModal").modal("hide");
-            //}
-            unloadingButton(btn);
-        });
-    }
-}
-
 function saveBulkEmpPrgression(btn) {
     var frm = $("#emp-prograssion-frm");
     if (frm.valid()) {
@@ -112,7 +64,6 @@ function bindComponentClass(e) {
         $('.select-picker').selectpicker('refresh');
     });
 }
-
 function getEmpDesignation() {
     var empCd = $("#EmpCd").val();
 
@@ -140,14 +91,6 @@ function getCurrentAmt() {
         })
     }
 }
-
-function showHideComponent() {
-    var type = $("#EP_TypeCd").val();
-    $("#component-container").addClass("d-none");
-    if (type == "HREP02" || type == "HREP04" || type == "HREP05")
-        $("#component-container").removeClass("d-none");
-}
-
 function uploadFile(event) {
     var ext = event.target.files[0].name.split('.').pop().toLowerCase();
     if (excelExtensions.includes(ext)) {

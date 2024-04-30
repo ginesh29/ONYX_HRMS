@@ -4,7 +4,7 @@
     {
         public string EmployeeCode { get; set; }
         public string EmpName { get; set; }
-        public decimal SrNo { get; set; }
+        public int SrNo { get; set; }
         public string DocType { get; set; }
         public string DocTypCd { get; set; }
         public string DocNo { get; set; }
@@ -32,5 +32,6 @@
         public string FormatedApprDate { get; set; }
         public decimal? Current_Approval_Level { get; set; }
         public string Current_Approval { get; set; }
+        public string ImagePath { get; set; }
     }
 }

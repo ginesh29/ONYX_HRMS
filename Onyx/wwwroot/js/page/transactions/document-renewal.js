@@ -166,43 +166,4 @@ window["datatable"] = $('#RenewalDocumentsApprovalDataTable').DataTable(
         ],
     }
 );
-function showDocumentApprovalModal(empCd, docTypeCd, srNo) {
-    var url = `/Transactions/GetRenewalDocumentApproval?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
-    $('#DocumentRenewModal').load(url, function () {
-        parseDynamicForm();
-        $("#DocumentRenewModal").modal("show");
-    });
-}
-function saveDocumentRenewalApproval(btn, reject) {
-    var frm = $("#document-frm");
-    if (frm.valid()) {
-        loadingButton(btn);
-        var status = !reject ? "A" : "R";
-        $("#Status").val(status);
-        filePostAjax("/Transactions/SaveRenewalDocumentApproval", frm[0], function (response) {
-            if (response.success) {
-                showSuccessToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-                reloadDatatable();
-            }
-            else {
-                showErrorToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-            }
-            unloadingButton(btn);
-        });
-    }
-}
-function showHideTypeDropdown() {
-    $('#RenewalDocumentsSearchDataTable').DataTable().destroy();
-    $("#RenewalDocumentsSearchDataTable").addClass("d-none");
-    var type = $("input[name='Type']:checked").val();
-    $("#EmpCd,#Company,#Vehicle").closest('.form-group').addClass("d-none");
-    if (type == "EMP")
-        $("#EmpCd").closest('.form-group').removeClass("d-none");
-    else if (type == "COM")
-        $("#Company").closest('.form-group').removeClass("d-none");
-    else
-        $("#Vehicle").closest('.form-group').removeClass("d-none");
-}
 showHideTypeDropdown();

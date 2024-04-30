@@ -80,7 +80,7 @@ namespace Onyx.Controllers
                     WpDateRange = ExtensionMethod.GetDateRange(leaveData.LvFrom, leaveData.LvTo),
                     Reason = leaveData.Reason,
                     Current_Approval_Level = leaveData.Current_Approval_Level,
-                    ApprDt = DateTime.Now.Date,
+                    ApprDt = DateTime.Now,
                     ApprBy = leaveData.Current_Approval.Trim(),
                 };
             }
@@ -281,7 +281,7 @@ namespace Onyx.Controllers
                     WopLvDays = leaveData.WopFrom != null && leaveData.WopFrom != null ? ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo) : 0,
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
-                    ApprDt = DateTime.Now.Date,
+                    ApprDt = DateTime.Now,
                     Salary_SinglePayrollAttendanceData = empSinglePayroll.Salary_SinglePayrollAttendanceData,
                     Component_SinglePayrollAttendanceData = empSinglePayroll.Component_SinglePayrollAttendanceData,
                 };
@@ -334,7 +334,7 @@ namespace Onyx.Controllers
                     WopLvDays = ExtensionMethod.GetDaysBetweenDateRange(leaveData.WopFrom, leaveData.WopTo),
                     ApprBy = leaveData.ApprBy,
                     ApprDays = leaveData.ApprDays,
-                    ApprDt = DateTime.Now.Date
+                    ApprDt = DateTime.Now
                 };
             }
             return PartialView("_EmpDutyResumptionModal", model);
@@ -428,7 +428,7 @@ namespace Onyx.Controllers
                 };
             else
             {
-                model.TransferDt = DateTime.Now.Date;
+                model.TransferDt = DateTime.Now;
             }
             ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new
             SelectListItem
@@ -600,7 +600,7 @@ namespace Onyx.Controllers
             loanDetails.Salary = Convert.ToInt32(empDetail.Total);
             loanDetails.ApprAmt = loanDetails.Amt;
             loanDetails.NoInst = loanDetails.NoInstReq;
-            loanDetails.LoanApprDt = DateTime.Now.Date;
+            loanDetails.LoanApprDt = DateTime.Now;
             loanDetails.ChgsPerc ??= 0;
             loanDetails.Balance = _transactionService.GetEmpLoan_Due(loanDetails.EmployeeCode.Trim());
             ViewBag.RecModeItems = _commonService.GetSysCodes(SysCode.RecMode).Select(m => new SelectListItem
@@ -844,7 +844,7 @@ namespace Onyx.Controllers
                 {
                     Amt = empprovisionsadj.Amt,
                     ApprBy = empprovisionsadj.Current_Approval?.Trim(),
-                    ApprDt = DateTime.Now.Date,
+                    ApprDt = DateTime.Now,
                     Days = empprovisionsadj.Days,
                     EmpCd = empprovisionsadj.EmpCd,
                     Narr = empprovisionsadj.Narr,
@@ -863,7 +863,7 @@ namespace Onyx.Controllers
             else
             {
                 model.TransNo = _transactionService.GetEmpProvisionAdjSrNo();
-                model.TransDt = DateTime.Now.Date;
+                model.TransDt = DateTime.Now;
             }
             ViewBag.ProvisionTypeItems = _organisationService.GetCompanyProvisions().Select(m => new
             SelectListItem
@@ -1103,7 +1103,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpFundApproval(string transNo)
         {
             var fundDetails = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
-            fundDetails.ApprDate = DateTime.Now.Date;
+            fundDetails.ApprDate = DateTime.Now;
             return PartialView("_EmpFundApprovalModal", fundDetails);
         }
         public IActionResult SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model, string processId)
@@ -1193,7 +1193,7 @@ namespace Onyx.Controllers
                     IssueDt = empDocument.IssueDt,
                     SrNo = _transactionService.EmpDocIssueRcpt_NextSrNo(empCd, empDocument.DocTypCd),
                     IssuePlace = empDocument.IssuePlace,
-                    TrnDt = DateTime.Now.Date,
+                    TrnDt = DateTime.Now,
                 };
 
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
@@ -1228,7 +1228,7 @@ namespace Onyx.Controllers
                     Narr = document.Narr,
                     ExpDt = document.ExpDt,
                     CompanyCd = document.CoCd,
-                    TrnDt = DateTime.Now.Date,
+                    TrnDt = DateTime.Now,
                     SrNo = _transactionService.ComDocIssueRcpt_NextSrNo(_loggedInUser.CompanyCd, document.DocTypCd),
                     DocsPaths = _organisationService.GetDocumentFiles(document.DivCd, document.DocTypCd, _loggedInUser.CompanyCd)
                 };
@@ -1260,7 +1260,7 @@ namespace Onyx.Controllers
                     DocTypSDes = vehicleDocument.DocTypSDes,
                     VehName = vehicleDocument.VehName,
                     ExpDt = vehicleDocument.ExpDt,
-                    TrnDt = DateTime.Now.Date,
+                    TrnDt = DateTime.Now,
                     SrNo = _transactionService.VehDocIssueRcpt_NextSrNo(vehCd, docType),
                     VehCd = vehCd,
                     VehicleDocsPaths = _organisationService.GetVehicleDocumentFiles(vehCd)
@@ -1463,7 +1463,7 @@ namespace Onyx.Controllers
             else
             {
                 model.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
-                model.TransDt = DateTime.Now.Date;
+                model.TransDt = DateTime.Now;
             }
             ViewBag.ProgressionTypeItems = _commonService.GetSysCodes(SysCode.EmpProgression).Select(m => new SelectListItem
             {
@@ -1593,7 +1593,7 @@ namespace Onyx.Controllers
             {
                 item.EntryBy = _loggedInUser.UserAbbr;
                 item.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
-                item.TransDt = DateTime.Now.Date;
+                item.TransDt = DateTime.Now;
                 item.PayCodeCd = filterModel.PayCodeCd;
                 item.PayTypCd = filterModel.PayTypCd;
                 item.EP_TypeCd = filterModel.EP_TypeCd;

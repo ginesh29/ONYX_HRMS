@@ -50,7 +50,9 @@
 #leave-approvals-notifications,
 #leave-sal-approvals-notifications,
 #loan-approvals-notifications,
-#fund-approvals-notifications {
+#fund-approvals-notifications,
+#doc-renewal-approvals-notifications,
+#progression-approvals-notifications {
     max-width: 500px !important;
     width: 490px !important;
 }
@@ -290,23 +292,23 @@ textarea {
     padding: 0;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-    width: 12px; /* width of the entire scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1; /* color of the track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #888; /* color of the scroll thumb */
-    border-radius: 6px; /* roundness of the scroll thumb */
-    border: 3px solid #f1f1f1; /* creates padding around scroll thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+    border: 3px solid #f1f1f1;
 }
 
-    /* Handle on hover */
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #555; /* color of the scroll thumb on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 
 .bs-ok-default.check-mark:after {
@@ -360,7 +362,9 @@ textarea {
 .form-control.disabled, .form-control[readonly],
 .disabled-container input,
 .disabled-container .dropdown-toggle,
-.disabled-container .select2-selection {
+.disabled-container .select2-selection,
+.disabled .dropdown-toggle,
+.disabled .select2-selection {
     background-color: #eee !important;
     opacity: 1;
     pointer-events: none;

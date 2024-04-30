@@ -25,6 +25,7 @@
         public string EP_TypeCd { get; set; }
         public decimal? Current_Approval_Level { get; set; }
         public string Current_Approval { get; set; }
+        public string ImagePath { get; set; }
         public EmpProgressionDetail_GetRow_Result Detail { get; set; }
     }
 }

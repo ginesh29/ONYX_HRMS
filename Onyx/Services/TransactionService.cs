@@ -24,7 +24,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", model.EmployeeCode);
             parameters.Add("v_LoanTyp", model.LoanTypeCd);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now.Date);
+            parameters.Add("v_DocDt", DateTime.Now);
             parameters.Add("v_Amt", model.Amt);
             parameters.Add("v_Purpose", model.Purpose);
             parameters.Add("v_Narr", model.Narr);
@@ -132,7 +132,7 @@ namespace Onyx.Services
             parameters.Add("v_EffDate", model.EffDate);
             parameters.Add("v_EndDate", model.EndDate);
             parameters.Add("v_EditBy", model.EntryBy);
-            parameters.Add("v_EditDt", DateTime.Now.Date);
+            parameters.Add("v_EditDt", DateTime.Now);
             var connection = new SqlConnection(connectionString);
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -184,7 +184,7 @@ namespace Onyx.Services
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
             parameters.Add("v_ApprAmt", model.ApprAmt);
             parameters.Add("v_LoanApprBy", model.LoanApprBy);
-            parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now.Date);
+            parameters.Add("v_LoanApprDt", model.LoanApprDt ?? DateTime.Now);
             parameters.Add("v_Status", model.LoanStatus);
             parameters.Add("v_ChgsPerc", model.ChgsPerc);
             parameters.Add("v_ChgsAmt", model.ChgsPerc);
@@ -198,7 +198,7 @@ namespace Onyx.Services
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_EntryDt", model.EntryDt);
             parameters.Add("v_EditBy", model.EntryBy);
-            parameters.Add("v_EditDt", DateTime.Now.Date);
+            parameters.Add("v_EditDt", DateTime.Now);
             parameters.Add("v_ChgsTyp", model.ChgsTyp);
             var connection = new SqlConnection(connectionString);
             connection.QueryFirstOrDefault<CommonResponse>
@@ -245,7 +245,7 @@ namespace Onyx.Services
             parameters.Add("v_ToDt", model.ToDt);
             parameters.Add("v_LvTaken", model.LvTaken);
             parameters.Add("v_DocRef", string.Empty);
-            parameters.Add("v_DocDt", DateTime.Now.Date);
+            parameters.Add("v_DocDt", DateTime.Now);
             parameters.Add("v_Substitute", string.Empty);
             parameters.Add("v_Reason", model.Reason);
             parameters.Add("v_Narr", model.Narr);
@@ -564,7 +564,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_CancelBy", model.ApprBy);
-            parameters.Add("v_CancelDt", DateTime.Now.Date);
+            parameters.Add("v_CancelDt", DateTime.Now);
             parameters.Add("v_Remarks", model.Remarks);
             parameters.Add("v_LvFare", model.LvTicket);
             parameters.Add("v_LvSalary", model.LvSalary);
@@ -636,7 +636,7 @@ namespace Onyx.Services
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
             parameters.Add("v_ApprBy", model.ApprBy);
-            parameters.Add("v_ApprDt", model.ApprDate ?? DateTime.Now.Date);
+            parameters.Add("v_ApprDt", model.ApprDate ?? DateTime.Now);
             parameters.Add("v_Status", model.Status);
             parameters.Add("v_Typ", model.Typ);
             parameters.Add("v_Amount", model.Amount);
@@ -653,7 +653,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_TransNo", model.TransNo);
             parameters.Add("v_CancelBy", model.ApprBy);
-            parameters.Add("v_CancelDt", DateTime.Now.Date);
+            parameters.Add("v_CancelDt", DateTime.Now);
             parameters.Add("v_Remarks", model.Remarks);
             parameters.Add("v_LvSalary", model.Status == "0" ? model.Amount : 0);
             parameters.Add("v_Disburse", "Y");
@@ -1095,7 +1095,7 @@ namespace Onyx.Services
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
             parameters.Add("v_ExpDt", model.ExpDt);
-            parameters.Add("v_TrnDt", DateTime.Now.Date);
+            parameters.Add("v_TrnDt", DateTime.Now);
             parameters.Add("v_TransTyp", trnTyp);
             parameters.Add("v_DocStatus", model.DocStatus);
             parameters.Add("v_Status", "N");
@@ -1117,7 +1117,7 @@ namespace Onyx.Services
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
             parameters.Add("v_ExpDt", model.ExpDt);
-            parameters.Add("v_TrnDt", DateTime.Now.Date);
+            parameters.Add("v_TrnDt", DateTime.Now);
             parameters.Add("v_TransTyp", trnTyp);
             parameters.Add("v_DocStatus", model.DocStatus);
             parameters.Add("v_Status", "N");
@@ -1139,7 +1139,7 @@ namespace Onyx.Services
             parameters.Add("v_IssueDt", model.IssueDt);
             parameters.Add("v_IssuePlace", model.IssuePlace);
             parameters.Add("v_ExpDt", model.ExpDt);
-            parameters.Add("v_TrnDt", DateTime.Now.Date);
+            parameters.Add("v_TrnDt", DateTime.Now);
             parameters.Add("v_TransTyp", trnTyp);
             parameters.Add("v_DocStatus", model.DocStatus);
             parameters.Add("v_Status", "N");

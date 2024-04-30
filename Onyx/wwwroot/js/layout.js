@@ -217,7 +217,6 @@ function saveLoanApproval(btn) {
     }
 
 }
-
 function showFundApprovalModal(transNo, reject) {
     var url = `/Transactions/GetEmpFundApproval?transNo=${transNo}`;
     $('#EmpFundApprovalModal').load(url, function () {
@@ -244,7 +243,6 @@ function showFundApprovalModal(transNo, reject) {
         $("#EmpFundApprovalModal").modal("show");
     });
 }
-
 function saveFundApproval(btn) {
     var frm = $("#fund-approval-frm");
     if (frm.valid()) {
@@ -264,7 +262,100 @@ function saveFundApproval(btn) {
         });
     }
 }
-
+function showEmpProgressionModal(transNo) {
+    var url = `/Transactions/GetEmployeeProgression?transNo=${transNo}`;
+    $('#EmpProgressionModal').load(url, function () {
+        parseDynamicForm();
+        bindEmployeeDropdown();
+        showHideComponent();
+        $("#DesigFromCd").addClass("disabled");
+        $("#DesigToCd").addClass("disabled");
+        $("#RevisedAmt").addClass("disabled");
+        $("#EmpProgressionModal").modal("show");
+    });
+}
+function deleteEmpProgression(transNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Transactions/DeleteEmployeeProgression?transNo=${transNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+                if ($("#progression-approvals-notifications").length)
+                    reloadPageAfterSometime();
+            });
+        }
+    });
+}
+function saveEmpPrgression(btn, approval) {
+    var frm = $("#emp-prograssion-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        var url = !approval ? "/Transactions/SaveEmployeeProgression" : "/Transactions/ApproveEmployeeProgression?processId=HRPT6";
+        postAjax(url, frm.serialize(), function (response) {
+            showSuccessToastr(response.message);
+            $("#EmpProgressionModal").modal("hide");
+            reloadDatatable();
+            if ($("#progression-approvals-notifications").length)
+                reloadPageAfterSometime();
+            unloadingButton(btn);
+        });
+    }
+}
+function showDocumentApprovalModal(empCd, docTypeCd, srNo) {
+    var url = `/Transactions/GetRenewalDocumentApproval?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function saveDocumentRenewalApproval(btn, reject) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        var status = !reject ? "A" : "R";
+        $("#Status").val(status);
+        filePostAjax("/Transactions/SaveRenewalDocumentApproval", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                reloadDatatable();
+                if ($("#doc-renewal-approvals-notifications").length)
+                    reloadPageAfterSometime();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function showHideTypeDropdown() {
+    $('#RenewalDocumentsSearchDataTable').DataTable().destroy();
+    $("#RenewalDocumentsSearchDataTable").addClass("d-none");
+    var type = $("input[name='Type']:checked").val();
+    $("#EmpCd,#Company,#Vehicle").closest('.form-group').addClass("d-none");
+    if (type == "EMP")
+        $("#EmpCd").closest('.form-group').removeClass("d-none");
+    else if (type == "COM")
+        $("#Company").closest('.form-group').removeClass("d-none");
+    else
+        $("#Vehicle").closest('.form-group').removeClass("d-none");
+}
+function showHideComponent() {
+    var type = $("#EP_TypeCd").val();
+    $("#component-container").addClass("d-none");
+    if (type == "HREP02" || type == "HREP04" || type == "HREP05")
+        $("#component-container").removeClass("d-none");
+}
 $('.filter-select-picker,.filter-select2').on('change', function (e) {
     var dataTable = window["datatable"];
     var value = $(this).val();
