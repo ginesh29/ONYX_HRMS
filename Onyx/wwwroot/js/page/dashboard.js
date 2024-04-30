@@ -85,7 +85,7 @@ function showChart(init) {
         var xValues = response.xAxis;
         var yValues = response.yAxis;
         var ctx = $('#myChart');
-        
+
         window["myChart"] = new Chart(ctx, {
             type: "bar",
             data: {

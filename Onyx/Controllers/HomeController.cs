@@ -96,7 +96,7 @@ namespace Onyx.Controllers
                     BackgroundColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
                     BorderColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
                     Start = !isLeapYear && m.Date.Day == 29 && m.Date.Month == 2 ? DateTime.MinValue.ToString("yyyy-MM-ddTHH:mm:ss") : new DateTime(year, m.Date.Month, m.Date.Day).ToString("yyyy-MM-ddTHH:mm:ss"),
-                    Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}".Replace("ANNIVERSARY", "WORK ANNIVERSARY"),
+                    Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}",
                 }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
             return Json(events);
         }
