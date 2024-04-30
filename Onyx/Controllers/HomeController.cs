@@ -12,21 +12,29 @@ namespace Onyx.Controllers
     {
         private readonly AuthService _authService;
         private readonly CommonService _commonService;
+        private readonly EmployeeService _employeeService;
         private readonly ReportService _reportService;
         private readonly LoggedInUserModel _loggedInUser;
 
-        public HomeController(AuthService authService, ReportService reportService, CommonService commonService)
+        public HomeController(AuthService authService, ReportService reportService, CommonService commonService, EmployeeService employeeService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _reportService = reportService;
             _commonService = commonService;
+            _employeeService = employeeService;
         }
         public IActionResult Index()
         {
             var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             EmplLoanAndLeaveApproval.HeadCounts = EmplLoanAndLeaveApproval.HeadCounts.Where(m => m.HeadCount > 0);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
+            if (_loggedInUser.UserOrEmployee == "E")
+            {
+                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserCd).Employees.FirstOrDefault();
+                ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserAbbr).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserAbbr, string.Empty, 0, "N", _loggedInUser.UserCd);
+            }
             return View();
         }
         public async Task<IActionResult> UpdateCompany(string CoCd)

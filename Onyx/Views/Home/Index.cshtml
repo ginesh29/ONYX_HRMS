@@ -8,8 +8,91 @@
     };
     var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
     EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval = ViewBag.EmplLoanAndLeaveApproval;
+    var loggedInUser = _authService.GetLoggedInUser();
+    Employee_GetRow_Result EmployeeDetail = ViewBag.EmployeeDetail;
+    EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
+    var address = $"{EmpContactDetail.AddressLine1}, {EmpContactDetail.AddressLine2}, {EmpContactDetail.AddressLine3}";
+    IEnumerable<EmpDocuments_GetRow_Result> empDocs = ViewBag.EmpDocs;
 }
 <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
+@if (loggedInUser.UserOrEmployee == "E")
+{
+    var avatarFileExist = EmployeeDetail.ImageFilePath.FileExist("emp-photo", loggedInUser.CompanyCd);
+    var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(EmployeeDetail.ImageFilePath) ? $"/uploads/{loggedInUser.CompanyCd}/emp-photo/{EmployeeDetail.ImageFilePath}" : "/images/avatar.png";
+    var lvStatus = EmployeeDetail.LvStatus == "N" ? "Leave Applied" :
+    EmployeeDetail.LvStatus == "Y" ? "Leave Approved" :
+    EmployeeDetail.LvStatus == "F" ? "On Leave " : "Present";
+    var statusClass = EmployeeDetail.LvStatus == "N" ? "warning" : EmployeeDetail.LvStatus == "Y" ? "orange" : EmployeeDetail.LvStatus == "F" ? "danger" : "success";
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-6 d-flex align-EmployeeDetails-stretch flex-column">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            <p class="text-muted text-sm mb-0"><b>Code: </b> @EmployeeDetail.Cd</p>
+                            <p class="text-muted text-sm mb-0"><b>Branch: </b> @EmployeeDetail.Branch</p>
+                            <p class="text-muted text-sm mb-0"><b>Sponsor: </b> @EmployeeDetail.Sponsor</p>
+                            <p class="text-muted text-sm mb-0"><b>Designation: </b> @EmployeeDetail.Designation</p>
+                            <p class="text-muted text-sm mb-0"><b>Department: </b> @EmployeeDetail.Department</p>
+                            <p class="text-muted text-sm mb-0"><b>Location: </b> @EmployeeDetail.Location</p>
+                            <p class="text-muted text-sm mb-0"><b>Type: </b> @EmployeeDetail.EmpType</p>
+                        </div>
+                        <div class="col-5 text-center">
+                            <img src="@avatarImage" alt="user-avatar" class="rounded img-fluid border" style="height: 150px;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <p class="text-muted text-sm mb-0"><b>Nationality: </b>@EmployeeDetail.Nationality</p>
+                            <p class="text-muted text-sm mb-0"><b>Date of Birth: </b> @EmployeeDetail.DOB.Value.FormatDate()</p>
+                            <p class="text-muted text-sm mb-0"><b>Date of Join: </b> @EmployeeDetail.DOJ.Value.FormatDate()</p>
+                            <p class="text-muted text-sm mb-0"><b>Confirmation: </b> @EmployeeDetail.Confirm.Value.FormatDate()</p>
+                            <p class="text-muted text-sm mb-0"><b>Probation: </b> @EmployeeDetail.Probation.Value.FormatDate()</p>
+                            <p class="text-muted text-sm mb-0"><b>Status: </b> @EmployeeDetail.Status</p>
+                        </div>
+                        <div class="col-md-5">
+                            <h4 class="lead mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h4>
+                            <p class="text-muted text-sm mb-0"><b>S/O: </b> @EmployeeDetail.Father</p>
+                            <p class="text-muted text-sm mb-0"><b>Email: </b> @EmpContactDetail?.Email</p>
+                            <p class="text-muted text-sm mb-0"><b>Mob No.: </b> @EmpContactDetail?.Mobile</p>
+                            <p class="text-muted text-sm mb-0"><b>Address: </b> @address</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-label text-primary">
+                        My Documents
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Doc Type</th>
+                                <th>Doc No</th>
+                                <th>Expiry Date</th>
+                                <th>Days</th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in empDocs)
+                        {
+                            var days = (item.ExpDt - DateTime.Now).Days;
+                            <tr>
+                                <td>@item.DocTypSDes</td>
+                                <td>@item.DocNo</td>
+                                <td>@item.ExpDt.FormatDate()</td>
+                                <td><span class="badge badge-info">@days day(s)</span></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 <div class="row">
     <div class="col-lg-3 col-6">
         <div class="small-box bg-white">
@@ -71,7 +154,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 500px; overflow:auto">
+            <div class="card-body" style="height: 535px; overflow:auto">
                 <table class="table table-sm" id="ExpiredDocDataTable">
                     <thead class="thead-dark">
                         <tr>
@@ -132,7 +215,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 500px; overflow:auto">
+            <div class="card-body" style="height: 535px; overflow:auto">
                 <table class="table table-sm" id="EmpLeaveDataTable-5">
                     <thead class="thead-dark">
                         <tr>

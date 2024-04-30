@@ -8,7 +8,7 @@
         public string DocNo { get; set; }
         public string OthRefNo { get; set; }
         public DateTime? IssueDt { get; set; }
-        public DateTime? ExpDt { get; set; }
+        public DateTime ExpDt { get; set; }
         public string FormatedIssueDt { get; set; }
         public string FormatedExpDt { get; set; }
         public string IssuePlace { get; set; }
