@@ -11,7 +11,7 @@
     var loggedInUser = _authService.GetLoggedInUser();
     Employee_GetRow_Result EmployeeDetail = ViewBag.EmployeeDetail;
     EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
-    var address = $"{EmpContactDetail.AddressLine1}, {EmpContactDetail.AddressLine2}, {EmpContactDetail.AddressLine3}";
+
     IEnumerable<EmpDocuments_GetRow_Result> empDocs = ViewBag.EmpDocs;
 }
 <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
@@ -19,10 +19,7 @@
 {
     var avatarFileExist = EmployeeDetail.ImageFilePath.FileExist("emp-photo", loggedInUser.CompanyCd);
     var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(EmployeeDetail.ImageFilePath) ? $"/uploads/{loggedInUser.CompanyCd}/emp-photo/{EmployeeDetail.ImageFilePath}" : "/images/avatar.png";
-    var lvStatus = EmployeeDetail.LvStatus == "N" ? "Leave Applied" :
-    EmployeeDetail.LvStatus == "Y" ? "Leave Approved" :
-    EmployeeDetail.LvStatus == "F" ? "On Leave " : "Present";
-    var statusClass = EmployeeDetail.LvStatus == "N" ? "warning" : EmployeeDetail.LvStatus == "Y" ? "orange" : EmployeeDetail.LvStatus == "F" ? "danger" : "success";
+    var address = $"{EmpContactDetail.AddressLine1}, {EmpContactDetail.AddressLine2}, {EmpContactDetail.AddressLine3}";
     <div class="row">
         <div class="col-12 col-sm-6 col-md-6 d-flex align-EmployeeDetails-stretch flex-column">
             <div class="card">
