@@ -882,7 +882,7 @@ namespace Onyx.Controllers
                     _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
                 return PartialView("_ExcelData", new { Data = excelData, Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("File not supported. Download again & refill data");
             }

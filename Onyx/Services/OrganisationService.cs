@@ -4,6 +4,7 @@ using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Transactions;
 
 namespace Onyx.Services
 {
@@ -906,7 +907,6 @@ namespace Onyx.Services
         }
         public void SaveApprovalProcess(CompanyProcessApprovalModel model, string CoCd)
         {
-
             var procedureName = "CompanyProcessApproval_Update_N";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
@@ -916,17 +916,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", model.BranchCd ?? "0");
             parameters.Add("v_Dept", model.DeptCd ?? "0");
             parameters.Add("v_CoCd", CoCd);
-            connection.Open();
-            using SqlTransaction transaction = connection.BeginTransaction();
-            try
-            {
-                connection.Query(procedureName, parameters, transaction: transaction, commandType: CommandType.StoredProcedure);
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-            }
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public void SaveApprovalProcess_Detail(CompanyProcessApprovalModel model, int srNo, string empCd, string CoCd)
         {

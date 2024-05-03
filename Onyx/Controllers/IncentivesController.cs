@@ -137,7 +137,7 @@ namespace Onyx.Controllers
                     _transactionService.ImportIncentiveExcelData(validData, filterModel);
                 return PartialView("_IncentiveExcelData", new { Data = excelData, Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("File not supported. Download again & refill data");
             }

@@ -966,7 +966,7 @@ namespace Onyx.Controllers
                     _transactionService.ImportAttendanceExcelData(validData, filterModel);
                 return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("File not supported. Download again & refill data");
             }
@@ -1070,7 +1070,7 @@ namespace Onyx.Controllers
                     _transactionService.ImportVariablePayComponentExcelData(validData, filterModel, _loggedInUser.CompanyCd);
                 return PartialView("_VariablePayDedComponentsExcelData", new { Data = excelData, Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("File not supported. Download again & refill data");
             }
@@ -1616,6 +1616,7 @@ namespace Onyx.Controllers
         }
         #endregion
 
+        #region Single Payroll
         public IActionResult SinglePayroll()
         {
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
@@ -1718,6 +1719,9 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        #endregion
+
+        #region EmpSepration
         public IActionResult EmpSepration()
         {
             ViewBag.SeprationTypeItems = _commonService.GetSysCodes(SysCode.SeprationType).Select(m => new SelectListItem
@@ -1737,5 +1741,6 @@ namespace Onyx.Controllers
                 };
             return PartialView("_EmpSettlementLetter", seprationData);
         }
+        #endregion
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Onyx.BackgroundTask;
 using Onyx.Data;
+using Onyx.Middleware;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 
@@ -36,6 +37,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
-using System.Linq;
 
 namespace Onyx.Controllers
 {
