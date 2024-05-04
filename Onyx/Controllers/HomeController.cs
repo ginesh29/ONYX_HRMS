@@ -87,9 +87,9 @@ namespace Onyx.Controllers
         }
         #endregion
 
-        public async Task<IActionResult> UpdateCompany(string CoCd)
+        public async Task<IActionResult> UpdateClaim(string claimType, string claimValue)
         {
-            await _authService.UpdateClaim("CompanyCd", CoCd.Trim());
+            await _authService.UpdateClaim(claimType, claimValue);
             var result = new CommonResponse
             {
                 Success = true,

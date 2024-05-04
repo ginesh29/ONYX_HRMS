@@ -83,7 +83,9 @@
                     returnUrl = returnUrl ? returnUrl : "/";
                     showSuccessToastr(response.message)
                     setTimeout(function () {
-                        window.location.href = returnUrl;
+                        postAjax("/home/UpdateClaim", { claimType: 'ActivityId', claimValue: response.data.activityId }, function (response) {
+                            window.location.href = returnUrl;
+                        });
                     }, 1000)
                     unloadingButton(btn);
                 }

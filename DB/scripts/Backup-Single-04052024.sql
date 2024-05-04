@@ -1,6 +1,6 @@
 CREATE OR ALTER Procedure [dbo].[ActivityLogHead_Update]
 	@v_CoCd			Char(5)
-,	@v_ActivityId	Varchar(20)=''
+,	@v_ActivityId	bigint=''
 ,	@v_SessionId	Varchar(40)=''
 ,	@v_UserCd		Char(5)=''
 ,	@v_IP			Varchar(20)=''

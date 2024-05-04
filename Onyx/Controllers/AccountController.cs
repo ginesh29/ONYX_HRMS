@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using System.Security.Claims;
 
 namespace Onyx.Controllers
 {
@@ -13,9 +14,10 @@ namespace Onyx.Controllers
         private readonly EmployeeService _employeeService;
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
+        private readonly LogService _logService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountController(DbGatewayService dbGatewayService, AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService, IHttpContextAccessor httpContextAccessor)
+        public AccountController(DbGatewayService dbGatewayService, AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService, IHttpContextAccessor httpContextAccessor, LogService logService)
         {
             _authService = authService;
             _commonService = commonService;
@@ -25,6 +27,7 @@ namespace Onyx.Controllers
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
             _httpContextAccessor = httpContextAccessor;
+            _logService = logService;
         }
         public IActionResult Login()
         {
@@ -39,7 +42,6 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            string activityId = _httpContextAccessor.HttpContext.Connection.Id;
             var companySp = model.Company.Split("_");
             var CoCd = companySp[0];
             model.CoAbbr = companySp[1];
@@ -62,7 +64,6 @@ namespace Onyx.Controllers
                         UserAbbr = user.Abbr,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
-                        ActivityId = activityId
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
@@ -88,7 +89,6 @@ namespace Onyx.Controllers
                         UserAbbr = model.LoginId,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
-                        ActivityId = activityId
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
@@ -99,19 +99,29 @@ namespace Onyx.Controllers
             }
             if (result.Success)
             {
-                _commonService.SetActivityLogHead(new ActivityLogModel
+                var activityId = _logService.SetActivityLogHead(new ActivityLogModel
                 {
                     Browser = model.Browser,
                     CoAbbr = model.CoAbbr,
                     CoCd = CoCd,
                     UserCd = UserCd,
-                    ActivityId = activityId,
+                    ActivityType = "I"
                 });
+                result.Data = new { activityId };
             }
             return Json(result);
         }
         public async Task<IActionResult> LogOut()
         {
+            _logService.SetActivityLogHead(new ActivityLogModel
+            {
+                Browser = _loggedInUser.Browser,
+                CoAbbr = _loggedInUser.CoAbbr,
+                UserCd = _loggedInUser.UserCd,
+                ActivityId = _loggedInUser.ActivityId,
+                CoCd = _loggedInUser.CompanyCd,
+                ActivityType = "U",
+            });
             await _authService.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }

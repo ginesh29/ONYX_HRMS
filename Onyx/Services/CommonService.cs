@@ -131,29 +131,7 @@ namespace Onyx.Services
             string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
-        }
-        public int SetActivityLogHead(ActivityLogModel model)
-        {
-            var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
-            var os = Environment.OSVersion.Platform.ToString();
-            var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
-            var procedureName = "ActivityLogHead_Update";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_CoCd", model.CoCd);
-            parameters.Add("v_ActivityId", model.ActivityId);
-            parameters.Add("v_SessionId", "");
-            parameters.Add("v_UserCd", model.UserCd);
-            parameters.Add("v_IP", ipAddress);
-            parameters.Add("v_OS", os);
-            parameters.Add("v_Browser", model.Browser);
-            parameters.Add("v_StartTime", DateTime.Now);
-            parameters.Add("v_EndTime", DateTime.Now);
-            parameters.Add("v_typ", "I");
-            var connection = new SqlConnection(connectionString);
-            int result = connection.QueryFirstOrDefault<int>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return result;
-        }
+        }        
         public int SetActivityLogDetail(string ActivityId, string ProcessId, string ActivityAbbr, string Message)
         {
             string UserIdWithName = _loggedInUser.UserCd != _loggedInUser.UserAbbr ? $"{_loggedInUser.UserAbbr}({_loggedInUser.UserCd})" : _loggedInUser.UserAbbr;

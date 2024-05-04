@@ -6,11 +6,14 @@ using Onyx.Services;
 using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<AppDbContext>();
+builder.Services.AddHostedService<QueuedHostedService>();
+builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<AppDbContext>();
 builder.Services.AddSingleton<DbGatewayService>();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddSingleton<CommonService>();
+builder.Services.AddSingleton<LogService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<EmployeeService>();
 builder.Services.AddSingleton<SettingService>();
@@ -18,9 +21,6 @@ builder.Services.AddSingleton<OrganisationService>();
 builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
-builder.Services.AddHostedService<QueuedHostedService>();
-builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
@@ -37,7 +37,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<CookieExpirationMiddleware>();
+//app.UseMiddleware<CookieExpirationMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

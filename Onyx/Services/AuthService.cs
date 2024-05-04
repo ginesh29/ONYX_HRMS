@@ -20,7 +20,7 @@ namespace Onyx.Services
                 new("UserOrEmployee", model.UserOrEmployee),
                 new("CompanyCd", model.CompanyCd),
                 new("CoAbbr", model.CoAbbr),
-                new("ActivityId",model.ActivityId),
+                new("ActivityId", string.Empty),
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -63,10 +63,14 @@ namespace Onyx.Services
             ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
             ClaimsIdentity identity = (ClaimsIdentity)user.Identity;
             Claim oldClaim = identity.FindFirst(key);
-            identity.RemoveClaim(oldClaim);
-            Claim newClaim = new(key, value);
-            identity.AddClaim(newClaim);
-            await _httpContextAccessor.HttpContext.SignInAsync(user);
+            if (oldClaim != null)
+                identity.RemoveClaim(oldClaim);
+            if (identity.Claims.Any())
+            {
+                Claim newClaim = new(key, value);
+                identity.AddClaim(newClaim);
+                await _httpContextAccessor.HttpContext.SignInAsync(user);
+            }            
         }
     }
 }
