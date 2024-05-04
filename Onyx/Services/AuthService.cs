@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Caching.Memory;
 using Onyx.Models.ViewModels;
 using System.Security.Claims;
 
 namespace Onyx.Services
 {
-    public class AuthService(IHttpContextAccessor httpContextAccessor)
+    public class AuthService(IHttpContextAccessor httpContextAccessor, IMemoryCache memoryCache)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly IMemoryCache _memoryCache = memoryCache;
         public async Task SignInUserAsync(LoggedInUserModel model)
         {
             var claims = new List<Claim>()
@@ -20,19 +22,22 @@ namespace Onyx.Services
                 new("UserOrEmployee", model.UserOrEmployee),
                 new("CompanyCd", model.CompanyCd),
                 new("CoAbbr", model.CoAbbr),
-                new("ActivityId", string.Empty),
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var prop = new AuthenticationProperties
             {
                 IsPersistent = true,
-                ExpiresUtc = DateTime.UtcNow.AddDays(1)
+                ExpiresUtc = DateTime.Now.AddDays(1)
             };
+            _memoryCache.Set("CompanyCd", model.CompanyCd, DateTime.Now.AddDays(2));
+            _memoryCache.Set("CoAbbr", model.CoAbbr, DateTime.Now.AddDays(2));
             await _httpContextAccessor.HttpContext.SignInAsync(claimsPrincipal, prop);
         }
         public async Task SignOutAsync()
         {
+            _memoryCache.Remove("CompanyCd");
+            _memoryCache.Remove("ActivityId");
             await _httpContextAccessor.HttpContext.SignOutAsync();
         }
         public LoggedInUserModel GetLoggedInUser()
@@ -60,6 +65,7 @@ namespace Onyx.Services
         }
         public async Task UpdateClaim(string key, string value)
         {
+            _memoryCache.Set(key, value, DateTime.Now.AddDays(2));
             ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
             ClaimsIdentity identity = (ClaimsIdentity)user.Identity;
             Claim oldClaim = identity.FindFirst(key);
@@ -69,8 +75,13 @@ namespace Onyx.Services
             {
                 Claim newClaim = new(key, value);
                 identity.AddClaim(newClaim);
-                await _httpContextAccessor.HttpContext.SignInAsync(user);
-            }            
+                var prop = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.Now.AddDays(1)
+                };
+                await _httpContextAccessor.HttpContext.SignInAsync(user, prop);
+            }
         }
     }
 }

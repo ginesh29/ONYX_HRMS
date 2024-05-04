@@ -25,7 +25,7 @@ namespace Onyx.Services
             parameters.Add("v_OS", os);
             parameters.Add("v_Browser", model.Browser);
             parameters.Add("v_StartTime", DateTime.Now);
-            parameters.Add("v_EndTime", DateTime.Now);
+            parameters.Add("v_EndTime", model.ActivityType == "U" ? DateTime.Now : null);
             parameters.Add("v_typ", model.ActivityType);
             var connection = new SqlConnection(connectionString);
             string result = connection.QueryFirstOrDefault<string>

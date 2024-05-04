@@ -1,35 +1,30 @@
-﻿using Onyx.Models.ViewModels;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Onyx.Models.ViewModels;
 using Onyx.Services;
-using System.Security.Claims;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Onyx.Middleware
 {
-    public class CookieExpirationMiddleware(RequestDelegate next, LogService logService)
+    public class CookieExpirationMiddleware(RequestDelegate next, LogService logService, AuthService authService, IMemoryCache memoryCache)
     {
         private readonly RequestDelegate _next = next;
         private readonly LogService _logService = logService;
-
+        private readonly AuthService _authService = authService;
+        private readonly IMemoryCache _memoryCache = memoryCache;
         public async Task Invoke(HttpContext context)
         {
             var userIdentity = context.User.Identity;
             if (!userIdentity.IsAuthenticated)
             {
-                var claimsIdentity = userIdentity as ClaimsIdentity;
-                if (claimsIdentity.Claims.Any())
+                var CoCd = _memoryCache.Get<string>("CompanyCd");
+                var CoAbbr = _memoryCache.Get<string>("CoAbbr");
+                var ActivityId = _memoryCache.Get<string>("ActivityId");
+                if (!string.IsNullOrEmpty(CoCd) && !string.IsNullOrEmpty(ActivityId))
                 {
-                    var ActivityId = claimsIdentity?.FindFirst("ActivityId")?.Value;
-                    var Browser = claimsIdentity?.FindFirst("Browser")?.Value;
-                    var CoAbbr = claimsIdentity?.FindFirst("CoAbbr")?.Value;
-                    var UserCd = claimsIdentity?.FindFirst("UserCd")?.Value;
-                    var CoCd = claimsIdentity?.FindFirst("CompanyCd")?.Value;
                     _logService.SetActivityLogHead(new ActivityLogModel
                     {
-                        Browser = Browser,
-                        CoAbbr = CoAbbr,
-                        UserCd = UserCd,
-                        ActivityId = ActivityId,
                         CoCd = CoCd,
+                        CoAbbr = CoAbbr,
+                        ActivityId = ActivityId,
                         ActivityType = "U",
                     });
                 }

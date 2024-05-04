@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
-using System.Security.Claims;
 
 namespace Onyx.Controllers
 {
@@ -41,7 +40,7 @@ namespace Onyx.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
-        {
+        {            
             var companySp = model.Company.Split("_");
             var CoCd = companySp[0];
             model.CoAbbr = companySp[1];
