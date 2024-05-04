@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
-using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
-using Rotativa.AspNetCore.Options;
 
 namespace Onyx.Controllers
 {

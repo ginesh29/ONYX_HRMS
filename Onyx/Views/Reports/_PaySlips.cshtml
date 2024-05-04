@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<GetRepo_PaySlip_Format_Result>
 @{
-    var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.WorkDays, m.Department, m.Curr1, m.Curr2, m.Designation, m.CoName, m.Yr, m.Prd });
+    var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.WorkDays, m.Department, m.Designation, m.CoName, m.Yr, m.Prd });
     int cnt = 0;
 }
 @foreach (var grp in grpData)
@@ -10,6 +10,8 @@
     var totalEarnings = grp.Sum(m => m.Amt1);
     var totalDeductions = grp.Sum(m => m.Amt2);
     var netSalary = totalEarnings - totalDeductions;
+    string Curr1 = grp.FirstOrDefault().Curr1;
+    string Curr2 = grp.FirstOrDefault().Curr2;
     <div class="col-md-8 mb-5">
         <div class="invoice p-3 mb-3">
             <!-- title row -->
@@ -68,10 +70,10 @@
                     <tfoot>
                         <tr class="table-secondary">
                             <td>Total Earnings/Payments</td>
-                            <td>@grp.Key.Curr1</td>
+                            <td>@Curr1</td>
                             <td class="border-right">@totalEarnings.ToString("0.00")</td>
                             <td>Total Deductions</td>
-                            <td>@grp.Key.Curr2</td>
+                            <td>@Curr2</td>
                             <td>@totalDeductions.ToString("0.00")</td>
                         </tr>
                     </tfoot>
@@ -79,7 +81,7 @@
                 <div style="width: 100%; display: table;">
                     <div style="display: table-row">
                         <div style="width: 75%; display: table-cell;"><span class="font-weight-bold">Amount (In words): </span>@ExtensionMethod.NumberToWords(netSalary)</div>
-                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@grp.Key.Curr1  @netSalary.ToString("0.00")</div>
+                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString("0.00")</div>
                     </div>
                 </div>
                 <hr />

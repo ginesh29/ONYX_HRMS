@@ -65,6 +65,7 @@ function showEmpLeave(type) {
                     },
                     {
                         data: function (row) {
+                            row.noOfDays = row.noOfDays ? row.noOfDays : 1;
                             return `<label class="badge badge-info">${row.noOfDays} day(s)</lable>`;
                         },
                     },
@@ -106,20 +107,3 @@ function showChart(init) {
     })
 }
 showChart(true);
-
-function loadCalendar() {
-    var Calendar = FullCalendar.Calendar;
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new Calendar(calendarEl, {
-        headerToolbar: {
-            left: 'today',
-            center: 'title',
-            right: 'prev,next'
-        },
-        initialView: 'listWeek',
-        themeSystem: 'bootstrap',
-        events: '/Home/FetchCalendarEvents',
-    });
-    calendar.render();
-}
-loadCalendar();

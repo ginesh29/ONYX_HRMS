@@ -43,7 +43,6 @@ namespace Onyx.Models.ViewModels.Report
     }
     public class PaySlipFilterModel
     {
-        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Branch")]
         public string BranchCd { get; set; }
         public string Period { get; set; }

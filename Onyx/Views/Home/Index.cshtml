@@ -13,6 +13,8 @@
     EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
 
     IEnumerable<EmpDocuments_GetRow_Result> empDocs = ViewBag.EmpDocs;
+    IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
+    var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
 }
 <link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
 @if (loggedInUser.UserOrEmployee == "E")
@@ -151,7 +153,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 535px; overflow:auto">
+            <div class="card-body" style="height: 575px; overflow:auto">
                 <table class="table table-sm" id="ExpiredDocDataTable">
                     <thead class="thead-dark">
                         <tr>
@@ -182,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 536px; overflow:auto">
+            <div class="card-body" style="height: 610px; overflow:auto">
                 <table class="table table-sm" id="EmpLeaveDataTable-3">
                     <thead class="thead-dark">
                         <tr>
@@ -241,7 +243,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 500px; overflow:auto">
+            <div class="card-body" style="height: 535px; overflow:auto">
                 <table class="table table-sm" id="EmpLeaveDataTable-4">
                     <thead class="thead-dark">
                         <tr>
@@ -257,7 +259,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-7">
         <div class="card">
             <div class="card-header">
                 <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
@@ -284,38 +286,7 @@
             <!-- /.card-body -->
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary">
-                        Head Count
-                    </h4>
-                </div>
-            </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Description</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
-                    {
-                        <tr>
-                            <td>@item.Des</td>
-                            <td>@item.HeadCount</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card">
             <div class="card-header">
                 <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
@@ -346,20 +317,65 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-5">
         <div class="card">
             <div class="card-header">
                 <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
                     <h4 class="card-label text-primary">
-                        Birthday/Work Anniversary Calendar
+                        Birthday/Work Anniversary
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body" style="height:500px;overflow:auto">
+                <table class="table table-sm">
+                    @foreach (var grp in groupedEvents)
+                    {
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="padding-left: 8px;">@grp.Key.Start</th>
+                            </tr>
+                        </thead>
+                        foreach (var item in grp)
+                        {
+                            <tr>
+                                <td><i class="fas fa-circle icon-sm mr-2" style="font-size:x-small;color:@item.BackgroundColor"></i>@item.Title</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <h4 class="card-label text-primary">
+                        Head Count
                     </h4>
                 </div>
             </div>
             <div class="card-body">
-                <div id="calendar"></div>
+                <table class="table table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Description</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
+                    {
+                        <tr>
+                            <td>@item.Des</td>
+                            <td>@item.HeadCount</td>
+                        </tr>
+                    }
+                </table>
             </div>
+            <!-- /.card-body -->
         </div>
     </div>
+
 </div>
 <style>
     .tooltip-inner {
