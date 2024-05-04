@@ -14,7 +14,8 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly CommonService _commonService;
         private readonly LoggedInUserModel _loggedInUser;
-        public AccountController(DbGatewayService dbGatewayService, AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AccountController(DbGatewayService dbGatewayService, AuthService authService, UserService userService, EmployeeService employeeService, CommonService commonService, SettingService settingService, IHttpContextAccessor httpContextAccessor)
         {
             _authService = authService;
             _commonService = commonService;
@@ -23,6 +24,7 @@ namespace Onyx.Controllers
             _employeeService = employeeService;
             _loggedInUser = _authService.GetLoggedInUser();
             _settingService = settingService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public IActionResult Login()
         {
@@ -37,6 +39,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
+            string activityId = _httpContextAccessor.HttpContext.Connection.Id;
             var companySp = model.Company.Split("_");
             var CoCd = companySp[0];
             model.CoAbbr = companySp[1];
@@ -58,9 +61,10 @@ namespace Onyx.Controllers
                         Username = validateUser.UName,
                         UserAbbr = user.Abbr,
                         UserType = (int)model.UserType,
-                        Browser = model.Browser
+                        Browser = model.Browser,
+                        ActivityId = activityId
                     };
-                    await _authService.SignInUserAsync(u, model.RememberMe);
+                    await _authService.SignInUserAsync(u);
                     result.Success = true;
                     result.Message = "Login Successfully";
                 }
@@ -83,9 +87,10 @@ namespace Onyx.Controllers
                         Username = user.Username,
                         UserAbbr = model.LoginId,
                         UserType = (int)model.UserType,
-                        Browser = model.Browser
+                        Browser = model.Browser,
+                        ActivityId = activityId
                     };
-                    await _authService.SignInUserAsync(u, model.RememberMe);
+                    await _authService.SignInUserAsync(u);
                     result.Success = true;
                     result.Message = "Login Successfully";
                 }
@@ -99,7 +104,8 @@ namespace Onyx.Controllers
                     Browser = model.Browser,
                     CoAbbr = model.CoAbbr,
                     CoCd = CoCd,
-                    UserCd = UserCd
+                    UserCd = UserCd,
+                    ActivityId = activityId,
                 });
             }
             return Json(result);

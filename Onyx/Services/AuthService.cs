@@ -8,8 +8,8 @@ namespace Onyx.Services
     public class AuthService(IHttpContextAccessor httpContextAccessor)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        public async Task SignInUserAsync(LoggedInUserModel model, bool rememberMe)
-        {            
+        public async Task SignInUserAsync(LoggedInUserModel model)
+        {
             var claims = new List<Claim>()
             {
                 new("Username", model.Username),
@@ -19,16 +19,16 @@ namespace Onyx.Services
                 new("UserCd", model.UserCd),
                 new("UserOrEmployee", model.UserOrEmployee),
                 new("CompanyCd", model.CompanyCd),
-                new("CoAbbr", model.CoAbbr)
+                new("CoAbbr", model.CoAbbr),
+                new("ActivityId",model.ActivityId),
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var prop = new AuthenticationProperties();
-            if (rememberMe)
+            var prop = new AuthenticationProperties
             {
-                prop.IsPersistent = rememberMe;
-                prop.ExpiresUtc = DateTime.UtcNow.AddDays(1);
-            }
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddDays(1)
+            };
             await _httpContextAccessor.HttpContext.SignInAsync(claimsPrincipal, prop);
         }
         public async Task SignOutAsync()
@@ -53,6 +53,7 @@ namespace Onyx.Services
                     user.CompanyCd = claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
                     user.CoAbbr = claims.FirstOrDefault(m => m.Type == "CoAbbr")?.Value;
                     user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
+                    user.ActivityId = claims.FirstOrDefault(m => m.Type == "ActivityId")?.Value;
                 }
             }
             return user;

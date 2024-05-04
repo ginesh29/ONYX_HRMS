@@ -46,7 +46,7 @@ namespace Onyx.Controllers
                 var result = _transactionService.SaveLoan(model);
                 var ActivityAbbr = "INS";
                 var Message = $", Loan is applied With Trans no={model.TransNo}";
-                _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+                _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
                 return Json(result);
             }
             return Json(new CommonResponse
@@ -92,7 +92,7 @@ namespace Onyx.Controllers
                     _transactionService.SaveLeave(model);
                     var ActivityAbbr = "INS";
                     var Message = $", Leave is applied With Trans no={model.TransNo}";
-                    _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+                    _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
                     var result = new CommonResponse
                     {
                         Success = true,
@@ -123,7 +123,7 @@ namespace Onyx.Controllers
             _transactionService.SaveLeaveSalary(model);
             var ActivityAbbr = "INS";
             var Message = $", Leave Salary is applied With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -152,7 +152,7 @@ namespace Onyx.Controllers
             _transactionService.SaveFundRequest(model);
             var ActivityAbbr = "INS";
             var Message = $", Fund request is applied With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,

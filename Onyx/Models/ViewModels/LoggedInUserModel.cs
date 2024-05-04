@@ -10,5 +10,6 @@
         public int UserType { get; set; }
         public string CompanyCd { get; set; }
         public string Browser { get; set; }
+        public string ActivityId { get; set; }
     }
 }

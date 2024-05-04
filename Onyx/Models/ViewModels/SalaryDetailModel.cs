@@ -2,7 +2,8 @@
 {
     public class SalaryDetailModel
     {
-        public string Des { get; set; }
+        public string Name { get; set; }
         public string PayElementDetailsCount { get; set; }
+        public string Prd { get; set; }
     }
 }

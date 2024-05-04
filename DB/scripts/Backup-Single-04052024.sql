@@ -1,3 +1,512 @@
+CREATE OR ALTER Procedure [dbo].[ActivityLogHead_Update]
+	@v_CoCd			Char(5)
+,	@v_ActivityId	Varchar(20)=''
+,	@v_SessionId	Varchar(40)=''
+,	@v_UserCd		Char(5)=''
+,	@v_IP			Varchar(20)=''
+,	@v_OS			Varchar(20)=''
+,	@v_Browser		Varchar(20)=''
+,	@v_StartTime	datetime=''
+,	@v_EndTime		datetime=''
+,	@v_typ			Char(1)=''
+As		-- Drop Procedure [dbo].[ActivityLogHead_Update]'03','13','','','','','','','05/13/2015','U'
+Begin
+	if @v_typ='I'
+	begin
+		Insert into ActivityLogHead
+		Values(
+			@v_CoCd
+		,	@v_SessionId
+		,	@v_UserCd
+		,	@v_IP
+		,	@v_OS
+		,	@v_Browser
+		,	@v_StartTime
+		,	@v_EndTime)
+		select @@identity
+	end
+	else if @v_typ='U'
+	begin
+		update ActivityLogHead
+		set EndTime=@v_EndTime
+		where CoCd=@v_CoCd and ActivityId=@v_ActivityId
+		select @@identity
+	end
+End
+
+ 
+ Go 
+CREATE OR ALTER     Procedure [dbo].[EmplLoanAndLeaveApproval_N]
+	@v_CoCd		char(5)
+,	@v_EmpCd	Char(10)
+,	@v_Typ		Char(1)
+
+AS
+--Drop Procedure [dbo].[EmplLoanAndLeaveApproval_N]'01','HR','U'
+
+select COUNT(TransNo) as LeaveApplied from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+where GETDATE() between FromDt and ToDt and LvStatus='N' and emp.CoCd=@v_CoCd --and emp.Status='HSTATPM   '
+
+select COUNT(TransNo) as OnLeave from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd --and emp.Status='HSTATPM   '
+
+select EmpCd [Working] into #Working from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd --and emp.Status='HSTATPM   '
+
+select count(cd) [Working] from Employee where cd not in (select [Working] from #Working)  --where Status='HSTATPM   '
+drop table #Working
+
+--select COUNT(TransNo) as LeaveApproval  from EmpLeave
+--inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EmpLeave.LvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LvStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LvApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LvApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EmpLeave.LvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LvApprBy or (select UserCd from Employee where Cd=EmpCd)=LvApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LeaveSalaryTicketApproval  from EmpLeaveSalaryTicket ELST
+--inner join Employee as emp on emp.Cd=ELST.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS3' and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	ELST.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS3' and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LoanApproval  from EmpLoan
+--inner join Employee as emp on emp.Cd=EmpLoan.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS1' and CPA.ApplTyp=EmpLoan.LoanTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LoanStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LoanApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LoanApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS1' and ApplTyp=EmpLoan.LoanTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LoanApprBy or (select UserCd from Employee where Cd=EmpCd)=LoanApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+		
+--select COUNT(EDI.EmpCd) as  DocumentIssue from EmpDocIssueRcpt as EDI
+--inner join  Employee as emp on emp.Cd=EDI.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT8' and CPA.ApplTyp=EDI.DocTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EDI.Stat='N' 
+--	and emp.CoCd=@v_CoCd 
+--	and emp.Status='HSTATPM   '   
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT8' and ApplTyp=EDI.DocTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+--select COUNT(EmpProgressionHead.EmpCd) as EmpProgression  from EmpProgressionHead
+--inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EmpProgressionHead.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EmpProgressionHead.Status='E' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT6' and ApplTyp=EmpProgressionHead.Typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+	
+--select COUNT(empprovisionsadj.EmpCd) as ProvAdj  from empprovisionsadj
+--inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=empprovisionsadj.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	empprovisionsadj.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and ApplTyp=empprovisionsadj.ProvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+			 
+	
+select SysCodes.Cd[Cd],SysCodes.Des,COUNT(Emp.Cd) as HeadCount from Employee as Emp 
+right   join SysCodes on Emp.Status=SysCodes.Cd  
+group by  SysCodes.Des,typ,emp.CoCd,SysCodes.Cd 
+having  typ='HSTAT ' or emp.CoCd=@v_CoCd
+
+
+declare @CurMonth int
+set @CurMonth=(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_MONTH           ')
+
+
+--order by Abbr
+--or Prd=
+--(select (CONVERT(varchar(10),(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')))+
+--(CONVERT(varchar(10),(select right ('00'+ltrim(str( (@CurMonth-1) )),2 ))))) 
+
+--select * from syscodes where typ='HEDT ' and cd<>'HEDT04    '
+declare @monthname as varchar(50)
+set @monthname=
+ case @CurMonth
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+select @monthname +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+
+declare @monthnameminusone as varchar(50)
+set @monthnameminusone=
+case @CurMonth-1
+when 0 then 'December' 
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+if( @monthnameminusone = 'December' )
+begin
+select @monthnameminusone +' '+
+(select CONVERT(varchar, CONVERT(int, Val)-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')
+end
+else
+begin
+select @monthnameminusone +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+end
+
+
+select (select des from syscodes where cd=EdTyp)[Name],isnull(CONVERT(decimal(18,2), SUM(Amt)),0) as  PayElementDetailsCount,Prd 
+from EmpTransYtd  
+where EdCd<>'HEDT04' 
+group by Prd,EdTyp
+order by prd desc
+--select SysCodes.Des,isnull(CONVERT(decimal(18,2), SUM(Amt)),0) as  PayElementDetailsCount ,Prd 
+--from EmpTransDetailYtd
+--right  join SysCodes on EmpTransDetailYtd.EdTyp=SysCodes.Cd  
+ 
+--group by  SysCodes.Des,typ,cd,Abbr,Prd
+--having typ='HEDT' and cd<>'HEDT04'
+--and Prd=(select Val++convert(varchar(10),RIGHT('00' + CONVERT(VARCHAR,@CurMonth-1), 2)) from  Parameters where CoCd='03' and Cd='CUR_YEAR')
+--(select Val*100+(@CurMonth-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR')
+
+--select COUNT(TransNo) as FundApproval  from EmpFund
+--inner join Employee as emp on emp.Cd=EmpFund.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS4' and CPA.ApplTyp=EmpFund.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EmpFund.[Status]='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM'
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS4' and ApplTyp=EmpFund.typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+
+DECLARE @startdate AS DATETIME = GETDATE()
+SELECT   Sum(AmtVal)[LoanRecoveryAmount] from EmpLoanDetail where EffDate>= DATEADD(MONTH, DATEDIFF(MONTH, 0, @startdate) , 0) and EndDate<=cast(EOMONTH(@startdate) as datetime) and Typ='D' 
+ Go 
+CREATE OR ALTER   Procedure [dbo].[GetRepo_PaySlip_Format_N] 
+	@v_CoCd			char(5)
+,	@v_Div			char(5)
+,	@v_RPrd			Char(2)
+,	@v_RYear		Char(4)
+,	@v_EmpCd		Char(10)
+As		-- Drop Procedure [dbo].[GetRepo_PaySlip_Format]'01','All','08','2016','All'
+Begin
+/*
+	Declare @v_CoCd char(5)
+	Declare @v_RPrd Char(2)
+	Declare @v_RYear Char(4)
+	Declare @v_EmpCd Char(10)
+
+	Set @v_CoCd='01'
+	Set @v_RPrd='06'
+	Set @v_RYear='2015'
+	Set @v_EmpCd='^'
+*/
+	--Declare @v_CoName Varchar(50)
+	declare @W_days numeric(2,0)
+	exec @W_days=  Get_Eday @v_RPrd,@v_RYear
+	Declare @Prd int
+	Declare @Period Char(6)
+	Declare @Year Char(4)
+	Declare @EDay int
+	Declare @DHrs numeric(5,2)
+	--Select @v_CoCd=Cd From Company Where CoName=@v_CoName
+	DeClare @OT1C 		char(10)
+	Declare @OT2C 		char(10)
+	Declare @OT3C 		char(10)
+	DeClare @ROT1C 		char(10)
+	Declare @ROT2C 		char(10)
+	Declare @ROT3C 		char(10)
+	Select @OT1C=Val From Parameters Where Cd='OT1' and CoCd=@v_CoCd
+	Select @OT2C=Val From Parameters Where Cd='OT2' and CoCd=@v_CoCd
+	Select @OT3C=Val From Parameters Where Cd='OT3' and CoCd=@v_CoCd
+	Select @ROT1C=Val From Parameters Where Cd='ROT1' and CoCd=@v_CoCd
+	Select @ROT2C=Val From Parameters Where Cd='ROT2' and CoCd=@v_CoCd
+	Select @ROT3C=Val From Parameters Where Cd='ROT3' and CoCd=@v_CoCd
+	Select @Prd=val From Parameters Where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	Select @Year=Val From Parameters Where Cd='CUR_YEAR' and CoCd=@v_CoCd
+	Set  @Period=@v_RYear*100+@v_RPrd
+	Select @DHrs=Val From Parameters Where Cd='WORKHRS' and CoCd=@v_CoCd
+	exec @Eday = Get_Eday @Prd,@Year
+
+	if cast(@v_RPrd as int) = @Prd and cast(@v_RYear as int)=@Year
+	  Begin
+		Select 
+			trim(Tp.EmpCd)[EmpCd]
+		,	(Select Personal_Id from EmpContract where EmpCd=Tp.EmpCd)[Official_Cd]
+		,	Emp.FName+' '+Emp.MName+ ' '+Emp.LName[Name]
+		,	Emp.Basic
+		,	Emp.BasicCurr
+		,	dbo.GetFunc_NoDecs(BasicCurr)[BasicNoDecs]
+		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd and Typ=Tp.EdTyp)[PayCode]
+		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd1 and Typ=Tp.EdTyp1)[PayCode1]
+		,	(select Des from Currency where Cd=Curr1)[Curr1]
+		,	(select Des from Currency where Cd=Curr2)[Curr2]
+		,	ExRate1
+		,	ExRate2
+		
+		,	case when EdTyp='HEDT01' 
+			then
+				case when EdCd='001' then round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
+				when EdCd in (Select Cd from companyearnded where EdTyp='HEDT01' and trntyp='P' and EdCd<>'001') 
+						then IsNull((Select top 1 round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
+						from EmpEarnDed where EdCd=TP.EdCd and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
+						and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0) 
+				else Isnull(Amt1,0) end
+			else
+			Isnull(Amt1,0) end	[Amt1]
+		,	Isnull(Amt2,0) [Amt2]
+		
+		,	round((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
+				-IsNull((select Amt from EmpTrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div),0))
+			+(IsNull((Select top 1 ((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay)
+					from EmpEarnDed where EdCd='009' and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
+					and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0)
+					-IsNull((select Amt from EmpTrans where EdCd='009' and EdTyp='HEDT01' and EmpCd=TP.Empcd and HRDiv=Emp.Div),0))
+					,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LOP]
+		,	round(((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
+					-IsNull((select Amt from EmpTrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div),0))*@W_days)/Emp.Basic,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LeaveAbs]
+			
+		,	dbo.GetFunc_NoDecs(Curr1)[NoDecs1]
+		,	dbo.GetFunc_NoDecs(Curr2)[NoDecs2]	
+		,	Isnull((Select Des From Codes Where Typ='BANK' and Cd=Emp.BankCd and EmpCd=Tp.EmpCd),'')[Bank]
+		,	(Select Max(Des) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay')[TrBank]
+		,	(Select Max(EmpAc) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[AcNo]
+		,	(Select Max(EmpAc) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrAcNo]
+		,	(Select Max(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayCurr]
+		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrCurr]
+		,	(Select Max(dbo.GetFunc_NoDecs(CurrCd)) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayNoDecs]
+		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrNoDecs]
+		,	(Select Max(Cast(CR.Rate as Char(15))) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayRate]
+		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrRate]
+		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.Typ='Net Pay' and BA.EmpCd=Tp.EmpCd)[BankAmt]
+		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.EmpCd=Tp.EmpCd and BA.Typ<>'Net Pay' and rtrim(BA.Bank)+rtrim(BA.Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrBankAmt]
+		,	isnull((Select Des from Designation where Cd=(Select Desg from EmpContract where EmpCd=Tp.EmpCd)),(Select Des From Designation Where Cd=Emp.Desg))[Designation]
+		,	(Select Des From DEPT Where cd=Emp.Dept)[Department]
+		,	(Select SDes From CC Where Cd=Emp.CC)[CC]
+		,	(Select SDes From Codes Where Typ='HLOC' and Cd=Emp.LocCd)[Loc]
+	  --,	@v_CoName[Co.Name] 
+		,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+		,	Br.Des[Branch]
+		,	(select Des from Codes where Typ='ESPON' and Cd=Emp.Sponsor)[Sponsor]
+		,	TrnInd
+		,	TrnInd1
+		,	@Prd[Prd]
+		,	@Year[Yr]
+		,	Isnull((Select RoundedAmt From EmpSalRound Where EmpCd=Tp.EmpCd),0)[Total]
+		,	(select Des from Currency where Cd=Curr.Cd)[Currency]
+		,	(select Des from Currency where Cd=Curr.SubCurr)[SubCurrency]
+		,	Curr.Rate
+		,	Curr.NoDecs[AmtDecs]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@OT1C),'')[WOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@OT2C),'')[OOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@OT3C),'')[HOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@ROT1C),'')[RWOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@ROT2C),'')[ROOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[RHOT]
+		,	Isnull(@OT1C,'')[WOTC]
+		,	Isnull(@OT2C,'')[OOTC]
+		,	Isnull(@OT3C,'')[HOTC]
+		,	Isnull(@ROT1C,'')[RWOTC]
+		,	Isnull(@ROT2C,'')[ROOTC]
+		,	Isnull(@ROT3C,'')[RHOTC]
+		,	EdTyp
+		,	EdCd
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'W')[WorkDays]
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'F')[FBDays]
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'O')[ODays]
+--			,	(Select Isnull(W_DAYS,0)-Isnull(UP_HDAYS,0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period) [W_days]
+		,	@Eday[W_days]
+		,	convert(int,(Select Isnull(sum(Up_HDays),0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period)) [Up_Hdays]
+		From
+			TempPaySlip Tp
+		,	Employee Emp
+		,	Branch Br
+		,	Currency Curr
+		Where
+			Emp.Cd=Tp.EmpCd
+		and	Br.Cd=Emp.Div
+		and Curr.Cd=Emp.CurrCd
+		and	(SubString(TrnInd,1,1) <> '#' or TrnInd is null)
+		and	(SubString(TrnInd1,1,1) <> '#' or TrnInd1 is null)
+		and	(Emp.CoCd=@v_CoCd and @v_EmpCd='All' or Emp.Cd=@v_EmpCd and @v_EmpCd<>'^')
+		and	(@v_Div='All' or @v_Div<>'' and Emp.div=@v_Div)
+		Order by	-- Select * From currency
+			Tp.EmpCd
+		,	Isnull(EdTyp,'Z')
+		,	Isnull(EdCd,'Z')
+	  End
+	Else
+	  Begin
+		Select 
+			trim(Tp.EmpCd)[EmpCd]
+		,	(Select Personal_Id from EmpContract where EmpCd=Tp.EmpCd)[Official_Cd]
+		,	Emp.FName+' '+Emp.MName+ ' '+Emp.LName[Name]
+		,	Emp.Basic
+		,	Emp.BasicCurr
+		,	dbo.GetFunc_NoDecs(BasicCurr)[BasicNoDecs]
+		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd and Typ=Tp.EdTyp)[PayCode]
+		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd1 and Typ=Tp.EdTyp1)[PayCode1]
+		,	(select Des from Currency where Cd=Curr1)[Curr1]
+		,	(select Des from Currency where Cd=Curr2)[Curr2]
+		,	ExRate1
+		,	ExRate2
+		
+		,	case when EdTyp='HEDT01' 
+			then
+				case when EdCd='001' then round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
+				when EdCd in (Select Cd from companyearnded where EdTyp='HEDT01' and trntyp='P' and EdCd<>'001') 
+						then IsNull((Select top 1 round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
+						from EmpEarnDed where EdCd=TP.EdCd and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
+						and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0) 
+				else Isnull(Amt1,0) end
+			else
+			Isnull(Amt1,0) end	[Amt1]
+		,	Isnull(Amt2,0) [Amt2]
+		
+		
+		
+		,	round((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
+				-IsNull((select Amt from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div and prd=@Period),0))
+			+(IsNull((Select top 1 ((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay)
+					from EmpEarnDed where EdCd='009' and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
+					and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0)
+					-IsNull((select Amt from EmpTransYtd where EdCd='009' and EdTyp='HEDT01' and EmpCd=TP.Empcd and HRDiv=Emp.Div and prd=@Period),0))
+					,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LOP]
+		,	round(((Emp.Basic-IsNull((select Amt from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div and prd=@Period),0))*@W_days)/Emp.Basic,0)[LeaveAbs]
+			
+		,	dbo.GetFunc_NoDecs(Curr1)[NoDecs1]
+		,	dbo.GetFunc_NoDecs(Curr2)[NoDecs2]	
+		,	Isnull((Select Des From Codes Where Typ='BANK' and Cd=Emp.BankCd and EmpCd=Tp.EmpCd),'')[Bank]
+		,	(Select Max(Des) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay')[TrBank]
+		,	(Select EmpAc From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[AcNo]
+		,	(Select EmpAc From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrAcNo]
+		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayCurr]
+		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrCurr]
+		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayNoDecs]
+		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrNoDecs]
+		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and  EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayRate]
+		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and  EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrRate]
+		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.Typ='Net Pay' and BA.EmpCd=Tp.EmpCd)[BankAmt]
+		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.EmpCd=Tp.EmpCd and BA.Typ<>'Net Pay' and rtrim(BA.Bank)+rtrim(BA.Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrBankAmt]
+		,	isnull((Select Des from Designation where Cd=(Select Desg from EmpContract where EmpCd=Tp.EmpCd)),(Select Des From Designation Where Cd=Emp.Desg))[Designation]
+		,	(Select Des From DEPT Where cd=Dept)[Department]
+		,	(Select SDes From CC Where Cd=Emp.CC)[CC]
+		,	(Select SDes From Codes Where Typ='HLOC' and Cd=Emp.LocCd)[Loc]
+		--,	@v_CoName[Co.Name] 
+		,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+		,	Br.Des[Branch]
+		,	(select Des from Codes where Typ='ESPON' and Cd=Emp.Sponsor)[Sponsor]
+		,	TrnInd
+		,	TrnInd1
+		,	cast(@v_RPrd as int)[Prd]
+		,	cast(@v_RYear as int)[Yr]
+		,	Isnull((Select RoundedAmt From EmpSalRoundYtd Where EmpCd=Tp.EmpCd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2) ),0)[Total]
+		,	(select Des from Currency where Cd=Curr.Cd)[Currency]
+		,	(select Des from Currency where Cd=Curr.SubCurr)[SubCurrency]
+		,	Curr.Rate
+		,	Curr.NoDecs[AmtDecs]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@OT1C),'')[WOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@OT2C),'')[OOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@OT3C),'')[HOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@ROT1C),'')[RWOT]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@ROT2C),'')[ROOT]
+--			,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[ODays]
+		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[RHOT]
+		,	Isnull(@OT1C,'')[WOTC]
+		,	Isnull(@OT2C,'')[OOTC]
+		,	Isnull(@OT3C,'')[HOTC]
+		,	Isnull(@ROT1C,'')[RWOTC]
+		,	Isnull(@ROT2C,'')[ROOTC]
+		,	Isnull(@ROT3C,'')[RHOTC]
+		,	EdTyp
+		,	EdCd
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'W')[WorkDays]
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'F')[FBDays]
+		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'O')[ODays]
+		,	right('0'+rtrim(@v_RPrd),2)+rtrim(@v_RYear)
+--			,	(Select Isnull(W_DAYS,0)-Isnull(UP_HDAYS,0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period) [W_days]
+		,	@Eday[W_days]
+		,	convert(int,(Select Isnull(sum(Up_HDays),0) From EmpAttendanceYtd Where EMPCD=TP.EMPCD AND PRD=@Period)) [Up_Hdays]
+		From
+			PaySlipYtd Tp
+		,	Employee Emp
+		,	Currency Curr
+		,	Branch Br
+		Where
+			Emp.Cd=Tp.EmpCd
+		and	Br.Cd=Emp.Div
+		and Curr.Cd=Emp.CurrCd
+		and	(SubString(TrnInd,1,1) <> '#' or TrnInd is null)
+		and	(SubString(TrnInd1,1,1) <> '#' or TrnInd1 is null)
+		and	(Emp.CoCd=@v_CoCd and @v_EmpCd='All' or Emp.Cd=@v_EmpCd and @v_EmpCd<>'^')
+		and	(@v_Div='All' or @v_Div<>'' and Emp.div=@v_Div)
+		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
+		order by
+			Tp.EmpCd
+		,	EdTyp
+		,	EdCd
+	  end
+End
+
+
+
+ 
+ 
+ Go 
 
 
 CREATE OR ALTER   Procedure [dbo].[GetRepo_ExpiredDocument_N]
@@ -8021,277 +8530,6 @@ End
  
  
  Go 
-CREATE OR ALTER   Procedure [dbo].[GetRepo_PaySlip_Format_N] 
-	@v_CoCd			char(5)
-,	@v_Div			char(5)
-,	@v_RPrd			Char(2)
-,	@v_RYear		Char(4)
-,	@v_EmpCd		Char(10)
-As		-- Drop Procedure [dbo].[GetRepo_PaySlip_Format]'01','All','08','2016','All'
-Begin
-/*
-	Declare @v_CoCd char(5)
-	Declare @v_RPrd Char(2)
-	Declare @v_RYear Char(4)
-	Declare @v_EmpCd Char(10)
-
-	Set @v_CoCd='01'
-	Set @v_RPrd='06'
-	Set @v_RYear='2015'
-	Set @v_EmpCd='^'
-*/
-	--Declare @v_CoName Varchar(50)
-	declare @W_days numeric(2,0)
-	exec @W_days=  Get_Eday @v_RPrd,@v_RYear
-	Declare @Prd int
-	Declare @Period Char(6)
-	Declare @Year Char(4)
-	Declare @EDay int
-	Declare @DHrs numeric(5,2)
-	--Select @v_CoCd=Cd From Company Where CoName=@v_CoName
-	DeClare @OT1C 		char(10)
-	Declare @OT2C 		char(10)
-	Declare @OT3C 		char(10)
-	DeClare @ROT1C 		char(10)
-	Declare @ROT2C 		char(10)
-	Declare @ROT3C 		char(10)
-	Select @OT1C=Val From Parameters Where Cd='OT1' and CoCd=@v_CoCd
-	Select @OT2C=Val From Parameters Where Cd='OT2' and CoCd=@v_CoCd
-	Select @OT3C=Val From Parameters Where Cd='OT3' and CoCd=@v_CoCd
-	Select @ROT1C=Val From Parameters Where Cd='ROT1' and CoCd=@v_CoCd
-	Select @ROT2C=Val From Parameters Where Cd='ROT2' and CoCd=@v_CoCd
-	Select @ROT3C=Val From Parameters Where Cd='ROT3' and CoCd=@v_CoCd
-	Select @Prd=val From Parameters Where Cd='CUR_MONTH' and CoCd=@v_CoCd
-	Select @Year=Val From Parameters Where Cd='CUR_YEAR' and CoCd=@v_CoCd
-	Set  @Period=@v_RYear*100+@v_RPrd
-	Select @DHrs=Val From Parameters Where Cd='WORKHRS' and CoCd=@v_CoCd
-	exec @Eday = Get_Eday @Prd,@Year
-
-	if cast(@v_RPrd as int) = @Prd and cast(@v_RYear as int)=@Year
-	  Begin
-		Select 
-			Tp.EmpCd
-		,	(Select Personal_Id from EmpContract where EmpCd=Tp.EmpCd)[Official_Cd]
-		,	Emp.FName+' '+Emp.MName+ ' '+Emp.LName[Name]
-		,	Emp.Basic
-		,	Emp.BasicCurr
-		,	dbo.GetFunc_NoDecs(BasicCurr)[BasicNoDecs]
-		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd and Typ=Tp.EdTyp)[PayCode]
-		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd1 and Typ=Tp.EdTyp1)[PayCode1]
-		,	(select Des from Currency where Cd=Curr1)[Curr1]
-		,	(select Des from Currency where Cd=Curr2)[Curr2]
-		,	ExRate1
-		,	ExRate2
-		
-		,	case when EdTyp='HEDT01' 
-			then
-				case when EdCd='001' then round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
-				when EdCd in (Select Cd from companyearnded where EdTyp='HEDT01' and trntyp='P' and EdCd<>'001') 
-						then IsNull((Select top 1 round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
-						from EmpEarnDed where EdCd=TP.EdCd and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-						and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0) 
-				else Isnull(Amt1,0) end
-			else
-			Isnull(Amt1,0) end	[Amt1]
-		,	Isnull(Amt2,0) [Amt2]
-		
-		,	round((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
-				-IsNull((select Amt from EmpTrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div),0))
-			+(IsNull((Select top 1 ((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay)
-					from EmpEarnDed where EdCd='009' and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-					and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0)
-					-IsNull((select Amt from EmpTrans where EdCd='009' and EdTyp='HEDT01' and EmpCd=TP.Empcd and HRDiv=Emp.Div),0))
-					,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LOP]
-		,	round(((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
-					-IsNull((select Amt from EmpTrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div),0))*@W_days)/Emp.Basic,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LeaveAbs]
-			
-		,	dbo.GetFunc_NoDecs(Curr1)[NoDecs1]
-		,	dbo.GetFunc_NoDecs(Curr2)[NoDecs2]	
-		,	Isnull((Select Des From Codes Where Typ='BANK' and Cd=Emp.BankCd and EmpCd=Tp.EmpCd),'')[Bank]
-		,	(Select Max(Des) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay')[TrBank]
-		,	(Select Max(EmpAc) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[AcNo]
-		,	(Select Max(EmpAc) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrAcNo]
-		,	(Select Max(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayCurr]
-		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrCurr]
-		,	(Select Max(dbo.GetFunc_NoDecs(CurrCd)) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayNoDecs]
-		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrNoDecs]
-		,	(Select Max(Cast(CR.Rate as Char(15))) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayRate]
-		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrRate]
-		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.Typ='Net Pay' and BA.EmpCd=Tp.EmpCd)[BankAmt]
-		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.EmpCd=Tp.EmpCd and BA.Typ<>'Net Pay' and rtrim(BA.Bank)+rtrim(BA.Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrBankAmt]
-		,	isnull((Select Des from Designation where Cd=(Select Desg from EmpContract where EmpCd=Tp.EmpCd)),(Select Des From Designation Where Cd=Emp.Desg))[Designation]
-		,	(Select Des From DEPT Where cd=Emp.Dept)[Department]
-		,	(Select SDes From CC Where Cd=Emp.CC)[CC]
-		,	(Select SDes From Codes Where Typ='HLOC' and Cd=Emp.LocCd)[Loc]
-	  --,	@v_CoName[Co.Name] 
-		,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-		,	Br.Des[Branch]
-		,	(select Des from Codes where Typ='ESPON' and Cd=Emp.Sponsor)[Sponsor]
-		,	TrnInd
-		,	TrnInd1
-		,	@Prd[Prd]
-		,	@Year[Yr]
-		,	Isnull((Select RoundedAmt From EmpSalRound Where EmpCd=Tp.EmpCd),0)[Total]
-		,	(select Des from Currency where Cd=Curr.Cd)[Currency]
-		,	(select Des from Currency where Cd=Curr.SubCurr)[SubCurrency]
-		,	Curr.Rate
-		,	Curr.NoDecs[AmtDecs]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@OT1C),'')[WOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@OT2C),'')[OOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@OT3C),'')[HOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@ROT1C),'')[RWOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@ROT2C),'')[ROOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[RHOT]
-		,	Isnull(@OT1C,'')[WOTC]
-		,	Isnull(@OT2C,'')[OOTC]
-		,	Isnull(@OT3C,'')[HOTC]
-		,	Isnull(@ROT1C,'')[RWOTC]
-		,	Isnull(@ROT2C,'')[ROOTC]
-		,	Isnull(@ROT3C,'')[RHOTC]
-		,	EdTyp
-		,	EdCd
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'W')[WorkDays]
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'F')[FBDays]
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'O')[ODays]
---			,	(Select Isnull(W_DAYS,0)-Isnull(UP_HDAYS,0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period) [W_days]
-		,	@Eday[W_days]
-		,	convert(int,(Select Isnull(sum(Up_HDays),0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period)) [Up_Hdays]
-		From
-			TempPaySlip Tp
-		,	Employee Emp
-		,	Branch Br
-		,	Currency Curr
-		Where
-			Emp.Cd=Tp.EmpCd
-		and	Br.Cd=Emp.Div
-		and Curr.Cd=Emp.CurrCd
-		and	(SubString(TrnInd,1,1) <> '#' or TrnInd is null)
-		and	(SubString(TrnInd1,1,1) <> '#' or TrnInd1 is null)
-		and	(Emp.CoCd=@v_CoCd and @v_EmpCd='All' or Emp.Cd=@v_EmpCd and @v_EmpCd<>'^')
-		and	(@v_Div='All' or @v_Div<>'' and Emp.div=@v_Div)
-		Order by	-- Select * From currency
-			Tp.EmpCd
-		,	Isnull(EdTyp,'Z')
-		,	Isnull(EdCd,'Z')
-	  End
-	Else
-	  Begin
-		Select 
-			Tp.EmpCd
-		,	(Select Personal_Id from EmpContract where EmpCd=Tp.EmpCd)[Official_Cd]
-		,	Emp.FName+' '+Emp.MName+ ' '+Emp.LName[Name]
-		,	Emp.Basic
-		,	Emp.BasicCurr
-		,	dbo.GetFunc_NoDecs(BasicCurr)[BasicNoDecs]
-		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd and Typ=Tp.EdTyp)[PayCode]
-		,	(Select Des From CompanyEarnDed Where Cd=Tp.EdCd1 and Typ=Tp.EdTyp1)[PayCode1]
-		,	(select Des from Currency where Cd=Curr1)[Curr1]
-		,	(select Des from Currency where Cd=Curr2)[Curr2]
-		,	ExRate1
-		,	ExRate2
-		
-		,	case when EdTyp='HEDT01' 
-			then
-				case when EdCd='001' then round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
-				when EdCd in (Select Cd from companyearnded where EdTyp='HEDT01' and trntyp='P' and EdCd<>'001') 
-						then IsNull((Select top 1 round(((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay),(select NoDecs from Currency where Cd=Emp.BasicCurr))
-						from EmpEarnDed where EdCd=TP.EdCd and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-						and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0) 
-				else Isnull(Amt1,0) end
-			else
-			Isnull(Amt1,0) end	[Amt1]
-		,	Isnull(Amt2,0) [Amt2]
-		
-		
-		
-		,	round((((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*Emp.Basic/@EDay)
-				-IsNull((select Amt from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div and prd=@Period),0))
-			+(IsNull((Select top 1 ((@Eday-(case when DATEPART(YYYY,Emp.Doj)*100+DATEPART(MM,Emp.Doj)=@Year*100+@Prd then DATEPART(DD,Emp.Doj)-1 else 0 end))*AmtVal/@EDay)
-					from EmpEarnDed where EdCd='009' and EdTyp='HEDT01' and	EffDate <= rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-					and	(EndDate >= rtrim(@Prd) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=Tp.Empcd order by EffDate desc),0)
-					-IsNull((select Amt from EmpTransYtd where EdCd='009' and EdTyp='HEDT01' and EmpCd=TP.Empcd and HRDiv=Emp.Div and prd=@Period),0))
-					,(select NoDecs from Currency where Cd=Emp.BasicCurr))[LOP]
-		,	round(((Emp.Basic-IsNull((select Amt from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=Tp.Empcd and HRDiv=Emp.Div and prd=@Period),0))*@W_days)/Emp.Basic,0)[LeaveAbs]
-			
-		,	dbo.GetFunc_NoDecs(Curr1)[NoDecs1]
-		,	dbo.GetFunc_NoDecs(Curr2)[NoDecs2]	
-		,	Isnull((Select Des From Codes Where Typ='BANK' and Cd=Emp.BankCd and EmpCd=Tp.EmpCd),'')[Bank]
-		,	(Select Max(Des) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay')[TrBank]
-		,	(Select EmpAc From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[AcNo]
-		,	(Select EmpAc From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrAcNo]
-		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayCurr]
-		,	(Select CurrCd From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrCurr]
-		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayNoDecs]
-		,	(Select dbo.GetFunc_NoDecs(CurrCd) From EmpBankAc Where EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrNoDecs]
-		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and  EmpCd=Tp.EmpCd and Typ='Net Pay')[NetPayRate]
-		,	(Select Cast(CR.Rate as Char(15)) From EmpBankAc EAC,Currency CR Where EAC.CurrCd=CR.Cd and  EmpCd=Tp.EmpCd and Typ <> 'Net Pay' and rtrim(Bank)+rtrim(Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrRate]
-		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.Typ='Net Pay' and BA.EmpCd=Tp.EmpCd)[BankAmt]
-		,	(Select Isnull(ST.Amt,0) From EmpBankTransfer ST,EmpBankAc BA Where ST.EmpCd=BA.EmpCd and ST.Bank=BA.Bank and ST.Branch=BA.Branch and  ST.SrNo=BA.SrNo and BA.EmpCd=Tp.EmpCd and BA.Typ<>'Net Pay' and rtrim(BA.Bank)+rtrim(BA.Branch) =(Select Max(rtrim(Bank)+rtrim(Branch)) From Codes,EmpBankAc Where Codes.Typ='BANK' and Cd=Bank and EmpCd=Tp.EmpCd and EmpBankAc.Typ <> 'Net Pay'))[TrBankAmt]
-		,	isnull((Select Des from Designation where Cd=(Select Desg from EmpContract where EmpCd=Tp.EmpCd)),(Select Des From Designation Where Cd=Emp.Desg))[Designation]
-		,	(Select Des From DEPT Where cd=Dept)[Department]
-		,	(Select SDes From CC Where Cd=Emp.CC)[CC]
-		,	(Select SDes From Codes Where Typ='HLOC' and Cd=Emp.LocCd)[Loc]
-		--,	@v_CoName[Co.Name] 
-		,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-		,	Br.Des[Branch]
-		,	(select Des from Codes where Typ='ESPON' and Cd=Emp.Sponsor)[Sponsor]
-		,	TrnInd
-		,	TrnInd1
-		,	cast(@v_RPrd as int)[Prd]
-		,	cast(@v_RYear as int)[Yr]
-		,	Isnull((Select RoundedAmt From EmpSalRoundYtd Where EmpCd=Tp.EmpCd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2) ),0)[Total]
-		,	(select Des from Currency where Cd=Curr.Cd)[Currency]
-		,	(select Des from Currency where Cd=Curr.SubCurr)[SubCurrency]
-		,	Curr.Rate
-		,	Curr.NoDecs[AmtDecs]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@OT1C),'')[WOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@OT2C),'')[OOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@OT3C),'')[HOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0001',@ROT1C),'')[RWOT]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0002',@ROT2C),'')[ROOT]
---			,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[ODays]
-		,	Isnull(dbo.GetFunc_OTCaption(Emp.Cd,'HCOTT0003',@ROT3C),'')[RHOT]
-		,	Isnull(@OT1C,'')[WOTC]
-		,	Isnull(@OT2C,'')[OOTC]
-		,	Isnull(@OT3C,'')[HOTC]
-		,	Isnull(@ROT1C,'')[RWOTC]
-		,	Isnull(@ROT2C,'')[ROOTC]
-		,	Isnull(@ROT3C,'')[RHOTC]
-		,	EdTyp
-		,	EdCd
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'W')[WorkDays]
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'F')[FBDays]
-		,	dbo.GetFunc_WorkDetails(@v_CoCd,@v_RPrd,@v_RYear,@EDay,Emp.Cd,@DHrs,'O')[ODays]
-		,	right('0'+rtrim(@v_RPrd),2)+rtrim(@v_RYear)
---			,	(Select Isnull(W_DAYS,0)-Isnull(UP_HDAYS,0) From EMPATTENDANCE Where EMPCD=TP.EMPCD AND PRD=@Period) [W_days]
-		,	@Eday[W_days]
-		,	convert(int,(Select Isnull(sum(Up_HDays),0) From EmpAttendanceYtd Where EMPCD=TP.EMPCD AND PRD=@Period)) [Up_Hdays]
-		From
-			PaySlipYtd Tp
-		,	Employee Emp
-		,	Currency Curr
-		,	Branch Br
-		Where
-			Emp.Cd=Tp.EmpCd
-		and	Br.Cd=Emp.Div
-		and Curr.Cd=Emp.CurrCd
-		and	(SubString(TrnInd,1,1) <> '#' or TrnInd is null)
-		and	(SubString(TrnInd1,1,1) <> '#' or TrnInd1 is null)
-		and	(Emp.CoCd=@v_CoCd and @v_EmpCd='All' or Emp.Cd=@v_EmpCd and @v_EmpCd<>'^')
-		and	(@v_Div='All' or @v_Div<>'' and Emp.div=@v_Div)
-		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
-		order by
-			Tp.EmpCd
-		,	EdTyp
-		,	EdCd
-	  end
-End
-
-
-
- 
- 
- Go 
 CREATE OR ALTER   Procedure [dbo].[EmpLeaveMaster_GetRow_N]
 	@v_EmpCd	char(10)
 ,	@v_LvTyp	Char(5)
@@ -12371,200 +12609,6 @@ where
 		or (ApprBy is not null
 			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and ApplTyp=empprovisionsadj.ProvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
 			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-			 
-	
-select SysCodes.Cd[Cd],SysCodes.Des,COUNT(Emp.Cd) as HeadCount from Employee as Emp 
-right   join SysCodes on Emp.Status=SysCodes.Cd  
-group by  SysCodes.Des,typ,emp.CoCd,SysCodes.Cd 
-having  typ='HSTAT ' or emp.CoCd=@v_CoCd
-
-
-declare @CurMonth int
-set @CurMonth=(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_MONTH           ')
-
-
---order by Abbr
---or Prd=
---(select (CONVERT(varchar(10),(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')))+
---(CONVERT(varchar(10),(select right ('00'+ltrim(str( (@CurMonth-1) )),2 ))))) 
-
---select * from syscodes where typ='HEDT ' and cd<>'HEDT04    '
-declare @monthname as varchar(50)
-set @monthname=
- case @CurMonth
-when 1 then 'January'  
-when 2 then 'February' 
-when 3 then 'March' 
-when 4 then 'April' 
-when 5 then 'May' 
-when 6 then 'June' 
-when 7 then 'July' 
-when 8 then 'August' 
-when 9 then 'September' 
-when 10 then 'October' 
-when 11 then 'November' 
-when 12 then 'December' 
-end 
-select @monthname +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
-
-declare @monthnameminusone as varchar(50)
-set @monthnameminusone=
-case @CurMonth-1
-when 0 then 'December' 
-when 1 then 'January'  
-when 2 then 'February' 
-when 3 then 'March' 
-when 4 then 'April' 
-when 5 then 'May' 
-when 6 then 'June' 
-when 7 then 'July' 
-when 8 then 'August' 
-when 9 then 'September' 
-when 10 then 'October' 
-when 11 then 'November' 
-when 12 then 'December' 
-end 
-if( @monthnameminusone = 'December' )
-begin
-select @monthnameminusone +' '+
-(select CONVERT(varchar, CONVERT(int, Val)-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')
-end
-else
-begin
-select @monthnameminusone +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
-end
-
-select SysCodes.Des,isnull(CONVERT(decimal(18,2), SUM(Amt)),0) as  PayElementDetailsCount  
-from EmpTransDetailYtd
-right  join SysCodes on EmpTransDetailYtd.EdTyp=SysCodes.Cd  
-where Prd=(select Val*100+(@CurMonth-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR')
-group by  SysCodes.Des,typ,cd,Abbr--,Prd
-having typ='HEDT ' and cd<>'HEDT04    '
---and Prd=(select Val++convert(varchar(10),RIGHT('00' + CONVERT(VARCHAR,@CurMonth-1), 2)) from  Parameters where CoCd='03' and Cd='CUR_YEAR')
-
-
-select COUNT(TransNo) as FundApproval  from EmpFund
-inner join Employee as emp on emp.Cd=EmpFund.EmpCd
-inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS4' and CPA.ApplTyp=EmpFund.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
-inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
-where 
-	EmpFund.[Status]='N' 
-	and emp.CoCd=@v_CoCd
-	and emp.Status='HSTATPM'
-	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
-		or (ApprBy is not null
-			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS4' and ApplTyp=EmpFund.typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
-			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-
-
-
-
-
-
- 
- 
- Go 
-
-
-CREATE OR ALTER   Procedure [dbo].[EmplLoanAndLeaveApproval_N]
-	@v_CoCd		char(5)
-,	@v_EmpCd	Char(10)
-,	@v_Typ		Char(1)
-AS
---Drop Procedure [dbo].[EmplLoanAndLeaveApproval]'01','HR','U'
-
-select COUNT(TransNo) as LeaveApplied from EmpLeave
-inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
-where GETDATE() between FromDt and ToDt and LvStatus='N' and emp.CoCd=@v_CoCd and emp.Status='HSTATPM   '
-
-select COUNT(TransNo) as OnLeave from EmpLeave
-inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
-where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd and emp.Status='HSTATPM   '
-
-select COUNT(TransNo) as Working from EmpLeave
-inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
-where GETDATE() between FromDt and ToDt and LvStatus!='F' and emp.CoCd=@v_CoCd and emp.Status='HSTATPM   '
-
---select COUNT(TransNo) as LeaveApproval  from EmpLeave
---inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EmpLeave.LvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	LvStatus='N' 
---	and emp.CoCd=@v_CoCd
---	and emp.Status='HSTATPM   '
---	and ((LvApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (LvApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EmpLeave.LvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LvApprBy or (select UserCd from Employee where Cd=EmpCd)=LvApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-
---select COUNT(TransNo) as LeaveSalaryTicketApproval  from EmpLeaveSalaryTicket ELST
---inner join Employee as emp on emp.Cd=ELST.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS3' and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	ELST.Status='N' 
---	and emp.CoCd=@v_CoCd
---	and emp.Status='HSTATPM   '
---	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (ApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS3' and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-
---select COUNT(TransNo) as LoanApproval  from EmpLoan
---inner join Employee as emp on emp.Cd=EmpLoan.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS1' and CPA.ApplTyp=EmpLoan.LoanTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	LoanStatus='N' 
---	and emp.CoCd=@v_CoCd
---	and emp.Status='HSTATPM   '
---	and ((LoanApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (LoanApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS1' and ApplTyp=EmpLoan.LoanTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LoanApprBy or (select UserCd from Employee where Cd=EmpCd)=LoanApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-
-		
---select COUNT(EDI.EmpCd) as  DocumentIssue from EmpDocIssueRcpt as EDI
---inner join  Employee as emp on emp.Cd=EDI.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT8' and CPA.ApplTyp=EDI.DocTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	EDI.Stat='N' 
---	and emp.CoCd=@v_CoCd 
---	and emp.Status='HSTATPM   '   
---	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (ApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT8' and ApplTyp=EDI.DocTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-
-
-
---select COUNT(EmpProgressionHead.EmpCd) as EmpProgression  from EmpProgressionHead
---inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EmpProgressionHead.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	EmpProgressionHead.Status='E' 
---	and emp.CoCd=@v_CoCd
---	and emp.Status='HSTATPM   '
---	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (ApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT6' and ApplTyp=EmpProgressionHead.Typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
-	
---select COUNT(empprovisionsadj.EmpCd) as ProvAdj  from empprovisionsadj
---inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
---inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=empprovisionsadj.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
---inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
---where 
---	empprovisionsadj.Status='N' 
---	and emp.CoCd=@v_CoCd
---	and emp.Status='HSTATPM   '
---	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
---		or (ApprBy is not null
---			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and ApplTyp=empprovisionsadj.ProvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
---			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
 			 
 	
 select SysCodes.Cd[Cd],SysCodes.Des,COUNT(Emp.Cd) as HeadCount from Employee as Emp 

@@ -6,7 +6,6 @@ using Onyx.Services;
 using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddSingleton<AppDbContext>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<DbGatewayService>();
@@ -21,6 +20,7 @@ builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
@@ -37,7 +37,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<CookieExpirationMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

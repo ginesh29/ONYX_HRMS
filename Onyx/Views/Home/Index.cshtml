@@ -126,6 +126,17 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-white">
+            <div class="inner">
+                <h3>@EmplLoanAndLeaveApproval.LoanRecoveryAmount</h3>
+                <p>Loan Recovery Amount</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-md-7">
@@ -291,12 +302,13 @@
             <div class="card-header">
                 <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
                     <h4 class="card-label text-primary">
-                        Last Month Salary (@EmplLoanAndLeaveApproval.LastMonth)
+                        Yearly Salary Graph
                     </h4>
                 </div>
             </div>
             <div class="card-body">
-                <table class="table table-sm">
+                <canvas id="myLineChart" style="height:335px"></canvas>
+                @* <table class="table table-sm">
                     <thead class="thead-dark">
                         <tr>
                             <th>Description</th>
@@ -310,7 +322,7 @@
                             <td>@item.PayElementDetailsCount</td>
                         </tr>
                     }
-                </table>
+                </table> *@
             </div>
             <!-- /.card-body -->
         </div>
@@ -380,10 +392,6 @@
 <style>
     .tooltip-inner {
         max-width: 300px;
-    }
-
-    .fc-list-event-time {
-        display: none;
     }
 </style>
 @section scripts {

@@ -140,7 +140,7 @@ namespace Onyx.Services
             var procedureName = "ActivityLogHead_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", model.CoCd);
-            parameters.Add("v_ActivityId", "");
+            parameters.Add("v_ActivityId", model.ActivityId);
             parameters.Add("v_SessionId", "");
             parameters.Add("v_UserCd", model.UserCd);
             parameters.Add("v_IP", ipAddress);
@@ -487,6 +487,7 @@ namespace Onyx.Services
             var currentMonth = multiResult.ReadFirstOrDefault<string>();
             var lastMonth = multiResult.ReadFirstOrDefault<string>();
             var salaryDetails = multiResult.Read<SalaryDetailModel>();
+            var loanRecoveryAmount = multiResult.ReadFirstOrDefault<int>();
             return new EmplLoanAndLeaveApproval
             {
                 LeaveApplied = leaveApplied,
@@ -495,7 +496,8 @@ namespace Onyx.Services
                 HeadCounts = headCount,
                 CurrentMonth = currentMonth,
                 LastMonth = lastMonth,
-                SalaryDetails = salaryDetails
+                SalaryDetails = salaryDetails,
+                LoanRecoveryAmount = loanRecoveryAmount
             };
         }
         public IEnumerable<GetDashboardCalendarEvents_Result> GetCalendarEvents(string UserCd)

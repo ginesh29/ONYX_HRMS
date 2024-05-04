@@ -113,7 +113,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -221,7 +221,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Type == (int)LeaveCofirmTypeEnum.Confirm ? "confirmed" : model.Type == (int)LeaveCofirmTypeEnum.Revise ? "revised" : "canceled";
             var Message = $", Leave is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -372,7 +372,7 @@ namespace Onyx.Controllers
             }
             var ActivityAbbr = "UPD";
             var Message = $", Duty Resumption With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -516,7 +516,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
             var Message = $", Leave Salary is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -565,7 +565,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "disbursed" : "canceled";
             var Message = $", Leave Salary/Ticket is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -625,7 +625,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.LoanStatus == "A" ? "approved" : "rejected";
             var Message = $", Loan is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -669,7 +669,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.LoanStatus == "D" ? "disbursed" : "canceled";
             var Message = $", Loan is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -766,7 +766,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = type == "D" ? "adjusted" : "closed";
             var Message = $", Loan is {action} With Trans no={transNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -1112,7 +1112,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Status == "A" ? "approved" : "rejected";
             var Message = $", Fund is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -1145,7 +1145,7 @@ namespace Onyx.Controllers
             var ActivityAbbr = "UPD";
             var action = model.Status == "0" ? "disbursed" : "canceled";
             var Message = $", Fund is {action} With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,
@@ -1709,7 +1709,7 @@ namespace Onyx.Controllers
             //}
             var ActivityAbbr = "UPD";
             var Message = $", Single Payroll submitted With Trans no={model.TransNo}";
-            _commonService.SetActivityLogDetail("0", processId, ActivityAbbr, Message);
+            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
             var result = new CommonResponse
             {
                 Success = true,

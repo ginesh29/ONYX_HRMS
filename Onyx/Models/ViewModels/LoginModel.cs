@@ -11,7 +11,6 @@ namespace Onyx.Models.ViewModels
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         public string Company { get; set; }
         public UserTypeEnum UserType { get; set; }
-        public bool RememberMe { get; set; }
         public string Browser { get; set; }
         public string CoAbbr { get; set; }
     }

@@ -6,5 +6,6 @@
         public string CoAbbr { get; set; }
         public string UserCd { get; set; }
         public string Browser { get; set; }
+        public string ActivityId { get; set; }
     }
 }

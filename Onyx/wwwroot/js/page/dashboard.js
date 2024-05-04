@@ -77,7 +77,7 @@ function showEmpLeave(type) {
 showEmpLeave(3);
 showEmpLeave(4);
 showEmpLeave(5);
-function showChart(init) {
+function showBarChart(init) {
     if (!init)
         window["myChart"].destroy();
     var type = $("#Chart-Type").val();
@@ -106,4 +106,31 @@ function showChart(init) {
         });
     })
 }
-showChart(true);
+showBarChart(true);
+
+function showLineChart() {
+    const xValues = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    new Chart("myLineChart", {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478, 1070, 1110],
+                borderColor: "red",
+                fill: false
+            }, {
+                data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000, 5070, 7110],
+                borderColor: "green",
+                fill: false
+            }, {
+                data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100, 2000, 1000],
+                borderColor: "blue",
+                fill: false
+            }]
+        },
+        options: {
+            legend: { display: false }
+        }
+    });
+}
+showLineChart();
