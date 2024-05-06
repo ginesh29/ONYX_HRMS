@@ -117,4 +117,18 @@ namespace Onyx.Models.ViewModels.Report
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }
+    public class EmpPayRegisterFilterModel
+    {
+        public string EmpCd { get; set; }
+        public string Sponsor { get; set; }
+        public string Branch { get; set; }
+        public string Section { get; set; }
+        public string Department { get; set; }
+        public string Nationality { get; set; }
+        public string Designation { get; set; }
+        public string Period { get; set; }
+        public string Year { get; set; }
+        public string Month { get; set; }
+        public string Type { get; set; }
+    }
 }

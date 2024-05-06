@@ -1,3 +1,637 @@
+CREATE OR ALTER Procedure [dbo].[GetRepo_EmpPayDetail]
+ 	@v_CoCd			Char(5)		
+,	@v_RPrd			Char(2)	
+,	@v_RYear		Char(4)
+,   @v_Employee     Char(10)	
+,   @v_Branch       char(5)
+,   @v_Location     char(10)
+,   @v_Department   Char(10)
+,   @v_Desg			Char(10)
+,   @v_Nat			Char(10)
+,   @v_Sponsor      Char(10)
+As				-- Drop Procedure [dbo].[GetRepo_EmpPayDetail]'100','09','2016 ','MHM/796','All','All ','All ','All ','All ','All '
+
+Begin
+	Declare @v_CoName		Varchar(50)
+	Declare @AmtDecs		int
+	Declare @Prd			int
+	Declare @Year			INT
+	Declare @DHrs 		numeric(5,2)
+	Select @v_CoName=CoName from Company where Cd=@v_CoCd
+	Select @AmtDecs=AmtDecs from Company where Cd=@v_CoCd
+	Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	Select @Year=RTRIM(Val) from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
+	Select @DHrs=Val from Parameters where Cd='WORKHRS' and CoCd=@v_CoCd
+	If Cast(@v_RYear as int) *100 +Cast(@v_RPrd as int) >= @Year *100 +@Prd
+		Select 	
+			EmT.Empcd[Cd]	
+		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		,	Emp.CurrCd
+		,	rtrim(EmT.EdTyp)[Typ]
+		,	(select Abbr from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Abbr]
+		,	(select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+		,	(select rtrim(TrnTyp) from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[TrnTyp]
+		,	Case EdTyp
+			when 'HEDT02' then -round(EmT.Amt*ExRate,@AmtDecs)
+			else round(EmT.Amt*ExRate,@AmtDecs)
+			end[Amt]
+		,	Case EdTyp
+			when 'HEDT02' then -EmT.Amt
+			else EmT.Amt
+			end[ActualAmt]
+		,	EMT.Curr
+		--,	Sys.Sdes[Pay Type]
+		,	(Select SDes from Syscodes where Cd =Emt.EdTyp)[Pay Type]
+		,	(select Sdes from branch where Cd=EmT.HRDiv)[Branch]
+		,   (select Sdes from Codes where Cd=EmT.LocCd)[Location]
+		,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		,   (select Sdes from Dept where Cd=EmT.HRDept)[Department]
+		,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		,	@Prd[Prd]
+		,	Cast(@Year AS VARCHAR(4))[Yr]
+		,	(Select Sum(Isnull(W_OT,0)) +Sum(Isnull(O_OT,0)) +Sum(Isnull(H_OT,0)) From EmpAttendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[OTHrs]
+		,	(Select Sum(W_Days-Up_HDays) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Wdays]
+		,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+		,   isnull(Emp.Personal_No,'')[PersonalNo]
+		--,   isnull(Cod2.SDes,'')[BankName]
+		,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		,   Isnull((select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd),'')[AccountNo]
+		,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select Val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd )),'')[WorkNo]
+		,	case TrnInd when 'S' then 'Payroll'
+						when '*S' then 'Single Payroll' end[Type]
+		,(Select Sum(Up_HDays) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Hdays]
+		From
+		 	EmpTrans EmT	
+		,Employee	  Emp 
+		Where		
+			Emp.cd=Emt.EmpCd
+		and	Isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		and EdTyp <> 'HEDT04'
+		and trnind in ('S','*S')
+		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or @v_Branch<>'' and EmT.HRDiv=@v_Branch)
+		and (@v_location='All' or @v_location<>'' and EmT.LocCd=@v_location)
+		and (@v_Department='All' or @v_Department<>'' and EmT.HRDept=@v_Department)
+		and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		and (@v_Desg='All' or @v_Desg<>'' and Emp.Desg=@v_Desg)
+		and (@v_Nat='All' or @v_Nat<>'' and Emp.Nat=@v_Nat)
+		--Union									
+		--Select 	
+		--	Emp.cd[Cd]	
+		--,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		--,	Emp.CurrCd
+		--,	'Others'[Typ]
+		--,	'Rounding'[Abbr]
+		--,	'Rounding'[Sdes]
+		--,	'V'
+		--,	Isnull((Select RoundedAmt-NetSalary from EmpSalRound where EmpCd=Emp.Cd),0)[Amt]
+		--,	0[ActualAmt]
+		--,	Emp.CurrCd[Curr]
+		--,	'Others'[Pay Type]
+		--,	(select Sdes from branch where Cd=Emp.Div)[Branch]
+		--,   (select Sdes from Codes where Cd=Emp.LocCd)[Location]
+		--,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		--,   (select Sdes from Dept where Cd=Emp.Dept)[Department]
+		--,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		--,	@Prd[Prd]
+		--,	@Year[Yr]
+		--,	0[OTHrs]
+		--,	0[Wdays]
+		--,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+	 --   ,   isnull(Emp.Personal_No,'')[PersonalNo]
+		----,   isnull(Cod2.SDes,'')[BankName]
+		--,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		--,   isnull((select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd),'')[AccountNo]
+		--,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		--,	'Payroll'[Type]
+		--From
+		--	Employee Emp 
+		--Where
+		--	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		--and Emp.Status not in ('HSTATNP','HSTATSR','HSTATST','HSTATES')
+		--and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		--and (@v_Branch='All' or @v_Branch<>'' and Emp.Div=@v_Branch)
+		--and (@v_location='All' or @v_location<>'' and Emp.LocCd=@v_location)
+		--and (@v_Department='All' or @v_Department<>'' and Emp.Dept=@v_Department)
+		--and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		Order by
+			EmT.EdTyp
+	Else
+		Select 	
+			EmT.Empcd[Cd]	
+		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		,	Emp.CurrCd
+		,	rtrim(EmT.EdTyp)[Typ]
+		,	(Select Abbr from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Abbr]
+		,	(Select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+		,	(Select rtrim(TrnTyp) from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[TrnTyp]
+		,	Case EdTyp
+			when 'HEDT02' then -round(EmT.Amt*ExRate,@AmtDecs)
+			else round(EmT.Amt*ExRate,@AmtDecs)
+			end[Amt]
+		,	Case EdTyp
+			when 'HEDT02' then -EmT.Amt
+			else EmT.Amt
+			end[ActualAmt]
+		,	EMT.Curr
+		--,	Sys.Sdes[Pay Type]
+		,	(Select SDes from Syscodes where Cd =Emt.EdTyp)[Pay Type]
+		,	(select Sdes from branch where Cd=EmT.HRDiv)[Branch]
+		,   (select Sdes from Codes where Cd=EmT.LocCd)[Location]
+		,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		,   (select Sdes from Dept where Cd=EmT.HRDept)[Department]
+		,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		,	Cast(@v_RPrd as int)[Prd]
+		,	Cast(@v_RYear as int)[Yr]
+		,	(Select Sum(Isnull(W_OT,0)) +Sum(Isnull(O_OT,0)) +Sum(Isnull(H_OT,0)) from EmpAttendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[OTHrs]
+		,	(Select Sum(W_Days) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Wdays]
+		,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+	    ,   isnull(Emp.Personal_No,'')[PersonalNo]
+		--,   isnull(Cod2.SDes,'')[BankName]
+		,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		,   (select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd)[AccountNo]
+		,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		,	case TrnInd when 'S' then 'Payroll'
+						when '*S' then 'Single Payroll' end[Type]
+		From
+			EmpTransYtd EmT
+		,	Employee Emp
+		Where
+			Emp.cd=Emt.EmpCd
+		and trnind in ('S','*S')
+		and	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900'
+		and EdTyp <> 'HEDT04'
+		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
+		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or @v_Branch<>'' and EmT.HRDiv=@v_Branch)
+		and (@v_location='All' or @v_location<>'' and EmT.LocCd=@v_location)
+		and (@v_Department='All' or @v_Department<>'' and EmT.HRDept=@v_Department)
+		and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		and (@v_Desg='All' or @v_Desg<>'' and Emp.Desg=@v_Desg)
+		and (@v_Nat='All' or @v_Nat<>'' and Emp.Nat=@v_Nat)
+		--Union
+		--Select 	
+		--	Emp.Cd[Cd]	
+		--,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		--,	Emp.CurrCd
+		--,	'Others'[Typ]
+		--,	'Rounding'[Abbr]
+		--,	'Rounding'[Sdes]
+		--,	'V'
+		--,	Isnull((Select RoundedAmt-NetSalary from EmpSalRoundYtd where EmpCd=Emp.Cd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)),0)[Amt]
+		--,	0[ActualAmt]
+		--,	Emp.CurrCd
+		--,	'Others'[Pay Type]
+		--,	(select Sdes from branch where Cd=Emp.Div)[Branch]
+		--,   (select Sdes from Codes where Cd=Emp.LocCd)[Location]
+		--,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		--,   (select Sdes from Dept where Cd=Emp.Dept)[Department]
+		--,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		--,	Cast(@v_RPrd as int)[Prd]
+		--,	Cast(@v_RYear as int)[Yr]
+		--,	0[OTHrs]
+		--,	0[Wdays]
+		--,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+		--,   isnull(Emp.Personal_No,'')[PersonalNo]
+		----,   isnull(Cod1.SDes,'')[BankName]
+		--,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		--,   (select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd)[AccountNo]
+		--,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		--,	'Payroll'[Type]
+		--From
+		--	Employee Emp
+		--Where
+		--	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		--and Emp.Status not in ('HSTATNP','HSTATSR','HSTATST','HSTATES')
+		--and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		--and (@v_Branch='All' or @v_Branch<>'' and Emp.Div=@v_Branch)
+		--and (@v_location='All' or @v_location<>'' and Emp.LocCd=@v_location)
+		--and (@v_Department='All' or @v_Department<>'' and Emp.Dept=@v_Department)
+		--and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		Order by
+			EmT.EdTyp
+End
+
+ 
+ Go 
+CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpPayDetail_N]
+ 	@v_CoCd			Char(5)		
+,	@v_RPrd			Char(2)	
+,	@v_RYear		Char(4)
+,   @v_Employee     Char(10)	
+,   @v_Branch       char(5)
+,   @v_Location     char(10)
+,   @v_Department   Char(10)
+,   @v_Desg			Char(10)
+,   @v_Nat			Char(10)
+,   @v_Sponsor      Char(10)
+As				-- Drop Procedure [dbo].[GetRepo_EmpPayDetail]'100','09','2016 ','MHM/796','All','All ','All ','All ','All ','All '
+
+Begin
+	Declare @v_CoName		Varchar(50)
+	Declare @AmtDecs		int
+	Declare @Prd			int
+	Declare @Year			INT
+	Declare @DHrs 		numeric(5,2)
+	Select @v_CoName=CoName from Company where Cd=@v_CoCd
+	Select @AmtDecs=AmtDecs from Company where Cd=@v_CoCd
+	Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	Select @Year=RTRIM(Val) from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
+	Select @DHrs=Val from Parameters where Cd='WORKHRS' and CoCd=@v_CoCd
+	If Cast(@v_RYear as int) *100 +Cast(@v_RPrd as int) >= @Year *100 +@Prd
+		Select 	
+			EmT.Empcd[Cd]	
+		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		,	Emp.CurrCd
+		,	rtrim(EmT.EdTyp)[Typ]
+		,	(select Abbr from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Abbr]
+		,	(select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+		,	(select rtrim(TrnTyp) from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[TrnTyp]
+		,	Case EdTyp
+			when 'HEDT02' then -round(EmT.Amt*ExRate,@AmtDecs)
+			else round(EmT.Amt*ExRate,@AmtDecs)
+			end[Amt]
+		,	Case EdTyp
+			when 'HEDT02' then -EmT.Amt
+			else EmT.Amt
+			end[ActualAmt]
+		,	EMT.Curr
+		--,	Sys.Sdes[PayType]
+		,	(Select SDes from Syscodes where Cd =Emt.EdTyp)[PayType]
+		,	(select Sdes from branch where Cd=EmT.HRDiv)[Branch]
+		,   (select Sdes from Codes where Cd=EmT.LocCd)[Location]
+		,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		,   (select Sdes from Dept where Cd=EmT.HRDept)[Department]
+		,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		,	@Prd[Prd]
+		,	Cast(@Year AS VARCHAR(4))[Yr]
+		,	(Select Sum(Isnull(W_OT,0)) +Sum(Isnull(O_OT,0)) +Sum(Isnull(H_OT,0)) From EmpAttendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[OTHrs]
+		,	(Select Sum(W_Days-Up_HDays) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Wdays]
+		,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+		,   isnull(Emp.Personal_No,'')[PersonalNo]
+		--,   isnull(Cod2.SDes,'')[BankName]
+		,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		,   Isnull((select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd),'')[AccountNo]
+		,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select Val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd )),'')[WorkNo]
+		,	case TrnInd when 'S' then 'Payroll'
+						when '*S' then 'Single Payroll' end[Type]
+		,(Select Sum(Up_HDays) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Hdays]
+		From
+		 	EmpTrans EmT	
+		,Employee	  Emp 
+		Where		
+			Emp.cd=Emt.EmpCd
+		and	Isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		and EdTyp <> 'HEDT04'
+		and trnind in ('S','*S')
+		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or @v_Branch<>'' and EmT.HRDiv=@v_Branch)
+		and (@v_location='All' or @v_location<>'' and EmT.LocCd=@v_location)
+		and (@v_Department='All' or @v_Department<>'' and EmT.HRDept=@v_Department)
+		and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		and (@v_Desg='All' or @v_Desg<>'' and Emp.Desg=@v_Desg)
+		and (@v_Nat='All' or @v_Nat<>'' and Emp.Nat=@v_Nat)
+		--Union									
+		--Select 	
+		--	Emp.cd[Cd]	
+		--,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		--,	Emp.CurrCd
+		--,	'Others'[Typ]
+		--,	'Rounding'[Abbr]
+		--,	'Rounding'[Sdes]
+		--,	'V'
+		--,	Isnull((Select RoundedAmt-NetSalary from EmpSalRound where EmpCd=Emp.Cd),0)[Amt]
+		--,	0[ActualAmt]
+		--,	Emp.CurrCd[Curr]
+		--,	'Others'[PayType]
+		--,	(select Sdes from branch where Cd=Emp.Div)[Branch]
+		--,   (select Sdes from Codes where Cd=Emp.LocCd)[Location]
+		--,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		--,   (select Sdes from Dept where Cd=Emp.Dept)[Department]
+		--,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		--,	@Prd[Prd]
+		--,	@Year[Yr]
+		--,	0[OTHrs]
+		--,	0[Wdays]
+		--,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+	 --   ,   isnull(Emp.Personal_No,'')[PersonalNo]
+		----,   isnull(Cod2.SDes,'')[BankName]
+		--,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		--,   isnull((select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd),'')[AccountNo]
+		--,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		--,	'Payroll'[Type]
+		--From
+		--	Employee Emp 
+		--Where
+		--	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		--and Emp.Status not in ('HSTATNP','HSTATSR','HSTATST','HSTATES')
+		--and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		--and (@v_Branch='All' or @v_Branch<>'' and Emp.Div=@v_Branch)
+		--and (@v_location='All' or @v_location<>'' and Emp.LocCd=@v_location)
+		--and (@v_Department='All' or @v_Department<>'' and Emp.Dept=@v_Department)
+		--and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		Order by
+			EmT.EdTyp
+	Else
+		Select 	
+			EmT.Empcd[Cd]	
+		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		,	Emp.CurrCd
+		,	rtrim(EmT.EdTyp)[Typ]
+		,	(Select Abbr from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Abbr]
+		,	(Select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+		,	(Select rtrim(TrnTyp) from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[TrnTyp]
+		,	Case EdTyp
+			when 'HEDT02' then -round(EmT.Amt*ExRate,@AmtDecs)
+			else round(EmT.Amt*ExRate,@AmtDecs)
+			end[Amt]
+		,	Case EdTyp
+			when 'HEDT02' then -EmT.Amt
+			else EmT.Amt
+			end[ActualAmt]
+		,	EMT.Curr
+		--,	Sys.Sdes[PayType]
+		,	(Select SDes from Syscodes where Cd =Emt.EdTyp)[PayType]
+		,	(select Sdes from branch where Cd=EmT.HRDiv)[Branch]
+		,   (select Sdes from Codes where Cd=EmT.LocCd)[Location]
+		,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		,   (select Sdes from Dept where Cd=EmT.HRDept)[Department]
+		,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		,	Cast(@v_RPrd as int)[Prd]
+		,	Cast(@v_RYear as int)[Yr]
+		,	(Select Sum(Isnull(W_OT,0)) +Sum(Isnull(O_OT,0)) +Sum(Isnull(H_OT,0)) from EmpAttendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[OTHrs]
+		,	(Select Sum(W_Days) from empattendance Where EmpCd=Emp.Cd And Prd=(@Year*100)+@Prd and Div=EmT.HRDiv)[Wdays]
+		,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+	    ,   isnull(Emp.Personal_No,'')[PersonalNo]
+		--,   isnull(Cod2.SDes,'')[BankName]
+		,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		,   (select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd)[AccountNo]
+		,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		,	case TrnInd when 'S' then 'Payroll'
+						when '*S' then 'Single Payroll' end[Type]
+		From
+			EmpTransYtd EmT
+		,	Employee Emp
+		Where
+			Emp.cd=Emt.EmpCd
+		and trnind in ('S','*S')
+		and	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900'
+		and EdTyp <> 'HEDT04'
+		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
+		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or @v_Branch<>'' and EmT.HRDiv=@v_Branch)
+		and (@v_location='All' or @v_location<>'' and EmT.LocCd=@v_location)
+		and (@v_Department='All' or @v_Department<>'' and EmT.HRDept=@v_Department)
+		and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		and (@v_Desg='All' or @v_Desg<>'' and Emp.Desg=@v_Desg)
+		and (@v_Nat='All' or @v_Nat<>'' and Emp.Nat=@v_Nat)
+		--Union
+		--Select 	
+		--	Emp.Cd[Cd]	
+		--,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName) +' '+rtrim(Emp.Lname)[EmpName]
+		--,	Emp.CurrCd
+		--,	'Others'[Typ]
+		--,	'Rounding'[Abbr]
+		--,	'Rounding'[Sdes]
+		--,	'V'
+		--,	Isnull((Select RoundedAmt-NetSalary from EmpSalRoundYtd where EmpCd=Emp.Cd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)),0)[Amt]
+		--,	0[ActualAmt]
+		--,	Emp.CurrCd
+		--,	'Others'[PayType]
+		--,	(select Sdes from branch where Cd=Emp.Div)[Branch]
+		--,   (select Sdes from Codes where Cd=Emp.LocCd)[Location]
+		--,	(Select Sdes from CC Where cd=Emp.CC)[CC]
+		--,   (select Sdes from Dept where Cd=Emp.Dept)[Department]
+		--,	(Select Coname from Company Where Cd=Emp.CoCd)[Company]
+		--,	Cast(@v_RPrd as int)[Prd]
+		--,	Cast(@v_RYear as int)[Yr]
+		--,	0[OTHrs]
+		--,	0[Wdays]
+		--,   (select Sdes from Codes where Cd=Emp.Sponsor)[Sponsor]
+		--,   isnull(Emp.Personal_No,'')[PersonalNo]
+		----,   isnull(Cod1.SDes,'')[BankName]
+		--,	(select SDes from codes where typ='BANK' and Cd=Emp.BankCd)[BankName]
+		--,   (select Isnull(EmpAc,'') from EmpBankAc where EmpCd=Emp.cd)[AccountNo]
+		--,	Isnull((select DocNo from EmpDocuments where EmpCd=Emp.cd and DocTyp=(select val From ParametersByProcess where ParameterCd='WP' and ParametersByProcess.CoCd=@v_CoCd  )),'')[WorkNo]
+		--,	'Payroll'[Type]
+		--From
+		--	Employee Emp
+		--Where
+		--	isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		--and Emp.Status not in ('HSTATNP','HSTATSR','HSTATST','HSTATES')
+		--and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		--and (@v_Branch='All' or @v_Branch<>'' and Emp.Div=@v_Branch)
+		--and (@v_location='All' or @v_location<>'' and Emp.LocCd=@v_location)
+		--and (@v_Department='All' or @v_Department<>'' and Emp.Dept=@v_Department)
+		--and (@v_Sponsor='All' or @v_Sponsor<>'' and Emp.Sponsor=@v_Sponsor)
+		Order by
+			EmT.EdTyp
+End
+
+ 
+ Go 
+CREATE OR ALTER       Procedure [dbo].[GetRepo_FixedPayrollCom_N]
+	@v_CoCd Varchar(5)
+,	@v_EmpCd Char(10)
+,	@v_Div char(5)=''
+,	@v_Dt1 datetime=''
+,	@v_Dt2	datetime=''
+
+As				-- Drop procedure [GetRepo_FixedPayrollCom_N] '01','523','','01/01/2021','06/06/2024'
+Begin
+
+	Declare @Prd		int
+	Declare @Year		int
+	Declare @EDay		int
+	Declare @AnnualLv		Char(10)
+	Declare @BasicCd		Char(15)
+	
+	Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
+	Exec @EDay=Get_EDay @Prd,@Year
+	select @BasicCd='HEDT01'+rtrim(Val) From Parameters Where Cd='BASIC' and CoCd='#'
+	select @AnnualLv=Val From Parameters Where Cd='CD_PREVILEGE_LV_1' and CoCd='#'
+	
+	Select distinct
+		ED.EmpCd
+	,	(Select rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName) From Employee where Cd=ED.EmpCd)[Name]
+	,	ED.EdCd
+	,	(Select SDes From CompanyEarnDed Where Typ=ED.EdTyp and Cd=ED.EdCd)[PayCode]
+	,	Ed.EdTyp
+	,	(Select SDes From SysCodes Where Typ='HEDT' and Cd=ED.EdTyp)[PayType]
+	,	Convert(Varchar,ED.SrNo)[SrNo]
+	,	Case PercAmt
+		When 'P' Then PercVal
+		Else AmtVal
+		End[Amount]	
+	,	(Select Des From Currency Where Cd=ED.Curr)[CurrDes]	
+	,	Case PercAmt
+		When 'P' Then 'Percent'
+		Else 'Amount'				
+		End[AmtDes]
+	,	EffDate
+	,	Case EndDate
+		When '01/01/1900' then Null
+		Else EndDate
+		End[EndDate]
+	,	(Select Sdes From Branch Where Cd=Emp.Div)[Branch]
+	,	(Select SDes From Codes Where Cd=Emp.LocCd)[Location]
+	,	(Select SDes From CC Where Cd=Emp.CC)[CC]
+	,	(Select Sdes From Dept Where cd=Emp.Dept)[Department]
+	,	Case EdTyp
+		When 'HEDT02' Then 'Deductions'
+		Else 'Earnings'
+		End[PTYP]
+	,	(Select CoName From Company where Cd=@v_CoCd)[CoName]
+	,	Emp.Basic[Basic]
+	,	(select top 1 EffDate from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc )[Last_Incr_Date]
+	,	Case PercAmt
+		When 'P' Then (select top 1 PercVal from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc ) 
+		Else 
+		isnull((select top 1 AmtVal from EmpEarnDed where empcd=Emp.Cd and SrNo=(select top 1 srno from EmpEarnDed where empcd=Emp.Cd order by SrNo desc)  order by EffDate desc )
+		-
+		(select isnull(((select top 1 isnull(AmtVal,0) from EmpEarnDed where empcd='523' and SrNo=((select top 1 srno from EmpEarnDed where empcd='523' order by SrNo desc)-1)  order by EffDate desc)) ,0))
+
+		,0)End[Last_Increment_Amount]
+	,	(Select 
+			isnull(sum(
+			case PercAmt
+				When 'P' then  case EdTyp
+						when 'HEDT02'then  -PercVal*.01*(Basic*Cr.Rate)
+						else PercVal*.01*Basic
+						end
+				When 'A' then  case EdTyp
+						when 'HEDT02' then -AmtVal*Cr.Rate
+						else AmtVal*Cr.Rate
+						end
+			end),0)[Total]		
+		From 
+				EmpEarnDed ED1
+			,	Employee E1
+			,	Currency CR
+		Where  
+			E1.Cd=ED1.EmpCd
+		and	Cr.Cd=ED1.Curr
+		and	ED1.EmpCd=ED.EmpCd
+		and	rtrim(EdTyp)+rtrim(EdCd) <> @BasicCd
+		and	rtrim(EdTyp)+rtrim(EdCd) in (select rtrim(PayTyp)+rtrim(PayCd) From CompanyLeavePay Where LvCd=@AnnualLv and CoCd=@v_CoCd)
+		and	EffDate<=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year) 
+		and	(EndDate>=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)  or EndDate='1/1/1900'))[Total]
+	From 
+		EmpEarnDed ED 		
+	,	Employee Emp 
+	,	Currency Cr
+	where 
+		Emp.Cd=EmpCd
+		and	Cr.Cd=Ed.Curr
+	and	(@v_EmpCd='' or ED.EmpCd=@v_EmpCd)
+	and (@v_Div='' or emp.Div=@v_Div)
+	and (ed.EffDate between @v_Dt1 and @v_Dt2)
+End 
+ Go 
+
+CREATE OR ALTER   Procedure [dbo].[GetRepo_FixedPayrollCom]
+	@v_CoCd Varchar(5)
+,	@v_EmpCd Char(10)
+,	@v_Div char(5)=''
+,	@v_Dt1 datetime
+,	@v_Dt2	datetime
+
+As				-- Drop procedure [GetRepo_FixedPayrollCom] '01',''--'00032'
+Begin
+
+	Declare @Prd		int
+	Declare @Year		int
+	Declare @EDay		int
+	Declare @AnnualLv		Char(10)
+	Declare @BasicCd		Char(15)
+	
+	Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
+	Exec @EDay=Get_EDay @Prd,@Year
+	select @BasicCd='HEDT01'+rtrim(Val) From Parameters Where Cd='BASIC' and CoCd='#'
+	select @AnnualLv=Val From Parameters Where Cd='CD_PREVILEGE_LV_1' and CoCd='#'
+	
+	Select distinct
+		ED.EmpCd
+	,	(Select rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName) From Employee where Cd=ED.EmpCd)[Name]
+	,	ED.EdCd
+	,	(Select SDes From CompanyEarnDed Where Typ=ED.EdTyp and Cd=ED.EdCd)[PayCode]
+	,	Ed.EdTyp
+	,	(Select SDes From SysCodes Where Typ='HEDT' and Cd=ED.EdTyp)[PayType]
+	,	Convert(Varchar,ED.SrNo)[SrNo]
+	,	Case PercAmt
+		When 'P' Then PercVal
+		Else AmtVal
+		End[Amount]	
+	,	(Select Des From Currency Where Cd=ED.Curr)[CurrDes]	
+	,	Case PercAmt
+		When 'P' Then 'Percent'
+		Else 'Amount'				
+		End[AmtDes]
+	,	Convert(Varchar,EffDate,103)EffDate
+	,	Case Convert(Varchar,EndDate,103)
+		When '01/01/1900' then Null
+		Else Convert(Varchar,EndDate,103)
+		End[EndDate]
+	,	(Select Sdes From Branch Where Cd=Emp.Div)[Branch]
+	,	(Select SDes From Codes Where Cd=Emp.LocCd)[Location]
+	,	(Select SDes From CC Where Cd=Emp.CC)[CC]
+	,	(Select Sdes From Dept Where cd=Emp.Dept)[Department]
+	,	Case EdTyp
+		When 'HEDT02' Then 'Deductions'
+		Else 'Earnings'
+		End[PTYP]
+	,	(Select CoName From Company where Cd=@v_CoCd)[CoName]
+	,	Emp.Basic[Basic]
+	,	Convert(Varchar,(select top 1 EffDate from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc ),103)[Last_Incr_Date]
+	,	Case PercAmt
+		When 'P' Then (select top 1 PercVal from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc ) 
+		Else 
+		isnull((select top 1 AmtVal from EmpEarnDed where empcd=Emp.Cd and SrNo=(select top 1 srno from EmpEarnDed where empcd=Emp.Cd order by SrNo desc)  order by EffDate desc )
+		-
+		(select top 1 AmtVal from EmpEarnDed where empcd=Emp.Cd and SrNo=((select top 1 srno from EmpEarnDed where empcd=Emp.Cd order by SrNo desc)-1)  order by EffDate desc )
+		,0)End[Last_Increment_Amount]
+	,	(Select 
+			isnull(sum(
+			case PercAmt
+				When 'P' then  case EdTyp
+						when 'HEDT02'then  -PercVal*.01*(Basic*Cr.Rate)
+						else PercVal*.01*Basic
+						end
+				When 'A' then  case EdTyp
+						when 'HEDT02' then -AmtVal*Cr.Rate
+						else AmtVal*Cr.Rate
+						end
+			end),0)[Total]		
+		From 
+				EmpEarnDed ED1
+			,	Employee E1
+			,	Currency CR
+		Where  
+			E1.Cd=ED1.EmpCd
+		and	Cr.Cd=ED1.Curr
+		and	ED1.EmpCd=ED.EmpCd
+		and	rtrim(EdTyp)+rtrim(EdCd) <> @BasicCd
+		and	rtrim(EdTyp)+rtrim(EdCd) in (select rtrim(PayTyp)+rtrim(PayCd) From CompanyLeavePay Where LvCd=@AnnualLv and CoCd=@v_CoCd)
+		and	EffDate<=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year) 
+		and	(EndDate>=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)  or EndDate='1/1/1900'))[Total]
+	From 
+		EmpEarnDed ED 		
+	,	Employee Emp 
+	,	Currency Cr
+	where 
+		Emp.Cd=EmpCd
+		and	Cr.Cd=Ed.Curr
+	and	(@v_EmpCd='All' or @v_EmpCd<>'All' and ED.EmpCd=@v_EmpCd)
+	and (@v_Div='' or emp.Div=@v_Div)
+	and (ed.EffDate between @v_Dt1 and @v_Dt2)
+End
+
+
+ 
+ 
+ Go 
 CREATE OR ALTER     Procedure [dbo].[EmplLoanAndLeaveApproval_N]
 	@v_CoCd		char(5)
 ,	@v_EmpCd	Char(10)
@@ -10264,109 +10898,6 @@ Begin
 
 --drop table #Employee
 End 
- 
- Go 
-
-CREATE OR ALTER   Procedure [dbo].[GetRepo_FixedPayrollCom]
-	@v_CoCd Varchar(5)
-,	@v_EmpCd Char(10)
-,	@v_Div char(5)=''
-,	@v_Dt1 datetime
-,	@v_Dt2	datetime
-
-As				-- Drop procedure [GetRepo_FixedPayrollCom] '01',''--'00032'
-Begin
-
-	Declare @Prd		int
-	Declare @Year		int
-	Declare @EDay		int
-	Declare @AnnualLv		Char(10)
-	Declare @BasicCd		Char(15)
-	
-	Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
-	Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
-	Exec @EDay=Get_EDay @Prd,@Year
-	select @BasicCd='HEDT01'+rtrim(Val) From Parameters Where Cd='BASIC' and CoCd='#'
-	select @AnnualLv=Val From Parameters Where Cd='CD_PREVILEGE_LV_1' and CoCd='#'
-	
-	Select distinct
-		ED.EmpCd
-	,	(Select rtrim(FName)+' '+rtrim(MName)+' '+rtrim(LName) From Employee where Cd=ED.EmpCd)[Name]
-	,	ED.EdCd
-	,	(Select SDes From CompanyEarnDed Where Typ=ED.EdTyp and Cd=ED.EdCd)[PayCode]
-	,	Ed.EdTyp
-	,	(Select SDes From SysCodes Where Typ='HEDT' and Cd=ED.EdTyp)[PayType]
-	,	Convert(Varchar,ED.SrNo)[SrNo]
-	,	Case PercAmt
-		When 'P' Then PercVal
-		Else AmtVal
-		End[Amount]	
-	,	(Select Des From Currency Where Cd=ED.Curr)[CurrDes]	
-	,	Case PercAmt
-		When 'P' Then 'Percent'
-		Else 'Amount'				
-		End[AmtDes]
-	,	Convert(Varchar,EffDate,103)EffDate
-	,	Case Convert(Varchar,EndDate,103)
-		When '01/01/1900' then Null
-		Else Convert(Varchar,EndDate,103)
-		End[EndDate]
-	,	(Select Sdes From Branch Where Cd=Emp.Div)[Branch]
-	,	(Select SDes From Codes Where Cd=Emp.LocCd)[Location]
-	,	(Select SDes From CC Where Cd=Emp.CC)[CC]
-	,	(Select Sdes From Dept Where cd=Emp.Dept)[Department]
-	,	Case EdTyp
-		When 'HEDT02' Then 'Deductions'
-		Else 'Earnings'
-		End[PTYP]
-	,	(Select CoName From Company where Cd=@v_CoCd)[CoName]
-	,	Emp.Basic[Basic]
-	,	Convert(Varchar,(select top 1 EffDate from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc ),103)[Last_Incr_Date]
-	,	Case PercAmt
-		When 'P' Then (select top 1 PercVal from EmpEarnDed where empcd=Emp.Cd  order by EffDate desc ) 
-		Else 
-		isnull((select top 1 AmtVal from EmpEarnDed where empcd=Emp.Cd and SrNo=(select top 1 srno from EmpEarnDed where empcd=Emp.Cd order by SrNo desc)  order by EffDate desc )
-		-
-		(select top 1 AmtVal from EmpEarnDed where empcd=Emp.Cd and SrNo=((select top 1 srno from EmpEarnDed where empcd=Emp.Cd order by SrNo desc)-1)  order by EffDate desc )
-		,0)End[Last_Increment_Amount]
-	,	(Select 
-			isnull(sum(
-			case PercAmt
-				When 'P' then  case EdTyp
-						when 'HEDT02'then  -PercVal*.01*(Basic*Cr.Rate)
-						else PercVal*.01*Basic
-						end
-				When 'A' then  case EdTyp
-						when 'HEDT02' then -AmtVal*Cr.Rate
-						else AmtVal*Cr.Rate
-						end
-			end),0)[Total]		
-		From 
-				EmpEarnDed ED1
-			,	Employee E1
-			,	Currency CR
-		Where  
-			E1.Cd=ED1.EmpCd
-		and	Cr.Cd=ED1.Curr
-		and	ED1.EmpCd=ED.EmpCd
-		and	rtrim(EdTyp)+rtrim(EdCd) <> @BasicCd
-		and	rtrim(EdTyp)+rtrim(EdCd) in (select rtrim(PayTyp)+rtrim(PayCd) From CompanyLeavePay Where LvCd=@AnnualLv and CoCd=@v_CoCd)
-		and	EffDate<=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year) 
-		and	(EndDate>=rtrim(@Prd) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)  or EndDate='1/1/1900'))[Total]
-	From 
-		EmpEarnDed ED 		
-	,	Employee Emp 
-	,	Currency Cr
-	where 
-		Emp.Cd=EmpCd
-	--	and	Cr.Cd=Ed.Curr
-	--and	(@v_EmpCd='All' or @v_EmpCd<>'All' and ED.EmpCd=@v_EmpCd)
-	--and (@v_Div='' or emp.Div=@v_Div)
-	--and (ed.EffDate between @v_Dt1 and @v_Dt2)
-End
-
-
- 
  
  Go 
 CREATE OR ALTER     procedure [dbo].[EmpTrans_Incentives_GetRow_N]

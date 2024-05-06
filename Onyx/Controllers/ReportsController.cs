@@ -509,5 +509,95 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Pay Register
+        public IActionResult PayRegister()
+        {
+            ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
+            });
+            ViewBag.DesignationItems = _organisationService.GetDesignations().Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}({m.Cd.Trim()})"
+            });
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            ViewBag.DepartmentItems = _settingService.GetDepartments().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.Department}({m.Code.Trim()})"
+            });
+            ViewBag.NationalityItems = _settingService.GetCountries().Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = m.Nationality
+            });
+            ViewBag.LocationItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDeployLoc).Select(m => new SelectListItem
+            {
+                Text = $"{m.ShortDes}({m.Code.Trim()})",
+                Value = m.Code.Trim(),
+            });
+            var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+            var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+            ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
+            return View();
+        }
+        public IActionResult FetchPayRegister(EmpPayRegisterFilterModel filterModel)
+        {
+            var spPeriod = filterModel.Period.Split('/');
+            filterModel.Month = spPeriod[0];
+            filterModel.Year = spPeriod[1];
+            ViewBag.TableResponsiveClass = "table-responsive";
+            if (filterModel.Type == "Detail")
+            {
+                var data = _reportService.GetRepo_EmpPayDetail(filterModel, _loggedInUser.CompanyCd);
+                return PartialView("_PayRegisterDetail", data);
+            }
+            else if (filterModel.Type == "Summary")
+            {
+                var data = _reportService.GetRepo_EmpPayDetail_Summary(filterModel, _loggedInUser.CompanyCd);
+                return PartialView("_PayRegisterSummary", data);
+            }
+            else
+            {
+                var data = _reportService.GetRepo_EmpPayDetail_Format(filterModel, _loggedInUser.CompanyCd);
+                return PartialView("_PayRegisterFormat1", data);
+            }
+        }
+        public IActionResult PayRegisterReport(EmpPayRegisterFilterModel filterModel)
+        {
+            var spPeriod = filterModel.Period.Split('/');
+            filterModel.Month = spPeriod[0];
+            filterModel.Year = spPeriod[1];
+            if (filterModel.Type == "Detail")
+            {
+                var data = _reportService.GetRepo_EmpPayDetail(filterModel, _loggedInUser.CompanyCd);
+                return new ViewAsPdf(data)
+                {
+                    PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                    PageOrientation = Orientation.Landscape,
+                };
+            }
+            else if (filterModel.Type == "Summary")
+            {
+                var data = _reportService.GetRepo_EmpPayDetail_Summary(filterModel, _loggedInUser.CompanyCd);
+                return new ViewAsPdf(data)
+                {
+                    PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                };
+            }
+            else
+            {
+                var data = _reportService.GetRepo_EmpPayDetail_Format(filterModel, _loggedInUser.CompanyCd);
+                return new ViewAsPdf(data) { PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 }, PageOrientation = Orientation.Landscape };
+            }
+        }
+        #endregion
     }
 }

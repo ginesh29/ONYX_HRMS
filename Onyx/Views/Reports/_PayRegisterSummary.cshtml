@@ -1,0 +1,54 @@
+﻿@model IEnumerable<GetRepo_EmpPayDetail_Summary_Result>
+@{
+    var groupedData = Model.GroupBy(m => new { m.Type });
+}
+<div class="table-responsive">
+    @foreach (var grp in groupedData)
+    {
+        var totalMonthPay = grp.Sum(m => m.MonthPay);
+        var totalEarnings = grp.Sum(m => m.Additions);
+        var totalDeductions = grp.Sum(m => m.Deductions);
+        var grandTotal = totalMonthPay + totalEarnings - totalDeductions;
+        <h6 class="text-primary">@grp.Key.Type</h6>
+        <table class="table table-sm" id="PayRegisterSummary" style="font-size:small">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Employee</th>
+                    <th>Branch</th>
+                    <th>Month Pay</th>
+                    <th>Leave Sal.</th>
+                    <th>Leave Tic.</th>
+                    <th>Earnings</th>
+                    <th>Deductions</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            @foreach (var item in grp)
+            {
+                var total = item.MonthPay + item.Additions - item.Deductions;
+                <tr>
+                    <td>@item.EmpName (@item.Cd.Trim())</td>
+                    <td>@item.Branch</td>
+                    <td>@item.MonthPay.ToString("0.00")</td>
+                    <td>@item.LS.ToString("0.00")</td>
+                    <td>@item.LT.ToString("0.00")</td>
+                    <td>@item.Additions.ToString("0.00")</td>
+                    <td>@item.Deductions.ToString("0.00")</td>
+                    <td>@total.ToString("0.00")</td>
+                </tr>
+            }
+            <tfoot class="table-secondary">
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td>@totalMonthPay.ToString("0.00")</td>
+                    <td>@Model.Sum(m => m.LS).ToString("0.00")</td>
+                    <td>@Model.Sum(m => m.LT).ToString("0.00")</td>
+                    <td>@totalEarnings.ToString("0.00")</td>
+                    <td>@totalDeductions.ToString("0.00")</td>
+                    <td>@grandTotal.ToString("0.00")</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+</div>

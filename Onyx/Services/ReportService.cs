@@ -241,5 +241,63 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public IEnumerable<GetRepo_EmpPayDetail_Result> GetRepo_EmpPayDetail(EmpPayRegisterFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpPayDetail_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_RPrd", filterModel.Month);
+            parameters.Add("v_RYear", filterModel.Year);
+            parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
+            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Location", filterModel.Section ?? "All");
+            parameters.Add("v_Department", filterModel.Department ?? "All");
+            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            parameters.Add("v_Desg", filterModel.Designation ?? "All");
+            parameters.Add("v_Nat", filterModel.Nationality ?? "All");
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpPayDetail_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_EmpPayDetail_Format_Result> GetRepo_EmpPayDetail_Format(EmpPayRegisterFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpPayDetail_Format";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_RPrd", filterModel.Month);
+            parameters.Add("v_RYear", filterModel.Year);
+            parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
+            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Location", filterModel.Section ?? "All");
+            parameters.Add("v_Department", filterModel.Department ?? "All");
+            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpPayDetail_Format_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_EmpPayDetail_Summary_Result> GetRepo_EmpPayDetail_Summary(EmpPayRegisterFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_EmpPayDetail_Summary";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_RPrd", filterModel.Month);
+            parameters.Add("v_RYear", filterModel.Year);
+            parameters.Add("v_Employee", filterModel.EmpCd ?? "All");
+            parameters.Add("v_Branch", filterModel.Branch ?? "All");
+            parameters.Add("v_Location", filterModel.Section ?? "All");
+            parameters.Add("v_Department", filterModel.Department ?? "All");
+            parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
+            parameters.Add("v_Desg", filterModel.Designation ?? "All");
+            parameters.Add("v_Nat", filterModel.Nationality ?? "All");
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_EmpPayDetail_Summary_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }

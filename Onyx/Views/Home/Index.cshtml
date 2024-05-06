@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <p class="text-muted text-sm mb-0"><b>Nationality: </b>@EmployeeDetail.Nationality</p>
                             <p class="text-muted text-sm mb-0"><b>Date of Birth: </b> @EmployeeDetail.DOB.Value.FormatDate()</p>
                             <p class="text-muted text-sm mb-0"><b>Date of Join: </b> @EmployeeDetail.DOJ.Value.FormatDate()</p>
@@ -51,8 +51,8 @@
                             <p class="text-muted text-sm mb-0"><b>Probation: </b> @EmployeeDetail.Probation.Value.FormatDate()</p>
                             <p class="text-muted text-sm mb-0"><b>Status: </b> @EmployeeDetail.Status</p>
                         </div>
-                        <div class="col-md-6">
-                            <h4 class="lead mt-3 mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h4>
+                        <div class="col-md-7">
+                            <h5 class="lead mt-3 mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h5>
                             <p class="text-muted text-sm mb-0"><b>S/O: </b> @EmployeeDetail.Father</p>
                             <p class="text-muted text-sm mb-0"><b>Email: </b> @EmpContactDetail?.Email</p>
                             <p class="text-muted text-sm mb-0"><b>Mob No.: </b> @EmpContactDetail?.Mobile</p>
@@ -165,7 +165,7 @@
                     <p>Loan Recovery Amount</p>
                 </div>
                 <div class="icon">
-                    <i class="fas fa-money-bill"></i>
+                    <i class="fas fa-money-bill-1-wave"></i>
                 </div>
             </div>
         </div>
@@ -394,17 +394,17 @@
                     labels: xValues,
                     datasets: [
                         {
-                            label: 'Benefits/Payments',
-                            data: JSON.parse(benefits),
+                            label: 'Allowances/Earnings',
+                            data: JSON.parse(allowance),
                             borderColor: "green",
                             fill: false
                         },
                         {
-                            label: 'Allowances/Earnings',
-                            data: JSON.parse(allowance),
+                            label: 'Benefits/Payments',
+                            data: JSON.parse(benefits),
                             borderColor: "blue",
                             fill: false
-                        },
+                        },                        
                         {
                             label: 'Deductions',
                             data: JSON.parse(deductions),

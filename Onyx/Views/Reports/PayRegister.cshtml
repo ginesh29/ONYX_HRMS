@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Pay Register Report";
+    var typeItems = new List<SelectListItem>{
+        new SelectListItem{Value="Detail",Text="Detail",Selected=true},
+        new SelectListItem{Value="Summary",Text="Summary"},
+        new SelectListItem{Value="Format1",Text="Format 1"},
+    };
+}
+@model EmpPayRegisterFilterModel
+<div class="card">
+    <div class="card-body">
+        <form id="filter-frm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.ALLSELECT">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Branch"></label>
+                        <select class="form-control filter-select-picker" asp-for="Branch" asp-items="ViewBag.BranchItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Department"></label>
+                        <select asp-for="Department" class="form-control filter-select-picker" asp-items="ViewBag.DepartmentItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Designation"></label>
+                        <select asp-for="Designation" class="form-control filter-select-picker" asp-items="ViewBag.DesignationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Sponsor"></label>
+                        <select asp-for="Sponsor" class="form-control filter-select-picker" asp-items="ViewBag.SponsorItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="Period"></label>
+                        <input asp-for="Period" value="@ViewBag.currentMonthYear" class="form-control month-year-input" type="text" data-toggle="datetimepicker">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Nationality"></label>
+                        <select asp-for="Nationality" class="form-control filter-select-picker" asp-items="ViewBag.NationalityItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Section"></label>
+                        <select asp-for="Section" class="form-control filter-select-picker" asp-items="ViewBag.LocationItems"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Type"></label>
+                        <div>
+                            @foreach (var item in typeItems)
+                            {
+                                <label class="radio-inline mb-0">
+                                    <label class="custom-control custom-radio">
+                                        <input type="radio" asp-for="Type" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_@item.Value" value="@item.Value" checked="@item.Selected">
+                                        <label for="type_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
+                                    </label>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="report-btn-div mb-3">
+                    <button class="btn btn-secondary" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <div id="PayRegister"></div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        bindEmployeeDropdown();
+        function loadGridData(btn) {
+            var frm = $("#filter-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                var url = `/Reports/FetchPayRegister?${frm.serialize()}`;
+                $('#PayRegister').load(url, function () {
+                    unloadingButton(btn);
+                    if ($(".table").length > 0)
+                        $("#btn-pdf").removeClass("d-none");
+                });
+            }
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/PayRegisterReport?${frm}`;
+                window.open(url);
+            }
+        }
+    </script>
+}
