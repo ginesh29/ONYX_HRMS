@@ -1,30 +1,30 @@
-﻿@{
+﻿@using System.Text.Json;;
+@{
     ViewData["Title"] = "Dashboard";
-    List<string> drpItems = ["30", "60", "90", "120", "150"];
-    var typeItems = new List<SelectListItem>{
-        new SelectListItem{Value="EMP",Text="Employee",Selected=true},
-        new SelectListItem{Value="COM",Text="Company"},
-        new SelectListItem{Value="VEH",Text="Vehicle"},
-    };
-    var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
-    EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval = ViewBag.EmplLoanAndLeaveApproval;
     var loggedInUser = _authService.GetLoggedInUser();
-    Employee_GetRow_Result EmployeeDetail = ViewBag.EmployeeDetail;
-    EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
-
-    IEnumerable<EmpDocuments_GetRow_Result> empDocs = ViewBag.EmpDocs;
-    IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
-    var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
+    EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval = ViewBag.EmplLoanAndLeaveApproval;
+    var salaryDetail = EmplLoanAndLeaveApproval.SalaryDetails;
+    var prds = salaryDetail.Select(m => m.Prd).Distinct().ToArray();
+    var benefits = salaryDetail.Where(m => m.Name == "Benefits/Payments").Select(m => m.PayElementDetailsCount).ToArray();
+    var allowance = salaryDetail.Where(m => m.Name == "Allowances/Earnings").Select(m => m.PayElementDetailsCount).ToArray();
+    var deductions = salaryDetail.Where(m => m.Name == "Deductions").Select(m => m.PayElementDetailsCount).ToArray();
 }
-<link rel="stylesheet" href="~/plugins/fullcalendar/main.css">
 @if (loggedInUser.UserOrEmployee == "E")
 {
+    Employee_GetRow_Result EmployeeDetail = ViewBag.EmployeeDetail;
+    EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
     var avatarFileExist = EmployeeDetail.ImageFilePath.FileExist("emp-photo", loggedInUser.CompanyCd);
     var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(EmployeeDetail.ImageFilePath) ? $"/uploads/{loggedInUser.CompanyCd}/emp-photo/{EmployeeDetail.ImageFilePath}" : "/images/avatar.png";
     var address = $"{EmpContactDetail.AddressLine1}, {EmpContactDetail.AddressLine2}, {EmpContactDetail.AddressLine3}";
+    IEnumerable<EmpDocuments_GetRow_Result> empDocs = ViewBag.EmpDocs;
     <div class="row">
-        <div class="col-12 col-sm-6 col-md-6 d-flex align-EmployeeDetails-stretch flex-column">
-            <div class="card">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <h4 class="card-label text-primary">
+                        Employee Basic Details
+                    </h4>
+                </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-7">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                             <p class="text-muted text-sm mb-0"><b>Nationality: </b>@EmployeeDetail.Nationality</p>
                             <p class="text-muted text-sm mb-0"><b>Date of Birth: </b> @EmployeeDetail.DOB.Value.FormatDate()</p>
                             <p class="text-muted text-sm mb-0"><b>Date of Join: </b> @EmployeeDetail.DOJ.Value.FormatDate()</p>
@@ -49,8 +49,8 @@
                             <p class="text-muted text-sm mb-0"><b>Probation: </b> @EmployeeDetail.Probation.Value.FormatDate()</p>
                             <p class="text-muted text-sm mb-0"><b>Status: </b> @EmployeeDetail.Status</p>
                         </div>
-                        <div class="col-md-5">
-                            <h4 class="lead mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h4>
+                        <div class="col-md-6">
+                            <h4 class="lead mt-3 mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h4>
                             <p class="text-muted text-sm mb-0"><b>S/O: </b> @EmployeeDetail.Father</p>
                             <p class="text-muted text-sm mb-0"><b>Email: </b> @EmpContactDetail?.Email</p>
                             <p class="text-muted text-sm mb-0"><b>Mob No.: </b> @EmpContactDetail?.Mobile</p>
@@ -59,15 +59,48 @@
                     </div>
                 </div>
             </div>
-        </div><div class="col-md-6">
-            <div class="card">
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary">
+                            Salary Graph
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="myLineChart" style="height:335px"></canvas>
+                    @* <table class="table table-sm">
+                <thead class="thead-dark">
+                <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                </tr>
+                </thead>
+                @foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
+                {
+                <tr>
+                <td>@item.Des</td>
+                <td>@item.PayElementDetailsCount</td>
+                </tr>
+                }
+                </table> *@
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card w-100">
                 <div class="card-header">
                     <h4 class="card-label text-primary">
                         My Documents
                     </h4>
                 </div>
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table table-sm">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Doc Type</th>
@@ -92,310 +125,312 @@
         </div>
     </div>
 }
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-white">
-            <div class="inner">
-                <h3>@EmplLoanAndLeaveApproval.Working</h3>
-                <p>Present Employee</p>
+else
+{
+    List<string> drpItems = ["30", "60", "90", "120", "150"];
+    var typeItems = new List<SelectListItem>{
+        new SelectListItem{Value="EMP",Text="Employee",Selected=true},
+        new SelectListItem{Value="COM",Text="Company"},
+        new SelectListItem{Value="VEH",Text="Vehicle"},
+    };
+    var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
+    IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
+    var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
+    <div class="row">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-white">
+                <div class="inner">
+                    <h3>@EmplLoanAndLeaveApproval.Working</h3>
+                    <p>Present Employee</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
             </div>
-            <div class="icon">
-                <i class="fas fa-users"></i>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-white">
+                <div class="inner">
+                    <h3>@EmplLoanAndLeaveApproval.OnLeave</h3>
+                    <p>Employee on Leave</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-white">
+                <div class="inner">
+                    <h3>@EmplLoanAndLeaveApproval.LeaveApplied</h3>
+                    <p>Employee Leave Applied</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-white">
+                <div class="inner">
+                    <h3>@EmplLoanAndLeaveApproval.LoanRecoveryAmount</h3>
+                    <p>Loan Recovery Amount</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-money-bill"></i>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-white">
-            <div class="inner">
-                <h3>@EmplLoanAndLeaveApproval.OnLeave</h3>
-                <p>Employee on Leave</p>
+    <div class="row">
+        @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
+        {
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-white">
+                    <div class="inner">
+                        <h3>@item.HeadCount</h3>
+                        <p>@item.Des</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
             </div>
-            <div class="icon">
-                <i class="fas fa-users"></i>
-            </div>
-        </div>
+        }
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-white">
-            <div class="inner">
-                <h3>@EmplLoanAndLeaveApproval.LeaveApplied</h3>
-                <p>Employee Leave Applied</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-users"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-white">
-            <div class="inner">
-                <h3>@EmplLoanAndLeaveApproval.LoanRecoveryAmount</h3>
-                <p>Loan Recovery Amount</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-money-bill"></i>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="card-label text-primary mr-auto">
-                    Document Expiry Waiting List
-                </h4>
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="mr-auto">
-                        @foreach (var status in typeItems)
-                        {
-                            <label class="radio-inline mb-0">
-                                <label class="custom-control custom-radio">
-                                    <input type="radio" name="DocExpiredType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_@status.Value" value="@status.Value" onchange="showExpiredDocuments()">
-                                    <label for="type_@status.Value" class="custom-control-label font-weight-normal">@status.Text</label>
+    <div class="row">
+        <div class="col-md-7 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <h4 class="card-label text-primary mr-auto">
+                        Document Expiry Waiting List
+                    </h4>
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="mr-auto">
+                            @foreach (var status in typeItems)
+                            {
+                                <label class="radio-inline mb-0">
+                                    <label class="custom-control custom-radio">
+                                        <input type="radio" name="DocExpiredType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_@status.Value" value="@status.Value" onchange="showExpiredDocuments()">
+                                        <label for="type_@status.Value" class="custom-control-label font-weight-normal">@status.Text</label>
+                                    </label>
                                 </label>
-                            </label>
-                        }
-                    </div>
-                    <label class="mb-0">No of Days Before</label>
-                    <div class="col-md-3">
-                        <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showExpiredDocuments()">
-                        </select>
+                            }
+                        </div>
+                        <label class="mb-0">No of Days Before</label>
+                        <div class="col-md-3">
+                            <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showExpiredDocuments()">
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body" style="height: 575px; overflow:auto">
-                <table class="table table-sm" id="ExpiredDocDataTable">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>No.</th>
-                            <th>Employee</th>
-                            <th>Doc. Type</th>
-                            <th>Doc. No.</th>
-                            <th>Expiry Date</th>
-                            <th>Days</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">
-                <!-- Toolbar -->
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary mr-auto">
-                        Leave List
-                    </h4>
-                    <label class="mb-0">No of Days</label>
-                    <div class="col-md-3">
-                        <select id="EmpLeaveNoOfDays-3" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(3)">
-                        </select>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm" id="ExpiredDocDataTable">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Employee</th>
+                                    <th>Doc. Type</th>
+                                    <th>Doc. No.</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="card-body" style="height: 610px; overflow:auto">
-                <table class="table table-sm" id="EmpLeaveDataTable-3">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>No.</th>
-                            <th>Employee</th>
-                            <th>Duration</th>
-                            <th>Days</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary mr-auto">
-                        Not Joined List
-                    </h4>
-                    <label class="mb-0">No of Days</label>
-                    <div class="col-md-3">
-                        <select id="EmpLeaveNoOfDays-5" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(5)">
-                        </select>
+        <div class="col-md-5 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <!-- Toolbar -->
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Leave List
+                        </h4>
+                        <label class="mb-0">No of Days</label>
+                        <div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays-3" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(3)">
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body" style="height: 535px; overflow:auto">
-                <table class="table table-sm" id="EmpLeaveDataTable-5">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>No.</th>
-                            <th>Employee</th>
-                            <th>Duration</th>
-                            <th>Days</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">
-                <!-- Toolbar -->
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary mr-auto">
-                        Return List
-                    </h4>
-                    <label class="mb-0">No of Days</label>
-                    <div class="col-md-3">
-                        <select id="EmpLeaveNoOfDays-4" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(4)">
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body" style="height: 535px; overflow:auto">
-                <table class="table table-sm" id="EmpLeaveDataTable-4">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>No.</th>
-                            <th>Employee</th>
-                            <th>Duration</th>
-                            <th>Days</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary mr-auto">
-                        Employee Analysis
-                    </h4>
-                    <label class="mb-0">Type</label>
-                    <div class="col-md-3">
-                        <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showChart()">
-                            <option value="Dept">Department</option>
-                            <option value="Branch">Branch</option>
-                            <option value="Nationality">Nationality</option>
-                            <option value="Location">Location</option>
-                            <option value="Status">Status</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="chart">
-                    <canvas id="myChart"></canvas>
-                </div>
-            </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary">
-                        Yearly Salary Graph
-                    </h4>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="myLineChart" style="height:335px"></canvas>
-                @* <table class="table table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Description</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
-                    {
-                        <tr>
-                            <td>@item.Des</td>
-                            <td>@item.PayElementDetailsCount</td>
-                        </tr>
-                    }
-                </table> *@
-            </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary">
-                        Birthday/Work Anniversary
-                    </h4>
-                </div>
-            </div>
-            <div class="card-body" style="height:500px;overflow:auto">
-                <table class="table table-sm">
-                    @foreach (var grp in groupedEvents)
-                    {
-                        <thead class="thead-light">
+                <div class="card-body">
+                    <table class="table table-sm" id="EmpLeaveDataTable-3">
+                        <thead class="thead-dark">
                             <tr>
-                                <th style="padding-left: 8px;">@grp.Key.Start</th>
+                                <th>No.</th>
+                                <th>Employee</th>
+                                <th>Duration</th>
+                                <th>Days</th>
                             </tr>
                         </thead>
-                        foreach (var item in grp)
-                        {
-                            <tr>
-                                <td><i class="fas fa-circle icon-sm mr-2" style="font-size:x-small;color:@item.BackgroundColor"></i>@item.Title</td>
-                            </tr>
-                        }
-                    }
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary">
-                        Head Count
-                    </h4>
+                    </table>
                 </div>
             </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Description</th>
-                            <th>Count</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
-                    {
-                        <tr>
-                            <td>@item.Des</td>
-                            <td>@item.HeadCount</td>
-                        </tr>
-                    }
-                </table>
-            </div>
-            <!-- /.card-body -->
         </div>
     </div>
-
-</div>
-<style>
-    .tooltip-inner {
-        max-width: 300px;
-    }
-</style>
+    <div class="row">
+        <div class="col-md-7 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Not Joined List
+                        </h4>
+                        <label class="mb-0">No of Days</label>
+                        <div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays-5" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(5)">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm" id="EmpLeaveDataTable-5">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No.</th>
+                                <th>Employee</th>
+                                <th>Duration</th>
+                                <th>Days</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <!-- Toolbar -->
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Return List
+                        </h4>
+                        <label class="mb-0">No of Days</label>
+                        <div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays-4" class="form-control dashboard-select-picker" asp-items="noOfDaysItems" onchange="showEmpLeave(4)">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm" id="EmpLeaveDataTable-4">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>No.</th>
+                                <th>Employee</th>
+                                <th>Duration</th>
+                                <th>Days</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Employee Analysis
+                        </h4>
+                        <label class="mb-0">Type</label>
+                        <div class="col-md-3">
+                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showChart()">
+                                <option value="Dept">Department</option>
+                                <option value="Branch">Branch</option>
+                                <option value="Nationality">Nationality</option>
+                                <option value="Location">Location</option>
+                                <option value="Status">Status</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+        <div class="col-md-5 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary">
+                            Birthday/Work Anniversary
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body" style="height:400px;overflow:auto">
+                    <table class="table table-sm">
+                        @foreach (var grp in groupedEvents)
+                        {
+                            <thead class="thead-light">
+                                <tr>
+                                    <th style="padding-left: 8px;">@grp.Key.Start</th>
+                                </tr>
+                            </thead>
+                            foreach (var item in grp)
+                            {
+                                <tr>
+                                    <td><i class="fas fa-circle icon-sm mr-2" style="font-size:x-small;color:@item.BackgroundColor"></i>@item.Title</td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 @section scripts {
     <script src="~/plugins/chart.js/chart.min.js"></script>
-    <script src="~/plugins/fullcalendar/main.js"></script>
     <script src="~/js/page/dashboard.js" asp-append-version="true"></script>
+    <script>
+        function showLineChart() {
+            var prds = '@Html.Raw(Json.Serialize(prds))';
+            var benefits = '@Html.Raw(Json.Serialize(benefits))';
+            var allowance = '@Html.Raw(Json.Serialize(allowance))';
+            var deductions = '@Html.Raw(Json.Serialize(deductions))';
+            const xValues = JSON.parse(prds);
+            new Chart("myLineChart", {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [
+                        {
+                            label: 'Benefits/Payments',
+                            data: JSON.parse(benefits),
+                            borderColor: "green",
+                            fill: false
+                        },
+                        {
+                            label: 'Allowances/Earnings',
+                            data: JSON.parse(allowance),
+                            borderColor: "blue",
+                            fill: false
+                        },
+                        {
+                            label: 'Deductions',
+                            data: JSON.parse(deductions),
+                            borderColor: "red",
+                            fill: false
+                        },
+                    ]
+                },
+                options: {
+                    legend: { display: true }
+                }
+            });
+        }
+
+        showLineChart();
+    </script>
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
+using System.Globalization;
 
 namespace Onyx.Controllers
 {
@@ -27,8 +28,15 @@ namespace Onyx.Controllers
         #region Dashboard
         public IActionResult Index()
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             EmplLoanAndLeaveApproval.HeadCounts = EmplLoanAndLeaveApproval.HeadCounts.Where(m => m.HeadCount > 0);
+            foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
+            {
+                item.Year = Convert.ToInt32(item.Prd[..4]);
+                item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
+                item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
+            }
+            EmplLoanAndLeaveApproval.SalaryDetails = EmplLoanAndLeaveApproval.SalaryDetails.OrderBy(m => m.Year).ThenBy(m => m.Month);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
             var start = DateTime.Now.Date;
             var end = start.AddDays(1).Date;
