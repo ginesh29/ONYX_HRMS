@@ -1,0 +1,45 @@
+﻿@model IEnumerable<GetRepo_FixedPayrollCom_Result>
+@{
+    var groupedData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Basic, m.Department, m.Branch, m.Last_Incr_Date });
+}
+<div class="table-responsive">
+    @foreach (var grp in groupedData)
+    {
+        var incrementAmt = grp.Sum(m => m.Last_Increment_Amount);
+        var totalEarning = grp.Where(m => m.PTYP == "Earnings").Sum(m => m.Amount);
+        var totalDuduction = grp.Where(m => m.PTYP == "Deductions").Sum(m => m.Amount);
+        var totalAmt = grp.Key.Basic + totalEarning - totalDuduction;
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th colspan="3">@grp.Key.Name (@grp.Key.EmpCd.Trim()) | Branch: @grp.Key.Branch | Dept: @grp.Key.Department</th>
+                    <th>Basic: @grp.Key.Basic.ToString("0.00")</th>
+                    <th colspan="3">Last Incr. Date: @grp.Key.Last_Incr_Date.FormatDate() | Last Incr. Amt: @incrementAmt.ToString("0.00") | Total: @totalAmt.ToString("0.00")</th>
+                </tr>
+            </thead>
+            <thead class="thead-light">
+                <tr>
+                    <th>Pay Code</th>
+                    <th>Pay Type</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            @foreach (var item in grp)
+            {
+                <tr>
+                    <td>@item.PayCode</td>
+                    <td>@item.PayType</td>
+                    <td>@item.PTYP</td>
+                    <td>@item.Amount.ToString("0.00")</td>
+                    <td>@item.CurrDes</td>
+                    <td>@item.EffDate.FormatDate()</td>
+                    <td>@item.EndDate.FormatDate()</td>
+                </tr>
+            }
+        </table>
+    }
+</div>

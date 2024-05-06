@@ -229,13 +229,13 @@ namespace Onyx.Services
         public IEnumerable<GetRepo_FixedPayrollCom_Result> GetEmpFixedPayroll(EmplFixedPayrollFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "GetRepo_FixedPayrollCom";
+            var procedureName = "GetRepo_FixedPayrollCom_N";
             var parameters = new DynamicParameters();
-            parameters.Add("v_EmpCd", filterModel.EmpCd);
-            parameters.Add("v_Div", filterModel.BranchCd);
+            parameters.Add("v_EmpCd", filterModel.EmpCd ?? string.Empty);
+            parameters.Add("v_Div", filterModel.BranchCd ?? string.Empty);
             parameters.Add("v_Cocd", CoCd);
-            parameters.Add("v_Dt1", filterModel.StartDate);
-            parameters.Add("v_Dt2", filterModel.EndDate);
+            parameters.Add("v_Dt1", filterModel.StartDate ?? new DateTime(1900, 1, 1).Date);
+            parameters.Add("v_Dt2", filterModel.EndDate ?? DateTime.Now.Date);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_FixedPayrollCom_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

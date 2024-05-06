@@ -496,15 +496,16 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpFixedPayroll(EmplFixedPayrollFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
-            return PartialView("_DocExpired", loans);
+            var data = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_EmployeeFixedPayroll", data);
         }
         public IActionResult EmpFixedPayrollReport(EmplFixedPayrollFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
-            return new ViewAsPdf(loans)
+            var data = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(data)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                PageOrientation = Orientation.Landscape,
             };
         }
         #endregion

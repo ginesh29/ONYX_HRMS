@@ -45,32 +45,20 @@
         function loadGridData(btn) {
             loadingButton(btn);
             var frm = $("#filter-frm").serialize();
-            var url = `/Reports/FetchDocExpired?${frm}`;
-            $('#DocExpired').load(url, function () {
+            var url = `/Reports/FetchEmpFixedPayroll?${frm}`;
+            $('#EmployeeFixedPayroll').load(url, function () {
                 unloadingButton(btn);
-                window["datatable"] = $('#DocExpiredReportTable').DataTable(dataTableDefaultOptions);
-                if (window["datatable"].data().any())
-                    $("#btn-pdf,#btn-excel").removeClass("d-none");
+                if ($(".table").length > 0)
+                    $("#btn-pdf").removeClass("d-none");
             });
         }
         function filterShowReport(btn, report) {
             loadGridData(btn);
             if (report) {
                 var frm = $("#filter-frm").serialize();
-                var url = `/Reports/DocExpiredReport?${frm}`;
+                var url = `/Reports/EmpFixedPayrollReport?${frm}`;
                 window.open(url);
             }
         }
-        function showHideTypeDropdown() {
-            var type = $("input[name='Type']:checked").val();
-            $("#EmpDocType,#ComDocType,#VehDocType").closest('.form-group').addClass("d-none");
-            if (type == "EMP")
-                $("#EmpDocType").closest('.form-group').removeClass("d-none");
-            else if (type == "COM")
-                $("#ComDocType").closest('.form-group').removeClass("d-none");
-            else
-                $("#VehDocType").closest('.form-group').removeClass("d-none");
-        }
-        showHideTypeDropdown();
     </script>
 }
