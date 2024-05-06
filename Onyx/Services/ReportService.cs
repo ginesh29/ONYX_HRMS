@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Onyx.Services
 {
@@ -222,6 +223,21 @@ namespace Onyx.Services
             parameters.Add("v_Cocd", CoCd);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<EmpLeaveMaster_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_FixedPayrollCom_Result> GetEmpFixedPayroll(EmplFixedPayrollFilterModel filterModel, string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_FixedPayrollCom";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", filterModel.EmpCd);
+            parameters.Add("v_Div", filterModel.BranchCd);
+            parameters.Add("v_Cocd", CoCd);
+            parameters.Add("v_Dt1", filterModel.StartDate);
+            parameters.Add("v_Dt2", filterModel.EndDate);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_FixedPayrollCom_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

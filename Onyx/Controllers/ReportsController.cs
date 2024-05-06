@@ -339,6 +339,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Loan Analysis
         public IActionResult LoanAnalysis()
         {
@@ -481,6 +482,31 @@ namespace Onyx.Controllers
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
             };
         }
-        #endregion       
+        #endregion
+
+        #region Employee Fixed Payroll
+        public IActionResult EmployeeFixedPayroll()
+        {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
+            return View();
+        }
+        public IActionResult FetchEmpFixedPayroll(EmplFixedPayrollFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
+            return PartialView("_DocExpired", loans);
+        }
+        public IActionResult EmpFixedPayrollReport(EmplFixedPayrollFilterModel filterModel)
+        {
+            var loans = _reportService.GetEmpFixedPayroll(filterModel, _loggedInUser.CompanyCd);
+            return new ViewAsPdf(loans)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
     }
 }

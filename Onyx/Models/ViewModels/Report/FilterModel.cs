@@ -107,4 +107,14 @@ namespace Onyx.Models.ViewModels.Report
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }
+    public class EmplFixedPayrollFilterModel
+    {
+        [Display(Name = "Employee")]
+        public string EmpCd { get; set; }
+        [Display(Name = "Branch")]
+        public string BranchCd { get; set; }
+        public string DateRange { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
 }
