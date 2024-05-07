@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GetRepo_PaySlip_Format_Result>
+﻿@model IEnumerable<GetRepo_PaySlip_Result>
 @{
     var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.WorkDays, m.Department, m.Designation, m.CoName, m.Yr, m.Prd });
     int cnt = 0;
@@ -64,7 +64,12 @@
                             <td class="border-right">@item.Amt1.ToString("0.00")</td>
                             <td>@item.PayCode1</td>
                             <td>@item.Curr2</td>
-                            <td>@item.Amt2.ToString("0.00")</td>
+                            <td>
+                                @if (item.Amt2 > 0)
+                                {
+                                    <span>@item.Amt2.ToString("0.00")</span>
+                                }
+                            </td>
                         </tr>
                     }
                     <tfoot>
@@ -74,7 +79,12 @@
                             <td class="border-right">@totalEarnings.ToString("0.00")</td>
                             <td>Total Deductions</td>
                             <td>@Curr2</td>
-                            <td>@totalDeductions.ToString("0.00")</td>
+                            <td>
+                                @if (totalDeductions > 0)
+                                {
+                                    <span>@totalDeductions.ToString("0.00")</span>
+                                }
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

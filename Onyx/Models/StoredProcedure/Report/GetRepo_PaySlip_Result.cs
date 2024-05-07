@@ -1,6 +1,6 @@
 ﻿namespace Onyx.Models.StoredProcedure.Report
 {
-    public class GetRepo_PaySlip_Format_Result
+    public class GetRepo_PaySlip_Result
     {
         public string EmpCd { get; set; }
         public string Official_Cd { get; set; }
@@ -16,8 +16,6 @@
         public decimal? ExRate2 { get; set; }
         public decimal Amt1 { get; set; }
         public decimal Amt2 { get; set; }
-        public decimal? LOP { get; set; }
-        public decimal? LeaveAbs { get; set; }
         public int? NoDecs1 { get; set; }
         public int? NoDecs2 { get; set; }
         public string Bank { get; set; }
@@ -42,7 +40,7 @@
         public string TrnInd { get; set; }
         public string TrnInd1 { get; set; }
         public int? Prd { get; set; }
-        public string Yr { get; set; }
+        public int? Yr { get; set; }
         public decimal Total { get; set; }
         public string Currency { get; set; }
         public string SubCurrency { get; set; }
@@ -65,7 +63,7 @@
         public string WorkDays { get; set; }
         public string FBDays { get; set; }
         public string ODays { get; set; }
-        public int? W_days { get; set; }
+        public decimal? W_days { get; set; }
         public int? Up_Hdays { get; set; }
     }
 }
