@@ -234,7 +234,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", filterModel.EmpCd ?? string.Empty);
             parameters.Add("v_Div", filterModel.BranchCd ?? string.Empty);
             parameters.Add("v_Cocd", CoCd);
-            parameters.Add("v_Dt1", filterModel.StartDate ?? new DateTime(1900, 1, 1).Date);
+            parameters.Add("v_Dt1", filterModel.StartDate ?? Convert.ToDateTime(CommonSetting.DeafultDate));
             parameters.Add("v_Dt2", filterModel.EndDate ?? DateTime.Now.Date);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_FixedPayrollCom_Result>

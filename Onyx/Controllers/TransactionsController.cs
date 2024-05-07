@@ -964,8 +964,9 @@ namespace Onyx.Controllers
                     _transactionService.ImportAttendanceExcelData(validData, filterModel);
                 return PartialView("_AttendanceExcelData", new { Data = excelData, Message });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return Json("File not supported. Download again & refill data");
             }
         }

@@ -808,7 +808,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public CommonResponse UpdateEmpMonthlyAttendance(EmpAttendance_Getrow_Result model, AttendanceFilterModel filterModel)
+        public void UpdateEmpMonthlyAttendance(EmpAttendance_Getrow_Result model, AttendanceFilterModel filterModel)
         {
             var procedureName = "EmpAttendance_Update";
             var parameters = new DynamicParameters();
@@ -826,9 +826,7 @@ namespace Onyx.Services
             parameters.Add("v_TrnInd", "S");
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            var data = connection.QueryFirstOrDefault<CommonResponse>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return data;
+            connection.QueryFirstOrDefault(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         public void DeleteEmpAttendance(string empCd, string period, string branch)
         {
@@ -879,14 +877,19 @@ namespace Onyx.Services
                 var empCd = Convert.ToString(reader.GetValue(0));
                 bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
                 string errorMessage = "<ul class='text-left ml-0'>";
+                int? WOT = reader.GetValue(2) != null ? Convert.ToInt32(reader.GetValue(2)) : null;
+                int? HOT = reader.GetValue(3) != null ? Convert.ToInt32(reader.GetValue(3)) : null;
                 if (!validEmployee)
                     errorMessage += "<li>Employee Code is empty or not valid</li>";
                 if (!int.TryParse(Convert.ToString(reader.GetValue(1)), out int Up_HDays))
                     errorMessage += "<li>No of Unpaid Days is not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(2)), out int W_OT))
-                    errorMessage += "<li>W.OT is not valid</li>";
-                if (!int.TryParse(Convert.ToString(reader.GetValue(3)), out int H_OT))
-                    errorMessage += "<li>H.OT is not valid</li>";
+                if (WOT != null && HOT != null)
+                {
+                    if (!int.TryParse(Convert.ToString(reader.GetValue(2)), out int W_OT))
+                        errorMessage += "<li>W.OT is not valid</li>";
+                    if (!int.TryParse(Convert.ToString(reader.GetValue(3)), out int H_OT))
+                        errorMessage += "<li>H.OT is not valid</li>";
+                }
                 errorMessage += "</ul>";
                 var excelData = new EmpAttendance_Getrow_Result
                 {
@@ -894,8 +897,8 @@ namespace Onyx.Services
                     ErrorMessage = errorMessage,
                     Cd = empCd,
                     Up_HDays = Up_HDays,
-                    W_OT = W_OT,
-                    H_OT = H_OT
+                    W_OT = Convert.ToInt32(WOT),
+                    H_OT = Convert.ToInt32(HOT),
                 };
                 result.Add(excelData);
             }
@@ -903,11 +906,11 @@ namespace Onyx.Services
         }
         public void ImportAttendanceExcelData(IEnumerable<EmpAttendance_Getrow_Result> excelData, AttendanceFilterModel filterModel)
         {
+            var spYearMonth = filterModel.MonthYear.Split("/");
+            filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
+            int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(spYearMonth[1]), Convert.ToInt32(spYearMonth[0]));
             foreach (var item in excelData)
             {
-                var spYearMonth = filterModel.MonthYear.Split("/");
-                filterModel.MonthYear = $"{spYearMonth[1]}{spYearMonth[0]}";
-                int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(spYearMonth[1]), Convert.ToInt32(spYearMonth[0]));
                 item.W_days = lastDayOfMonth;
                 item.NHrs = Convert.ToInt32((item.W_days - item.Up_HDays - item.P_HDays) * float.Parse(filterModel.WorkingHrDay));
                 item.Payable = item.W_days - item.Up_HDays;
@@ -1027,17 +1030,17 @@ namespace Onyx.Services
         }
         public void ImportVariablePayComponentExcelData(IEnumerable<EmpTrans_VarCompFixAmt_GetRow_Result> excelData, VariablePayDedComponentFilterModel filterModel, string CoCd)
         {
+            if (!string.IsNullOrEmpty(filterModel.MonthYear))
+            {
+                var spYearMonth = filterModel.MonthYear.Split("/");
+                int month = Convert.ToInt32(spYearMonth[0]);
+                int year = Convert.ToInt32(spYearMonth[1]);
+                int lastDayOfMonth = DateTime.DaysInMonth(year, month);
+                filterModel.FromDt = new DateTime(year, month, 1);
+                filterModel.ToDt = new DateTime(year, month, lastDayOfMonth);
+            }
             foreach (var item in excelData)
             {
-                if (!string.IsNullOrEmpty(filterModel.MonthYear))
-                {
-                    var spYearMonth = filterModel.MonthYear.Split("/");
-                    int month = Convert.ToInt32(spYearMonth[0]);
-                    int year = Convert.ToInt32(spYearMonth[1]);
-                    int lastDayOfMonth = DateTime.DaysInMonth(year, month);
-                    filterModel.FromDt = new DateTime(year, month, 1);
-                    filterModel.ToDt = new DateTime(year, month, lastDayOfMonth);
-                }
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, CoCd); item.Curr = employeeDetail.BasicCurr.Trim();
                 item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
                 item.TransId = "M";
@@ -1388,7 +1391,7 @@ namespace Onyx.Services
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
-        }        
+        }
         public void UpdateEmpProgDetail(EmpProgressionHeadModel model)
         {
             var procedureName = "EmpProgressionDetail_Update_N";

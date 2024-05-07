@@ -422,7 +422,7 @@ namespace Onyx.Services
             parameters.Add("v_PercVal", model.PercVal);
             parameters.Add("v_AmtVal", model.Amt);
             parameters.Add("v_EffDate", model.EffDt);
-            parameters.Add("v_EndDate", model.EndDt);
+            parameters.Add("v_EndDate", CommonSetting.DeafultDate);
             parameters.Add("v_EntryBy", model.EntryBy);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
