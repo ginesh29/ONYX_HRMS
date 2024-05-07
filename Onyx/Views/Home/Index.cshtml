@@ -8,7 +8,10 @@
     var benefits = salaryDetail.Where(m => m.Name == "Benefits/Payments").Select(m => m.PayElementDetailsCount).ToArray();
     var allowance = salaryDetail.Where(m => m.Name == "Allowances/Earnings").Select(m => m.PayElementDetailsCount).ToArray();
     var deductions = salaryDetail.Where(m => m.Name == "Deductions").Select(m => m.PayElementDetailsCount).ToArray();
-
+    var donutXaxis = EmplLoanAndLeaveApproval.HeadCounts.Select(m => m.Des).ToArray();
+    var donutValue = EmplLoanAndLeaveApproval.HeadCounts.Select(m => m.HeadCount).ToArray();
+    string[] allBarColors = ["#b91d47", "#00aba9", "#2b5797", "#ed992c", "#1e7145","#191970","#556B2F",    "#2F4F4F", "#800000", "#36454F", "#800020", "#000080", "#228B22", "#4B3822", "#483D8B", "#6A5ACD",  "#008080"];
+    var barColors = allBarColors.Take(donutXaxis.Length).ToArray();
 }
 @if (loggedInUser.UserOrEmployee == "E")
 {
@@ -115,6 +118,7 @@
 
 @if (loggedInUser.UserCd != "Emp")
 {
+
     List<string> drpItems = ["30", "60", "90", "120", "150"];
     var typeItems = new List<SelectListItem>{
         new SelectListItem{Value="EMP",Text="Employee",Selected=true},
@@ -124,6 +128,52 @@
     var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
     IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
     var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Employee Analysis
+                        </h4>
+                        <label class="mb-0">Type</label>
+                        <div class="col-md-3">
+                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showBarChart()">
+                                <option value="Dept">Department</option>
+                                <option value="Branch">Branch</option>
+                                <option value="Nationality">Nationality</option>
+                                <option value="Location">Location</option>
+                                <option value="Status">Status</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Employee Statistics
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="myDonutChart"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-white">
@@ -169,22 +219,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        @foreach (var item in EmplLoanAndLeaveApproval.HeadCounts)
-        {
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-white">
-                    <div class="inner">
-                        <h3>@item.HeadCount</h3>
-                        <p>@item.Des</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                </div>
-            </div>
-        }
     </div>
     <div class="row">
         <div class="col-md-7 d-flex align-items-stretch">
@@ -319,34 +353,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-7 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header">
-                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                        <h4 class="card-label text-primary mr-auto">
-                            Employee Analysis
-                        </h4>
-                        <label class="mb-0">Type</label>
-                        <div class="col-md-3">
-                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showChart()">
-                                <option value="Dept">Department</option>
-                                <option value="Branch">Branch</option>
-                                <option value="Nationality">Nationality</option>
-                                <option value="Location">Location</option>
-                                <option value="Status">Status</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart">
-                        <canvas id="myChart"></canvas>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
+    <div class="row">        
         <div class="col-md-5 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-header">
@@ -404,7 +411,7 @@
                             data: JSON.parse(benefits),
                             borderColor: "blue",
                             fill: false
-                        },                        
+                        },
                         {
                             label: 'Deductions',
                             data: JSON.parse(deductions),
@@ -418,7 +425,32 @@
                 }
             });
         }
-
         showLineChart();
+
+        function showPieChart() {
+            var donutXaxis = '@Html.Raw(Json.Serialize(donutXaxis))';
+            var donutValue = '@Html.Raw(Json.Serialize(donutValue))';
+            var barColors = '@Html.Raw(Json.Serialize(barColors))';
+            var xValues = JSON.parse(donutXaxis);
+            var yValues = JSON.parse(donutValue);
+            console.log(xValues);
+            console.log(yValues);
+            new Chart("myDonutChart", {
+                type: "doughnut",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: JSON.parse(barColors),
+                        data: yValues
+                    }]
+                },
+                options: {
+                    title: {
+                        display: false,
+                    }
+                }
+            });
+        }
+        showPieChart();
     </script>
 }
