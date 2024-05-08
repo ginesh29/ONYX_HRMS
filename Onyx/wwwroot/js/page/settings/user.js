@@ -1,5 +1,4 @@
-﻿var initJsTree = true;
-window["datatable"] = $('#UsersDataTable').DataTable(
+﻿window["datatable"] = $('#UsersDataTable').DataTable(
     {
         ajax: "/Settings/FetchUsers",
         ordering: false,
@@ -37,6 +36,7 @@ function showUserModal(cd) {
     $('#UserModal').load(url, function () {
         parseDynamicForm();
         $("#UserModal").modal("show");
+        var initJsTree = true;
         $('#tree-view').jstree({
             "checkbox": {
                 "keep_selected_style": false,
@@ -50,6 +50,7 @@ function showUserModal(cd) {
             var checkedNodes = treeInstance.get_checked();
             var uncheckedNodes = allNodes.filter(node => !checkedNodes.includes(node.id)).map(node => node.id);
             $.each(checkedNodes, function (i, item) {
+                console.log(initJsTree)
                 if (!initJsTree) {
                     $(`#permission_checkbox_Add_${item}`).prop("checked", true);
                     $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
@@ -70,7 +71,7 @@ function showUserModal(cd) {
             $("#MenuIds").val(checkedNodes.toString());
         }).on('ready.jstree', function () {
             initJsTree = false;
-        });   
+        });
     });
 }
 function expandAllParents(treeInstance, nodeId) {

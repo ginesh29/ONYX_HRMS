@@ -6,6 +6,7 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
+    var profilePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE1");
     int totalTab = 4;
     if (documentPermission != null)
         totalTab++;
@@ -36,7 +37,7 @@
                         }
                     </div>
                     <hr />
-                    <div class="bs-stepper-content">
+                    <div class="bs-stepper-content @(profilePermission.UEdit =="Y"?"":"disabled-container")">
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
                             @foreach (var item in sections.Select((value, i) => new { i, value }))
@@ -64,7 +65,7 @@
                                             <partial name="_Documents" />
                                         }
                                         else if (item.value.Contains("Components") && componentPermission != null)
-                                        {                                            
+                                        {
                                             <partial name="_Components" />
                                         }
                                         else if (item.value.Contains("Address"))

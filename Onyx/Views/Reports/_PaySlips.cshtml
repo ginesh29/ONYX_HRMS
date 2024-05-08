@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<GetRepo_PaySlip_Result>
 @{
-    var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.WorkDays, m.Department, m.Designation, m.CoName, m.Yr, m.Prd });
+    var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.W_days, m.Department, m.Designation, m.CoName, m.Yr, m.Prd });
     int cnt = 0;
 }
 @foreach (var grp in grpData)
@@ -28,7 +28,7 @@
                 <table>
                     <tr>
                         <th width="120px">Employee Code:</th>
-                        <td width="400px">@grp.Key.EmpCd</td>
+                        <td width="300px">@grp.Key.EmpCd</td>
                         <th width="120px">Designation:</th>
                         <td width="250px">@grp.Key.Designation</td>
                     </tr>
@@ -40,7 +40,7 @@
                     </tr>
                     <tr>
                         <th>Days Worked:</th>
-                        <td>@grp.Key.WorkDays</td>
+                        <td>@grp.Key.W_days</td>
                         <th>Department:</th>
                         <td>@grp.Key.Department</td>
                     </tr>
