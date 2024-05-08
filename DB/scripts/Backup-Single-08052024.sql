@@ -1,5 +1,6 @@
 
 
+
 CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpPayDetail_Format_N]
  	@v_CoCd			Char(5)		
 ,	@v_RPrd			Char(2)	
@@ -9,7 +10,7 @@ CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpPayDetail_Format_N]
 ,   @v_Location     char(10)
 ,   @v_Department   Char(10)
 ,   @v_Sponsor      Char(10)
-As				-- Drop Procedure [GetRepo_EmpPayDetail_Format_N]'01','11','2023','All','01','All ','All','All'
+As				-- Drop Procedure [GetRepo_EmpPayDetail_Format_N]'01','02','2024','All','07','All ','All','All'
 				
 Begin
 
@@ -43,17 +44,16 @@ Begin
 	select  @Prd=case when LEN(convert(varchar(10),@Month))=1 then convert(varchar(10),@Year)+RIGHT('0' +convert(varchar(10),@Month),3) else convert(varchar(10),@Year)+convert(varchar(10),@Month) end
 	--print @Eday
 	--print @FixedDays
-
+	DECLARE 
+		@pivotcols AS NVARCHAR(MAX)
+,		@query  AS NVARCHAR(MAX)
 	If Cast(@v_RYear as int) *100 +Cast(@v_RPrd as int) >= @Year *100 +@Month
 		BEGIN
 
 			Select 	distinct
 				EmT.Empcd[Cd]	
 			,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-			--,	round(isnull((Emp.Basic/@Days),0)*(select SUM(W_days) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[BasicSalaray]
 			,	round((select isnull(sum(amt),0) from emptrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=EmT.HRDiv) ),2)[BasicSalaray]
-			--,	round((IsNull((Select top 1 AmtVal from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-			--		and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=EmT.Empcd order by EffDate desc),0)/@Days)*(select SUM(W_days-Up_HDays) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[OtherAllowance]
 			,	round((select isnull(sum(amt),0) from emptrans where EdCd='004' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=EmT.HRDiv) ),2)[OtherAllowance]
 
 			,	round(isnull((Emp.Basic/@Days),0)*(select SUM(W_days) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)
@@ -62,19 +62,12 @@ Begin
 			,	round((Emp.Basic/@Days)*(select SUM(Up_HDays) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)
 				+(IsNull((Select top 1 AmtVal from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
 					and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=EmT.Empcd order by EffDate desc),0)/@Days)*(select SUM(Up_HDays) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[LOP]
-			--,	(select SUM(Up_HDays) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)[WorkingDays]
-			
-			--,case when(select count(*) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)>1
-			--then abs(Isnull(((Select Isnull(sum(Up_HDays),0) From EmpAttendance Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)),0)
-			---Isnull((@Days),0))
-			--else Isnull((Select Isnull(sum(Up_HDays),0) From EmpAttendance Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd),0) 
-			--end [WorkingDays] 
 			,	case when(select count(*) from EmpAttendance where EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)>1
 				then abs(Isnull(((Select Isnull(sum(Up_HDays),0) From EmpAttendance Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)),2)
 				-Isnull((@Days),0))
 				else Isnull((Select abs(Isnull(sum(Up_HDays),0)-Isnull((@Days),0)) From EmpAttendance Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd),0) 
 				end [WorkingDays] 
-			,	(Select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+			,	(Select des from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
 			,	isnull(Amt,0)[Amt]
 			,	RIGHT('0' +convert(varchar(10),@Month),3)[Prd]
 			,	Cast(@v_RYear as CHAR(4))[Yr]
@@ -119,10 +112,7 @@ Begin
 			Select 	distinct
 				Emp.cd[Cd]	
 			,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName]
-			--,	isnull(round(isnull(Emp.Basic,0),2),0)[BasicSalaray]
 			,	round((select isnull(sum(amt),0) from emptrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div) ),2)[BasicSalaray]
-			--,	round(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-			--		and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=Emp.Cd order by EffDate desc),0),2)[OtherAllowance]
 			,	round((select isnull(sum(amt),0) from emptrans where EdCd='004' and EdTyp='HEDT01' and EmpCd=Emp.cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div) ),2)[OtherAllowance]
 			,	round(Emp.Basic
 				+(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
@@ -131,9 +121,8 @@ Begin
 				+(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
 					and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=Emp.Cd order by EffDate desc),0)),2)[LOP]
 			,	@Days[WorkingDays]
-			,	(Select Sdes from CompanyEarnDed, EmpTrans EmT where Cd=EmT.EdCd and Typ=EmT.EdTyp and  EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div))[Sdes]
+			,	(Select des from CompanyEarnDed, EmpTrans EmT where Cd=EmT.EdCd and Typ=EmT.EdTyp and  EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div))[Sdes]
 			,	0[Amt]
-
 			,	Cast(@v_RPrd as CHAR(2))[Prd]
 			,	Cast(@v_RYear as CHAR(4))[Yr]
 			,	(Select CoName from Company where Cd=@v_CoCd)[CompanyName]
@@ -153,10 +142,7 @@ Begin
 			,	(select sdes from codes where cd=emp.LocCd)[secttion]
 			,	(select des from syscodes where ltrim(rtrim(cd))= ltrim(rtrim(Emp.PayMode)))[Paymode]
 			,	(select des from codes where typ='ESPON' and cd=emp.Sponsor)[Sponsor]
-			--,	(select des from Branch where cd=emp.Div)[Branch]
 			,	(select des from Branch where cd=(select top 1 hrdiv from EmpTransYtd where empcd=emp.cd and prd=@Prd))[Branch]
-
-			
 			From
 			Employee	  Emp	
 			inner join 	Branch    Br on Br.Cd=Emp.Div	
@@ -174,13 +160,11 @@ Begin
 			and emp.cd not in (select Empcd from EmpTrans)
 			--and	Emp.Cd not in (select Cd From Employee Where Status in ('HSTATNP','HSTATTP','HSTATSR','HSTATST','HSTATES'))
 			order by Cd
-			select * from  dbo.#temp_Sal 
-			group by cd,Branch,EmpName,BasicSalaray,
-			OtherAllowance,ElSal,LOP,WorkingDays,
-			Prd,Yr,CompanyName,
-			CompanyFax,CompanyAdress,CompanyPhone,CompanyEmail,CompanyLogo,
-			Search,Desg,Doj,dept,Sponsor,secttion,Paymode
-			
+			select distinct Sdes into #EmpTransYtd2 from dbo.#temp_Sal 
+			select @pivotcols=Coalesce(@pivotcols+',','')+QUOTENAME(Sdes)  from #EmpTransYtd2 
+			Set @query=N'Select cd,Empname,Prd,WorkingDays,ElSal,LOP,Yr,CompanyName,CompanyAdress,CompanyFax,CompanyEmail,CompanyLogo,Desg,DOj,Dept,secttion,Paymode,Sponsor,Branch,'+@pivotcols+'  from #temp_Sal Pivot (sum(Amt) for Sdes in('+@pivotcols+')) as Pivot1'
+			exec sp_executesql @query
+			drop table  #EmpTransYtd2
 			drop table dbo.#temp_Sal
 		END
 	Else
@@ -194,10 +178,7 @@ Begin
 			Select 	distinct
 				EmT.Empcd[Cd]	
 					,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName]
-			--,	round(isnull((Emp.Basic/@Days),0)*(select SUM(W_days) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[BasicSalaray]
 			,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=EmT.HRDiv) and prd=@Prd ),2)[BasicSalaray]
-			--,	round((IsNull((Select top 1 AmtVal from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-			--		and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=EmT.Empcd order by EffDate desc),0)/@Days)*(select SUM(W_days) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[OtherAllowance]
 			,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdCd='004'  and EdTyp='HEDT01' and prd=@Prd and EmpCd=EmT.Empcd and (@v_Branch='All' or @v_Branch<>'' and HRDiv=EmT.HRDiv)),0),2)[OtherAllowance]
 			,	round(isnull((Emp.Basic/@Days),0)*(select SUM(W_days) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)
 				+(IsNull((Select top 1 AmtVal from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
@@ -205,13 +186,12 @@ Begin
 			,	round((Emp.Basic/@Days)*(select SUM(Up_HDays) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)
 				+(IsNull((Select top 1 AmtVal from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
 					and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900') and EmpCd=EmT.Empcd order by EffDate desc),0)/@Days)*(select SUM(Up_HDays) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd),2)[LOP]
-			--,	(select SUM(Up_HDays) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or @v_Branch<>'All' and Div=EmT.HRDiv) and Prd=@Prd)[WorkingDays]
 			,	case when(select count(*) from EmpAttendanceYtd where EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)>1
 				then abs(Isnull(((Select Isnull(sum(Up_HDays),0) From EmpAttendanceYtd Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd)),2)
 				-Isnull((@Days),0))
 				else Isnull((Select abs(Isnull(sum(Up_HDays),0)-Isnull((@Days),0)) From EmpAttendanceYtd Where  EmpCd=EmT.EmpCd and (@v_Branch='All' or Div=@v_Branch) and Prd=@Prd),0) 
 				end [WorkingDays] 
-			,	(Select Sdes from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
+			,	(Select des from CompanyEarnDed where Cd=EmT.EdCd and Typ=EmT.EdTyp)[Sdes]
 			,	isnull(Amt,0)[Amt]
 			,	RIGHT('0' +convert(varchar(10),@Month),3)[Prd]
 			,	Cast(@v_RYear as CHAR(4))[Yr]
@@ -258,12 +238,9 @@ Begin
 			Select 	distinct
 				Emp.cd[Cd]	
 					,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName]
-			--,	isnull((Emp.Basic/@Days),0)[BasicSalaray]
 			,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=emp.Div) ),2)[BasicSalaray]
 
 			,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdCd='004'  and EdTyp='HEDT01' and prd=@Prd and EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'' and HRDiv=emp.Div)),0),2)[OtherAllowance]
-			--,	(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
-			--		and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=Emp.Cd order by EffDate desc),0)/@Days)[OtherAllowance]
 			,	(Emp.Basic/@Days)*
 				+(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
 					and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=Emp.Cd order by EffDate desc),0)/@Days)[ElSal]
@@ -271,7 +248,7 @@ Begin
 				+(IsNull((Select top 1 isnull(AmtVal,0) from EmpEarnDed where EdCd='004' and EdTyp='HEDT01' and	EffDate <= rtrim(@Month) + '/' + rtrim(@EDay)+'/'+rtrim(@Year)
 					and	(EndDate >= rtrim(@Month) + '/1/'+rtrim(@Year) or EndDate='1/1/1900')and EmpCd=Emp.Cd order by EffDate desc),0))[LOP]
 			,	@Days[WorkingDays]
-			,	(Select Sdes from CompanyEarnDed, EmpTransYtd EmT where Cd=EmT.EdCd and prd=@Prd and Typ=EmT.EdTyp and  EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div))[Sdes]
+			,	(Select des from CompanyEarnDed, EmpTransYtd EmT where Cd=EmT.EdCd and prd=@Prd and Typ=EmT.EdTyp and  EmpCd=Emp.Cd and (@v_Branch='All' or @v_Branch<>'All' and HRDiv=Emp.Div))[Sdes]
 			,	0[Amt]
 			,	Cast(@v_RPrd as CHAR(2))[Prd]
 			,	Cast(@v_RYear as CHAR(4))[Yr]
@@ -311,27 +288,12 @@ Begin
 			--and	Emp.Cd not in (select Cd From Employee Where Status in ('HSTATNP','HSTATTP','HSTATSR','HSTATST','HSTATES'))
 			order by Cd
 
-			--select * from dbo.#temp_Sal1 --group by cd
-
-DECLARE 
-		@pivotcols AS NVARCHAR(MAX)
-,		@query  AS NVARCHAR(MAX)
-
-select distinct Sdes into #EmpTransYtd1 from #temp_Sal1 
-
-
-select @pivotcols=Coalesce(@pivotcols+',','')+QUOTENAME(Sdes)  from #EmpTransYtd1 
-
---select @pivotcols
-Set @query=N'Select cd,Empname,Prd,WorkingDays,ElSal,LOP,Yr,CompanyName,CompanyAdress,CompanyFax,CompanyEmail,CompanyLogo,Desg,DOj,Dept,secttion,Paymode,Sponsor,Branch,'+@pivotcols+'  from #temp_Sal1 Pivot (sum(Amt) for Sdes in('+@pivotcols+')) as Pivot1'
---select @query
-
-exec sp_executesql @query
-
-
-
-drop table  #EmpTransYtd1
-drop table dbo.#temp_Sal1
+			select distinct Sdes into #EmpTransYtd1 from #temp_Sal1 
+			select @pivotcols=Coalesce(@pivotcols+',','')+QUOTENAME(Sdes)  from #EmpTransYtd1 
+			Set @query=N'Select cd,Empname,Prd,WorkingDays,ElSal,LOP,Yr,CompanyName,CompanyAdress,CompanyFax,CompanyEmail,CompanyLogo,Desg,DOj,Dept,secttion,Paymode,Sponsor,Branch,'+@pivotcols+'  from #temp_Sal1 Pivot (sum(Amt) for Sdes in('+@pivotcols+')) as Pivot1'
+			exec sp_executesql @query
+			drop table  #EmpTransYtd1
+			drop table dbo.#temp_Sal1
 
 END
 End 

@@ -358,7 +358,8 @@ function showDocumentModal(empCd, docTypeCd, srNo) {
         bindEmployeeDropdown();
         parseDynamicForm();
         showHideExpiry();
-        $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
+        if (empCd)
+            $('#DocList').load(`/Employee/FetchDocumentFiles?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}`);
         $("#DocumentModal").modal("show");
     });
 }
@@ -430,6 +431,7 @@ function filesPreview(input) {
     }
 };
 function deleteDocumentFile(curr, divCd, docType, srNo) {
+
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -440,6 +442,7 @@ function deleteDocumentFile(curr, divCd, docType, srNo) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
+            var empCd = $("#EmpCd").val();
             deleteAjax(`/Employee/DeleteDocumentFile?empCd=${encodeURI(empCd)}&docTypCd=${docType}&slNo=${srNo}`, function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);

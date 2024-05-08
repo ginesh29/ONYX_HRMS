@@ -19,6 +19,7 @@ namespace Onyx.Controllers
         private readonly EmployeeService _employeeService;
         private readonly OrganisationService _organisationService;
         private readonly LoggedInUserModel _loggedInUser;
+        private readonly FileHelper _fileHelper;
         public TransactionsController(AuthService authService, CommonService commonService, TransactionService transactionService, SettingService settingService, EmployeeService employeeService, OrganisationService organisationService, DbGatewayService dbGatewayService)
         {
             _authService = authService;
@@ -29,6 +30,7 @@ namespace Onyx.Controllers
             _employeeService = employeeService;
             _organisationService = organisationService;
             _dbGatewayService = dbGatewayService;
+            _fileHelper = new FileHelper();
         }
 
         #region Leave Transaction
@@ -1346,11 +1348,31 @@ namespace Onyx.Controllers
             });
             return PartialView("_RenewalDocumentApprovalModal", document);
         }
-        public IActionResult SaveRenewalDocumentApproval(EmpDocIssueRcpt_GetRow_Result model)
+        public async Task<IActionResult> SaveRenewalDocumentApproval(EmpDocIssueRcpt_GetRow_Result model)
         {
             model.EntryBy = _loggedInUser.UserAbbr;
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
             _transactionService.SaveEmpDocIssueRcptAppr(model);
+            if (model.DocFiles?.Count() > 0)
+            {
+                string uploadedFilePath = string.Empty;
+                foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
+                {
+                    if (item != null)
+                    {
+                        var filePath = await _fileHelper.UploadFile(item.value, "emp-doc", _loggedInUser.CompanyCd);
+                        uploadedFilePath = filePath;
+                        _employeeService.SaveDocumentFile(new EmpDocImageModel
+                        {
+                            EmployeeCode = model.EmployeeCode,
+                            EntryBy = _loggedInUser.UserAbbr,
+                            DocumentTypeCd = model.DocType,
+                            ImageFile = uploadedFilePath,
+                            SlNo = item.i + 1,
+                        });
+                    }
+                }
+            }
             var action = model.Status == "A" ? "approved" : "rejected";
             var result = new CommonResponse
             {

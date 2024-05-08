@@ -167,3 +167,25 @@ window["datatable"] = $('#RenewalDocumentsApprovalDataTable').DataTable(
     }
 );
 showHideTypeDropdown();
+
+function filesPreview(input) {
+    $("#Files-Preview").html("");
+    if (input.files) {
+        var filesCount = input.files.length;
+        for (i = 0; i < filesCount; i++) {
+            var ext = input.files[i].name.split('.').pop().toLowerCase();
+            if (imageExtensions.includes(ext) || pdfExtensions.includes(ext)) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    var src = event.target.result.includes("image") ? event.target.result : "/images/pdf-icon.png";
+                    var html = `<div class="btn-file-edit-container"><img style="height:100px;max-width:100%" src='${src}' class="img-thumbnail mb-3"></div>`;
+                    $("#Files-Preview").append(html);
+                }
+                reader.readAsDataURL(input.files[i]);
+                $("#doc-file-label").text(`${filesCount} files Chosen`);
+            }
+            else
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
+        }
+    }
+};
