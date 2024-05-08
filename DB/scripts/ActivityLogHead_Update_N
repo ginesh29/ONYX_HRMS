@@ -1,0 +1,43 @@
+USE [LSHRMS]
+GO
+/****** Object:  StoredProcedure [dbo].[ActivityLogHead_Update_N]    Script Date: 08/05/2024 3:53:52 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER    Procedure [dbo].[ActivityLogHead_Update_N]
+	@v_CoCd			Char(5)
+,	@v_ActivityId	bigint=''
+,	@v_SessionId	Varchar(40)=''
+,	@v_UserCd		Char(10)=''
+,	@v_IP			Varchar(20)=''
+,	@v_OS			Varchar(20)=''
+,	@v_Browser		Varchar(20)=''
+,	@v_StartTime	datetime=''
+,	@v_EndTime		datetime=''
+,	@v_typ			Char(1)=''
+As		-- Drop Procedure [dbo].[ActivityLogHead_Update]'03','13','','','','','','','05/13/2015','U'
+Begin
+	if @v_typ='I'
+	begin
+		Insert into ActivityLogHead
+		Values(
+			@v_CoCd
+		,	@v_SessionId
+		,	@v_UserCd
+		,	@v_IP
+		,	@v_OS
+		,	@v_Browser
+		,	@v_StartTime
+		,	@v_EndTime)
+		select @@identity
+	end
+	else if @v_typ='U'
+	begin
+		update ActivityLogHead
+		set EndTime=@v_EndTime
+		where CoCd=@v_CoCd and ActivityId=@v_ActivityId
+		select @@identity
+	end
+End
