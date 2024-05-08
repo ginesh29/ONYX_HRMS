@@ -50,7 +50,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaveApprovalData()
         {
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = leaveData,
@@ -60,7 +60,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLeaveApproval(string transNo)
         {
             var model = new EmpLeaveApprovalModel();
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee).FirstOrDefault(m => m.TransNo.Trim() == transNo);
             if (leaveData != null)
             {
                 model = new EmpLeaveApprovalModel()
@@ -93,8 +93,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
+            model.EntryBy = _loggedInUser.UserCd;
             model.ApprDays = model.LvDays + model.WopLvDays;
             if (model.Status == "Y")
             {
@@ -139,7 +139,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveConfirm(EmpLeaveConfirmModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserCd;
             model.ApprDays = model.LvDays + model.WopLvDays;
             if (model.Type == (int)LeaveCofirmTypeEnum.Revise)
             {
@@ -179,7 +179,7 @@ namespace Onyx.Controllers
                         EmpCd = model.EmpCd,
                         MonthYear = $"{currentYear}{currentMonth}",
                         WorkingHrDay = WorkingHrDay,
-                        EntryBy = _loggedInUser.UserAbbr
+                        EntryBy = _loggedInUser.UserCd
                     };
                     _transactionService.UpdateEmpMonthlyAttendance(attendance, attendanceFilter);
                 }
@@ -205,7 +205,7 @@ namespace Onyx.Controllers
                         Branch = employee.Div,
                         Department = employee.Dept,
                         EmpCd = model.EmpCd,
-                        EntryBy = _loggedInUser.UserAbbr,
+                        EntryBy = _loggedInUser.UserCd,
                         MonthYear = $"{currentYear}{currentMonth}",
                         PayType = EdTyp,
                         PayCode = EdCd,
@@ -341,8 +341,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveDutyResumption(EmpDutyResumptionModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserAbbr;
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserCd;
+            model.EntryBy = _loggedInUser.UserCd;
             model.ApprDays = model.LvDays + model.WopLvDays;
             var wpDateSp = !string.IsNullOrEmpty(model.WpDateRange) ? model.WpDateRange.Split(" - ") : null;
             model.WpFrom = !string.IsNullOrEmpty(model.WpDateRange) ? Convert.ToDateTime(wpDateSp[0]) : null;
@@ -457,7 +457,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpTransfer(EmpTransferModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             if (model.Mode == "I")
                 model.SrNo = _transactionService.GetEmpTransferSrNo(model.EmpCd);
             var result = _transactionService.SaveEmpTransfer(model);
@@ -483,7 +483,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLeaveSalaryApprovalData()
         {
-            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = leaveData,
@@ -493,7 +493,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLeaveSalaryApproval(string transNo)
         {
             var model = new EmpLeaveSalaryApprovalModel();
-            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var leaveData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
             if (leaveData != null)
             {
                 model = new EmpLeaveSalaryApprovalModel()
@@ -512,8 +512,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveSalaryApproval(EmpLeaveSalaryApprovalModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveLeaveSalaryApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "approved" : "rejected";
@@ -562,7 +562,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveSalaryDisburse(EmpLeaveSalaryDisburseModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserCd;
             _transactionService.SaveLeaveSalaryDisburse(model, _loggedInUser.CompanyCd);
             var ActivityAbbr = "UPD";
             var action = model.Status == "Y" ? "disbursed" : "canceled";
@@ -584,7 +584,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpLoanApprovalData()
         {
-            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = loanData,
@@ -593,7 +593,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanApproval(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
             var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserCd).Employees.FirstOrDefault();
             loanDetails.EmployeeCode = loanDetails.EmployeeCode.Trim();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
@@ -619,8 +619,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLoanApproval(EmpLoan_GetRow_Result model, string processId)
         {
-            model.LoanApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.LoanApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.Current_Approval;
+            model.EntryBy = _loggedInUser.UserCd;
             if (model.LoanStatus == "A")
                 model.Reco_Prd = model.Reco_Prd[4..];
             _transactionService.SaveLoanApproval(model);
@@ -650,7 +650,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpLoanDisburse(string transNo)
         {
-            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
+            var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
             var empDetail = _employeeService.FindEmployee(loanDetails.EmployeeCode.Trim(), _loggedInUser.CompanyCd);
             loanDetails.ChgsTyp = loanDetails.ChgsTyp.Trim() == "FR" ? "Fixed Rate" : "Reduce Balance";
             loanDetails.EmpBranchCd = empDetail.Div.Trim();
@@ -762,7 +762,7 @@ namespace Onyx.Controllers
                 item.TransNo = transNo;
                 item.EmpCd = empCd;
                 item.Typ = type;
-                item.EntryBy = _loggedInUser.UserAbbr;
+                item.EntryBy = _loggedInUser.UserCd;
                 _transactionService.SaveEmpLoanAdj(item);
             }
             var ActivityAbbr = "UPD";
@@ -814,7 +814,7 @@ namespace Onyx.Controllers
                 AmtVal = model.PayAmt,
                 EndDate = endDate,
                 ChgsAmt = 0,
-                EntryBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserCd,
             });
             TempData["success"] = $"Loan adjusted successfully";
             return RedirectToAction("ReceiptVoucher");
@@ -828,7 +828,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchProvisionAdjData()
         {
-            var transferData = _transactionService.GetEmpProvisionAdjData(string.Empty, "6", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var transferData = _transactionService.GetEmpProvisionAdjData(string.Empty, "6", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = transferData,
@@ -837,7 +837,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetProvisionAdj(string transNo)
         {
-            var empprovisionsadj = _transactionService.GetEmpProvisionAdjData(transNo, "2", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault();
+            var empprovisionsadj = _transactionService.GetEmpProvisionAdjData(transNo, "2", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee).FirstOrDefault();
             var model = new EmpprovisionsadjModel();
             if (empprovisionsadj != null)
                 model = new EmpprovisionsadjModel
@@ -876,15 +876,15 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpProvisionAdj(EmpprovisionsadjModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _transactionService.SaveEmpProvisionAdj(model);
             return Json(result);
         }
         [HttpPost]
         public IActionResult ApproveEmpProvisionAdj(EmpprovisionsadjModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
+            model.EntryBy = _loggedInUser.UserCd;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
             var result = _transactionService.SetEmpprovisionsadjAppr(model);
             return Json(result);
         }
@@ -936,7 +936,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpMonthlyAttendance(AttendanceModel model)
         {
-            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
+            model.FilterModel.EntryBy = _loggedInUser.UserCd;
             foreach (var item in model.AttendanceData)
                 _transactionService.UpdateEmpMonthlyAttendance(item, model.FilterModel);
             var result = new CommonResponse
@@ -950,7 +950,7 @@ namespace Onyx.Controllers
         {
             try
             {
-                filterModel.EntryBy = _loggedInUser.UserAbbr;
+                filterModel.EntryBy = _loggedInUser.UserCd;
                 var excelData = _transactionService.GetAttendanceFromExcel(file, _loggedInUser.CompanyCd);
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
@@ -1034,7 +1034,7 @@ namespace Onyx.Controllers
         public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
         {
             _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
-            model.FilterModel.EntryBy = _loggedInUser.UserAbbr;
+            model.FilterModel.EntryBy = _loggedInUser.UserCd;
             foreach (var item in model.VariableComponentsData)
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
@@ -1055,7 +1055,7 @@ namespace Onyx.Controllers
         {
             try
             {
-                filterModel.EntryBy = _loggedInUser.UserAbbr;
+                filterModel.EntryBy = _loggedInUser.UserCd;
                 var excelData = _transactionService.GetVariablePayComponentFromExcel(file, _loggedInUser.CompanyCd);
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);
@@ -1094,7 +1094,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpFundApprovalData()
         {
-            var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             CommonResponse result = new()
             {
                 Data = fundData,
@@ -1103,14 +1103,14 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpFundApproval(string transNo)
         {
-            var fundDetails = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
+            var fundDetails = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault(m => m.TransNo.Trim() == transNo);
             fundDetails.ApprDate = DateTime.Now;
             return PartialView("_EmpFundApprovalModal", fundDetails);
         }
         public IActionResult SaveEmpFundApproval(EmpFund_Approval_GetRow_Result model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.Current_Approval;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveEmpFundApproval(model);
             var ActivityAbbr = "UPD";
             var action = model.Status == "A" ? "approved" : "rejected";
@@ -1281,7 +1281,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveRenewalEmpDocument(EmpDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveEmpDocIssueReceipt(model);
             var result = new CommonResponse
             {
@@ -1292,7 +1292,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveRenewalComDocument(CompanyDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveComDocIssueReceipt(model);
             var result = new CommonResponse
             {
@@ -1303,7 +1303,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveRenewalVehDocument(VehDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveVehDocIssueReceipt(model);
             var result = new CommonResponse
             {
@@ -1314,7 +1314,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpDocRenewalData()
         {
-            var docs = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "1");
+            var docs = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "1");
             CommonResponse result = new()
             {
                 Data = docs,
@@ -1323,7 +1323,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalDocumentApproval(string empCd, string docTypeCd, int srNo)
         {
-            var document = _transactionService.GetEmpDocIssueRcpt(empCd, docTypeCd, srNo, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "2").FirstOrDefault();
+            var document = _transactionService.GetEmpDocIssueRcpt(empCd, docTypeCd, srNo, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "2").FirstOrDefault();
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
             ViewBag.EmpDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem
@@ -1350,8 +1350,8 @@ namespace Onyx.Controllers
         }
         public async Task<IActionResult> SaveRenewalDocumentApproval(EmpDocIssueRcpt_GetRow_Result model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.Current_Approval;
+            model.EntryBy = _loggedInUser.UserCd;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.Current_Approval;
             _transactionService.SaveEmpDocIssueRcptAppr(model);
             if (model.DocFiles?.Count() > 0)
             {
@@ -1365,7 +1365,7 @@ namespace Onyx.Controllers
                         _employeeService.SaveDocumentFile(new EmpDocImageModel
                         {
                             EmployeeCode = model.EmployeeCode,
-                            EntryBy = _loggedInUser.UserAbbr,
+                            EntryBy = _loggedInUser.UserCd,
                             DocumentTypeCd = model.DocType,
                             ImageFile = uploadedFilePath,
                             SlNo = item.i + 1,
@@ -1441,7 +1441,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmployeeProgressionData()
         {
-            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             CommonResponse result = new()
             {
                 Data = progressionData,
@@ -1450,7 +1450,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmployeeProgression(string transNo)
         {
-            var empProgressionHead = _transactionService.GetEmpProgressionData(transNo, "1", _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee).FirstOrDefault();
+            var empProgressionHead = _transactionService.GetEmpProgressionData(transNo, "1", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee).FirstOrDefault();
             var model = new EmpProgressionHeadModel();
             if (empProgressionHead != null)
             {
@@ -1519,7 +1519,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmployeeProgression(EmpProgressionHeadModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.UpdateEmpProgHead(model);
             if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
                 _transactionService.UpdateEmpProgDetail(model);
@@ -1533,8 +1533,8 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult ApproveEmployeeProgression(EmpProgressionHeadModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserAbbr : model.ApprBy;
+            model.EntryBy = _loggedInUser.UserCd;
+            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
             _transactionService.UpdateEmpProgAppr(model);
             if (model.EP_TypeCd == "HREP02" || model.EP_TypeCd == "HREP04" || model.EP_TypeCd == "HREP05")
                 _transactionService.UpdateEmpProgDetail(model);
@@ -1563,7 +1563,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var excelData = _transactionService.GetProgressionFromExcel(file, _loggedInUser.CompanyCd);
             foreach (var excel in excelData)
             {
@@ -1612,7 +1612,7 @@ namespace Onyx.Controllers
             var validData = model.Where(m => m.IsValid);
             foreach (var item in validData)
             {
-                item.EntryBy = _loggedInUser.UserAbbr;
+                item.EntryBy = _loggedInUser.UserCd;
                 item.TransNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EPH");
                 item.TransDt = DateTime.Now;
                 item.PayCodeCd = filterModel.PayCodeCd;
@@ -1689,7 +1689,7 @@ namespace Onyx.Controllers
                         EmpCd = model.EmpCd,
                         MonthYear = $"{currentYear}{currentMonth}",
                         WorkingHrDay = WorkingHrDay,
-                        EntryBy = _loggedInUser.UserAbbr
+                        EntryBy = _loggedInUser.UserCd
                     };
                     _transactionService.UpdateEmpMonthlyAttendance(attendance, attendanceFilter);
                 }
@@ -1715,7 +1715,7 @@ namespace Onyx.Controllers
                         Branch = employee.Div,
                         Department = employee.Dept,
                         EmpCd = model.EmpCd,
-                        EntryBy = _loggedInUser.UserAbbr,
+                        EntryBy = _loggedInUser.UserCd,
                         MonthYear = $"{currentYear}{currentMonth}",
                         PayType = EdTyp,
                         PayCode = EdCd,

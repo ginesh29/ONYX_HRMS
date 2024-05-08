@@ -82,7 +82,7 @@ namespace Onyx.Controllers
                 FromDt = model.FilterModel.FromDt,
                 ToDt = model.FilterModel.ToDt,
                 PayType = "HEDT01",
-                EntryBy = _loggedInUser.UserAbbr
+                EntryBy = _loggedInUser.UserCd
             };
             foreach (var item in model.IncentiveData)
             {
@@ -121,7 +121,7 @@ namespace Onyx.Controllers
         {
             try
             {
-                filterModel.EntryBy = _loggedInUser.UserAbbr;
+                filterModel.EntryBy = _loggedInUser.UserCd;
                 var excelData = _transactionService.GetIncentiveFromExcel(file, _loggedInUser.CompanyCd);
                 var validData = excelData.Where(m => m.IsValid);
                 var invalidData = excelData.Where(m => !m.IsValid);

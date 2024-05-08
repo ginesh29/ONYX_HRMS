@@ -33,14 +33,14 @@ namespace Onyx.Controllers
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextToolTransNo(_loggedInUser.CompanyCd, "EMPLOAN");
             if (_loggedInUser.UserOrEmployee == "E")
-                ViewBag.EmpCd = _loggedInUser.UserAbbr;
+                ViewBag.EmpCd = _loggedInUser.UserCd;
             return View();
         }
         [HttpPost]
         public IActionResult SaveLoanApplication(EmpLoanModel model, string processId, bool confirmed = false)
         {
             var LoanDue = _transactionService.GetEmpLoan_Due(model.EmployeeCode);
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             if (LoanDue == 0 || confirmed)
             {
                 var result = _transactionService.SaveLoan(model);
@@ -68,7 +68,7 @@ namespace Onyx.Controllers
             ViewBag.IntLocalTypeItems = _commonService.GetIntLocalTypes();
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveTransNo();
             if (_loggedInUser.UserOrEmployee == "E")
-                ViewBag.EmpCd = _loggedInUser.UserAbbr;
+                ViewBag.EmpCd = _loggedInUser.UserCd;
             return View();
         }
         public IActionResult GetLeaveType(string cd)
@@ -78,7 +78,7 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId, bool confirmed = false)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
             var dateSp = model.DateRange.Split(" - ");
             model.FromDt = Convert.ToDateTime(dateSp[0]);
@@ -114,12 +114,12 @@ namespace Onyx.Controllers
         {
             ViewBag.TransactionNextNo = _transactionService.GetNextLeaveSalaryTransNo();
             if (_loggedInUser.UserOrEmployee == "E")
-                ViewBag.EmpCd = _loggedInUser.UserAbbr;
+                ViewBag.EmpCd = _loggedInUser.UserCd;
             return View();
         }
         public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveLeaveSalary(model);
             var ActivityAbbr = "INS";
             var Message = $", Leave Salary is applied With Trans no={model.TransNo}";
@@ -143,12 +143,12 @@ namespace Onyx.Controllers
             });
             ViewBag.TransactionNextNo = _transactionService.GetNextEmpFund_TransNo();
             if (_loggedInUser.UserOrEmployee == "E")
-                ViewBag.EmpCd = _loggedInUser.UserAbbr;
+                ViewBag.EmpCd = _loggedInUser.UserCd;
             return View();
         }
         public IActionResult SaveFundRequestApplication(EmployeeFundModel model, string processId)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             _transactionService.SaveFundRequest(model);
             var ActivityAbbr = "INS";
             var Message = $", Fund request is applied With Trans no={model.TransNo}";

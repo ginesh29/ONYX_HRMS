@@ -140,6 +140,13 @@ namespace Onyx.Controllers
                 ViewBag.TotalSalary = employee.Basic + totalIncome - totalDeductions;
                 ViewBag.Currency = employee.BasicCurr?.Trim();
             }
+            else
+            {
+                employee = new Employee_Find_Result();
+                var autoGen = _commonService.GetParameterByType("#", "GEN_EMPCD")?.Val;
+                if (autoGen == "Y")
+                    employee.Cd = _employeeService.GetAutoGenerateEmployeeCd().Trim();
+            }
             ViewBag.SalutationItems = _commonService.GetCodesGroups(CodeGroup.Salutation).Select(m => new SelectListItem
             {
                 Value = m.Code.Trim(),
@@ -243,7 +250,7 @@ namespace Onyx.Controllers
                 Text = m.ShortDes
             });
             ViewBag.CalulationBasisTypeItems = _commonService.GetCalulationBasisTypes();
-            return View("ProfileUpsert", employee ?? new Employee_Find_Result());
+            return View("ProfileUpsert", employee);
         }
         public IActionResult GetEmployeeDetail(string empCd)
         {
@@ -274,7 +281,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> SavePersonalDetail(Employee_Find_Result model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             model.ConfirmPassword = !string.IsNullOrEmpty(model.ConfirmPassword) ? model.ConfirmPassword.Encrypt() : null;
             if (model.AvatarFile != null)
             {
@@ -350,7 +357,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEducation(EmpQualificationModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _employeeService.SaveEmpQualification(model);
             return Json(result);
         }
@@ -418,7 +425,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveExperience(EmpExperienceModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var dateSp = model.DateRange.Split(" - ");
             model.StartingDate = Convert.ToDateTime(dateSp[0]);
             model.EndingDate = Convert.ToDateTime(dateSp[1]);
@@ -490,7 +497,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveDocument(EmpDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _employeeService.SaveDocument(model);
             if (result.Success)
             {
@@ -507,7 +514,7 @@ namespace Onyx.Controllers
                             _employeeService.SaveDocumentFile(new EmpDocImageModel
                             {
                                 EmployeeCode = model.EmpCd,
-                                EntryBy = _loggedInUser.UserAbbr,
+                                EntryBy = _loggedInUser.UserCd,
                                 DocumentTypeCd = model.DocTypCd,
                                 ImageFile = uploadedFilePath,
                                 SlNo = item.i + 1 + totalFiles,
@@ -548,7 +555,7 @@ namespace Onyx.Controllers
             var uploadedFilePath = await _fileHelper.UploadFile(file, "emp-doc", _loggedInUser.CompanyCd);
             _employeeService.SaveDocumentFile(new EmpDocImageModel
             {
-                EntryBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserCd,
                 DocumentTypeCd = docTypCd,
                 ImageFile = uploadedFilePath,
                 SlNo = SrNo,
@@ -632,7 +639,7 @@ namespace Onyx.Controllers
         public IActionResult SaveComponent(EmpEarnDedModel model)
         {
             var employee = _employeeService.FindEmployee(model.EmpCd, _loggedInUser.CompanyCd);
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             if (model.Mode == "I")
             {
                 model.SrNo = _employeeService.EmpEarnDed_SrNo(model.EmpCd, model.EdCd, model.EdTyp);
@@ -699,7 +706,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveAddress(EmpAddressModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _employeeService.SaveAddress(model);
             return Json(result);
         }
@@ -790,7 +797,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveBankAccount(EmpBankAcModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _employeeService.SaveBankAccount(model);
             return Json(result);
         }
@@ -847,7 +854,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveCalendarEvent(EmpCalendarModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _employeeService.SaveCalendarEvent(model);
             return Json(result);
         }
@@ -879,7 +886,7 @@ namespace Onyx.Controllers
                     Message = "Headers are not matched. Download again & refill data";
                 }
                 if (validHeader && validData.Any())
-                    _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserAbbr);
+                    _employeeService.ImportExcelData(validData, nextSerialNo, _loggedInUser.UserCd);
                 return PartialView("_ExcelData", new { Data = excelData, Message });
             }
             catch (Exception)

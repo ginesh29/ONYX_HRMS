@@ -82,7 +82,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveComponent(EarnDedModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveComponent(model);
             return Json(result);
         }
@@ -153,7 +153,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveLoanType(LoanTypeModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveLoanType(model);
             return Json(result);
         }
@@ -220,7 +220,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveWorkingHour(WorkingHourModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var dateSp = model.DateRange.Split(" - ");
             model.FromDt = Convert.ToDateTime(dateSp[0]);
             model.ToDt = Convert.ToDateTime(dateSp[1]);
@@ -297,7 +297,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveOvertimeRate(OvertimeRateModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveOvertimeRate(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -385,7 +385,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveCalendarEvent(CompanyCalendarModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveCalendarEvent(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
@@ -699,7 +699,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveBank(BankModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveBank(model);
             return Json(result);
         }
@@ -762,7 +762,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveDocument(CompanyDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveDocument(model, _loggedInUser.CompanyCd);
             if (result.Success)
             {
@@ -778,7 +778,7 @@ namespace Onyx.Controllers
                             uploadedFilePath = filePath;
                             _organisationService.SaveDocumentFile(new CompDocImageModel
                             {
-                                EntryBy = _loggedInUser.UserAbbr,
+                                EntryBy = _loggedInUser.UserCd,
                                 CompanyCode = _loggedInUser.CompanyCd,
                                 DocumentTypeCd = model.DocTypCd,
                                 ImageFile = uploadedFilePath,
@@ -821,7 +821,7 @@ namespace Onyx.Controllers
             var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-doc", _loggedInUser.CompanyCd);
             _organisationService.SaveDocumentFile(new CompDocImageModel
             {
-                EntryBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserCd,
                 CompanyCode = _loggedInUser.CompanyCd,
                 DocumentTypeCd = docTypCd,
                 ImageFile = uploadedFilePath,
@@ -928,7 +928,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveVehicle(CompanyVehicleModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveVehicle(model);
             TempData["success"] = result.Message;
             return RedirectToAction("GetVehicle", new { cd = model.Cd });
@@ -981,7 +981,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveVehicleDocument(VehDocumentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveVehicleDocument(model);
             if (result.Success)
             {
@@ -997,7 +997,7 @@ namespace Onyx.Controllers
                             uploadedFilePath = filePath;
                             _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
                             {
-                                EntryBy = _loggedInUser.UserAbbr,
+                                EntryBy = _loggedInUser.UserCd,
                                 CompanyCode = _loggedInUser.CompanyCd,
                                 DocumentTypeCd = model.DocTypCd,
                                 ImageFile = uploadedFilePath,
@@ -1035,7 +1035,7 @@ namespace Onyx.Controllers
             var uploadedFilePath = await _fileHelper.UploadFile(file, "comp-vehicle-doc", _loggedInUser.CompanyCd);
             _organisationService.SaveVehicleDocumentFile(new CompDocImageModel
             {
-                EntryBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserCd,
                 CompanyCode = _loggedInUser.CompanyCd,
                 DocumentTypeCd = docTypCd,
                 ImageFile = uploadedFilePath,
@@ -1084,7 +1084,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveDesignation(DesignationModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveDesignation(model);
             return Json(result);
         }
@@ -1142,7 +1142,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveLeaveType(CompanyLeaveModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveLeaveType(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -1217,7 +1217,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveLeavePayComponent(CompanyLeavePayModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _organisationService.SaveLeavePayComponent(model, _loggedInUser.CompanyCd);
             return Json(result);
         }
@@ -1286,7 +1286,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveTravelFare(AirFareModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var dateSp = model.DateRange.Split(" - ");
             model.FromDate = Convert.ToDateTime(dateSp[0]);
             model.ToDate = Convert.ToDateTime(dateSp[1]);

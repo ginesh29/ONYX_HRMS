@@ -1314,7 +1314,7 @@ namespace Onyx.Services
                 FromDt = model.FromDt,
                 ToDt = model.ToDt,
                 PayType = "HEDT01",
-                EntryBy = _loggedInUser.UserAbbr,
+                EntryBy = _loggedInUser.UserCd,
             };
             foreach (var item in excelData)
             {

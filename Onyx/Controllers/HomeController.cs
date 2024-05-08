@@ -28,7 +28,7 @@ namespace Onyx.Controllers
         #region Dashboard
         public IActionResult Index()
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             EmplLoanAndLeaveApproval.HeadCounts = EmplLoanAndLeaveApproval.HeadCounts.Where(m => m.HeadCount > 0);
             foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
             {
@@ -55,9 +55,9 @@ namespace Onyx.Controllers
             ViewBag.BirthDayEvents = events;
             if (_loggedInUser.UserOrEmployee == "E")
             {
-                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserCd).Employees.FirstOrDefault();
-                ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserAbbr).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserAbbr, string.Empty, 0, "N", _loggedInUser.UserCd);
+                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserAbbr).Employees.FirstOrDefault();
+                ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);
             }
             return View();
         }

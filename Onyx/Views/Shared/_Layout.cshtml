@@ -1,6 +1,6 @@
 ﻿@{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
-    var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserAbbr")?.Value.Contains("Admin");
+    var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserCd")?.Value.Equals("001");
     var processId = Context.Request.Query["processId"];
     var loggedInUser = _authService.GetLoggedInUser();
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, processId);

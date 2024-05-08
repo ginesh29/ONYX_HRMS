@@ -4,11 +4,10 @@ using Onyx.Services;
 
 namespace Onyx.Middleware
 {
-    public class CookieExpirationMiddleware(RequestDelegate next, LogService logService, AuthService authService, IMemoryCache memoryCache)
+    public class CookieExpirationMiddleware(RequestDelegate next, LogService logService, IMemoryCache memoryCache)
     {
         private readonly RequestDelegate _next = next;
         private readonly LogService _logService = logService;
-        private readonly AuthService _authService = authService;
         private readonly IMemoryCache _memoryCache = memoryCache;
         public async Task Invoke(HttpContext context)
         {

@@ -10,6 +10,15 @@ namespace Onyx.Services
     public class EmployeeService(DbGatewayService dbGatewayService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
+        public string GetAutoGenerateEmployeeCd()
+        {
+            var procedureName = "EmployeeAuto_GetRow_N";
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<string>
+                (procedureName, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         public Employee_Find_Result FindEmployee(string Cd, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();

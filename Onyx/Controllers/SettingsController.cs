@@ -57,7 +57,7 @@ namespace Onyx.Controllers
         public async Task<IActionResult> SaveBranch(BranchModel model)
         {
 
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             model.CoCd = _loggedInUser.CompanyCd;
             if (model.ImageFile != null)
             {
@@ -125,7 +125,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveUser(UserModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             model.UPwd = model.UPwd.Encrypt();
             var result = _settingService.SaveUser(model);
             if (result.Success)
@@ -182,7 +182,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveDepartment(DepartmentModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _settingService.SaveDepartment(model);
             return Json(result);
         }
@@ -251,7 +251,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveCode(CodeModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _settingService.SaveCode(model);
             return Json(result);
         }
@@ -302,7 +302,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveCountry(CountryModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _settingService.SaveCountry(model);
             return Json(result);
         }
@@ -350,7 +350,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveCurrency(CurrencyModel model)
         {
-            model.EntryBy = _loggedInUser.UserAbbr;
+            model.EntryBy = _loggedInUser.UserCd;
             var result = _settingService.SaveCurrency(model, _loggedInUser.CompanyCd);
             return Json(result);
         }

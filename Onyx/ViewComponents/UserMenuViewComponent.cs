@@ -23,7 +23,7 @@ namespace Onyx.ViewComponents
         }
         public IViewComponentResult Invoke()
         {
-            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.UserAbbr, _loggedInUser.CompanyCd) : null;
+            var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.UserCd, _loggedInUser.CompanyCd) : null;
             var month = Convert.ToInt32(_commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));
@@ -33,17 +33,17 @@ namespace Onyx.ViewComponents
             else
                 companies = companies.Select(m => { m.Selected = m.Value.Trim() == _loggedInUser.CompanyCd; return m; });
             ViewBag.UserCompanyItems = companies;
-            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
-            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            var leaveSalaryData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee);
+            var leaveData = _transactionService.GetEmpLeaveApprovalData(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
+            var loanData = _transactionService.GetEmpLoanApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var leaveSalaryData = _transactionService.GetEmpLeaveSalaryApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var fundData = _transactionService.GetEmpFundApprovalData(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var progressionData = _transactionService.GetEmpProgressionData(string.Empty, string.Empty, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             foreach (var item in progressionData)
             {
                 item.EP_TypeCd = item.EP_TypeCd.Trim();
                 item.Detail = _transactionService.GetEmpProgressionDetail(item.TransNo.Trim());
             }
-            var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserAbbr, _loggedInUser.UserOrEmployee, "1");
+            var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "1");
             ViewBag.LeaveApprovalData = leaveData;
             ViewBag.LoanApprovalData = loanData;
             ViewBag.LeaveSalaryApprovalData = leaveSalaryData;

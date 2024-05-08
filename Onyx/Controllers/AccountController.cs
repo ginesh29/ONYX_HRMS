@@ -40,7 +40,7 @@ namespace Onyx.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
-        {            
+        {
             var companySp = model.Company.Split("_");
             var CoCd = companySp[0];
             model.CoAbbr = companySp[1];
@@ -76,7 +76,7 @@ namespace Onyx.Controllers
                 var employee = _userService.ValidateEmployee(model);
                 if (employee != null)
                 {
-                    UserCd = employee.UserCd.Trim();
+                    UserCd = employee.Cd.Trim();
                     var user = _userService.GetUsers(employee.UserCd.Trim(), model.CoAbbr).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
@@ -85,7 +85,7 @@ namespace Onyx.Controllers
                         UserCd = UserCd,
                         UserOrEmployee = "E",
                         Username = user.Username,
-                        UserAbbr = model.LoginId,
+                        UserAbbr = user.Abbr,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
                     };
@@ -136,7 +136,7 @@ namespace Onyx.Controllers
             {
                 var user = _userService.ValidateUser(new LoginModel
                 {
-                    LoginId = _loggedInUser.UserAbbr,
+                    LoginId = _loggedInUser.UserCd,
                     Password = model.OldPassword
                 });
                 if (user != null)
@@ -164,12 +164,12 @@ namespace Onyx.Controllers
                 var employee = _userService.ValidateEmployee(new LoginModel
                 {
 
-                    LoginId = _loggedInUser.UserAbbr,
+                    LoginId = _loggedInUser.UserCd,
                     Password = model.OldPassword
                 });
                 if (employee != null)
                 {
-                    _employeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, model.ConfirmPassword);
+                    _employeeService.UpdateEmployeePassword(_loggedInUser.CompanyCd, _loggedInUser.UserCd, model.ConfirmPassword);
                     result.Success = true;
                     result.Message = "Password changed Successfully";
                 }

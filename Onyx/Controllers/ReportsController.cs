@@ -119,8 +119,8 @@ namespace Onyx.Controllers
             filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
-            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserAbbr, _loggedInUser.UserCd).Employees.FirstOrDefault();
-            var ReportGeneratedBy = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? employee.Name : _loggedInUser.UserAbbr;
+            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
+            var ReportGeneratedBy = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? employee.Name : _loggedInUser.UserCd;
             var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
             return new ViewAsPdf(new { Data = transactions, ReportGeneratedBy })
             {

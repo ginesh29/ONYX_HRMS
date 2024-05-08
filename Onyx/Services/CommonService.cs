@@ -131,12 +131,11 @@ namespace Onyx.Services
             string query = $"delete from UserBranch where UserCd = '{UserCd}';{Environment.NewLine}{insertQuery}";
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
-        }        
+        }
         public int SetActivityLogDetail(string ActivityId, string ProcessId, string ActivityAbbr, string Message)
         {
             string UserIdWithName = _loggedInUser.UserCd != _loggedInUser.UserAbbr ? $"{_loggedInUser.UserAbbr}({_loggedInUser.UserCd})" : _loggedInUser.UserAbbr;
-            var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
-            Message = $"[{DateTime.Now}] {UserIdWithName} {Message} ({ipAddress})";
+            Message = $"[{DateTime.Now}] {UserIdWithName} {Message}";
             var procedureName = "ActivityLogDetail_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_ActivityId", ActivityId);
