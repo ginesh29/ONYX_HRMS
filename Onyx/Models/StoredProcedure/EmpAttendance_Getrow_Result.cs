@@ -10,9 +10,9 @@
         public int Up_HDays { get; set; }
         public int NHrs { get; set; }
         public int CHrs { get; set; }
-        public int W_OT { get; set; }
+        public int? W_OT { get; set; }
         public int O_OT { get; set; }
-        public int H_OT { get; set; }
+        public int? H_OT { get; set; }
         public int C_OT { get; set; }
         public double Payable { get; set; }
         public double LoanDed { get; set; }

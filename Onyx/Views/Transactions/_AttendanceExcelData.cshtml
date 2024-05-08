@@ -11,8 +11,11 @@
                 <th>No Of Days</th>
                 <th>Paid</th>
                 <th>Unpaid</th>
-                <th>W.OT</th>
-                <th>H.OT</th>
+                @if (excelData.FirstOrDefault().W_OT != null && excelData.FirstOrDefault().H_OT != null)
+                {
+                    <th>W.OT</th>
+                    <th>H.OT</th>
+                }
             </tr>
         </thead>
         @foreach (var item in excelData)
@@ -34,8 +37,11 @@
                 <td>@item.W_days</td>
                 <td>@item.P_HDays</td>
                 <td>@item.Up_HDays</td>
-                <td>@item.W_OT</td>
-                <td>@item.H_OT</td>
+                @if (item.W_OT != null && item.H_OT != null)
+                {
+                    <td>@item.W_OT</td>
+                    <td>@item.H_OT</td>
+                }
             </tr>
         }
     </table>

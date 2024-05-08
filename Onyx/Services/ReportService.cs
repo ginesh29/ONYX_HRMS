@@ -264,7 +264,7 @@ namespace Onyx.Services
         public IEnumerable<GetRepo_EmpPayDetail_Format_Result> GetRepo_EmpPayDetail_Format(EmpPayRegisterFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "GetRepo_EmpPayDetail_Format";
+            var procedureName = "GetRepo_EmpPayDetail_Format_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cocd", CoCd);
             parameters.Add("v_RPrd", filterModel.Month);

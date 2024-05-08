@@ -129,52 +129,6 @@
     IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
     var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
     <div class="row">
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header">
-                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                        <h4 class="card-label text-primary mr-auto">
-                            Employee Analysis
-                        </h4>
-                        <label class="mb-0">Type</label>
-                        <div class="col-md-3">
-                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showBarChart()">
-                                <option value="Dept">Department</option>
-                                <option value="Branch">Branch</option>
-                                <option value="Nationality">Nationality</option>
-                                <option value="Location">Location</option>
-                                <option value="Status">Status</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart">
-                        <canvas id="myChart"></canvas>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header">
-                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                        <h4 class="card-label text-primary mr-auto">
-                            Employee Statistics
-                        </h4>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart">
-                        <canvas id="myDonutChart"></canvas>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-white">
                 <div class="inner">
@@ -217,6 +171,52 @@
                 <div class="icon">
                     <i class="fas fa-money-bill-1-wave"></i>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Employee Statistics Analysis
+                        </h4>
+                        <label class="mb-0">Type</label>
+                        <div class="col-md-3">
+                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="showBarChart()">
+                                <option value="Dept">Department</option>
+                                <option value="Branch">Branch</option>
+                                <option value="Nationality">Nationality</option>
+                                <option value="Location">Location</option>
+                                <option value="Status">Status</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary mr-auto">
+                            Employee Statistics
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart">
+                        <canvas id="myDonutChart"></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
             </div>
         </div>
     </div>

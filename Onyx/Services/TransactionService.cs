@@ -897,8 +897,8 @@ namespace Onyx.Services
                     ErrorMessage = errorMessage,
                     Cd = empCd,
                     Up_HDays = Up_HDays,
-                    W_OT = Convert.ToInt32(WOT),
-                    H_OT = Convert.ToInt32(HOT),
+                    W_OT = WOT,
+                    H_OT = HOT,
                 };
                 result.Add(excelData);
             }
