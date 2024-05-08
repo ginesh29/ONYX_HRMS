@@ -147,4 +147,5 @@ update EmpDocuments set Expiry = 1 where ExpDt is not null
 
 Go
 
+alter table activityloghead alter column UserCd char(20)
 update Users set UPWD='MTIzNDU2' where Cd in('001','HR')
