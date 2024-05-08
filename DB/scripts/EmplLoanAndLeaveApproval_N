@@ -1,0 +1,217 @@
+USE [LSHRMS]
+GO
+/****** Object:  StoredProcedure [dbo].[EmplLoanAndLeaveApproval_N]    Script Date: 08/05/2024 2:00:13 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+ALTER      Procedure [dbo].[EmplLoanAndLeaveApproval_N]
+	@v_CoCd		char(5)
+,	@v_EmpCd	Char(10)
+,	@v_Typ		Char(1)
+
+AS
+--Drop Procedure [dbo].[EmplLoanAndLeaveApproval_N]'01','HR','U'
+
+select COUNT(TransNo) as LeaveApplied from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd 
+where GETDATE() between FromDt and ToDt and LvStatus='N' and emp.CoCd=@v_CoCd --and emp.Status='HSTATPM   '
+
+select COUNT(TransNo) as OnLeave from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd --and emp.Status='HSTATPM   '
+
+select EmpCd [Working] into #Working from EmpLeave
+inner join Employee as emp on emp.Cd=EmpLeave.EmpCd 
+where GETDATE() between FromDt and ToDt and LvStatus='F' and emp.CoCd=@v_CoCd  --and emp.Status='HSTATPM   '
+
+select count(cd) [Working] from Employee where cd not in (select [Working] from #Working) and Active='Y' --where Status='HSTATPM   '
+drop table #Working
+
+--select COUNT(TransNo) as LeaveApproval  from EmpLeave
+--inner join Employee as emp on emp.Cd=EmpLeave.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS2' and CPA.ApplTyp=EmpLeave.LvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LvStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LvApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LvApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS2' and ApplTyp=EmpLeave.LvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LvApprBy or (select UserCd from Employee where Cd=EmpCd)=LvApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LeaveSalaryTicketApproval  from EmpLeaveSalaryTicket ELST
+--inner join Employee as emp on emp.Cd=ELST.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS3' and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	ELST.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS3' and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+--select COUNT(TransNo) as LoanApproval  from EmpLoan
+--inner join Employee as emp on emp.Cd=EmpLoan.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS1' and CPA.ApplTyp=EmpLoan.LoanTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	LoanStatus='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((LoanApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (LoanApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS1' and ApplTyp=EmpLoan.LoanTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=LoanApprBy or (select UserCd from Employee where Cd=EmpCd)=LoanApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+		
+--select COUNT(EDI.EmpCd) as  DocumentIssue from EmpDocIssueRcpt as EDI
+--inner join  Employee as emp on emp.Cd=EDI.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT8' and CPA.ApplTyp=EDI.DocTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EDI.Stat='N' 
+--	and emp.CoCd=@v_CoCd 
+--	and emp.Status='HSTATPM   '   
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT8' and ApplTyp=EDI.DocTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+--select COUNT(EmpProgressionHead.EmpCd) as EmpProgression  from EmpProgressionHead
+--inner join Employee as emp on emp.Cd=EmpProgressionHead.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT6' and CPA.ApplTyp=EmpProgressionHead.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EmpProgressionHead.Status='E' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT6' and ApplTyp=EmpProgressionHead.Typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+	
+--select COUNT(empprovisionsadj.EmpCd) as ProvAdj  from empprovisionsadj
+--inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=empprovisionsadj.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	empprovisionsadj.Status='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM   '
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and ApplTyp=empprovisionsadj.ProvTyp and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+			 
+	
+select SysCodes.Cd[Cd],SysCodes.Des,COUNT(Emp.Cd) as HeadCount from Employee as Emp 
+right   join SysCodes on Emp.Status=SysCodes.Cd  
+group by  SysCodes.Des,typ,emp.CoCd,SysCodes.Cd 
+having  typ='HSTAT ' or emp.CoCd=@v_CoCd
+
+
+declare @CurMonth int
+set @CurMonth=(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_MONTH           ')
+
+
+--order by Abbr
+--or Prd=
+--(select (CONVERT(varchar(10),(select Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')))+
+--(CONVERT(varchar(10),(select right ('00'+ltrim(str( (@CurMonth-1) )),2 ))))) 
+
+--select * from syscodes where typ='HEDT ' and cd<>'HEDT04    '
+declare @monthname as varchar(50)
+set @monthname=
+ case @CurMonth
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+select @monthname +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+
+declare @monthnameminusone as varchar(50)
+set @monthnameminusone=
+case @CurMonth-1
+when 0 then 'December' 
+when 1 then 'January'  
+when 2 then 'February' 
+when 3 then 'March' 
+when 4 then 'April' 
+when 5 then 'May' 
+when 6 then 'June' 
+when 7 then 'July' 
+when 8 then 'August' 
+when 9 then 'September' 
+when 10 then 'October' 
+when 11 then 'November' 
+when 12 then 'December' 
+end 
+if( @monthnameminusone = 'December' )
+begin
+select @monthnameminusone +' '+
+(select CONVERT(varchar, CONVERT(int, Val)-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            ')
+end
+else
+begin
+select @monthnameminusone +' '+Val from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR            '
+end
+
+
+SELECT 
+    p.Prd,
+	(select des from syscodes where cd=e.EdTyp)Name,
+    ISNULL(SUM(Amt), 0) AS PayElementDetailsCount
+FROM 
+    (SELECT DISTINCT Prd FROM EmpTransYtd WHERE EmpCd = @v_EmpCd) p
+CROSS JOIN 
+    (SELECT DISTINCT EdTyp FROM EmpTransYtd WHERE EmpCd = @v_EmpCd) e
+LEFT JOIN 
+    EmpTransYtd t ON p.Prd = t.Prd AND e.EdTyp = t.EdTyp AND t.EdCd <> 'HEDT04' AND t.EmpCd = @v_EmpCd
+GROUP BY 
+    p.Prd, e.EdTyp
+order by prd
+--select SysCodes.Des,isnull(CONVERT(decimal(18,2), SUM(Amt)),0) as  PayElementDetailsCount ,Prd 
+--from EmpTransDetailYtd
+--right  join SysCodes on EmpTransDetailYtd.EdTyp=SysCodes.Cd  
+ 
+--group by  SysCodes.Des,typ,cd,Abbr,Prd
+--having typ='HEDT' and cd<>'HEDT04'
+--and Prd=(select Val++convert(varchar(10),RIGHT('00' + CONVERT(VARCHAR,@CurMonth-1), 2)) from  Parameters where CoCd='03' and Cd='CUR_YEAR')
+--(select Val*100+(@CurMonth-1) from  Parameters where CoCd=@v_CoCd and Cd='CUR_YEAR')
+
+--select COUNT(TransNo) as FundApproval  from EmpFund
+--inner join Employee as emp on emp.Cd=EmpFund.EmpCd
+--inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPSS4' and CPA.ApplTyp=EmpFund.Typ and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+--inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+--where 
+--	EmpFund.[Status]='N' 
+--	and emp.CoCd=@v_CoCd
+--	and emp.Status='HSTATPM'
+--	and ((ApprBy is null and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) and cpad.SrNo='1')
+--		or (ApprBy is not null
+--			and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPSS4' and ApplTyp=EmpFund.typ and Div=emp.Div and Dept=emp.Dept and (EmpCd=ApprBy or (select UserCd from Employee where Cd=EmpCd)=ApprBy)) +1
+--			and ((@v_Typ='E' and CPAD.EmpCd=@v_EmpCd) or (@v_Typ='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))))
+
+
+
+
+DECLARE @startdate AS DATETIME = GETDATE()
+SELECT   Sum(AmtVal)[LoanRecoveryAmount] from EmpLoanDetail where EffDate>= DATEADD(MONTH, DATEDIFF(MONTH, 0, @startdate) , 0) and EndDate<=cast(EOMONTH(@startdate) as datetime) and Typ='D'
