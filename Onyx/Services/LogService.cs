@@ -14,7 +14,7 @@ namespace Onyx.Services
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         public string SetActivityLogHead(ActivityLogModel model)
         {
-            var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress;
+            var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
             var os = Environment.OSVersion.Platform.ToString();
             var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
