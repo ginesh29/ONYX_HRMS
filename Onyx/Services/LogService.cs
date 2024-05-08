@@ -4,15 +4,17 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Net.Sockets;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Onyx.Services
 {
-    public class LogService(DbGatewayService dbGatewayService)
+    public class LogService(DbGatewayService dbGatewayService, IHttpContextAccessor httpContextAccessor)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         public string SetActivityLogHead(ActivityLogModel model)
         {
-            var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(m => m.AddressFamily == AddressFamily.InterNetwork).ToString();
+            var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress;
             var os = Environment.OSVersion.Platform.ToString();
             var connectionString = _dbGatewayService.GetConnectionString(model.CoAbbr);
             var procedureName = "ActivityLogHead_Update";
