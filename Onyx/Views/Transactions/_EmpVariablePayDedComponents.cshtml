@@ -39,7 +39,7 @@
                 </td>
                 <td>
                     @item.value.EmpName (@item.value.Cd.Trim())
-                    <input asp-for="@Model.VariableComponentsData[item.i].Cd" type="hidden" />
+                    <input asp-for="@Model.VariableComponentsData[item.i].Cd.Trim()" type="hidden" />
                 </td>
                 <td>
                     @item.value.Branch
