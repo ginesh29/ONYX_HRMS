@@ -1,78 +1,24 @@
-﻿@model IEnumerable<GetRepo_EmpPayDetail_Format_Result>
+﻿@model  List<dynamic>
 <div class="@ViewBag.TableResponsiveClass">
     <table class="table table-sm" id="PayRegisterFormat1" style="font-size:x-small">
         <thead class="thead-dark">
             <tr>
-                <th>Employee</th>
-                <th>Paymode</th>
-                <th>W.Days</th>
-                <th>Basic</th>
-                <th>Trans. Allow.</th>
-                <th>Fixed OT Allow.</th>
-                <th>Living/ Housing</th>
-                <th>Other Allow.</th>
-                <th>Total Sal.</th>
-                <th>OT</th>
-                <th>LSA</th>
-                <th>LTA</th>
-                <th>Manager Ince.</th>
-                <th>Ince.</th>
-                <th>Last Sal.</th>
-                <th>Gross Sal.</th>
-                <th>Staff Adv. Given</th>
-                <th>Staff Adv. Coll.</th>
-                <th>Staff Fund Given</th>
-                <th>Staff Fund Coll.</th>
-                <th>TMF Pay</th>
-                <th>TMF1</th>
-                <th>TMF2</th>
-                <th>TMF3</th>
-                <th>TMF4</th>
-                <th>TMFC</th>
-                <th>Pension</th>
-                <th>Net Sal.</th>
+                @foreach (var columnName in ((IDictionary<string, object>)Model[0]).Keys)
+                {
+                    <th>@columnName</th>
+                }
             </tr>
         </thead>
-        @foreach (var item in Model)
-        {
-            var totalSalary = item.BasicSalaray + item.TransportAllowance + item.FOTA + item.LivingAllowance + item.OtherAllowance;
-            var totalGrossSalary = totalSalary + item.OverTime + item.LSA + item.LTA + item.Incentives + item.ManagerIncentives;
-            var totalDeductions = item.TMFPay + item.TMF1 + item.TMF2 + item.TMF3 + item.TMF4 + item.TMFC;
-            var netSalary = totalGrossSalary - totalDeductions;
-            <tr>
-                <td>
-                    @item.EmpName (@item.Cd.Trim())<br />
-                    Branch: @item.Branch<br />
-                    Sponsor: @item.Sponsor
-                </td>
-                <td>@item.Paymode</td>
-                <td>@item.WorkingDays</td>
-                <td>@item.BasicSalaray.ToString("0.00")</td>
-                <td>@item.TransportAllowance.ToString("0.00")</td>
-                <td>@item.FOTA.ToString("0.00")</td>
-                <td>@item.LivingAllowance.ToString("0.00")</td>
-                <td>@item.OtherAllowance.ToString("0.00")</td>
-                <td>@totalSalary.ToString("0.00")</td>
-                <td>@item.OverTime.ToString("0.00")</td>
-                <td>@item.LSA.ToString("0.00")</td>
-                <td>@item.LTA.ToString("0.00")</td>
-                <td>@item.ManagerIncentives.ToString("0.00")</td>
-                <td>@item.Incentives.ToString("0.00")</td>
-                <td>@item.LastSalary.ToString("0.00")</td>
-                <td>@totalGrossSalary.ToString("0.00")</td>
-                <td>@item.StaffAdvGiven.ToString("0.00")</td>
-                <td>@item.StaffAdvCollected.ToString("0.00")</td>
-                <td>@item.StaffFundGiven.ToString("0.00")</td>
-                <td>@item.StaffFundCollected.ToString("0.00")</td>
-                <td>@item.TMFPay.ToString("0.00")</td>
-                <td>@item.TMF1.ToString("0.00")</td>
-                <td>@item.TMF2.ToString("0.00")</td>
-                <td>@item.TMF3.ToString("0.00")</td>
-                <td>@item.TMF4.ToString("0.00")</td>
-                <td>@item.TMFC.ToString("0.00")</td>
-                <td>@item.Pension.ToString("0.00")</td>
-                <td>@netSalary.ToString("0.00")</td>
-            </tr>
-        }
+        <tbody>
+            @foreach (var row in Model)
+            {
+                <tr>
+                    @foreach (var column in (IDictionary<string, object>)row)
+                    {
+                        <td>@column.Value</td>
+                    }
+                </tr>
+            }
+        </tbody>
     </table>
 </div>

@@ -261,7 +261,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public IEnumerable<GetRepo_EmpPayDetail_Format_Result> GetRepo_EmpPayDetail_Format(EmpPayRegisterFilterModel filterModel, string CoCd)
+        public IEnumerable<dynamic> GetRepo_EmpPayDetail_Format(EmpPayRegisterFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpPayDetail_Format_N";
@@ -275,7 +275,7 @@ namespace Onyx.Services
             parameters.Add("v_Department", filterModel.Department ?? "All");
             parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
             var connection = new SqlConnection(connectionString);
-            var result = connection.Query<GetRepo_EmpPayDetail_Format_Result>
+            var result = connection.Query<dynamic>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
