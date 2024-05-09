@@ -364,3 +364,82 @@ $('.filter-select-picker,.filter-select2').on('change', function (e) {
         if (dataTable.column(columnIndex).search() !== value)
             dataTable.column(columnIndex).search(value).draw();
 });
+
+function showEmpDocumentModal(empCd, docTypeCd, srNo) {
+    var url = `/Transactions/GetRenewalEmpDocument?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function showComDocumentModal(docTypeCd, divCd) {
+    var url = `/Transactions/GetRenewalComDocument?docTypeCd=${encodeURI(docTypeCd.trim())}&divCd=${divCd.trim()}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function showVehDocumentModal(vehCd, docType) {
+    var url = `/Transactions/GetRenewalVehicleDocument?vehCd=${vehCd}&docType=${docType}`;
+    $('#DocumentRenewModal').load(url, function () {
+        parseDynamicForm();
+        $("#DocumentRenewModal").modal("show");
+    });
+}
+function saveEmpDocumentRenewal(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Transactions/SaveRenewalEmpDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                if (window.location.search)
+                    window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
+                else
+                    reloadPageAfterSometime();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function saveComDocumentRenewal(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Transactions/SaveRenewalComDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
+function saveVehDocumentRenewal(btn) {
+    var frm = $("#document-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        filePostAjax("/Transactions/SaveRenewalVehDocument", frm[0], function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#DocumentRenewModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}

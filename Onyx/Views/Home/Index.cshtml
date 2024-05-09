@@ -246,6 +246,7 @@
                                     <th>Doc. No.</th>
                                     <th>Expiry Date</th>
                                     <th>Days</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -374,6 +375,7 @@
         </div>
     </div>
 }
+
 @section scripts {
     <script src="~/plugins/chart.js/chart.min.js"></script>
     <script src="~/js/page/dashboard.js" asp-append-version="true"></script>
@@ -422,8 +424,6 @@
             var barColors = '@Html.Raw(Json.Serialize(barColors))';
             var xValues = JSON.parse(donutXaxis);
             var yValues = JSON.parse(donutValue);
-            console.log(xValues);
-            console.log(yValues);
             new Chart("myDonutChart", {
                 type: "doughnut",
                 data: {

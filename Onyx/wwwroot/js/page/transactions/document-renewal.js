@@ -66,60 +66,6 @@ function showVehDocumentModal(vehCd, docType) {
         $("#DocumentRenewModal").modal("show");
     });
 }
-function saveEmpDocumentRenewal(btn) {
-    var frm = $("#document-frm");
-    if (frm.valid()) {
-        loadingButton(btn);
-        filePostAjax("/Transactions/SaveRenewalEmpDocument", frm[0], function (response) {
-            if (response.success) {
-                showSuccessToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
-            }
-            else {
-                showErrorToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-            }
-            unloadingButton(btn);
-        });
-    }
-}
-function saveComDocumentRenewal(btn) {
-    var frm = $("#document-frm");
-    if (frm.valid()) {
-        loadingButton(btn);
-        filePostAjax("/Transactions/SaveRenewalComDocument", frm[0], function (response) {
-            if (response.success) {
-                showSuccessToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
-            }
-            else {
-                showErrorToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-            }
-            unloadingButton(btn);
-        });
-    }
-}
-function saveVehDocumentRenewal(btn) {
-    var frm = $("#document-frm");
-    if (frm.valid()) {
-        loadingButton(btn);
-        filePostAjax("/Transactions/SaveRenewalVehDocument", frm[0], function (response) {
-            if (response.success) {
-                showSuccessToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-                window.location.href = '/Transactions/DocumentRenewal?processId=HRPT8'
-            }
-            else {
-                showErrorToastr(response.message);
-                $("#DocumentRenewModal").modal("hide");
-            }
-            unloadingButton(btn);
-        });
-    }
-}
 $("#EmpCd").change(function (e) {
     var empCd = e.target.value ? e.target.value : '0';
     bindDocumentRenewalSerachTable(empCd, "EMP");

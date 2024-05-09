@@ -26,9 +26,20 @@
                 },
                 {
                     data: function (row) {
-                        return `<label class="badge badge-info">${row.noOfDays} day(s)</lable>`;
+                        return `<label class="badge badge-secondary">${row.noOfDays} day(s)</lable>`;
                     },
                 },
+                {
+                    data: function (row) {
+                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('${row.cd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                                <i class="fas fa-pen"></i>
+                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showComDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                                <i class="fas fa-pen"></i>
+                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                                <i class="fas fa-pen"></i>
+                                </button>`
+                    }, "width": "40px"
+                }
             ],
         }
     );

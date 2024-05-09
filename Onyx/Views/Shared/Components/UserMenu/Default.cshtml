@@ -9,6 +9,7 @@
     IEnumerable<EmpFund_Approval_GetRow_Result> fundApprovalData = ViewBag.FundApprovalData;
     IEnumerable<EmpProgressionHead_GetRow_Result> progressionData = ViewBag.ProgressionData;
     IEnumerable<EmpDocIssueRcpt_GetRow_Result> docRenewalData = ViewBag.DocRenewalData;
+    IEnumerable<Empprovisionsadj_GetRow_Result> provisionAdjData = ViewBag.ProvisionAdjData;
     var dateFormat = ExtensionMethod.GetDateFormat();
 }
 <ul class="navbar-nav ml-auto">
@@ -308,6 +309,54 @@
                     }
                 </div>
                 <a href="/Transactions/DocumentRenewal?processId=HRPT8" class="dropdown-item dropdown-footer">See All Document Renewal Approvals</a>
+            </div>
+        </li>
+    }
+    @if (provisionAdjData.Count() > 0)
+    {
+        <li class="nav-item dropdown ml-3">
+            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Employee Provision Adjustment to be Approve">
+                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@provisionAdjData.Count()</span>
+                <img src="~/images/provision.png" height="40px" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
+                <h5 class="text-primary text-center mt-2">Employee Provision Adjustment Approval Notifications</h5>
+                <div class="dropdown-divider"></div>
+                <div class="notifications custom-scrollbar">
+                    @foreach (var item in provisionAdjData)
+                    {
+                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                        <div id="transNo-@item.TransNo">
+                            <a href="#" class="dropdown-item">
+                                <!-- Message Start -->
+                                <div class="media">
+                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                    <div class="media-body">
+                                        <h3 class="dropdown-item-title">
+                                            @item.Name.Trim() (@item.EmpCd.Trim())
+                                        </h3>
+                                        <p class="text-sm">
+                                            Type: @item.ProvTyp | Days: @item.Days | Amt: @item.Amt
+                                            <span>
+                                                <button class="btn btn-sm btn-info ml-2" onclick="showEmpProvisionAdjModal('@item.TransNo')">
+                                                    <i class="fas fa-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProvisionAdj('@item.TransNo')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </span>
+                                        </p>
+                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt, DateTime.Now)</p>
+                                    </div>
+                                </div>
+                                <!-- Message End -->
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    }
+                </div>
+                <a href="/Transactions/EmpProvisionAdj?processId=HRPT14" class="dropdown-item dropdown-footer">See All Employee Provision Adjustment Approvals</a>
             </div>
         </li>
     }

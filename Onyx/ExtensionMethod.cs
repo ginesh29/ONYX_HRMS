@@ -216,7 +216,7 @@ namespace Onyx
 
         public static string FormatDate(this DateTime date)
         {
-            var dateFormat = GetDateFormat();
+            var dateFormat = "dd/MM/yyyy";
             return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
         }
     }

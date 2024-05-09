@@ -44,12 +44,14 @@ namespace Onyx.ViewComponents
                 item.Detail = _transactionService.GetEmpProgressionDetail(item.TransNo.Trim());
             }
             var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "1");
+            var provisionAdjData = _transactionService.GetEmpProvisionAdjData(string.Empty, "6", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             ViewBag.LeaveApprovalData = leaveData;
             ViewBag.LoanApprovalData = loanData;
             ViewBag.LeaveSalaryApprovalData = leaveSalaryData;
             ViewBag.FundApprovalData = fundData;
             ViewBag.ProgressionData = progressionData;
             ViewBag.DocRenewalData = docRenewalData;
+            ViewBag.ProvisionAdjData = provisionAdjData;
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,

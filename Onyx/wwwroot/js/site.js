@@ -50,8 +50,8 @@ const dateRangePickerDefaultOptions = {
     locale: {
         format: CommonSetting.DisplayDateFormat
     },
-    showDropdowns: true,
     autoUpdateInput: false,
+    showDropdowns: true,
     autoApply: true,
 }
 function loadingPage() {
@@ -351,7 +351,6 @@ function initControls() {
         locale: {
             format: CommonSetting.DisplayDateFormat
         },
-        //autoUpdateInput: false,
         autoApply: true,
         singleDatePicker: true,
         showDropdowns: true,
@@ -392,11 +391,13 @@ function initControls() {
         var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
         $("#Days").text(`(${days} days)`);
     }).on('change.daterangepicker', function (ev, picker) {
-        $(this).val("");
-        $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
-        $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
-        $(`#${ev.target.id}Days-txt`).text("");
-        $(`#Days`).text("");
+        if (!$(this).val()) {
+            $(this).val("");
+            $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
+            $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
+            $(`#${ev.target.id}Days-txt`).text("");
+            $(`#Days`).text("");
+        }        
     });
 }
 function downloadFile(foldername, filename) {
