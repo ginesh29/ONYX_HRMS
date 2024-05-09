@@ -329,6 +329,15 @@ namespace Onyx.Services
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public int GetEmpDocNext_SrNo(string empCd)
+        {
+            var query = $"SELECT Isnull(Max(SrNo),0)+1 AS NextID FROM EmpDocuments where EmpCd ='{empCd}'";
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (query);
+            return data;
+        }
         public void DeleteDocument(string empCd, string docType, int SrNo)
         {
             var procedureName = "EmpDocuments_Delete";

@@ -481,7 +481,7 @@ namespace Onyx.Controllers
                 };
             else
             {
-                model.SrNo = _commonService.GetNext_SrNo("EmpDocuments", "srNo");
+                model.SrNo = _employeeService.GetEmpDocNext_SrNo(empCd);
                 model.Expiry = true;
             }
             var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
