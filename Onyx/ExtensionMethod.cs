@@ -120,12 +120,7 @@ namespace Onyx
                 return string.Empty;
             return $"{Convert.ToDateTime(startDate).ToString(format)} - {Convert.ToDateTime(endDate).ToString(format)}";
         }
-        public static string GetDateFormat()
-        {
-            DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
-            string shortDateFormat = dateFormat.ShortDatePattern;
-            return shortDateFormat;
-        }
+        public static string GetDateFormat() => CommonSetting.DisplayDateFormat;
         public static int GetDaysBetweenDateRange(DateTime? startDate, DateTime? endDate)
         {
             if (startDate == null || endDate == null)
@@ -216,7 +211,7 @@ namespace Onyx
 
         public static string FormatDate(this DateTime date)
         {
-            var dateFormat = "dd/MM/yyyy";
+            var dateFormat = CommonSetting.DisplayDateFormat;
             return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
         }
     }

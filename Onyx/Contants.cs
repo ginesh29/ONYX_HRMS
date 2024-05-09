@@ -4,6 +4,7 @@
     {
         public const string DEFAULTSELECT = "-- Select --";
         public const string ALLSELECT = "-- All --";
+        public const string DisplayDateFormat = "dd/MM/yyyy";
         public const string InputDateFormat = "yyyy-MM-dd";
         public const string DeafultDate = "1900-01-01";
     }
