@@ -65,7 +65,7 @@
                             <td>@item.PayCode1</td>
                             <td>@item.Curr2</td>
                             <td>
-                                @if (item.Amt2 > 0)
+                                @if (!string.IsNullOrEmpty(item.PayCode1))
                                 {
                                     <span>@item.Amt2.ToString("0.00")</span>
                                 }

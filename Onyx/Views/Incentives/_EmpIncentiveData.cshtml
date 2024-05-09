@@ -21,8 +21,7 @@
                 </th>
                 <th>No.</th>
                 <th>Image</th>
-                <th width="300">Employee</th>
-                <th>Branch</th>
+                <th width="400">Employee</th>
                 <th>Designation</th>
                 <th>Emp. Type</th>
                 <th>Curr. Sal</th>
@@ -44,8 +43,10 @@
                 </td>
                 <td>@(item.i + 1) <input asp-for="@Model.IncentiveData[item.i].SrNo" type="hidden" value="@(item.i + 1)"></td>
                 <td><img src="@avatarImage" class="img-size-50 mr-3 img-circle border"></td>
-                <td>@item.value.EmpName (@item.value.Cd.Trim())</td>
-                <td>@item.value.Branch</td>
+                <td>
+                    @item.value.EmpName (@item.value.Cd.Trim())<br />
+                    Branch: @item.value.Branch
+                </td>
                 <td>@item.value.Dept</td>
                 <td>@item.value.SalTyp</td>
                 <td>@item.value.Salary.ToString("0.00")</td>

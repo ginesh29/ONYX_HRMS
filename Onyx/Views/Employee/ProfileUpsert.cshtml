@@ -7,11 +7,13 @@
     var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
     var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
     var profilePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE1");
-    int totalTab = 4;
+    int totalTab = 5;
     if (documentPermission != null)
         totalTab++;
     if (componentPermission != null)
         totalTab++;
+    int i = 0;
+    int j = 0;
 }
 @model Employee_Find_Result
 <link rel="stylesheet" href="~/plugins/bs-stepper/css/bs-stepper.min.css">
@@ -21,16 +23,44 @@
             <div class="card-body p-0">
                 <div id="stepper" class="bs-stepper">
                     <div class="bs-stepper-header" role="tablist">
-                        @foreach (var item in sections.Select((value, i) => new { i, value }))
+                        @foreach (var item in sections)
                         {
-                            @if (!item.value.Contains("Documents") && !item.value.Contains("Components") ||
-                           (item.value.Contains("Documents") && documentPermission != null) ||
-                           item.value.Contains("Components") && componentPermission != null)
+                            @if (!item.Contains("Documents") && !item.Contains("Components") ||
+                           (item.Contains("Documents") && documentPermission != null) ||
+                           item.Contains("Components") && componentPermission != null)
                             {
-                                <div class="step" data-target="#@item.value.ConvertToSlug()-part">
-                                    <button type="button" class="step-trigger @(item.i!=0 &&string.IsNullOrEmpty(Model.Code)?"disabled":"")" role="tab" aria-controls="@item.value.ConvertToSlug()-part" id="@item.value.ConvertToSlug()-trigger">
-                                        <span class="bs-stepper-circle">@(item.i + 1)</span>
-                                        <span class="bs-stepper-label">@item.value</span>
+                                <div class="step" data-target="#@item.ConvertToSlug()-part">
+                                    <button type="button" class="step-trigger @(i!=0 &&string.IsNullOrEmpty(Model.Code)?"disabled":"")" role="tab" aria-controls="@item.ConvertToSlug()-part" id="@item.ConvertToSlug()-trigger">
+                                        @if (item.Contains("Personal"))
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Official"))
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Education"))
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Experience"))
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Documents") && documentPermission != null)
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Components") && componentPermission != null)
+                                        {
+                                            i++;
+                                        }
+                                        else if (item.Contains("Address"))
+                                        {
+                                            i++;
+                                        }
+                                        <span class="bs-stepper-circle">@i</span>
+                                        <span class="bs-stepper-label">@item</span>
                                     </button>
                                 </div>
                             }
@@ -40,45 +70,52 @@
                     <div class="bs-stepper-content @(profilePermission.UEdit =="Y"?"":"disabled-container")">
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
-                            @foreach (var item in sections.Select((value, i) => new { i, value }))
+                            @foreach (var item in sections)
                             {
-                                <div id="@item.value.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.value.ConvertToSlug()-part-trigger">
+                                <div id="@item.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.ConvertToSlug()-part-trigger">
                                     <div style="min-height:400px">
-                                        @if (item.value.Contains("Personal"))
+                                        @if (item.Contains("Personal"))
                                         {
                                             <partial name="_PersonalDetail" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Official"))
+                                        else if (item.Contains("Official"))
                                         {
                                             <partial name="_OfficialDetail" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Education"))
+                                        else if (item.Contains("Education"))
                                         {
                                             <partial name="_EducationDetail" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Experience"))
+                                        else if (item.Contains("Experience"))
                                         {
                                             <partial name="_ExperienceDetail" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Documents") && documentPermission != null)
+                                        else if (item.Contains("Documents") && documentPermission != null)
                                         {
                                             <partial name="_Documents" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Components") && componentPermission != null)
+                                        else if (item.Contains("Components") && componentPermission != null)
                                         {
                                             <partial name="_Components" />
+                                            j++;
                                         }
-                                        else if (item.value.Contains("Address"))
+                                        else if (item.Contains("Address"))
                                         {
                                             <div class="mb-3">
                                                 <button type="button" class="btn btn-info" onclick="showAddressModal('','')" id="btn-add-address">New Address</button>
                                             </div>
                                             <div id="Addresses"></div>
+                                            j++;
                                         }
                                     </div>
-                                    <button type="button" class="btn btn-primary @(item.i != 0 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
-                                    <button type="button" class="btn btn-primary float-right @(item.i != totalTab ? "" :"d-none")" onclick="GoToNextPrev(this)">Next &raquo;</button>
-                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(item.i == totalTab ? "" :"d-none")">Exit Profile</a>
+                                    <button type="button" class="btn btn-primary @(j != 1 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
+                                    <button type="button" class="btn btn-primary float-right @(j!= totalTab ? "" :"d-none")" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(j == totalTab ? "" :"d-none")">Exit Profile</a>
                                 </div>
                             }
                         </form>

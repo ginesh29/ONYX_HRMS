@@ -1033,6 +1033,7 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
         {
+            model.VariableComponentsData = model.VariableComponentsData.Where(m => m.Active).ToList();
             _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
             model.FilterModel.EntryBy = _loggedInUser.UserCd;
             foreach (var item in model.VariableComponentsData)

@@ -14,5 +14,6 @@
         public string ErrorMessage { get; set; }
         public string Narr { get; set; }
         public string TransId { get; set; }
+        public bool Active { get; set; }
     }
 }

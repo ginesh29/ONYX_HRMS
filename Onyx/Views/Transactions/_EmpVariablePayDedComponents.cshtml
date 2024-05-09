@@ -11,6 +11,12 @@
     <table class="table table-sm mt-3" id="EmpVariablePayDedComponentsTable">
         <thead class="thead-dark">
             <tr>
+                <th>
+                    <div class="custom-control custom-checkbox">
+                        <input id="check-all" class="custom-control-input custom-control-input-white custom-control-input-outline" type="checkbox" onchange="checkAll(this)">
+                        <label for="check-all" class="custom-control-label font-weight-normal"></label>
+                    </div>
+                </th>
                 <th>No.</th>
                 <th width="500">Employee</th>
                 <th>Branch</th>
@@ -21,6 +27,12 @@
         @foreach (var item in Model.VariableComponentsData.Select((value, i) => new { i, value }))
         {
             <tr>
+                <td>
+                    <div class="custom-control custom-checkbox">
+                        <input asp-for="@Model.VariableComponentsData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
+                        <label for="@($"VariableComponentsData_{item.i}__Active")" class=" custom-control-label font-weight-normal"></label>
+                    </div>
+                </td>
                 <td>
                     @(item.i + 1)
                     <input asp-for="@Model.VariableComponentsData[item.i].SrNo" type="hidden" value="@(item.i + 1)" />

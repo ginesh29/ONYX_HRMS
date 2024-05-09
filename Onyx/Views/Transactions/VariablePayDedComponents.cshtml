@@ -166,5 +166,32 @@
             else
                 showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
+        function changeCheckbox(cur) {
+            $(cur).closest("tr").find("input").addClass("disabled");
+            $(cur).closest("tr").removeClass("table-primary");
+            if ($(cur).is(":checked")) {
+                $(cur).closest("tr").find("input").removeClass("disabled");
+                $(cur).closest("tr").addClass("table-primary");
+            }
+            var totalCheckbox = $(".chk").length;
+            var totalCheckedCheckbox = $(".chk:checked").length;
+            if (totalCheckbox == totalCheckedCheckbox)
+                $("#check-all").prop("checked", true);
+            else
+                $("#check-all").prop("checked", false);
+        }
+        function checkAll(cur) {
+            var checked = $(cur).is(":checked");
+            if (checked) {
+                $("#EmpVariablePayDedComponents table tbody tr").addClass("table-primary");
+                $("#EmpVariablePayDedComponents table tbody tr").find("input").removeClass("disabled");
+                $(".chk").prop("checked", true);
+            }
+            else {
+                $(".chk").prop("checked", false);
+                $("#EmpVariablePayDedComponents table tbody tr").find("input").addClass("disabled");
+                $("#EmpVariablePayDedComponents table tbody tr").removeClass("table-primary");
+            }
+        }
     </script>
 }
