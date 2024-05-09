@@ -309,6 +309,56 @@ function saveEmpPrgression(btn, approval) {
         });
     }
 }
+
+function showEmpProvisionAdjModal(transNo) {
+    var url = `/Transactions/GetProvisionAdj?transNo=${transNo}`;
+    $('#EmpProvisionAdjModal').load(url, function () {
+        parseDynamicForm();
+        bindEmployeeDropdown();
+        $("#EmpProvisionAdjModal").modal("show");
+    });
+}
+function deleteEmpProvisionAdj(transNo) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to Delete?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteAjax(`/Transactions/DeleteEmpProvisionAdj?transNo=${transNo}`, function (response) {
+                showSuccessToastr(response.message);
+                reloadDatatable();
+                if ($("#provision-adj-approvals-notifications").length)
+                    reloadPageAfterSometime();
+            });
+        }
+    });
+}
+function saveEmpProvisionAdj(btn, approval) {
+    var frm = $("#emp-provision-adj-frm");
+    if (frm.valid()) {
+        loadingButton(btn);
+        var url = !approval ? "/Transactions/SaveEmpProvisionAdj" : "/Transactions/ApproveEmpProvisionAdj";
+        postAjax(url, frm.serialize(), function (response) {
+            if (response.success) {
+                showSuccessToastr(response.message);
+                $("#EmpProvisionAdjModal").modal("hide");
+                reloadDatatable();
+                if ($("#provision-adj-approvals-notifications").length)
+                    reloadPageAfterSometime();
+            }
+            else {
+                showErrorToastr(response.message);
+                $("#EmpProvisionAdjModal").modal("hide");
+            }
+            unloadingButton(btn);
+        });
+    }
+}
 function showDocumentApprovalModal(empCd, docTypeCd, srNo) {
     var url = `/Transactions/GetRenewalDocumentApproval?empCd=${encodeURI(empCd)}&docTypeCd=${docTypeCd}&srNo=${srNo}`;
     $('#DocumentRenewModal').load(url, function () {

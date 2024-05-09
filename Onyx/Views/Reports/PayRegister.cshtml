@@ -80,7 +80,7 @@
                 <div class="report-btn-div mb-3">
                     <button class="btn btn-secondary" onclick="filterShowReport(this)">Search</button>
                     <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
-                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                    <button class="btn btn-outline-info ml-2 d-none" id="btn-excel" data-table-id="PayRegisterFormat1"><i class="fa fa-file-excel"></i></button>
                 </div>
             </div>
         </form>
@@ -88,6 +88,8 @@
         <div id="PayRegister"></div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 @section scripts {
     <script>
         bindEmployeeDropdown();
@@ -98,8 +100,13 @@
                 var url = `/Reports/FetchPayRegister?${frm.serialize()}`;
                 $('#PayRegister').load(url, function () {
                     unloadingButton(btn);
-                    if ($(".table").length > 0)
+                    var isPayRegister = $("#PayRegisterFormat1").length;
+                    if ($(".table").length > 0) {
                         $("#btn-pdf").removeClass("d-none");
+                        $("#btn-excel").addClass("d-none");
+                        if (isPayRegister)
+                            $("#btn-excel").removeClass("d-none");
+                    }
                 });
             }
         }

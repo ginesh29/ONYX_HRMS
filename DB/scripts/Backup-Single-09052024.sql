@@ -1,3 +1,76 @@
+CREATE OR ALTER   procedure [dbo].[Empprovisionsadj_GetRow_N]
+	@v_Param		Char(10)=null
+,	@v_Typ			Char(1)=''
+,	@v_EmpCd		Char(10)
+,	@v_EmpUser		Char(1)
+,	@v_Usercd		varchar(10)
+As		-- Drop Procedure [dbo].[Empprovisionsadj_GetRow]'','6','HR','U','HR'
+Begin	
+	Select
+		TransNo
+	,	TransDt
+	,	Convert(varchar(20),TransDt,103)[FormattedTransDt]
+	,	RefDoc
+	,	EmpCd
+	,	(select Fname +' '+Mname+' '+LName from employee where cd=EmpCd)[Name]
+	,	(select Imagefile from Employee where cd= EmpCd) [ImagePath]
+	,	ProvTyp
+	,	(select Des from CompanyProvisions where cd=ProvTyp)[Prov]
+	,	Days
+	,	Amt
+	,	Purpose
+	,	Narr
+	,	ApprBy
+	,	ApprDt
+	
+	,	case when @v_Typ = '2'
+		then
+		(select SrNo From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT14' 
+			and CPAD.ApplTyp=EP.ProvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval_Level]
+	,	case when @v_Typ = '2'
+		then
+		(select EmpCd From CompanyProcessApprovalDetail as CPAD
+			where CPAD.ProcessId='HRPT14' 
+			and CPAD.ApplTyp=EP.ProvTyp
+			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
+			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
+			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
+		
+		end[Current_Approval]
+		
+	From
+		empprovisionsadj EP
+	Where
+		(@v_Typ='0') or
+		(@v_Typ='1' and ltrim(str(month(EP.TransDt)))=@v_Param) or
+		(@v_Typ='2' and EP.TransNo=@v_Param) or
+		(@v_Typ='3' and EP.EmpCd=@v_Param) or 
+		(@v_Typ='4' and EP.Status='E') or 
+		(@v_Typ='5' and EP.Status='A') or 
+		(@v_Typ ='6' and TransNo in( select TransNo  from empprovisionsadj
+				inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
+				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=EP.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
+				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
+				where 
+				empprovisionsadj.Status='E' 
+				and emp.Status='HSTATPM '
+				and emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
+				and ((ApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
+					or (ApprBy is not null
+						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and CPA.ApplTyp=EP.ProvTyp and Div=emp.Div and Dept=emp.Dept and EmpCd=ApprBy ) +1
+						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
+			)
+	order by TransNo 
+End
+ 
+ 
+ Go 
 
 
 
@@ -10354,78 +10427,6 @@ CREATE OR ALTER   procedure [dbo].[Empprovisionsadj_GetRow]
 ,	@v_EmpCd		Char(10)
 ,	@v_EmpUser		Char(1)
 ,	@v_Usercd		varchar(10)='001'
-As		-- Drop Procedure [dbo].[Empprovisionsadj_GetRow]'','6','HR','U','HR'
-Begin	
-	Select
-		TransNo
-	,	TransDt
-	,	Convert(varchar(20),TransDt,103)[FormattedTransDt]
-	,	RefDoc
-	,	EmpCd
-	,	(select Fname +' '+Mname+' '+LName from employee where cd=EmpCd)[Name]
-	,	ProvTyp
-	,	(select Des from CompanyProvisions where cd=ProvTyp)[Prov]
-	,	Days
-	,	Amt
-	,	Purpose
-	,	Narr
-	,	ApprBy
-	,	ApprDt
-	
-	,	case when @v_Typ = '2'
-		then
-		(select SrNo From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPT14' 
-			and CPAD.ApplTyp=EP.ProvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
-			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
-			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
-		
-		end[Current_Approval_Level]
-	,	case when @v_Typ = '2'
-		then
-		(select EmpCd From CompanyProcessApprovalDetail as CPAD
-			where CPAD.ProcessId='HRPT14' 
-			and CPAD.ApplTyp=EP.ProvTyp
-			and CPAD.Div=(select Div from Employee where Cd=EP.EmpCd)
-			and CPAD.Dept=(select Dept from Employee where Cd=EP.EmpCd)
-			and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))))
-		
-		end[Current_Approval]
-		
-	From
-		empprovisionsadj EP
-	Where
-		(@v_Typ='0') or
-		(@v_Typ='1' and ltrim(str(month(EP.TransDt)))=@v_Param) or
-		(@v_Typ='2' and EP.TransNo=@v_Param) or
-		(@v_Typ='3' and EP.EmpCd=@v_Param) or 
-		(@v_Typ='4' and EP.Status='E') or 
-		(@v_Typ='5' and EP.Status='A') or 
-		(@v_Typ ='6' and TransNo in( select TransNo  from empprovisionsadj
-				inner join Employee as emp on emp.Cd=empprovisionsadj.EmpCd
-				inner join CompanyProcessApproval as CPA on CPA.ProcessId='HRPT14' and CPA.ApplTyp=EP.ProvTyp and CPA.Div=emp.Div and CPA.Dept=emp.Dept
-				inner join CompanyProcessApprovalDetail as CPAD on CPAD.CoCd=CPA.CoCd and CPAD.ProcessId=CPA.ProcessId and CPAD.ApplTyp=CPA.ApplTyp and CPAD.Div=CPA.Div and CPAD.Dept=CPA.Dept
-				where 
-				empprovisionsadj.Status='E' 
-				and emp.Status='HSTATPM '
-				and emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
-				and ((ApprBy is null and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd)))  and cpad.SrNo='1')
-					or (ApprBy is not null
-						and CPAD.SrNo=(select SrNo from CompanyProcessApprovalDetail where ProcessId='HRPT14' and CPA.ApplTyp=EP.ProvTyp and Div=emp.Div and Dept=emp.Dept and EmpCd=ApprBy ) +1
-						and ((@v_EmpUser='E' and CPAD.EmpCd=@v_EmpCd) or (@v_EmpUser='U' and cpad.EmpCd in (Select Cd from Employee where UserCd=@v_EmpCd))) )))
-			)
-	order by TransNo 
-End
- 
- 
- Go 
-CREATE OR ALTER   procedure [dbo].[Empprovisionsadj_GetRow_N]
-	@v_Param		Char(10)=null
-,	@v_Typ			Char(1)=''
-,	@v_EmpCd		Char(10)
-,	@v_EmpUser		Char(1)
-,	@v_Usercd		varchar(10)
 As		-- Drop Procedure [dbo].[Empprovisionsadj_GetRow]'','6','HR','U','HR'
 Begin	
 	Select

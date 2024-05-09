@@ -297,6 +297,11 @@ $('#btn-excel').on('click', function (e) {
     var title = document.title.replace(" - Onyx", "");
     if (window["datatable"])
         exportExcel(window["datatable"], title)
+    else {
+        var tableId = $(this).attr('data-table-id');
+        exportTableToExcel(tableId, title)
+    }
+
 });
 function bindEmployeeDropdown() {
     var el = $("select#EmpCd,select#EmployeeCode,select#DriverCd,select#EmpCd-Filter");
@@ -397,7 +402,7 @@ function initControls() {
             $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
             $(`#${ev.target.id}Days-txt`).text("");
             $(`#Days`).text("");
-        }        
+        }
     });
 }
 function downloadFile(foldername, filename) {

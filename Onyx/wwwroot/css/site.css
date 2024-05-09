@@ -52,7 +52,8 @@
 #loan-approvals-notifications,
 #fund-approvals-notifications,
 #doc-renewal-approvals-notifications,
-#progression-approvals-notifications {
+#progression-approvals-notifications,
+#provision-adj-approvals-notifications {
     max-width: 500px !important;
     width: 490px !important;
 }

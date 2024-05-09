@@ -528,12 +528,9 @@ namespace Onyx.Controllers
         [HttpDelete]
         public IActionResult DeleteDocument(string empCd, string docTypeCd, int srNo)
         {
-            _employeeService.DeleteDocument(empCd, docTypeCd, srNo);
-            var result = new CommonResponse
-            {
-                Success = true,
-                Message = CommonMessage.DELETED
-            };
+            var result = _employeeService.DeleteDocumentFile(empCd, docTypeCd, 0);
+            if (result.Success)
+                _employeeService.DeleteDocument(empCd, docTypeCd, srNo);
             return Json(result);
         }
         public IActionResult FetchDocumentFiles(string empCd, string docTypeCd)
