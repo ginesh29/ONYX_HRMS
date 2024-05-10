@@ -74,7 +74,7 @@ namespace Onyx.Controllers
             {
                 Id = s.Cd.Trim(),
                 Text = $"{s.Name.Trim()}({s.Cd.Trim()})"
-            });
+            }).OrderBy(m => m.Text);
             return Json(items);
         }
         public IActionResult FetchEmployees(int? page, int? pageSize, EmployeeFilterModel filterModel)

@@ -89,32 +89,51 @@ showEmpLeave(3);
 showEmpLeave(4);
 showEmpLeave(5);
 function showBarChart(init) {
-    if (!init)
-        window["myChart"].destroy();
-    var type = $("#Chart-Type").val();
-    var typeText = $("#Chart-Type option:selected").text();
-    getAjax(`/Home/EmployeeWiseForChart?type=${type}`, function (response) {
-        var xValues = response.xAxis;
-        var yValues = response.yAxis;
-        var ctx = $('#myChart');
+    if ($('#myChart').length) {
+        if (!init)
+            window["myChart"].destroy();
+        var type = $("#Chart-Type").val();
+        var typeText = $("#Chart-Type option:selected").text();
+        getAjax(`/Home/EmployeeWiseForChart?type=${type}`, function (response) {
+            var xValues = response.xAxis;
+            var yValues = response.yAxis;
+            var ctx = $('#myChart');
 
-        window["myChart"] = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    backgroundColor: "orange",
-                    data: yValues
-                }]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: typeText
+            window["myChart"] = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: "orange",
+                        data: yValues
+                    }]
+                },
+                options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: typeText
+                    }
                 }
-            }
-        });
-    })
+            });
+        })
+    }
 }
 showBarChart(true);
+
+function loadPayslip() {
+    var frm = $("#payslip-filter-frm");
+    var url = `/Reports/FetchPaySlips?${frm.serialize()}`;
+    $('#PaySlip').load(url, function () {
+        $("#btn-pdf").addClass("d-none");
+        if ($(".invoice").length > 0)
+            $("#btn-pdf").removeClass("d-none");
+    });
+}
+function filterShowReport(report) {
+    if (report) {
+        var frm = $("#payslip-filter-frm");
+        var url = `/Reports/PaySlipsReport?${decodeURIComponent(frm.serialize())}`;
+        window.open(url);
+    }
+}

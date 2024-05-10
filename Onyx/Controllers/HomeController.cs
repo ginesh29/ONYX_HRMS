@@ -57,8 +57,18 @@ namespace Onyx.Controllers
             {
                 ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserAbbr).Employees.FirstOrDefault();
                 ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);                
             }
+            var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserAbbr).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
+            if (_loggedInUser.UserCd != "001")
+                quickLinkItems = quickLinkItems.Where(m => m.Visible == "Y");
+            ViewBag.QuickLinkItems = quickLinkItems;
+            if(_loggedInUser.UserOrEmployee == "E")
+            {
+                var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+                var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+                ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
+            }           
             return View();
         }
         public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel, int days)

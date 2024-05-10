@@ -79,7 +79,7 @@
                     html += `<option value='${item.value}'>${item.text}</option>`
                 })
                 $("#PayCode").html(html);
-                $("#PayCode").attr("title", "-- Select --");
+                $("#PayCode").attr("title", "-- All --");
                 $("#PayCode").selectpicker('refresh');
             });
         }
@@ -139,7 +139,7 @@
                 };
                 unloadingButton(btn);
                 var frmData = getFrmData();
-                postAjax(url, { filterModel: filterModel, model: frmData }, function (response) {
+                postAjax(url, { filterModel: filterModel, variableComponentsData: frmData }, function (response) {
                     if (response.success) {
                         showSuccessToastr(response.message);
                         searchComponents();

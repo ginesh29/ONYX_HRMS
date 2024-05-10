@@ -82,7 +82,7 @@ function unloadingButton(btn) {
 }
 function showSuccessToastr(msg) {
     toastr.clear()
-    toastr.success(msg);
+    toastr.info(msg);
 }
 function showWarningToastr(msg) {
     toastr.clear()
@@ -340,13 +340,14 @@ function initControls() {
     $("select.select-picker,select.filter-select-picker").not("#user-company-dropdown").not("[multiple]").each(function () {
         var curr = this;
         var val = $(curr).val();
-        if (!$(curr).find(".no-value-option").length && val) {
-            $(curr).prepend('<option value="" class="no-value-option">-- Select --</option>');
+        var txt = $(curr).hasClass("filter-select-picker") ? "-- All --" : "-- Select --";
+        if (!$(curr).find(".no-value-option").length && val) {            
+            $(curr).prepend(`<option value="" class="no-value-option">${txt}</option>`);
             $(curr).selectpicker('refresh');
         }
         $(curr).change(function () {
             if (!$(curr).find(".no-value-option").length) {
-                $(curr).prepend('<option value="" class="no-value-option">-- Select --</option>');
+                $(curr).prepend(`<option value="" class="no-value-option">${txt}</option>`);
                 $(curr).selectpicker('refresh');
             }
         })

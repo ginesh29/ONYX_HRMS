@@ -1504,5 +1504,21 @@ namespace Onyx.Services
             return data;
         }
         #endregion
+        public EmplLoanAndLeaveHistory_Result GetEmployee_LeaveLoanHistory(string empCd)
+        {
+            var procedureName = "EmplLoanAndLeaveHistory_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_EmpCd", empCd);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var empLoans = multiResult.Read<EmpLoan>();
+            var empLeaves = multiResult.Read<EmpLeave>();
+            return new EmplLoanAndLeaveHistory_Result
+            {
+                EmpLeaves = empLeaves,
+                EmpLoans = empLoans
+            };
+        }
     }
 }

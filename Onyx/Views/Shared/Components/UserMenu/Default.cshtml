@@ -10,385 +10,469 @@
     IEnumerable<EmpProgressionHead_GetRow_Result> progressionData = ViewBag.ProgressionData;
     IEnumerable<EmpDocIssueRcpt_GetRow_Result> docRenewalData = ViewBag.DocRenewalData;
     IEnumerable<Empprovisionsadj_GetRow_Result> provisionAdjData = ViewBag.ProvisionAdjData;
+    EmplLoanAndLeaveHistory_Result ownLeaveLoanData = ViewBag.OwnLeaveLoanData;
+    var ownLeaveData = ownLeaveLoanData.EmpLeaves;
+    var ownLoanData = ownLeaveLoanData.EmpLoans;
     var dateFormat = ExtensionMethod.GetDateFormat();
 }
-<ul class="navbar-nav ml-auto">
-    <!-- Messages Dropdown Menu -->
-    @if (leaveApprovalData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@leaveApprovalData.Count()</span>
-                <img src="~/images/leave.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Leave Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in leaveApprovalData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo.Trim()">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.Emp.Trim() (@item.EmpCd.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            @item.LvFrom.Value.ToString(dateFormat) - @item.LvTo.Value.ToString(dateFormat) (@ExtensionMethod.GetDaysBetweenDateRange(item.LvFrom, item.LvTo) days)
-                                            <span>
-                                                <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.LvFrom.Value.ToString(CommonSetting.InputDateFormat)','@item.LvTo.Value.ToString(CommonSetting.InputDateFormat)')">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()',true)">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/EmpLeaveApprovals?processId=HRPT11" class="dropdown-item dropdown-footer">See All Leave Approvals</a>
-            </div>
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-    }
-    @if (leaveSalaryApprovalData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave Salary/Ticket to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 3px;">@leaveSalaryApprovalData.Count()</span>
-                <img src="~/images/ticket-flight.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-sal-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Leave Salary/Ticket Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in leaveSalaryApprovalData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo.Trim()">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.Emp.Trim() (@item.EmpCd.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Leave Salary: @item.LvSalary | Leave Ticket:  @item.LvTicket
-                                            <span>
-                                                <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showLeaveSalaryApprovalModal('@item.TransNo.Trim()')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveSalaryApprovalModal('@item.TransNo.Trim()',true)">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+        @if (ownLeaveData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="My Leaves">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@ownLeaveData.Count()</span>
+                    <img src="~/images/own-leave.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="own-leave-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">My Leaves</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in ownLeaveData)
+                        {
+                            <div>
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                <label>Duration:</label> @item.FromDt.ToString(dateFormat) - @item.ToDt.ToString(dateFormat) (@ExtensionMethod.GetDaysBetweenDateRange(item.FromDt, item.ToDt) days)<label>
+                                            </h3>
+                                            <p class="text-sm">
+                                                <label>Leave Type:</label> @item.Type |  <label>
+                                                    Status.:
+                                                </label> @item.LvStatus
+                                                <label>Reason:</label> @item.Reason
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt, DateTime.Now)</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
+                                    <!-- Message End -->
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
-                <a href="/Transactions/EmpLeaveSalaryApproval?processId=HRPT6" class="dropdown-item dropdown-footer">See All Leave Salary/Ticket Approvals</a>
-            </div>
-        </li>
-    }
-    @if (loanApprovalData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Loan to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@loanApprovalData.Count()</span>
-                <img src="~/images/loan.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="loan-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Loan Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in loanApprovalData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo.Trim()">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.EmpName.Trim() (@item.EmployeeCode.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Type: @item.LoanType | Amount: @item.Amt | Inst.: @item.NoInstReq
-                                            <span>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()',true)">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/EmpLoanApproval?processId=HRPT21" class="dropdown-item dropdown-footer">See All Loan Approvals</a>
-            </div>
-        </li>
-    }
-    @if (fundApprovalData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Fund to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@fundApprovalData.Count()</span>
-                <img src="~/images/funding.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="fund-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Fund Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in fundApprovalData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo.Trim()">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.Emp.Trim() (@item.EmpCd.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Amount: @item.Amount
-                                            <span>
-                                                <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('@item.TransNo.Trim()')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('@item.TransNo.Trim()',true)">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/EmpFundApproval?processId=HREFA" class="dropdown-item dropdown-footer">See All Fund Approvals</a>
-            </div>
-        </li>
-    }
-    @if (progressionData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Progression to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@progressionData.Count()</span>
-                <img src="~/images/progress.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="progression-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Employee Progression Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in progressionData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo.Trim()">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.Name.Trim() (@item.EmpCode.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Type: @item.EP_Typ | Component: @item.Detail.PayCd
-                                            @if (item.EP_TypeCd == "HREP02" || item.EP_TypeCd == "HREP04" || item.EP_TypeCd == "HREP05")
-                                            {
-                                                <span>| Revised Amt: @item.Detail.Incremented.ToString("0.00") </span>
-                                            }
-                                            <span>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showEmpProgressionModal('@item.TransNo.Trim()')">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProgression('@item.TransNo.Trim()')">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/EmployeeProgression?processId=HRPT6" class="dropdown-item dropdown-footer">See All Employee Progression Approvals</a>
-            </div>
-        </li>
-    }
-    @if (docRenewalData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Document Renewal to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@docRenewalData.Count()</span>
-                <img src="~/images/documents.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Document Renewal Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in docRenewalData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.SrNo">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.EmpName.Trim() (@item.EmployeeCode.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Doc Type: @item.DocTypeDes | Doc No.: @item.DocNo
-                                            <span>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showDocumentApprovalModal('@item.EmployeeCode.Trim()','@item.DocType.Trim()',@item.SrNo)">
-                                                    <i class="fas fa-pen"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TrnDt.Value, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/DocumentRenewal?processId=HRPT8" class="dropdown-item dropdown-footer">See All Document Renewal Approvals</a>
-            </div>
-        </li>
-    }
-    @if (provisionAdjData.Count() > 0)
-    {
-        <li class="nav-item dropdown ml-3">
-            <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Employee Provision Adjustment to be Approve">
-                <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@provisionAdjData.Count()</span>
-                <img src="~/images/provision.png" height="40px" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="provision-adj-approvals-notifications" style="left: inherit; right: 0px;">
-                <h5 class="text-primary text-center mt-2">Employee Provision Adjustment Approval Notifications</h5>
-                <div class="dropdown-divider"></div>
-                <div class="notifications custom-scrollbar">
-                    @foreach (var item in provisionAdjData)
-                    {
-                        var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
-                        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
-                        <div id="transNo-@item.TransNo">
-                            <a href="#" class="dropdown-item">
-                                <!-- Message Start -->
-                                <div class="media">
-                                    <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
-                                    <div class="media-body">
-                                        <h3 class="dropdown-item-title">
-                                            @item.Name.Trim() (@item.EmpCd.Trim())
-                                        </h3>
-                                        <p class="text-sm">
-                                            Type: @item.ProvTyp | Days: @item.Days | Amt: @item.Amt
-                                            <span>
-                                                <button class="btn btn-sm btn-info ml-2" onclick="showEmpProvisionAdjModal('@item.TransNo')">
-                                                    <i class="fas fa-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProvisionAdj('@item.TransNo')">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </span>
-                                        </p>
-                                        <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt, DateTime.Now)</p>
-                                    </div>
-                                </div>
-                                <!-- Message End -->
-                            </a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    }
-                </div>
-                <a href="/Transactions/EmpProvisionAdj?processId=HRPT14" class="dropdown-item dropdown-footer">See All Employee Provision Adjustment Approvals</a>
-            </div>
-        </li>
-    }
-    <li class="nav-item mr-3 ml-5">
-        <div style="width:200px;">
-            <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
-            </select>
-        </div>
-    </li>
-    <!-- Navbar Search -->
-    <li class="nav-item dropdown user-menu">
-        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            <img src="@profilePic" class="user-image img-circle border" alt="User Image">
-            <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;" id="user-menu">
-            <!-- User image -->
-            <li class="user-header" style="height:90px">
-                <p>
-                    @if (!string.IsNullOrEmpty(Model.EmployeeName))
-                    {
-                        <span>@Model.EmployeeName -</span>
-                    }
-                    @Model.Username
-                    <small>Current period : @Model.CurrentPeriod</small>
-                    <small>Current logged : @Model.CurrentLogged</small>
-                </p>
             </li>
-            <li class="user-footer">
-                <a href="javascript:void(0)" class="btn btn-flat btn-outline-secondary" onclick="showChangePasswordModal()">Change Password</a>
-                <a href="javascript:void(0)" class="btn btn-primary btn-flat float-right" onclick="logOut(this)">Sign out</a>
+        }
+        @if (ownLoanData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="My Loans">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@ownLoanData.Count()</span>
+                    <img src="~/images/own-loan.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="own-loan-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">My Loans</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in ownLoanData)
+                        {
+                            <div>
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                <label>Loan Type:</label> @item.Type | <label>Amt:</label> @item.ApprAmt.ToString("0.00") | <label>No. of Inst.:</label> @item.NoInst
+                                            </h3>
+                                            <p class="text-sm">
+                                                <label>Status</label>: @item.Status
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
             </li>
-        </ul>
-    </li>
-</ul>
+        }
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <!-- Messages Dropdown Menu -->
+        @if (leaveApprovalData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@leaveApprovalData.Count()</span>
+                    <img src="~/images/leave.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Leave Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in leaveApprovalData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo.Trim()">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.Emp.Trim() (@item.EmpCd.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                @item.LvFrom.Value.ToString(dateFormat) - @item.LvTo.Value.ToString(dateFormat) (@ExtensionMethod.GetDaysBetweenDateRange(item.LvFrom, item.LvTo) days)
+                                                <span>
+                                                    <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.LvFrom.Value.ToString(CommonSetting.InputDateFormat)','@item.LvTo.Value.ToString(CommonSetting.InputDateFormat)')">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('@item.TransNo.Trim()',true)">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmpLeaveApprovals?processId=HRPT11" class="dropdown-item dropdown-footer">See All Leave Approvals</a>
+                </div>
+            </li>
+        }
+        @if (leaveSalaryApprovalData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave Salary/Ticket to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 3px;">@leaveSalaryApprovalData.Count()</span>
+                    <img src="~/images/ticket-flight.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-sal-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Leave Salary/Ticket Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in leaveSalaryApprovalData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo.Trim()">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.Emp.Trim() (@item.EmpCd.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Leave Salary: @item.LvSalary | Leave Ticket:  @item.LvTicket
+                                                <span>
+                                                    <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showLeaveSalaryApprovalModal('@item.TransNo.Trim()')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveSalaryApprovalModal('@item.TransNo.Trim()',true)">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmpLeaveSalaryApproval?processId=HRPT6" class="dropdown-item dropdown-footer">See All Leave Salary/Ticket Approvals</a>
+                </div>
+            </li>
+        }
+        @if (loanApprovalData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Loan to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@loanApprovalData.Count()</span>
+                    <img src="~/images/loan.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="loan-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Loan Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in loanApprovalData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo.Trim()">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.EmpName.Trim() (@item.EmployeeCode.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Type: @item.LoanType | Amount: @item.Amt | Inst.: @item.NoInstReq
+                                                <span>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()',true)">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmpLoanApproval?processId=HRPT21" class="dropdown-item dropdown-footer">See All Loan Approvals</a>
+                </div>
+            </li>
+        }
+        @if (fundApprovalData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Fund to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@fundApprovalData.Count()</span>
+                    <img src="~/images/funding.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="fund-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Fund Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in fundApprovalData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo.Trim()">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.Emp.Trim() (@item.EmpCd.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Amount: @item.Amount
+                                                <span>
+                                                    <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('@item.TransNo.Trim()')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('@item.TransNo.Trim()',true)">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmpFundApproval?processId=HREFA" class="dropdown-item dropdown-footer">See All Fund Approvals</a>
+                </div>
+            </li>
+        }
+        @if (progressionData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Progression to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@progressionData.Count()</span>
+                    <img src="~/images/progress.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="progression-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Employee Progression Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in progressionData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo.Trim()">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.Name.Trim() (@item.EmpCode.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Type: @item.EP_Typ | Component: @item.Detail.PayCd
+                                                @if (item.EP_TypeCd == "HREP02" || item.EP_TypeCd == "HREP04" || item.EP_TypeCd == "HREP05")
+                                                {
+                                                    <span>| Revised Amt: @item.Detail.Incremented.ToString("0.00") </span>
+                                                }
+                                                <span>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showEmpProgressionModal('@item.TransNo.Trim()')">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProgression('@item.TransNo.Trim()')">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmployeeProgression?processId=HRPT6" class="dropdown-item dropdown-footer">See All Employee Progression Approvals</a>
+                </div>
+            </li>
+        }
+        @if (docRenewalData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Document Renewal to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@docRenewalData.Count()</span>
+                    <img src="~/images/documents.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Document Renewal Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in docRenewalData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.SrNo">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.EmpName.Trim() (@item.EmployeeCode.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Doc Type: @item.DocTypeDes | Doc No.: @item.DocNo
+                                                <span>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showDocumentApprovalModal('@item.EmployeeCode.Trim()','@item.DocType.Trim()',@item.SrNo)">
+                                                        <i class="fas fa-pen"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TrnDt.Value, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/DocumentRenewal?processId=HRPT8" class="dropdown-item dropdown-footer">See All Document Renewal Approvals</a>
+                </div>
+            </li>
+        }
+        @if (provisionAdjData.Count() > 0)
+        {
+            <li class="nav-item dropdown ml-3">
+                <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Employee Provision Adjustment to be Approve">
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@provisionAdjData.Count()</span>
+                    <img src="~/images/provision.png" height="40px" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="provision-adj-approvals-notifications" style="left: inherit; right: 0px;">
+                    <h5 class="text-primary text-center mt-2">Employee Provision Adjustment Approval Notifications</h5>
+                    <div class="dropdown-divider"></div>
+                    <div class="notifications custom-scrollbar">
+                        @foreach (var item in provisionAdjData)
+                        {
+                            var avatarFileExist = item.ImagePath.FileExist("emp-photo", companyCd);
+                            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImagePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImagePath}" : "/images/avatar.png";
+                            <div id="transNo-@item.TransNo">
+                                <a href="#" class="dropdown-item">
+                                    <!-- Message Start -->
+                                    <div class="media">
+                                        <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+                                        <div class="media-body">
+                                            <h3 class="dropdown-item-title">
+                                                @item.Name.Trim() (@item.EmpCd.Trim())
+                                            </h3>
+                                            <p class="text-sm">
+                                                Type: @item.ProvTyp | Days: @item.Days | Amt: @item.Amt
+                                                <span>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showEmpProvisionAdjModal('@item.TransNo')">
+                                                        <i class="fas fa-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProvisionAdj('@item.TransNo')">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> @ExtensionMethod.GetRelativeTime(item.TransDt, DateTime.Now)</p>
+                                        </div>
+                                    </div>
+                                    <!-- Message End -->
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        }
+                    </div>
+                    <a href="/Transactions/EmpProvisionAdj?processId=HRPT14" class="dropdown-item dropdown-footer">See All Employee Provision Adjustment Approvals</a>
+                </div>
+            </li>
+        }
+        <li class="nav-item mr-3 ml-5">
+            <div style="width:200px;">
+                <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
+                </select>
+            </div>
+        </li>
+        <!-- Navbar Search -->
+        <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <img src="@profilePic" class="user-image img-circle border" alt="User Image">
+                <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;" id="user-menu">
+                <!-- User image -->
+                <li class="user-header" style="height:90px">
+                    <p>
+                        @if (!string.IsNullOrEmpty(Model.EmployeeName))
+                        {
+                            <span>@Model.EmployeeName -</span>
+                        }
+                        @Model.Username
+                        <small>Current period : @Model.CurrentPeriod</small>
+                        <small>Current logged : @Model.CurrentLogged</small>
+                    </p>
+                </li>
+                <li class="user-footer">
+                    <a href="javascript:void(0)" class="btn btn-flat btn-outline-secondary" onclick="showChangePasswordModal()">Change Password</a>
+                    <a href="javascript:void(0)" class="btn btn-primary btn-flat float-right" onclick="logOut(this)">Sign out</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

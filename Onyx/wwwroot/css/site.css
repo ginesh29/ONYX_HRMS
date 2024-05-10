@@ -3,6 +3,15 @@
     width: 265px;
 }
 
+.dashboard-quicklinks:nth-of-type(n+2) {
+    padding-left: .5rem !important;
+}
+
+.dashboard-quicklinks:not(:last-child) {
+    padding-right: .5rem !important;
+    border-right: solid 1px #ced4da;
+}
+
 .modal {
     overflow: auto !important;
 }
@@ -53,7 +62,9 @@
 #fund-approvals-notifications,
 #doc-renewal-approvals-notifications,
 #progression-approvals-notifications,
-#provision-adj-approvals-notifications {
+#provision-adj-approvals-notifications,
+#own-loan-notifications,
+#own-leave-notifications {
     max-width: 500px !important;
     width: 490px !important;
 }

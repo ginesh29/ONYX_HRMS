@@ -13,7 +13,6 @@
     if (componentPermission != null)
         totalTab++;
     int i = 0;
-    int j = 0;
 }
 @model Employee_Find_Result
 <link rel="stylesheet" href="~/plugins/bs-stepper/css/bs-stepper.min.css">
@@ -70,39 +69,43 @@
                     <div class="bs-stepper-content @(profilePermission.UEdit =="Y"?"":"disabled-container")">
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
+                            @{
+                                i = 0;
+                            }
                             @foreach (var item in sections)
                             {
                                 <div id="@item.ConvertToSlug()-part" class="content" role="tabpanel" aria-labelledby="@item.ConvertToSlug()-part-trigger">
                                     <div style="min-height:400px">
+                                        <h5 class="text-primary">@Model.Name (@Model.Code)</h5>
                                         @if (item.Contains("Personal"))
-                                        {
+                                        {                                            
                                             <partial name="_PersonalDetail" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Official"))
                                         {
                                             <partial name="_OfficialDetail" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Education"))
                                         {
                                             <partial name="_EducationDetail" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Experience"))
                                         {
                                             <partial name="_ExperienceDetail" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Documents") && documentPermission != null)
                                         {
                                             <partial name="_Documents" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Components") && componentPermission != null)
                                         {
                                             <partial name="_Components" />
-                                            j++;
+                                            i++;
                                         }
                                         else if (item.Contains("Address"))
                                         {
@@ -110,12 +113,12 @@
                                                 <button type="button" class="btn btn-info" onclick="showAddressModal('','')" id="btn-add-address">New Address</button>
                                             </div>
                                             <div id="Addresses"></div>
-                                            j++;
+                                            i++;
                                         }
                                     </div>
-                                    <button type="button" class="btn btn-primary @(j != 1 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
-                                    <button type="button" class="btn btn-primary float-right @(j!= totalTab ? "" :"d-none")" onclick="GoToNextPrev(this)">Next &raquo;</button>
-                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(j == totalTab ? "" :"d-none")">Exit Profile</a>
+                                    <button type="button" class="btn btn-primary @(i != 1 ? "visible" :"invisible")" onclick="GoToNextPrev(this,true)">&laquo; Previous</button>
+                                    <button type="button" class="btn btn-primary float-right @(i!= totalTab ? "" :"d-none")" onclick="GoToNextPrev(this)">Next &raquo;</button>
+                                    <a href="/Employee/Profiles" class="btn btn-success float-right @(i == totalTab ? "" :"d-none")">Exit Profile</a>
                                 </div>
                             }
                         </form>

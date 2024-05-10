@@ -214,5 +214,21 @@ namespace Onyx
             var dateFormat = CommonSetting.DisplayDateFormat;
             return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
         }
+        public static string GetOrdinal(this int number)
+        {
+            if (number % 100 >= 11 && number % 100 <= 13)
+                return "th";
+            switch (number % 10)
+            {
+                case 1:
+                    return "st";
+                case 2:
+                    return "nd";
+                case 3:
+                    return "rd";
+                default:
+                    return "th";
+            }
+        }
     }
 }

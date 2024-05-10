@@ -31,9 +31,9 @@ namespace Onyx.Models.StoredProcedure
         public string MaritalStatus { get; set; }
         public string Designation { get; set; }
         public string Desg { get; set; }
-        public DateTime? DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string FormatedDOB { get; set; }
-        public DateTime? DOJ { get; set; }
+        public DateTime DOJ { get; set; }
         public string FormatedDOJ { get; set; }
         public string FormatedProbation { get; set; }
         public string FormatedConfrm { get; set; }

@@ -17,7 +17,7 @@ namespace Onyx.ViewComponents
         }
         public IViewComponentResult Invoke()
         {
-            var menuItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserCd);
+            var menuItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserAbbr);
             if (_loggedInUser.UserCd != "001")
             {
                 var visibleMenuItems = menuItems.Where(m => m.Visible == "Y");

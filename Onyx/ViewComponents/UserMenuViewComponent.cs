@@ -27,7 +27,7 @@ namespace Onyx.ViewComponents
             var month = Convert.ToInt32(_commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
             bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));
-            var companies = _commonService.GetUserCompanies(_loggedInUser.UserCd).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
+            var companies = _commonService.GetUserCompanies(_loggedInUser.UserAbbr).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
             if (companies.Count() == 1)
                 companies = companies.Select(m => { m.Selected = true; return m; });
             else
@@ -52,6 +52,11 @@ namespace Onyx.ViewComponents
             ViewBag.ProgressionData = progressionData;
             ViewBag.DocRenewalData = docRenewalData;
             ViewBag.ProvisionAdjData = provisionAdjData;
+            if (_loggedInUser.UserOrEmployee == "E")
+            {
+                var ownLeaveLoanData = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd);
+                ViewBag.OwnLeaveLoanData = ownLeaveLoanData;
+            }
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,
