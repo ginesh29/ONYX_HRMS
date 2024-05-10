@@ -1022,7 +1022,7 @@ namespace Onyx.Controllers
                 model.FromDt = new DateTime(year, month, 1);
                 model.ToDt = new DateTime(year, month, lastDayOfMonth);
             }
-            var variablecomponentsData = _transactionService.GetVariablePayDedComponents(model);
+            var variablecomponentsData = _transactionService.GetVariablePayDedComponents(model).Skip(100);
             var variableComponentModel = new VariablePayDedComponentModel
             {
                 VariableComponentsData = variablecomponentsData.ToList(),
@@ -1031,20 +1031,18 @@ namespace Onyx.Controllers
             return PartialView("_EmpVariablePayDedComponents", variableComponentModel);
         }
         [HttpPost]
-        public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
+        public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentFilterModel filterModel, List<EmpTrans_VarCompFixAmt_GetRow_Result> model)
         {
-            model.VariableComponentsData = model.VariableComponentsData.Where(m => m.Active).ToList();
-            _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
-            model.FilterModel.EntryBy = _loggedInUser.UserCd;
-            foreach (var item in model.VariableComponentsData)
+            _transactionService.DeleteEmpTrans(string.Empty, filterModel.PayCode, filterModel.PayType, filterModel.Branch);
+            filterModel.EntryBy = _loggedInUser.UserCd;
+            foreach (var item in model)
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
                 item.Curr = employeeDetail.BasicCurr.Trim();
                 item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
                 item.TransId = "M";
-                _transactionService.EmpTrans_Update(item, model.FilterModel);
+                _transactionService.EmpTrans_Update(item, filterModel);
             }
-
             var result = new CommonResponse
             {
                 Success = true,

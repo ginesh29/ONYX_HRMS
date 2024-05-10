@@ -1,5 +1,5 @@
 ﻿@model VariablePayDedComponentModel
-<form id="variable-component-frm">
+<form id="variable-component-frm" method="post" action="SaveEmpVariablePayDedComponents">
     <input type="hidden" asp-for="FilterModel.Branch" />
     <input type="hidden" asp-for="FilterModel.Department" />
     <input type="hidden" asp-for="FilterModel.PayCode" />
@@ -39,7 +39,7 @@
                 </td>
                 <td>
                     @item.value.EmpName (@item.value.Cd.Trim())
-                    <input asp-for="@Model.VariableComponentsData[item.i].Cd.Trim()" type="hidden" />
+                    <input asp-for="@Model.VariableComponentsData[item.i].Cd" value="@Model.VariableComponentsData[item.i].Cd.Trim()" type="hidden" />
                 </td>
                 <td>
                     @item.value.Branch
