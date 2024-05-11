@@ -40,11 +40,11 @@ namespace Onyx.Controllers
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
             if (_loggedInUser.UserOrEmployee == "E")
             {
-                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserAbbr).Employees.FirstOrDefault();
+                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
                 ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserLinkedTo);
             }
-            var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserAbbr).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
+            var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserLinkedTo).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
             if (_loggedInUser.UserCd != "001")
                 quickLinkItems = quickLinkItems.Where(m => m.Visible == "Y");
             ViewBag.QuickLinkItems = quickLinkItems;

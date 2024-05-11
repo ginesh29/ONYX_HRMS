@@ -192,7 +192,7 @@
         </div>
     </div>
 }
-@if (loggedInUser.UserAbbr != "Emp")
+@if (loggedInUser.UserLinkedTo != "Emp")
 {
     List<string> drpItems = ["30", "60", "90", "120", "150"];
     var typeItems = new List<SelectListItem>{
@@ -440,66 +440,6 @@
         </div>
     </div>
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Scrollable Div</title>
-    <style>
-        .scrollable-div {
-            width: 300px; /* Set your desired width */
-            height: 200px; /* Set your desired height */
-            overflow: hidden; /* Hide default scrollbar */
-            border: 1px solid #ccc; /* Optional: Add a border for clarity */
-            padding: 10px; /* Optional: Add padding for content */
-            position: relative; /* Needed for absolute positioning of scrollbar */
-        }
-
-        .custom-scrollbar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px; /* Adjust height as needed */
-            background-color: #f0f0f0;
-            cursor: pointer;
-            border-radius: 4px;
-            overflow-x: auto; /* Enable horizontal scrolling for the scrollbar */
-        }
-
-            .custom-scrollbar::-webkit-scrollbar {
-                display: none; /* Hide the default scrollbar */
-            }
-
-        .scrollbar-thumb {
-            width: 20%; /* Set the width of the scrollbar thumb */
-            height: 100%;
-            background-color: #888;
-            border-radius: 4px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="scrollable-div">
-        <div class="content">
-            <!-- Place your content here -->
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et massa eget arcu vehicula rutrum. Integer et magna et justo fermentum suscipit. Ut vel risus nec velit varius rhoncus.</p>
-            <p>Phasellus ut eros auctor, hendrerit mi ac, vehicula odio. Vivamus et nisi ac ligula eleifend elementum. Fusce eget ultricies mi. Duis eu dui ut ante accumsan gravida.</p>
-            <!-- Repeat your content as needed -->
-        </div>
-        <div class="custom-scrollbar">
-            <div class="scrollbar-thumb"></div>
-        </div>
-    </div>
-
-
-
-</body>
-</html>
-
-
 <style>
     .small-box .icon > img {
         font-size: 90px;

@@ -52,7 +52,6 @@ namespace Onyx.Controllers
                 if (validateUser != null)
                 {
                     UserCd = validateUser.Cd;
-                    var user = _userService.GetUsers(validateUser.Cd, model.CoAbbr).FirstOrDefault();
                     var u = new LoggedInUserModel
                     {
                         CompanyCd = CoCd,
@@ -60,7 +59,7 @@ namespace Onyx.Controllers
                         UserCd = UserCd,
                         UserOrEmployee = "U",
                         Username = validateUser.UName,
-                        UserAbbr = user.Abbr,
+                        UserLinkedTo = UserCd,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
                     };
@@ -85,7 +84,7 @@ namespace Onyx.Controllers
                         UserCd = UserCd,
                         UserOrEmployee = "E",
                         Username = user.Username,
-                        UserAbbr = user.Abbr,
+                        UserLinkedTo = user.Code,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
                     };
