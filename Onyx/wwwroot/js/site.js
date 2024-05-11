@@ -82,7 +82,7 @@ function unloadingButton(btn) {
 }
 function showSuccessToastr(msg) {
     toastr.clear()
-    toastr.info(msg);
+    toastr.success(msg);
 }
 function showWarningToastr(msg) {
     toastr.clear()
