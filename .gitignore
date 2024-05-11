@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Onyx/wwwroot/uploads/01/emp-doc
+/Onyx/wwwroot/uploads/100/emp-doc
