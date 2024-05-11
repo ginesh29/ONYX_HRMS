@@ -202,7 +202,8 @@
     };
     var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
     IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
-    var groupedEvents = BirthDayEvents.GroupBy(m => new { m.Start });
+    var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPT8");
+    var editRenewalPermission = docRenewalPermission.UEdit;
     <div class="row">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-white">
@@ -311,6 +312,7 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <input type="hidden" id="HasDocRenewal" />
                     <div class="table-responsive">
                         <table class="table table-sm" id="ExpiredDocDataTable">
                             <thead class="thead-dark">
@@ -419,32 +421,20 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-5 d-flex align-items-stretch">
+        <div class="col-md-7 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-header">
                     <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                        <h4 class="card-label text-primary">
+                        <h4 class="card-label text-primary mr-auto">
                             Birthday/Work Anniversary
                         </h4>
+                        <label class="mb-0">Date Range</label>
+                        <div class="col-md-4">
+                            <input id="DateRange" type="text" class="form-control">
+                        </div>
                     </div>
                 </div>
-                <div class="card-body" style="height:400px;overflow:auto">
-                    <table class="table table-sm">
-                        @foreach (var grp in groupedEvents)
-                        {
-                            <thead class="thead-light">
-                                <tr>
-                                    <th style="padding-left: 8px;">@grp.Key.Start</th>
-                                </tr>
-                            </thead>
-                            foreach (var item in grp)
-                            {
-                                <tr>
-                                    <td><i class="fas fa-circle icon-sm mr-2" style="font-size:x-small;color:@item.BackgroundColor"></i>@item.Title</td>
-                                </tr>
-                            }
-                        }
-                    </table>
+                <div class="card-body" style="height:400px;overflow:auto" id="BirthdayEvents">
                 </div>
             </div>
         </div>

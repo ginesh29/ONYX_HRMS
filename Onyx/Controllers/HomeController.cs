@@ -38,37 +38,22 @@ namespace Onyx.Controllers
             }
             EmplLoanAndLeaveApproval.SalaryDetails = EmplLoanAndLeaveApproval.SalaryDetails.OrderBy(m => m.Year).ThenBy(m => m.Month);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
-            var start = DateTime.Now.Date;
-            var end = start.AddDays(1).Date;
-            int year = start.Year;
-            bool isLeapYear = year % 4 == 0;
-            var events = _commonService.GetCalendarEvents(_loggedInUser.UserCd)
-                .Select(m => new CalendarModel
-                {
-                    Id = m.SrNo.ToString(),
-                    AllDay = true,
-                    BackgroundColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
-                    BorderColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
-                    Start = !isLeapYear && m.Date.Day == 29 && m.Date.Month == 2 ? DateTime.MinValue.FormatDate() : new DateTime(year, m.Date.Month, m.Date.Day).ToString("dddd d MMM, yyyy"),
-                    Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}",
-                }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
-            ViewBag.BirthDayEvents = events;
             if (_loggedInUser.UserOrEmployee == "E")
             {
                 ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserAbbr).Employees.FirstOrDefault();
                 ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);                
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserAbbr);
             }
             var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserAbbr).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
             if (_loggedInUser.UserCd != "001")
                 quickLinkItems = quickLinkItems.Where(m => m.Visible == "Y");
             ViewBag.QuickLinkItems = quickLinkItems;
-            if(_loggedInUser.UserOrEmployee == "E")
+            if (_loggedInUser.UserOrEmployee == "E")
             {
                 var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
                 var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
                 ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
-            }           
+            }
             return View();
         }
         public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel, int days)
@@ -103,6 +88,30 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult EmpBirthdayEvents(string DateRange)
+        {
+            var start = DateTime.Now.AddDays(-1).Date;
+            var end = DateTime.Now.AddDays(1).Date;
+            if (!string.IsNullOrEmpty(DateRange))
+            {
+                var dateSp = DateRange.Split(" - ");
+                start = Convert.ToDateTime(dateSp[0]);
+                end = Convert.ToDateTime(dateSp[1]);
+            }
+            int year = start.Year;
+            bool isLeapYear = year % 4 == 0;
+            var events = _commonService.GetCalendarEvents(_loggedInUser.UserCd)
+                .Select(m => new CalendarModel
+                {
+                    Id = m.SrNo.ToString(),
+                    AllDay = true,
+                    BackgroundColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
+                    BorderColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
+                    Start = !isLeapYear && m.Date.Day == 29 && m.Date.Month == 2 ? DateTime.MinValue.FormatDate() : new DateTime(year, m.Date.Month, m.Date.Day).ToString("dddd d MMM, yyyy"),
+                    Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}",
+                }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
+            return PartialView("_EmpBirthdayEvents", events);
+        }
         #endregion
 
         public async Task<IActionResult> UpdateClaim(string claimType, string claimValue)
@@ -127,6 +136,5 @@ namespace Onyx.Controllers
             else
                 return NotFound();
         }
-
     }
 }

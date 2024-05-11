@@ -1,4 +1,22 @@
-﻿function showExpiredDocuments() {
+﻿var dateFormat = $("#LocalDateFormat").val();
+var startDate = moment().subtract(1, "day").format(dateFormat);
+var endDate = moment().add(1, "day").format(dateFormat);
+var dateRangeOptions = dateRangePickerDefaultOptions;
+dateRangeOptions.startDate = startDate;
+dateRangeOptions.endDate = endDate;
+$('#DateRange').val(`${startDate} - ${endDate}`);
+$('#DateRange').daterangepicker(dateRangeOptions)
+    .on('apply.daterangepicker', function () {
+        setTimeout(function () {
+            loadBirthdayEvents();
+        }, 500)
+    });
+function loadBirthdayEvents() {
+    var dateRange = $('#DateRange').val();
+    $("#BirthdayEvents").load(`/Home/EmpBirthdayEvents?DateRange=${encodeURI(dateRange)}`);
+}
+loadBirthdayEvents();
+function showExpiredDocuments() {
     var type = $('input[name=DocExpiredType]:checked').val();
     var days = $("#ExpiredDocNoOfDays").val();
     $('#ExpiredDocDataTable').DataTable().destroy();

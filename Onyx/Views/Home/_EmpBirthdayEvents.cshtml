@@ -1,0 +1,20 @@
+﻿@model IEnumerable<CalendarModel>
+@{
+    var groupedEvents = Model.GroupBy(m => new { m.Start });
+}
+<table class="table table-sm">
+    @foreach (var grp in groupedEvents)
+    {
+        <thead class="thead-light">
+            <tr>
+                <th style="padding-left: 8px;">@grp.Key.Start</th>
+            </tr>
+        </thead>
+        foreach (var item in grp)
+        {
+            <tr>
+                <td><i class="fas fa-circle icon-sm mr-2" style="font-size:x-small;color:@item.BackgroundColor"></i>@item.Title</td>
+            </tr>
+        }
+    }
+</table>

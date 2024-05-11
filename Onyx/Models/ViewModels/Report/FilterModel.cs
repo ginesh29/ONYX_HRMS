@@ -104,8 +104,8 @@ namespace Onyx.Models.ViewModels.Report
         public string Type { get; set; }
         public string DocType { get; set; }
         public string DateRange { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
     public class EmplFixedPayrollFilterModel
     {
