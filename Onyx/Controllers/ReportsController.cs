@@ -188,7 +188,7 @@ namespace Onyx.Controllers
         }
         #endregion
 
-        #region Pay Slip
+        #region Payslip
         public IActionResult PaySlip()
         {
             ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem

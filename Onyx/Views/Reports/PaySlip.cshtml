@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Pay Slip Report";
+    ViewData["Title"] = "Payslip Report";
 }
 @model PaySlipFilterModel
 <div class="card">
@@ -37,17 +37,19 @@
             </div>
         </form>
         <hr />
-        <div class="col-md-8"></div>
+        <div id="PaySlips" class="col-md-8"></div>
     </div>
 </div>
 @section scripts {
     <script>
         bindEmployeeDropdown();
         function loadGridData(btn) {
+            debugger
             var frm = $("#filter-frm");
             if (frm.valid()) {
                 loadingButton(btn);
                 var url = `/Reports/FetchPaySlips?${frm.serialize()}`;
+                console.log(url);
                 $('#PaySlips').load(url, function () {
                     unloadingButton(btn);
                     if ($(".invoice").length > 0)
