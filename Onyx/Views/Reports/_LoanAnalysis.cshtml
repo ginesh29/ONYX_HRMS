@@ -24,7 +24,7 @@
                 <td>@item.Employee (@item.EmpCd.Trim())</td>
                 <td>@item.Branch</td>
                 <td>@item.LoanApprDt.FormatDate()</td>
-                <td>@item.ApprAmt.ToString("0.00")</td>
+                <td>@item.ApprAmt.FormatDecimal(2)</td>
                 <td>@item.NoInst</td>
                 <td>@item.DedStartDt.FormatDate()</td>
                 <td>@item.RecoModeDes</td>

@@ -30,16 +30,16 @@
                 <table>
                     <tr>
                         <th width="100">Basic Salary</th>
-                        <td>: @Model.Basic.ToString("0.00")</td>
+                        <td>: @Model.Basic.FormatDecimal(2)</td>
                     </tr>
                     <tr>
                         <th>Allowance</th>
-                        <td>: @Model.Allowance.ToString("0.00")</td>
+                        <td>: @Model.Allowance.FormatDecimal(2)</td>
                     </tr>
                     <tfoot>
                         <tr>
                             <th>Total</th>
-                            <td>: @total.ToString("0.00")</td>
+                            <td>: @total.FormatDecimal(2)</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -68,13 +68,13 @@
                         <th>Total days with company</th>
                         <td>: @Model.DaysWorked</td>
                         <th>Eligible LS days</th>
-                        <td>: @Model.LSProv_OpDays.ToString("0.00")</td>
+                        <td>: @Model.LSProv_OpDays.FormatDecimal(2)</td>
                     </tr>
                     <tr>
                         <th>Apprd.Ls Days per year(365 Days)</th>
-                        <td>: @Model.AnnLv.ToString("0.00")</td>
+                        <td>: @Model.AnnLv.FormatDecimal(2)</td>
                         <th>Balance LS days</th>
-                        <td>: @Model.LSProv_Days.ToString("0.00")</td>
+                        <td>: @Model.LSProv_Days.FormatDecimal(2)</td>
                     </tr>
                     <tr>
                         <th>Total LS taken by days</th>
@@ -86,7 +86,7 @@
                         <th>
                             Apprd.AT amount per year(365 days)
                         </th>
-                        <td>: @Model.LTProv_OpAmt.ToString("0.00")</td>
+                        <td>: @Model.LTProv_OpAmt.FormatDecimal(2)</td>
                         <th>Balance A.T Nos</th>
                         <td>: </td>
                     </tr>
@@ -97,11 +97,11 @@
                 <table>
                     <tr>
                         <th width="100">Leave Salary</th>
-                        <td>: @Model.LSProv_Amt.ToString("0.00")</td>
+                        <td>: @Model.LSProv_Amt.FormatDecimal(2)</td>
                     </tr>
                     <tr>
                         <th>Air Ticket</th>
-                        <td>: @Model.LTProv_OpAmt.ToString("0.00")</td>
+                        <td>: @Model.LTProv_OpAmt.FormatDecimal(2)</td>
                     </tr>
                     <tr>
                         <th>Gratuity</th>
@@ -133,7 +133,7 @@
         </tr>
         <tr>
             <th>Gratuity Eligible Days</th>
-            <td>: @Model.PayableDays.ToString("0.00")</td>
+            <td>: @Model.PayableDays.FormatDecimal(2)</td>
         </tr>
         <tr>
             <th>Based On Working Days</th>

@@ -12,7 +12,7 @@
         public string DocRef { get; set; }
         public string DocDt { get; set; }
         public string FormatedDocDt { get; set; }
-        public int? Amt { get; set; }
+        public decimal Amt { get; set; }
         public int? NoInstReq { get; set; }
         public string Purpose { get; set; }
         public string Narr { get; set; }

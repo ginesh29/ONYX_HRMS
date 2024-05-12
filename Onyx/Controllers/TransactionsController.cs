@@ -1512,7 +1512,8 @@ namespace Onyx.Controllers
         public IActionResult GetCurrentAmt(string empCd, string edTypeDes, string edCdDes)
         {
             var result = _transactionService.GetCurrentAmt(empCd, edTypeDes, edCdDes);
-            result.PercAmt = result.PercAmt == "A" ? "AMOUNT" : "PERCENTAGE";
+            if (result != null)
+                result.PercAmt = result.PercAmt == "A" ? "AMOUNT" : "PERCENTAGE";
             return Json(result);
         }
         [HttpPost]

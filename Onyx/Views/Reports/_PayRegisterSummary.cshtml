@@ -29,24 +29,24 @@
                 <tr>
                     <td>@item.EmpName (@item.Cd.Trim())</td>
                     <td>@item.Branch</td>
-                    <td>@item.MonthPay.ToString("0.00")</td>
-                    <td>@item.LS.ToString("0.00")</td>
-                    <td>@item.LT.ToString("0.00")</td>
-                    <td>@item.Additions.ToString("0.00")</td>
-                    <td>@item.Deductions.ToString("0.00")</td>
-                    <td>@total.ToString("0.00")</td>
+                    <td>@item.MonthPay.FormatDecimal(2)</td>
+                    <td>@item.LS.FormatDecimal(2)</td>
+                    <td>@item.LT.FormatDecimal(2)</td>
+                    <td>@item.Additions.FormatDecimal(2)</td>
+                    <td>@item.Deductions.FormatDecimal(2)</td>
+                    <td>@total.FormatDecimal(2)</td>
                 </tr>
             }
             <tfoot class="table-secondary">
                 <tr>
                     <td></td>
                     <td>Total</td>
-                    <td>@totalMonthPay.ToString("0.00")</td>
-                    <td>@Model.Sum(m => m.LS).ToString("0.00")</td>
-                    <td>@Model.Sum(m => m.LT).ToString("0.00")</td>
-                    <td>@totalEarnings.ToString("0.00")</td>
-                    <td>@totalDeductions.ToString("0.00")</td>
-                    <td>@grandTotal.ToString("0.00")</td>
+                    <td>@totalMonthPay.FormatDecimal(2)</td>
+                    <td>@Model.Sum(m => m.LS).FormatDecimal(2)</td>
+                    <td>@Model.Sum(m => m.LT).FormatDecimal(2)</td>
+                    <td>@totalEarnings.FormatDecimal(2)</td>
+                    <td>@totalDeductions.FormatDecimal(2)</td>
+                    <td>@grandTotal.FormatDecimal(2)</td>
                 </tr>
             </tfoot>
         </table>

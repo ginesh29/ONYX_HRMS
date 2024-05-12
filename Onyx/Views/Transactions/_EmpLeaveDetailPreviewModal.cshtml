@@ -136,37 +136,37 @@
                         <tr>
                             <th>Leave</th>
                             <td>@LeaveOpening</td>
-                            <td>@LeaveCum.ToString("0.00")</td>
-                            <td>@LeaveTotal.ToString("0.00")</td>
+                            <td>@LeaveCum.FormatDouble(2)</td>
+                            <td>@LeaveTotal.FormatDouble(2)</td>
                             <td>@LeaveTaken</td>
-                            <td>@(LeaveBalance > 0 ? LeaveTotal.ToString("0.00") : 0)</td>
+                            <td>@(LeaveBalance > 0 ? LeaveTotal.FormatDouble(2) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveEligibilityColor">@LeaveEligibility</span></td>
                         </tr>
                         <tr>
                             <th>Leave Salary Days</th>
                             <td>@LeaveSalDaysOpening</td>
-                            <td>@(LeaveSalDaysCum > 0 ? LeaveSalDaysCum.ToString("0.00") : 0)</td>
-                            <td>@LeaveSalDaysTotal.ToString("0.00")</td>
+                            <td>@(LeaveSalDaysCum > 0 ? LeaveSalDaysCum.FormatDouble(2) : 0)</td>
+                            <td>@LeaveSalDaysTotal.FormatDouble(2)</td>
                             <td>@LeaveSalDaysTaken</td>
-                            <td>@(LeaveSalDaysBalance > 0 ? LeaveSalDaysTotal.ToString("0.00") : 0)</td>
+                            <td>@(LeaveSalDaysBalance > 0 ? LeaveSalDaysTotal.FormatDouble(2) : 0)</td>
                             <td>-</td>
                         </tr>
                         <tr>
                             <th>Leave Salary</th>
                             <td>@LeaveSalOpening</td>
-                            <td>@(LeaveSalCum > 0 ? LeaveSalCum.ToString("0.00") : 0)</td>
-                            <td>@LeaveSalTotal.ToString("0.00")</td>
+                            <td>@(LeaveSalCum > 0 ? LeaveSalCum.FormatDouble(2) : 0)</td>
+                            <td>@LeaveSalTotal.FormatDouble(2)</td>
                             <td>@LeaveSalTaken</td>
-                            <td>@(LeaveSalBalance > 0 ? LeaveSalTotal.ToString("0.00") : 0)</td>
+                            <td>@(LeaveSalBalance > 0 ? LeaveSalTotal.FormatDouble(2) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveSalEligibilityColor">@LeaveSalEligibility</span></td>
                         </tr>
                         <tr>
                             <th>Leave Ticket</th>
                             <td>@LeaveTicketOpening</td>
-                            <td>@(LeaveTicketCum > 0 ? LeaveTicketCum.ToString("0.00") : 0)</td>
-                            <td>@LeaveTicketTotal.ToString("0.00")</td>
+                            <td>@(LeaveTicketCum > 0 ? LeaveTicketCum.FormatDouble(2) : 0)</td>
+                            <td>@LeaveTicketTotal.FormatDouble(2)</td>
                             <td>@LeaveTicketTaken</td>
-                            <td>@(LeaveTicketBalance > 0 ? LeaveTicketTotal.ToString("0.00") : 0)</td>
+                            <td>@(LeaveTicketBalance > 0 ? LeaveTicketTotal.FormatDouble(2) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveTicketEligibilityColor">@LeaveTicketEligibility</span></td>
                         </tr>
                     </table>

@@ -36,8 +36,8 @@
                 <td>@item.FormatedWOP_FromDt.FormatDate() - @item.FormatedWOP_ToDt.FormatDate()</td>
                 <td>@item.JoinDt.FormatDate()</td>
                 <td>@item.Days</td>
-                <td>@item.Lvsalary.ToString("0.00")</td>
-                <td>@item.Lvfare.ToString("0.00")</td>
+                <td>@item.Lvsalary.FormatDecimal(2)</td>
+                <td>@item.Lvfare.FormatDecimal(2)</td>
                 <td>@item.Remarks</td>
                 <td>@item.Narr</td>
             </tr>

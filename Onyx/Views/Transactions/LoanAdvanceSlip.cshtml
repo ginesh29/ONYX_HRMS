@@ -44,7 +44,7 @@
         </tr>
         <tr>
             <th>Loan Amount</th>
-            <td>: @Model.ApprAmt.ToString("0.00")</td>
+            <td>: @Model.ApprAmt.FormatDecimal(2)</td>
         </tr>
         <tr>
             <th>No Of Installments</th>
@@ -52,15 +52,15 @@
         </tr>
         <tr>
             <th>Installment Amount</th>
-            <td>: @installmentAmt.ToString("0.00")</td>
+            <td>: @installmentAmt.FormatDecimal(2)</td>
         </tr>
         <tr>
             <th>Previous Due Amount</th>
-            <td>: @Model.Balance.ToString("0.00")</td>
+            <td>: @Model.Balance.FormatDecimal(2)</td>
         </tr>
         <tr>
             <th>Total Due Amount</th>
-            <td>: @Model.ApprAmt.ToString("0.00")</td>
+            <td>: @Model.ApprAmt.FormatDecimal(2)</td>
         </tr>
         <tr>
             <th>Approvals</th>
@@ -76,7 +76,7 @@
         </div>
     </div>
     <hr />
-    <h4>Received Advance Amount AED  @ExtensionMethod.NumberToWords(Model.ApprAmt) (AED.@Model.ApprAmt.ToString("0.00"))</h4>
+    <h4>Received Advance Amount AED  @ExtensionMethod.NumberToWords(Model.ApprAmt) (AED.@Model.ApprAmt.FormatDecimal(2))</h4>
     <table>
         <tr>
             <td width="120px">Employee Name</td>

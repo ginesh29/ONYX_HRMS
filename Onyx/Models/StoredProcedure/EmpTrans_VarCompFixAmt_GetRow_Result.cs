@@ -7,7 +7,7 @@
         public string EmpName { get; set; }
         public string Branch { get; set; }
         public string Dept { get; set; }
-        public decimal? Amt { get; set; }
+        public decimal Amt { get; set; }
         public string Status { get; set; }
         public string Curr { get; set; }
         public bool IsValid { get; set; }

@@ -159,9 +159,9 @@ namespace Onyx
             if (number == 0)
                 return "Zero";
 
-            string[] units = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
-            string[] teens = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-            string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+            string[] units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+            string[] teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+            string[] tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
 
             string words = "";
 
@@ -214,21 +214,27 @@ namespace Onyx
             var dateFormat = CommonSetting.DisplayDateFormat;
             return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
         }
+        public static string FormatDecimal(this decimal number, int decimalPlaces)
+        {
+            string formatString = "0." + new string('0', decimalPlaces);
+            return number.ToString(formatString);
+        }
+        public static string FormatDouble(this double number, int decimalPlaces)
+        {
+            string formatString = "0." + new string('0', decimalPlaces);
+            return number.ToString(formatString);
+        }
         public static string GetOrdinal(this int number)
         {
             if (number % 100 >= 11 && number % 100 <= 13)
                 return "th";
-            switch (number % 10)
+            return (number % 10) switch
             {
-                case 1:
-                    return "st";
-                case 2:
-                    return "nd";
-                case 3:
-                    return "rd";
-                default:
-                    return "th";
-            }
+                1 => "st",
+                2 => "nd",
+                3 => "rd",
+                _ => "th",
+            };
         }
     }
 }

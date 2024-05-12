@@ -31,7 +31,7 @@ namespace Onyx.Models.StoredProcedure
         public string ApplicationStatus { get; set; }
         [Display(Name = "Approved Amount")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
-        public int ApprAmt { get; set; }
+        public decimal ApprAmt { get; set; }
         [Display(Name = "Recovery Mode")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string RecoMode { get; set; }
@@ -75,7 +75,7 @@ namespace Onyx.Models.StoredProcedure
         public string CompanyEmail { get; set; }
         public string CompanyLogo { get; set; }
         public string LoanTypeCd { get; set; }
-        public int Balance { get; set; }
+        public decimal Balance { get; set; }
         public decimal DetailSrno { get; set; }
         [Display(Name = "Guarantor Details")]
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]

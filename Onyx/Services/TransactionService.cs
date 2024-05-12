@@ -217,7 +217,7 @@ namespace Onyx.Services
             connection.QueryFirstOrDefault<CommonResponse>
               (procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
-        public void Update_Loan_GeneralLedger(string empCd, int loanAmt, string CoCd)
+        public void Update_Loan_GeneralLedger(string empCd, decimal loanAmt, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Update_Loan_GeneralLedger";

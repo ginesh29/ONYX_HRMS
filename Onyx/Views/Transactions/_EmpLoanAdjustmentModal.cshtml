@@ -17,10 +17,10 @@
                     <div><span class="font-weight-bold">Employee: </span>@($"{Model.EmpName}({Model.EmpCd.Trim()})")</div>
                     <div><span class="font-weight-bold">Application Date: </span>@Model.TransDt.Value.ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Loan Type: </span>@Model.LoanTyp</div>
-                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt.ToString("0.00")</div>
+                    <div><span class="font-weight-bold">Loan Amount: </span>@Model.Amt.FormatDecimal(2)</div>
                     <div><span class="font-weight-bold">Approved Date: </span>@Convert.ToDateTime(Model.LoanApprDt).ToString(dateFormat)</div>
                     <div><span class="font-weight-bold">Deduct. Start Date: </span>@Convert.ToDateTime(Model.DedStartDt).ToString(dateFormat)</div>
-                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt.ToString("0.00")</div>
+                    <div><span class="font-weight-bold">Approved Amount: </span>@Model.ApprAmt.FormatDecimal(2)</div>
                     <div><span class="font-weight-bold">Recovery Mode: </span>@Model.RecoMode</div>
                     <div><span class="font-weight-bold">Recovery Period: </span>@Model.RecoPrd</div>
                     <div><span class="font-weight-bold">No of Installments: </span>@Model.NoInst</div>
@@ -32,7 +32,7 @@
                     <form id="loan-adj-frm">
                         <input type="hidden" asp-for="NoInst" />
                         <input type="hidden" asp-for="LoanStatus" />
-                        <input type="hidden" asp-for="ApprAmt" value="@Model.ApprAmt.ToString("0.00")" />
+                        <input type="hidden" asp-for="ApprAmt" value="@Model.ApprAmt.FormatDecimal(2)" />
                         <input type="hidden" asp-for="EmpCd" />
                         <input type="hidden" asp-for="TransNo" />
                         <input type="hidden" asp-for="LoanStatus" />

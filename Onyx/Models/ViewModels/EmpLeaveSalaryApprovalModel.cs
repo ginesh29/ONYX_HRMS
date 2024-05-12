@@ -16,10 +16,10 @@ namespace Onyx.Models.ViewModels
         public string EmployeeCode { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Leave Salary")]
-        public int LvSalary { get; set; }
+        public decimal LvSalary { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
         [Display(Name = "Leave Ticket")]
-        public int LvTicket { get; set; }
+        public decimal LvTicket { get; set; }
         public string EntryBy { get; set; }
         public string ApprBy { get; set; }
         public int ApprLvl { get; set; }

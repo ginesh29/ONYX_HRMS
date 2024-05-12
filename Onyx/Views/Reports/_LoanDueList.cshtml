@@ -19,9 +19,9 @@
                 <td>@item.TransNo.Trim()</td>
                 <td>@item.ApprDate.FormatDate()</td>
                 <td>@item.LoanTyp</td>
-                <td>@item.ApprAmt.ToString("0.00")</td>
-                <td>@item.Deducted.ToString("0.00")</td>
-                <td>@item.Balance.ToString("0.00")</td>
+                <td>@item.ApprAmt.FormatDecimal(2)</td>
+                <td>@item.Deducted.FormatDecimal(2)</td>
+                <td>@item.Balance.FormatDecimal(2)</td>
             </tr>
         }
     </table>

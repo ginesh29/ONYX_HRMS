@@ -61,13 +61,13 @@
                         <tr>
                             <td>@item.PayCode</td>
                             <td>@item.Curr1</td>
-                            <td class="border-right">@item.Amt1.ToString("0.00")</td>
+                            <td class="border-right">@item.Amt1.FormatDecimal(2)</td>
                             <td>@item.PayCode1</td>
                             <td>@item.Curr2</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(item.PayCode1))
                                 {
-                                    <span>@item.Amt2.ToString("0.00")</span>
+                                    <span>@item.Amt2.FormatDecimal(2)</span>
                                 }
                             </td>
                         </tr>
@@ -76,13 +76,13 @@
                         <tr class="table-secondary">
                             <td>Total Earnings/Payments</td>
                             <td>@Curr1</td>
-                            <td class="border-right">@totalEarnings.ToString("0.00")</td>
+                            <td class="border-right">@totalEarnings.FormatDecimal(2)</td>
                             <td>Total Deductions</td>
                             <td>@Curr2</td>
                             <td>
                                 @if (totalDeductions > 0)
                                 {
-                                    <span>@totalDeductions.ToString("0.00")</span>
+                                    <span>@totalDeductions.FormatDecimal(2)</span>
                                 }
                             </td>
                         </tr>
@@ -91,7 +91,7 @@
                 <div style="width: 100%; display: table;">
                     <div style="display: table-row">
                         <div style="width: 75%; display: table-cell;"><span class="font-weight-bold">Amount (In words): </span>@ExtensionMethod.NumberToWords(netSalary)</div>
-                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString("0.00")</div>
+                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.FormatDecimal(2)</div>
                     </div>
                 </div>
                 <hr />

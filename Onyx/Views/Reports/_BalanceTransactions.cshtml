@@ -75,29 +75,29 @@
             <tr>
                 <td>@item.Name (@item.Code.Trim())</td>
                 <td>@LeaveOpening</td>
-                <td>@LeaveCum.ToString("0.00")</td>
-                <td>@LeaveTotal.ToString("0.00")</td>
-                <td>@LeaveTaken.ToString("0.00")</td>
-                <td>@LeaveBalance.ToString("0.00")</td>
-                <td>@LeaveSalDaysOpening.ToString("0.00")</td>
-                <td>@LeaveSalDaysCum.ToString("0.00")</td>
-                <td>@LeaveSalDaysTotal.ToString("0.00")</td>
-                <td>@LeaveSalDaysTaken.ToString("0.00")</td>
-                <td>@LeaveSalDaysBalance.ToString("0.00")</td>
-                <td>@LeaveSalOpening.ToString("0.00")</td>
-                <td>@LeaveSalCum.ToString("0.00")</td>
-                <td>@LeaveSalTotal.ToString("0.00")</td>
-                <td>@LeaveSalTaken.ToString("0.00")</td>
-                <td>@LeaveSalBalance.ToString("0.00")</td>
+                <td>@LeaveCum.FormatDouble(2)</td>
+                <td>@LeaveTotal.FormatDouble(2)</td>
+                <td>@LeaveTaken.FormatDouble(2)</td>
+                <td>@LeaveBalance.FormatDouble(2)</td>
+                <td>@LeaveSalDaysOpening.FormatDouble(2)</td>
+                <td>@LeaveSalDaysCum.FormatDouble(2)</td>
+                <td>@LeaveSalDaysTotal.FormatDouble(2)</td>
+                <td>@LeaveSalDaysTaken.FormatDouble(2)</td>
+                <td>@LeaveSalDaysBalance.FormatDouble(2)</td>
+                <td>@LeaveSalOpening.FormatDouble(2)</td>
+                <td>@LeaveSalCum.FormatDouble(2)</td>
+                <td>@LeaveSalTotal.FormatDouble(2)</td>
+                <td>@LeaveSalTaken.FormatDouble(2)</td>
+                <td>@LeaveSalBalance.FormatDouble(2)</td>
                 <td>@LeaveSalEligibility</td>
-                <td>@LeaveTicketOpening.ToString("0.00")</td>
-                <td>@LeaveTicketCum.ToString("0.00")</td>
-                <td>@LeaveTicketTotal.ToString("0.00")</td>
-                <td>@LeaveTicketTaken.ToString("0.00")</td>
-                <td>@LeaveTicketBalance.ToString("0.00")</td>
+                <td>@LeaveTicketOpening.FormatDouble(2)</td>
+                <td>@LeaveTicketCum.FormatDouble(2)</td>
+                <td>@LeaveTicketTotal.FormatDouble(2)</td>
+                <td>@LeaveTicketTaken.FormatDouble(2)</td>
+                <td>@LeaveTicketBalance.FormatDouble(2)</td>
                 <td>@LeaveTicketEligibility</td>
-                <td>@item.GratDays.ToString("0.00")</td>
-                <td>@item.GratAmt.ToString("0.00")</td>
+                <td>@item.GratDays.FormatDouble(2)</td>
+                <td>@item.GratAmt.FormatDouble(2)</td>
             </tr>
         }
     </table>

@@ -22,7 +22,7 @@
                     <th width="200px">Applied Date:</th>
                     <td width="200px">@item.TransDt.FormatDate()</td>
                     <th width="200px">Applied Amount:</th>
-                    <td width="200px">@item.Amt.ToString("0.00")</td>
+                    <td width="200px">@item.Amt.FormatDecimal(2)</td>
                     <th width="200px">Recovery Mode:</th>
                     <td width="200px">@item.RecoMode</td>
                 </tr>
@@ -30,7 +30,7 @@
                     <th>Approved Date:</th>
                     <td>@item.LoanApprDt.FormatDate()</td>
                     <th>Approved Amount:</th>
-                    <td>@item.ApprAmt.ToString("0.00")</td>
+                    <td>@item.ApprAmt.FormatDecimal(2)</td>
                     <th>Approved By:</th>
                     <td>@item.LoanApprBy</td>
                 </tr>
