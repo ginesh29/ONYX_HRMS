@@ -462,7 +462,7 @@ namespace Onyx.Services
             var currentMonth = multiResult.ReadFirstOrDefault<string>();
             var lastMonth = multiResult.ReadFirstOrDefault<string>();
             var salaryDetails = multiResult.Read<SalaryDetailModel>();
-            var userSalaryDetails = multiResult.Read<SalaryDetailModel>();
+            var userSalaryDetails = type == "E" ? multiResult.Read<SalaryDetailModel>() : [];
             return new EmplLoanAndLeaveApproval
             {
                 LeaveApplied = leaveApplied,
