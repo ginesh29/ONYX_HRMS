@@ -106,7 +106,7 @@ namespace Onyx.Controllers
             }
             int year = start.Year;
             bool isLeapYear = year % 4 == 0;
-            var events = _commonService.GetCalendarEvents(_loggedInUser.UserCd)
+            var events = _commonService.GetCalendarEvents(_loggedInUser.UserLinkedTo)
                 .Select(m => new CalendarModel
                 {
                     Id = m.SrNo.ToString(),
