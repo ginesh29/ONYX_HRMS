@@ -13,6 +13,9 @@
     string[] allBarColors = ["#b91d47", "#00aba9", "#2b5797", "#ed992c", "#1e7145", "#191970", "#556B2F", "#2F4F4F", "#800000", "#36454F", "#800020", "#000080", "#228B22", "#4B3822", "#483D8B", "#6A5ACD", "#008080"];
     var barColors = allBarColors.Take(donutXaxis.Length).ToArray();
     IEnumerable<GetMenuWithPermissions_Result> quickLinkItems = ViewBag.QuickLinkItems;
+    var userSalaryDetail = EmplLoanAndLeaveApproval.UserSalaryDetails;
+    var userPrds = userSalaryDetail.Select(m => m.Prd).Distinct().ToArray();
+    var userEarnings = userSalaryDetail.Select(m => m.PayElementDetailsCount).ToArray();
 }
 @if (quickLinkItems.Count() > 0 || loggedInUser.UserOrEmployee == "E")
 {
@@ -82,7 +85,22 @@
                 </div>
             </div>
         </div>
-    </div>    
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary">
+                            Salary Graph
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="myLineChart" style="height:335px"></canvas>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <div class="card w-100">
@@ -177,23 +195,6 @@
         </div>
     </div>
 }
-<div class="row">
-    <div class="col-md-6 d-flex align-items-stretch">
-        <div class="card w-100">
-            <div class="card-header">
-                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                    <h4 class="card-label text-primary">
-                        Salary Graph
-                    </h4>
-                </div>
-            </div>
-            <div class="card-body">
-                <canvas id="myLineChart" style="height:335px"></canvas>
-            </div>
-            <!-- /.card-body -->
-        </div>
-    </div>
-</div>
 @if (loggedInUser.UserLinkedTo != "Emp")
 {
     List<string> drpItems = ["30", "60", "90", "120", "150"];
@@ -440,6 +441,21 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-5 d-flex align-items-stretch">
+            <div class="card w-100">
+                <div class="card-header">
+                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                        <h4 class="card-label text-primary">
+                            Salary Graph
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="myUserLineChart" style="height:335px"></canvas>
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
     </div>
 }
 <style>
@@ -497,6 +513,31 @@
         }
         showLineChart();
 
+        function showUserLineChart() {
+            if ($('#myUserLineChart').length) {
+                var userPrds = '@Html.Raw(Json.Serialize(userPrds))';
+                var userEarnings = '@Html.Raw(Json.Serialize(userEarnings))';
+                const xValues = JSON.parse(userPrds);
+                new Chart("myUserLineChart", {
+                    type: "line",
+                    data: {
+                        labels: xValues,
+                        datasets: [
+                            {
+                                data: JSON.parse(userEarnings),
+                                borderColor: "green",
+                                fill: false
+                            }                            
+                        ]
+                    },
+                    options: {
+                        legend: { display: false }
+                    }
+                });
+            }
+        }
+        showUserLineChart();
+
         function showPieChart() {
             if ($('#myDonutChart').length) {
                 var donutXaxis = '@Html.Raw(Json.Serialize(donutXaxis))';
@@ -522,18 +563,5 @@
             }
         }
         showPieChart();
-        $(document).ready(function () {
-            const $scrollbarThumb = $('.scrollbar-thumb');
-            const $scrollableDiv = $('.scrollable-div');
-            const $content = $('.content');
-
-            $scrollbarThumb.css('width', `${$scrollableDiv.width() / $content.prop('scrollWidth') * 100}%`);
-
-            $scrollableDiv.on('scroll', function () {
-                const scrollPercentage = $scrollableDiv.scrollTop() / ($content.prop('scrollHeight') - $scrollableDiv.height());
-                const thumbPosition = $scrollableDiv.height() * scrollPercentage;
-                $scrollbarThumb.css('transform', `translateY(${thumbPosition}px)`);
-            });
-        });
     </script>
 }

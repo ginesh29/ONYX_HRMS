@@ -11,5 +11,6 @@ namespace Onyx.Models.StoredProcedure
         public int LeaveApplied { get; set; }
         public int Working { get; set; }
         public IEnumerable<SalaryDetailModel> SalaryDetails { get; set; }
+        public IEnumerable<SalaryDetailModel> UserSalaryDetails { get; set; }
     }
 }

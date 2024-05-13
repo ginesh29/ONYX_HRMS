@@ -36,6 +36,12 @@ namespace Onyx.Controllers
                 item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
                 item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
             }
+            foreach (var item in EmplLoanAndLeaveApproval.UserSalaryDetails)
+            {
+                item.Year = Convert.ToInt32(item.Prd[..4]);
+                item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
+                item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
+            }
             EmplLoanAndLeaveApproval.SalaryDetails = EmplLoanAndLeaveApproval.SalaryDetails.OrderBy(m => m.Year).ThenBy(m => m.Month);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
             if (_loggedInUser.UserOrEmployee == "E")

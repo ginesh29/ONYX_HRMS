@@ -462,6 +462,7 @@ namespace Onyx.Services
             var currentMonth = multiResult.ReadFirstOrDefault<string>();
             var lastMonth = multiResult.ReadFirstOrDefault<string>();
             var salaryDetails = multiResult.Read<SalaryDetailModel>();
+            var userSalaryDetails = multiResult.Read<SalaryDetailModel>();
             return new EmplLoanAndLeaveApproval
             {
                 LeaveApplied = leaveApplied,
@@ -471,6 +472,7 @@ namespace Onyx.Services
                 CurrentMonth = currentMonth,
                 LastMonth = lastMonth,
                 SalaryDetails = salaryDetails,
+                UserSalaryDetails = userSalaryDetails
             };
         }
         public IEnumerable<GetDashboardCalendarEvents_Result> GetCalendarEvents(string UserCd)
