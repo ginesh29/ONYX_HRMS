@@ -81,7 +81,7 @@
                                         <div class="media">
                                             <div class="media-body">
                                                 <h3 class="dropdown-item-title">
-                                                    <label>Loan Type:</label> @item.Type | <label>Amt:</label> @item.ApprAmt.FormatDecimal(2) | <label>No. of Inst.:</label> @item.NoInst
+                                                    <label>Loan Type:</label> @item.Type | <label>Amt:</label> @item.ApprAmt.ToString(ViewData["DecimalFormat"].ToString()) | <label>No. of Inst.:</label> @item.NoInst
                                                 </h3>
                                                 <p class="text-sm">
                                                     <label>Status</label>: @item.Status
@@ -177,7 +177,7 @@
                                                 @item.Emp.Trim() (@item.EmpCd.Trim())
                                             </h3>
                                             <p class="text-sm">
-                                                Leave Salary: @item.LvSalary.FormatDecimal(2) | Leave Ticket:  @item.LvTicket.FormatDecimal(2)
+                                                Leave Salary: @item.LvSalary.ToString(ViewData["DecimalFormat"].ToString()) | Leave Ticket:  @item.LvTicket.ToString(ViewData["DecimalFormat"].ToString())
                                                 <span>
                                                     <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
                                                         <i class="fas fa-search"></i>
@@ -228,7 +228,7 @@
                                                 @item.EmpName.Trim() (@item.EmployeeCode.Trim())
                                             </h3>
                                             <p class="text-sm">
-                                                Type: @item.LoanType | Amount: @item.Amt.FormatDecimal(2) | Inst.: @item.NoInstReq
+                                                Type: @item.LoanType | Amount: @item.Amt.ToString(ViewData["DecimalFormat"].ToString()) | Inst.: @item.NoInstReq
                                                 <span>
                                                     <button class="btn btn-sm btn-info ml-2" onclick="showLoanApprovalModal('@item.TransNo.Trim()')">
                                                         <i class="fas fa-check"></i>
@@ -276,7 +276,7 @@
                                                 @item.Emp.Trim() (@item.EmpCd.Trim())
                                             </h3>
                                             <p class="text-sm">
-                                                Amount: @item.Amount.FormatDecimal(2)
+                                                Amount: @item.Amount.ToString(ViewData["DecimalFormat"].ToString())
                                                 <span>
                                                     <button class="btn btn-sm btn-warning ml-2" onclick="showLeaveDetailModal('@item.EmpCd.Trim()','@item.TransDt.Value.ToString(CommonSetting.InputDateFormat)')">
                                                         <i class="fas fa-search"></i>
@@ -330,7 +330,7 @@
                                                 Type: @item.EP_Typ | Component: @item.Detail.PayCd
                                                 @if (item.EP_TypeCd == "HREP02" || item.EP_TypeCd == "HREP04" || item.EP_TypeCd == "HREP05")
                                                 {
-                                                    <span>| Revised Amt: @item.Detail.Incremented.FormatDecimal(2) </span>
+                                                    <span>| Revised Amt: @item.Detail.Incremented.ToString(ViewData["DecimalFormat"].ToString()) </span>
                                                 }
                                                 <span>
                                                     <button class="btn btn-sm btn-info ml-2" onclick="showEmpProgressionModal('@item.TransNo.Trim()')">

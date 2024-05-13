@@ -6,10 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Views\Reports\ubg2521w.wh3~" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="MailKit" Version="4.5.0" />
@@ -18,4 +14,5 @@
 		<PackageReference Include="X.PagedList" Version="9.1.2" />
 		<PackageReference Include="X.PagedList.Mvc.Core" Version="9.1.2" />
 	</ItemGroup>
+
 </Project>

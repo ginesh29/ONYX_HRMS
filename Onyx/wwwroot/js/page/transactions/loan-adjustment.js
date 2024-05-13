@@ -16,8 +16,11 @@
                 }
             },
             { data: "loanTyp" },
-            { data: "amt" },
-            { data: "apprAmt" },
+            {
+                data: function (row) {
+                    return !row.apprAmt ? row.apprAmt : formatDecimal(row.apprAmt)
+                },
+            },
             { data: "noInst" },
             { data: "purpose" },
             {

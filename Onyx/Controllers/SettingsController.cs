@@ -24,6 +24,56 @@ namespace Onyx.Controllers
             _fileHelper = new FileHelper();
             _userService = userService;
         }
+
+        #region Company
+        public IActionResult CompanyDetails()
+        {
+            var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
+            var companyObj = new CompanyModel
+            {
+                Add1 = company.Add1,
+                Add2 = company.Add2,
+                Add3 = company.Add3,
+                CoCd = _loggedInUser.CompanyCd,
+                CoName = company.CoName,
+                Email = company.Email,
+                Fax = company.Fax,
+                Phone = company.Phone,
+                Logo = company.Logo,
+                AmtDecs = company.AmtDecs,
+                BaseCurr = company.BaseCurr,
+                RptCurr = company.RptCurr,
+                FinBeginDt = company.FinBeginDt,
+                FinEndDt = company.FinEndDt,
+                QtyDecs = company.QtyDecs,
+            };
+            return View(companyObj);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateCompany(CompanyModel model)
+        {
+            if (model.LogoFile != null)
+            {
+                var ext = Path.GetExtension(model.LogoFile.FileName);
+                var logoFilename = $"logo-{model.CoCd}{ext}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/company-logo", logoFilename);
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await model.LogoFile.CopyToAsync(stream);
+                model.Logo = logoFilename;
+            }
+            model.CoCd = _loggedInUser.CompanyCd;
+            _settingService.SaveCompany(model);
+            await _authService.UpdateClaim("AmtDecs", model.AmtDecs.ToString());
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
+            };
+            return Json(result);
+        }
+        #endregion
         #region Branch
         public IActionResult Branches()
         {

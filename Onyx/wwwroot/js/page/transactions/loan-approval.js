@@ -23,7 +23,7 @@
             { data: "loanType" },
             {
                 data: function (row) {
-                    return !row.apprAmt ? row.amt : row.apprAmt
+                    return !row.amt ? row.amt : formatDecimal(row.amt)
                 },
             },
             {

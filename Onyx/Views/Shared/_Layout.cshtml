@@ -4,6 +4,7 @@
     var processId = Context.Request.Query["processId"];
     var loggedInUser = _authService.GetLoggedInUser();
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, processId);
+    ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -66,6 +67,7 @@
             <section class="content">
                 <div class="container-fluid">
                     <input type="hidden" id="LocalDateFormat" value="@ViewData["LocalDateFormat"]" />
+                    <input type="hidden" id="AmtDecs" value="@loggedInUser.AmtDecs" />
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />
                     <input type="hidden" id="ProcessId" value="@processId" />

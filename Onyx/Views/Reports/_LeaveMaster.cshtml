@@ -32,15 +32,15 @@
                 @if (ReportType == "LeaveMaster")
                 {
                     <td>@item.LvTyp</td>
-                    <td>@item.MaxLv.FormatDecimal(2)</td>
+                    <td>@item.MaxLv.ToString(ViewData["DecimalFormat"].ToString())</td>
                 }
-                <td>@item.LvOpBal.FormatDecimal(2)</td>
-                <td>@item.LvUsed.FormatDecimal(2)</td>
-                <td>@item.LvAccr.FormatDecimal(2)</td>
-                <td>@item.CumLvNoPay.Value.FormatDecimal(2)</td>
+                <td>@item.LvOpBal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.LvUsed.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.LvAccr.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.CumLvNoPay.Value.ToString(ViewData["DecimalFormat"].ToString())</td>
                 @if (ReportType != "LeaveMaster")
                 {
-                    <td>@item.BalanceLeave.FormatDecimal(2)</td>
+                    <td>@item.BalanceLeave.ToString(ViewData["DecimalFormat"].ToString())</td>
                     <td>@item.LeaveDueDate.FormatDate()</td>
                 }
             </tr>

@@ -6,7 +6,7 @@
     var paidLoan = Model.Where(m => m.EffDate.Month < Convert.ToInt32(currentMonth)).Sum(m => m.AmtVal);
     var currentEmi = ViewBag.CurrentEmi;
     var remainingLoan = totalLoan - paidLoan;
-    var msg = $"Remaining loan amount is {remainingLoan.FormatDecimal(2)} only";
+    var msg = $"Remaining loan amount is {remainingLoan.ToString(ViewData["DecimalFormat"].ToString())} only";
 }
 <input type="hidden" id="CurrentMonth" value="@currentMonth" />
 <input type="hidden" id="CurrentYear" value="@currentYear" />
@@ -36,7 +36,7 @@
             </td>
             <td>@Convert.ToDateTime(item.value.EffDate).FormatDate()</td>
             <td>
-                <input type="text" asp-for="@Model[item.i].AmtVal" value="@item.value.AmtVal.FormatDecimal(2)" class="form-control form-control-sm @(!currentMonthYear || item.value.AmtVal == remainingLoan ?"disabled":"") amt decimal-input" data-month="@item.value.EffDate.Month" data-year="@item.value.EffDate.Year" data-value="@item.value.AmtVal.FormatDecimal(2)" onchange="updateEmi(this)" max="@remainingLoan" />
+                <input type="text" asp-for="@Model[item.i].AmtVal" value="@item.value.AmtVal.ToString(ViewData["DecimalFormat"].ToString())" class="form-control form-control-sm @(!currentMonthYear || item.value.AmtVal == remainingLoan ?"disabled":"") amt decimal-input" data-month="@item.value.EffDate.Month" data-year="@item.value.EffDate.Year" data-value="@item.value.AmtVal.ToString(ViewData["DecimalFormat"].ToString())" onchange="updateEmi(this)" max="@remainingLoan" />
             </td>
         </tr>
     }

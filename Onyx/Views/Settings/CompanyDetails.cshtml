@@ -1,0 +1,136 @@
+﻿@model CompanyModel
+@{
+    ViewData["Title"] = "Company Details";
+}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-primary">
+            <div class="card-body">
+                <form asp-controller="Setting" asp-action="UpdateCompany" id="company-frm" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="RptCurr" />
+                    <input type="hidden" asp-for="FinBeginDt" />
+                    <input type="hidden" asp-for="FinEndDt" />
+                    <input type="hidden" asp-for="QtyDecs" />
+                    <input type="hidden" asp-for="Logo" />
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label asp-for="CoCd"></label>
+                                <input asp-for="CoCd" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label asp-for="CoName"></label>
+                                <input asp-for="CoName" class="form-control" placeholder="Company Name">
+                                <span asp-validation-for="CoName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Add1"></label>
+                                <input asp-for="Add1" class="form-control" placeholder="Address 1">
+                                <span asp-validation-for="Add1" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Add2"></label>
+                                <input asp-for="Add2" class="form-control" placeholder="Address 2">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Add3"></label>
+                                <input asp-for="Add3" class="form-control" placeholder="Address 3">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Phone"></label>
+                                <input asp-for="Phone" class="form-control" placeholder="Phone">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Fax"></label>
+                                <input asp-for="Fax" class="form-control" placeholder="Fax">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" class="form-control" placeholder="Email" type="email">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="BaseCurr"></label>
+                                <input asp-for="BaseCurr" class="form-control">
+                                <span asp-validation-for="BaseCurr" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="AmtDecs"></label>
+                                <input asp-for="AmtDecs" class="form-control int-input" type="text">
+                                <span asp-validation-for="AmtDecs" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LogoFile">Logo</label>
+                                <div class="custom-file">
+                                    <input asp-for="LogoFile" class="custom-file-input" onchange="previewLogo(event)">
+                                    <label class="custom-file-label" id="logo-file-label" asp-for="LogoFile">@(!string.IsNullOrEmpty(Model.Logo) ? Model.Logo : "Choose file")</label>
+                                </div>
+                                <span asp-validation-for="LogoFile" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <img id="Logo-Preview" style="height:100px" src="~/uploads/company-logo/@Model.Logo" class="@(string.IsNullOrEmpty(Model.Logo) ? "d-none" :"")" asp-append-version="true">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-info" onclick="updateCompany(this)">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        function updateCompany(btn) {
+            var frm = $("#company-frm");
+            if (frm.valid()) {
+                loadingButton(btn);
+                filePostAjax("/settings/updatecompany", frm[0], function (response) {
+                    if (response.success) {
+                        unloadingButton(btn);
+                        showSuccessToastr(response.message);
+                        reloadPageAfterSometime();
+                    }
+                });
+            }
+        }
+        function previewLogo(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('Logo-Preview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+            var filename = $("#LogoFile").val().split("\\").pop();
+            $("#logo-file-label").text(filename);
+        };
+    </script>
+}

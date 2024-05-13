@@ -46,6 +46,7 @@ namespace Onyx.Controllers
             model.CoAbbr = companySp[1];
             string UserCd = string.Empty;
             var result = new CommonResponse { Success = false };
+            var company = _settingService.GetCompany(CoCd, model.CoAbbr);
             if (model.UserType == UserTypeEnum.User)
             {
                 var validateUser = _userService.ValidateUser(model);
@@ -62,6 +63,7 @@ namespace Onyx.Controllers
                         UserLinkedTo = UserCd,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
+                        AmtDecs = company.AmtDecs,
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
@@ -87,6 +89,7 @@ namespace Onyx.Controllers
                         UserLinkedTo = user.Code,
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
+                        AmtDecs = company.AmtDecs,
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;

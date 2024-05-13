@@ -49,27 +49,27 @@
                 <td class="text-center">@item.DaysWorked</td>
                 <td class="text-center">@item.PrRate</td>
 
-                <td>@item.OpDays.FormatDouble(2)</td>
-                <td>@item.OpAmt.FormatDouble(2)</td>
+                <td>@item.OpDays.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.OpAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
 
-                <td>@item.GTMAmt.FormatDouble(2)</td>
-                <td>@item.GTMPay.FormatDouble(2)</td>
-                <td>@item.GTMAdj.FormatDouble(2)</td>
+                <td>@item.GTMAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTMPay.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTMAdj.ToString(ViewData["DecimalFormat"].ToString())</td>
 
-                <td>@item.GTMDays.FormatDouble(2)</td>
-                <td>@item.GTMDaysPay.FormatDouble(2)</td>
-                <td>@item.GTMDaysAdj.FormatDouble(2)</td>
+                <td>@item.GTMDays.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTMDaysPay.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTMDaysAdj.ToString(ViewData["DecimalFormat"].ToString())</td>
 
-                <td>@item.GTCAmt.FormatDouble(2)</td>
-                <td>@item.GTCPay.FormatDouble(2)</td>
-                <td>@item.GTCAdj.FormatDouble(2)</td>
+                <td>@item.GTCAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTCPay.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTCAdj.ToString(ViewData["DecimalFormat"].ToString())</td>
 
-                <td>@item.GTCDays.FormatDouble(2)</td>
-                <td>@item.GTCDaysPay.FormatDouble(2)</td>
-                <td>@item.GTCDaysAdj.FormatDouble(2)</td>
+                <td>@item.GTCDays.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTCDaysPay.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTCDaysAdj.ToString(ViewData["DecimalFormat"].ToString())</td>
 
-                <td>@item.GTCDays.FormatDouble(2)</td>
-                <td>@item.GTCAmt.FormatDouble(2)</td>
+                <td>@item.GTCDays.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GTCAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
             </tr>
         }
     </table>

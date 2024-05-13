@@ -524,7 +524,11 @@ function bindComponentDataTable() {
                     { data: "type" },
                     { data: "description" },
                     { data: "currency" },
-                    { data: "amt" },
+                    {
+                        data: function (row) {
+                            return !row.amt ? row.amt : formatDecimal(row.amt)
+                        },
+                    },
                     { data: "percVal" },
                     {
                         data: function (row) {

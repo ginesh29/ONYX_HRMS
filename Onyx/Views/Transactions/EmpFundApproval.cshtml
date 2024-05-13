@@ -40,7 +40,11 @@
                             return row.transDt && moment(row.transDt).format(CommonSetting.DisplayDateFormat);
                         },
                     },
-                    { data: "amount" },
+                    {
+                        data: function (row) {
+                            return !row.amount ? row.amount : formatDecimal(row.amount)
+                        },
+                    },
                     {
                         data: function (row) {
                             return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.transDt}')">

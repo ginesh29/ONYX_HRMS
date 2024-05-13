@@ -44,7 +44,8 @@ const LeaveConfirmTypesEnum = {
 
 const CommonSetting = {
     DisplayDateFormat: $("#LocalDateFormat").val(),
-    InputDateFormat: "YYYY-MM-DD"
+    InputDateFormat: "YYYY-MM-DD",
+    AmtDecs: $("#AmtDecs").val()
 }
 const dateRangePickerDefaultOptions = {
     locale: {
@@ -53,6 +54,9 @@ const dateRangePickerDefaultOptions = {
     autoUpdateInput: false,
     showDropdowns: true,
     autoApply: true,
+}
+function formatDecimal(num) {
+    return num.toFixed(CommonSetting.AmtDecs);
 }
 function loadingPage() {
     $("#page-loader").removeClass("d-none");
@@ -341,7 +345,7 @@ function initControls() {
         var curr = this;
         var val = $(curr).val();
         var txt = $(curr).hasClass("filter-select-picker") ? "-- All --" : "-- Select --";
-        if (!$(curr).find(".no-value-option").length && val) {            
+        if (!$(curr).find(".no-value-option").length && val) {
             $(curr).prepend(`<option value="" class="no-value-option">${txt}</option>`);
             $(curr).selectpicker('refresh');
         }

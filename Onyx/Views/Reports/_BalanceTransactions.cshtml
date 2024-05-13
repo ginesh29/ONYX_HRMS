@@ -75,29 +75,29 @@
             <tr>
                 <td>@item.Name (@item.Code.Trim())</td>
                 <td>@LeaveOpening</td>
-                <td>@LeaveCum.FormatDouble(2)</td>
-                <td>@LeaveTotal.FormatDouble(2)</td>
-                <td>@LeaveTaken.FormatDouble(2)</td>
-                <td>@LeaveBalance.FormatDouble(2)</td>
-                <td>@LeaveSalDaysOpening.FormatDouble(2)</td>
-                <td>@LeaveSalDaysCum.FormatDouble(2)</td>
-                <td>@LeaveSalDaysTotal.FormatDouble(2)</td>
-                <td>@LeaveSalDaysTaken.FormatDouble(2)</td>
-                <td>@LeaveSalDaysBalance.FormatDouble(2)</td>
-                <td>@LeaveSalOpening.FormatDouble(2)</td>
-                <td>@LeaveSalCum.FormatDouble(2)</td>
-                <td>@LeaveSalTotal.FormatDouble(2)</td>
-                <td>@LeaveSalTaken.FormatDouble(2)</td>
-                <td>@LeaveSalBalance.FormatDouble(2)</td>
+                <td>@LeaveCum.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalDaysOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalDaysCum.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalDaysTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalDaysTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalDaysBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalCum.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveSalBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
                 <td>@LeaveSalEligibility</td>
-                <td>@LeaveTicketOpening.FormatDouble(2)</td>
-                <td>@LeaveTicketCum.FormatDouble(2)</td>
-                <td>@LeaveTicketTotal.FormatDouble(2)</td>
-                <td>@LeaveTicketTaken.FormatDouble(2)</td>
-                <td>@LeaveTicketBalance.FormatDouble(2)</td>
+                <td>@LeaveTicketOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTicketCum.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTicketTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTicketTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTicketBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
                 <td>@LeaveTicketEligibility</td>
-                <td>@item.GratDays.FormatDouble(2)</td>
-                <td>@item.GratAmt.FormatDouble(2)</td>
+                <td>@item.GratDays.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GratAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
             </tr>
         }
     </table>

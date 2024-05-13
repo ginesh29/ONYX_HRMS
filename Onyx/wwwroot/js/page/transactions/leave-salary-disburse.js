@@ -15,8 +15,16 @@
                 }
             },     
             { data: "div" },
-            { data: "lvSalary" },
-            { data: "lvTicket" },
+            {
+                data: function (row) {
+                    return !row.lvSalary ? row.lvSalary : formatDecimal(row.lvSalary)
+                },
+            },
+            {
+                data: function (row) {
+                    return !row.lvTicket ? row.lvTicket : formatDecimal(row.lvTicket)
+                },
+            },
             {
                 data: function (row) {
                     return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.appDt}')">

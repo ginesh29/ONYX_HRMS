@@ -21,7 +21,11 @@
             },
             { data: "prov" },
             { data: "days" },
-            { data: "amt" },
+            {
+                data: function (row) {
+                    return !row.amt ? row.amt : formatDecimal(row.amt)
+                },
+            },
             { data: "purpose" },
             { data: "narr" },
             {

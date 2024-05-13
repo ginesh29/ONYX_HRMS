@@ -4,8 +4,6 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
-using System.Net;
-using System.Net.Sockets;
 
 namespace Onyx.Services
 {

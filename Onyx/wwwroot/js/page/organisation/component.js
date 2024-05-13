@@ -10,7 +10,11 @@
             },
             { data: "cd" },
             { data: "typeDesc" },
-            { data: "perc_Amt" },
+            {
+                data: function (row) {
+                    return !row.perc_Amt ? row.perc_Amt : formatDecimal(row.perc_Amt)
+                },
+            },
             { data: "perc_Val" },
             { data: "trnTyp" },
             { data: "abbr" },

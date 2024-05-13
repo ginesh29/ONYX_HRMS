@@ -214,15 +214,9 @@ namespace Onyx
             var dateFormat = CommonSetting.DisplayDateFormat;
             return date.IsNotEmptyDate() ? date.ToString(dateFormat) : string.Empty;
         }
-        public static string FormatDecimal(this decimal number, int decimalPlaces)
+        public static string GetDecimalFormat(int decimalPlaces)
         {
-            string formatString = "0." + new string('0', decimalPlaces);
-            return number.ToString(formatString);
-        }
-        public static string FormatDouble(this double number, int decimalPlaces)
-        {
-            string formatString = "0." + new string('0', decimalPlaces);
-            return number.ToString(formatString);
+            return "0." + new string('0', decimalPlaces);
         }
         public static string GetOrdinal(this int number)
         {

@@ -9,6 +9,52 @@ namespace Onyx.Services
     public class SettingService(DbGatewayService dbGatewayService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
+        #region Company
+        public CompanyDetail_Getrow_Result GetCompany(string CoCd, string CoAbbr)
+        {
+            var procedureName = "Company_Getrow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", CoCd);
+            parameters.Add("v_Typ", "1");
+            var connectionString = _dbGatewayService.GetConnectionString(CoAbbr);
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<CompanyDetail_Getrow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public void SaveCompany(CompanyModel model)
+        {
+            try
+            {
+
+                var procedureName = "Company_Update";
+                var parameters = new DynamicParameters();
+                parameters.Add("v_Cd", model.CoCd);
+                parameters.Add("v_CoName", model.CoName);
+                parameters.Add("v_Add1", model.Add1);
+                parameters.Add("v_Add2", model.Add2);
+                parameters.Add("v_Add3", model.Add3);
+                parameters.Add("v_Phone", model.Phone);
+                parameters.Add("v_Fax", model.Fax);
+                parameters.Add("v_Email", model.Email);
+                parameters.Add("v_AmtDecs", model.AmtDecs);
+                parameters.Add("v_BaseCurr", model.BaseCurr);
+                parameters.Add("v_RptCurr", model.RptCurr);
+                parameters.Add("v_FinBeginDt", model.FinBeginDt);
+                parameters.Add("v_FinEndDt", model.FinEndDt);
+                parameters.Add("v_QtyDecs", model.QtyDecs);
+                parameters.Add("v_Logo", model.Logo);
+                var connectionString = _dbGatewayService.GetConnectionString();
+                var connection = new SqlConnection(connectionString);
+                connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        #endregion
+
         #region Branch
         public IEnumerable<Branch_GetRow_Result> GetBranches(string CoCd)
         {
