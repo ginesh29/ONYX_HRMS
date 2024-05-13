@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<Employee_LeaveHistory_GetRow_Result>
+@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+}
 <div class="@ViewBag.TableResponsiveClass">
     <table class="table table-sm" id="BalanceTransactionsReportTable" style="font-size:x-small">
         <thead class="thead-dark">

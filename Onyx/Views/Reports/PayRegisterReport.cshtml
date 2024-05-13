@@ -10,8 +10,7 @@
     <partial name="_HeadImports" />
 </head>
 <body>
-    <h3 class="text-center mb-3">Pay Register Report</h3>
-    <h6 class="text-right"><span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now</h6>
+    <partial name="_ReportHeader" />
     @if (type == "Detail")
     {
         <partial name="_PayRegisterDetail" model="Model" />

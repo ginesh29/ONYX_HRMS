@@ -31,7 +31,7 @@ namespace Onyx.Models.ViewModels.Report
     {
         [Display(Name = "Employee")]
         public string EmpCd { get; set; }
-        public DateTime? ToDate { get; set; }
+        public DateTime ToDate { get; set; }
     }
     public class ProvisionFilterModel
     {

@@ -18,7 +18,6 @@
         public double LvTicket { get; set; }
         public double LvTicketOp { get; set; }
         public double LvTicketTaken { get; set; }
-        public DateTime FormatedFromDt { get; set; }
         public double Cumlvnopay { get; set; }
         public double GratDaysOp { get; set; }
         public double GratDays { get; set; }
