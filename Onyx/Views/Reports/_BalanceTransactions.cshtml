@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Employee_LeaveHistory_GetRow_Result>
 @{
     var loggedInUser = _authService.GetLoggedInUser();
-    ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <div class="@ViewBag.TableResponsiveClass">
     <table class="table table-sm" id="BalanceTransactionsReportTable" style="font-size:x-small">
@@ -79,29 +79,29 @@
             <tr>
                 <td>@item.Name (@item.Code.Trim())</td>
                 <td>@LeaveOpening</td>
-                <td>@LeaveCum.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalDaysOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalDaysCum.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalDaysTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalDaysTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalDaysBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalCum.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveSalBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveCum.ToString(DecimalFormat)</td>
+                <td>@LeaveTotal.ToString(DecimalFormat)</td>
+                <td>@LeaveTaken.ToString(DecimalFormat)</td>
+                <td>@LeaveBalance.ToString(DecimalFormat)</td>
+                <td>@LeaveSalDaysOpening.ToString(DecimalFormat)</td>
+                <td>@LeaveSalDaysCum.ToString(DecimalFormat)</td>
+                <td>@LeaveSalDaysTotal.ToString(DecimalFormat)</td>
+                <td>@LeaveSalDaysTaken.ToString(DecimalFormat)</td>
+                <td>@LeaveSalDaysBalance.ToString(DecimalFormat)</td>
+                <td>@LeaveSalOpening.ToString(DecimalFormat)</td>
+                <td>@LeaveSalCum.ToString(DecimalFormat)</td>
+                <td>@LeaveSalTotal.ToString(DecimalFormat)</td>
+                <td>@LeaveSalTaken.ToString(DecimalFormat)</td>
+                <td>@LeaveSalBalance.ToString(DecimalFormat)</td>
                 <td>@LeaveSalEligibility</td>
-                <td>@LeaveTicketOpening.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTicketCum.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTicketTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTicketTaken.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@LeaveTicketBalance.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@LeaveTicketOpening.ToString(DecimalFormat)</td>
+                <td>@LeaveTicketCum.ToString(DecimalFormat)</td>
+                <td>@LeaveTicketTotal.ToString(DecimalFormat)</td>
+                <td>@LeaveTicketTaken.ToString(DecimalFormat)</td>
+                <td>@LeaveTicketBalance.ToString(DecimalFormat)</td>
                 <td>@LeaveTicketEligibility</td>
-                <td>@item.GratDays.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@item.GratAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.GratDays.ToString(DecimalFormat)</td>
+                <td>@item.GratAmt.ToString(DecimalFormat)</td>
             </tr>
         }
     </table>

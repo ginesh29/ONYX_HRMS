@@ -82,22 +82,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header">
-                    <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
-                        <h4 class="card-label text-primary">
-                            Salary Graph
-                        </h4>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <canvas id="myLineChart" style="height:335px"></canvas>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
-    </div>
+    </div>    
     <div class="row">
         <div class="col-md-6">
             <div class="card w-100">
@@ -192,6 +177,23 @@
         </div>
     </div>
 }
+<div class="row">
+    <div class="col-md-6 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-header">
+                <div class="btn-toolbar d-flex align-items-center" role="toolbar" aria-label="Toolbar with button groups">
+                    <h4 class="card-label text-primary">
+                        Salary Graph
+                    </h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="myLineChart" style="height:335px"></canvas>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
 @if (loggedInUser.UserLinkedTo != "Emp")
 {
     List<string> drpItems = ["30", "60", "90", "120", "150"];
@@ -202,7 +204,7 @@
     };
     var noOfDaysItems = drpItems.Select(m => new SelectListItem { Text = $"{m} days", Value = m, Selected = m == "30" });
     IEnumerable<CalendarModel> BirthDayEvents = ViewBag.BirthDayEvents;
-@*     var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPT8");
+    @*     var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPT8");
     var editRenewalPermission = docRenewalPermission.UEdit; *@
     <div class="row">
         <div class="col-lg-3 col-6">

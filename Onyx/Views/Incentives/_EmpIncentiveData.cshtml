@@ -1,6 +1,7 @@
 ﻿@model IncentiveModel
 @{
-    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <form id="incentive-frm">
     <input type="hidden" asp-for="FilterModel.Branch" />
@@ -32,8 +33,8 @@
         </thead>
         @foreach (var item in Model.IncentiveData.Select((value, i) => new { i, value }))
         {
-            var avatarFileExist = item.value.Image.FileExist("emp-photo", companyCd);
-            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.value.Image) ? $"/uploads/{companyCd}/emp-photo/{item.value.Image}" : "/images/avatar.png";
+            var avatarFileExist = item.value.Image.FileExist("emp-photo", loggedInUser.CompanyCd);
+            var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.value.Image) ? $"/uploads/{loggedInUser.CompanyCd}/emp-photo/{item.value.Image}" : "/images/avatar.png";
             <tr>
                 <td>
                     <div class="custom-control custom-checkbox">
@@ -49,7 +50,7 @@
                 </td>
                 <td>@item.value.Dept</td>
                 <td>@item.value.SalTyp</td>
-                <td>@item.value.Salary.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.value.Salary.ToString(DecimalFormat)</td>
                 <td>
                     <input asp-for="@Model.IncentiveData[item.i].Cd" type="hidden">
                     <input asp-for="@Model.IncentiveData[item.i].SalesAmt" type="text" class="form-control form-control-sm decimal-input disabled">

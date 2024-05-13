@@ -3,6 +3,8 @@
     ViewData["Title"] = "Loan/Salary Advance Slip";
     Layout = null;
     var installmentAmt = Model.ApprAmt / Model.NoInstReq;
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +45,7 @@
         </tr>
         <tr>
             <th>Loan Amount</th>
-            <td>: @Model.ApprAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+            <td>: @Model.ApprAmt.ToString(DecimalFormat)</td>
         </tr>
         <tr>
             <th>No Of Installments</th>
@@ -51,15 +53,15 @@
         </tr>
         <tr>
             <th>Installment Amount</th>
-            <td>: @installmentAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+            <td>: @installmentAmt.ToString(DecimalFormat)</td>
         </tr>
         <tr>
             <th>Previous Due Amount</th>
-            <td>: @Model.Balance.ToString(ViewData["DecimalFormat"].ToString())</td>
+            <td>: @Model.Balance.ToString(DecimalFormat)</td>
         </tr>
         <tr>
             <th>Total Due Amount</th>
-            <td>: @Model.ApprAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+            <td>: @Model.ApprAmt.ToString(DecimalFormat)</td>
         </tr>
         <tr>
             <th>Approvals</th>
@@ -75,7 +77,7 @@
         </div>
     </div>
     <hr />
-    <h4>Received Advance Amount AED  @ExtensionMethod.NumberToWords(Model.ApprAmt) (AED.@Model.ApprAmt.ToString(ViewData["DecimalFormat"].ToString()))</h4>
+    <h4>Received Advance Amount AED  @ExtensionMethod.NumberToWords(Model.ApprAmt) (AED.@Model.ApprAmt.ToString(DecimalFormat))</h4>
     <table>
         <tr>
             <td width="120px">Employee Name</td>

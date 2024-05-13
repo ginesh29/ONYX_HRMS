@@ -3,6 +3,8 @@
     IEnumerable<EmpLeaveMaster_GetRow_Result> data = Model.Data;
     var ReportType = Model.ReportType;
     var dateFormat = ExtensionMethod.GetDateFormat();
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <div class="table-responsive">
     <table class="table table-sm" id="LeaveMasterReportTable">
@@ -32,15 +34,15 @@
                 @if (ReportType == "LeaveMaster")
                 {
                     <td>@item.LvTyp</td>
-                    <td>@item.MaxLv.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td>@item.MaxLv.ToString(DecimalFormat)</td>
                 }
-                <td>@item.LvOpBal.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@item.LvUsed.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@item.LvAccr.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@item.CumLvNoPay.Value.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.LvOpBal.ToString(DecimalFormat)</td>
+                <td>@item.LvUsed.ToString(DecimalFormat)</td>
+                <td>@item.LvAccr.ToString(DecimalFormat)</td>
+                <td>@item.CumLvNoPay.Value.ToString(DecimalFormat)</td>
                 @if (ReportType != "LeaveMaster")
                 {
-                    <td>@item.BalanceLeave.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td>@item.BalanceLeave.ToString(DecimalFormat)</td>
                     <td>@item.LeaveDueDate.FormatDate()</td>
                 }
             </tr>

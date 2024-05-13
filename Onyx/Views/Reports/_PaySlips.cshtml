@@ -2,6 +2,8 @@
 @{
     var grpData = Model.GroupBy(m => new { m.EmpCd, m.Name, m.Sponsor, m.W_days, m.Department, m.Designation, m.CoName, m.Yr, m.Prd });
     int cnt = 0;
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 @foreach (var grp in grpData)
 {
@@ -61,13 +63,13 @@
                         <tr>
                             <td>@item.PayCode</td>
                             <td>@item.Curr1</td>
-                            <td class="border-right">@item.Amt1.ToString(ViewData["DecimalFormat"].ToString())</td>
+                            <td class="border-right">@item.Amt1.ToString(DecimalFormat)</td>
                             <td>@item.PayCode1</td>
                             <td>@item.Curr2</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(item.PayCode1))
                                 {
-                                    <span>@item.Amt2.ToString(ViewData["DecimalFormat"].ToString())</span>
+                                    <span>@item.Amt2.ToString(DecimalFormat)</span>
                                 }
                             </td>
                         </tr>
@@ -76,13 +78,13 @@
                         <tr class="table-secondary">
                             <td>Total Earnings/Payments</td>
                             <td>@Curr1</td>
-                            <td class="border-right">@totalEarnings.ToString(ViewData["DecimalFormat"].ToString())</td>
+                            <td class="border-right">@totalEarnings.ToString(DecimalFormat)</td>
                             <td>Total Deductions</td>
                             <td>@Curr2</td>
                             <td>
                                 @if (totalDeductions > 0)
                                 {
-                                    <span>@totalDeductions.ToString(ViewData["DecimalFormat"].ToString())</span>
+                                    <span>@totalDeductions.ToString(DecimalFormat)</span>
                                 }
                             </td>
                         </tr>
@@ -91,7 +93,7 @@
                 <div style="width: 100%; display: table;">
                     <div style="display: table-row">
                         <div style="width: 75%; display: table-cell;"><span class="font-weight-bold">Amount (In words): </span>@ExtensionMethod.NumberToWords(netSalary)</div>
-                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString(ViewData["DecimalFormat"].ToString())</div>
+                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString(DecimalFormat)</div>
                     </div>
                 </div>
                 <hr />

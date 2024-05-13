@@ -379,15 +379,15 @@ namespace Onyx.Services
         }
         public class SpModel
         {
-            public string type { get; set; }
-            public string name { get; set; }
-            public DateTime modify_date { get; set; }
+            public string Type { get; set; }
+            public string Name { get; set; }
+            public DateTime Modify_Date { get; set; }
         }
         public void GenerateModifiedSp(bool singleFile = true)
         {
-            var modifiedSpQuery = @$"SELECT name, modify_date, trim(type)type FROM sys.objects
-	                                WHERE (type = 'P' or type = 'TR') and modify_date > '2024-01-01'
-	                                ORDER BY modify_date DESC";
+            var modifiedSpQuery = @$"SELECT Name, Modify_Date, trim(type)Type FROM sys.objects
+	                                WHERE (Type = 'P' or Type = 'TR') and Modify_Date > '2024-01-01'
+	                                ORDER BY Modify_Date DESC";
             var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
             var sps = connection.Query<SpModel>(modifiedSpQuery);
@@ -395,7 +395,7 @@ namespace Onyx.Services
             string filePath;
             foreach (var item in sps)
             {
-                string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.name.Trim()}')) AS Definition";
+                string query = $"SELECT OBJECT_DEFINITION(OBJECT_ID('{item.Name.Trim()}')) AS Definition";
                 string storedProcedureText = connection.QueryFirstOrDefault<string>(query);
                 if (!string.IsNullOrEmpty(storedProcedureText))
                 {
@@ -409,8 +409,8 @@ namespace Onyx.Services
                 }
                 if (!singleFile)
                 {
-                    string type = item.type == "P" ? "Sp" : "Trigger";
-                    filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\{type}-Backup-{item.modify_date:ddMMyyyy}.sql";
+                    string type = item.Type == "P" ? "Sp" : "Trigger";
+                    filePath = $@"D:\Projects\HRMS\Onyx\DB\scripts\{type}-Backup-{item.Modify_Date:ddMMyyyy}.sql";
                     File.WriteAllText(filePath, result);
                 }
             }
@@ -462,7 +462,6 @@ namespace Onyx.Services
             var currentMonth = multiResult.ReadFirstOrDefault<string>();
             var lastMonth = multiResult.ReadFirstOrDefault<string>();
             var salaryDetails = multiResult.Read<SalaryDetailModel>();
-            var loanRecoveryAmount = multiResult.ReadFirstOrDefault<int>();
             return new EmplLoanAndLeaveApproval
             {
                 LeaveApplied = leaveApplied,
@@ -472,7 +471,6 @@ namespace Onyx.Services
                 CurrentMonth = currentMonth,
                 LastMonth = lastMonth,
                 SalaryDetails = salaryDetails,
-                LoanRecoveryAmount = loanRecoveryAmount
             };
         }
         public IEnumerable<GetDashboardCalendarEvents_Result> GetCalendarEvents(string UserCd)

@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<GetRepo_EmpPayDetail_Summary_Result>
 @{
     var groupedData = Model.GroupBy(m => new { m.Type });
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <div class="table-responsive">
     @foreach (var grp in groupedData)
@@ -29,24 +31,24 @@
                 <tr>
                     <td>@item.EmpName (@item.Cd.Trim())</td>
                     <td>@item.Branch</td>
-                    <td>@item.MonthPay.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@item.LS.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@item.LT.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@item.Additions.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@item.Deductions.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@total.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td>@item.MonthPay.ToString(DecimalFormat)</td>
+                    <td>@item.LS.ToString(DecimalFormat)</td>
+                    <td>@item.LT.ToString(DecimalFormat)</td>
+                    <td>@item.Additions.ToString(DecimalFormat)</td>
+                    <td>@item.Deductions.ToString(DecimalFormat)</td>
+                    <td>@total.ToString(DecimalFormat)</td>
                 </tr>
             }
             <tfoot class="table-secondary">
                 <tr>
                     <td></td>
                     <td>Total</td>
-                    <td>@totalMonthPay.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@Model.Sum(m => m.LS).ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@Model.Sum(m => m.LT).ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@totalEarnings.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@totalDeductions.ToString(ViewData["DecimalFormat"].ToString())</td>
-                    <td>@grandTotal.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td>@totalMonthPay.ToString(DecimalFormat)</td>
+                    <td>@Model.Sum(m => m.LS).ToString(DecimalFormat)</td>
+                    <td>@Model.Sum(m => m.LT).ToString(DecimalFormat)</td>
+                    <td>@totalEarnings.ToString(DecimalFormat)</td>
+                    <td>@totalDeductions.ToString(DecimalFormat)</td>
+                    <td>@grandTotal.ToString(DecimalFormat)</td>
                 </tr>
             </tfoot>
         </table>

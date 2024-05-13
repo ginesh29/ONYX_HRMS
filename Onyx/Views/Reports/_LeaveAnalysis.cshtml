@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<	GetRepo_EmpLeave_Result>
+@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+}
 <div class="table-responsive">
     <table class="table table-sm" id="EmpLeaveAnalysisReportTable" style="font-size:small">
         <thead class="thead-dark">
@@ -36,8 +40,8 @@
                 <td>@item.FormatedWOP_FromDt.FormatDate() - @item.FormatedWOP_ToDt.FormatDate()</td>
                 <td>@item.JoinDt.FormatDate()</td>
                 <td>@item.Days</td>
-                <td>@item.Lvsalary.ToString(ViewData["DecimalFormat"].ToString())</td>
-                <td>@item.Lvfare.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.Lvsalary.ToString(DecimalFormat)</td>
+                <td>@item.Lvfare.ToString(DecimalFormat)</td>
                 <td>@item.Remarks</td>
                 <td>@item.Narr</td>
             </tr>

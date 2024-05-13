@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<GetRepo_EmpLoan_Result>
 @{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
     int cnt = 0;
 }
 @foreach (var item in Model)
@@ -22,7 +24,7 @@
                     <th width="200px">Applied Date:</th>
                     <td width="200px">@item.TransDt.FormatDate()</td>
                     <th width="200px">Applied Amount:</th>
-                    <td width="200px">@item.Amt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td width="200px">@item.Amt.ToString(DecimalFormat)</td>
                     <th width="200px">Recovery Mode:</th>
                     <td width="200px">@item.RecoMode</td>
                 </tr>
@@ -30,7 +32,7 @@
                     <th>Approved Date:</th>
                     <td>@item.LoanApprDt.FormatDate()</td>
                     <th>Approved Amount:</th>
-                    <td>@item.ApprAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                    <td>@item.ApprAmt.ToString(DecimalFormat)</td>
                     <th>Approved By:</th>
                     <td>@item.LoanApprBy</td>
                 </tr>

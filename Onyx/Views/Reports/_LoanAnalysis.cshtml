@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<GetRepo_EmpLoan_Analysis_Result>
+@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+}
 <div class="table-responsive">
     <table class="table table-sm" id="EmpLoanAnalysisReportTable" style="font-size:small">
         <thead class="thead-dark">
@@ -24,7 +28,7 @@
                 <td>@item.Employee (@item.EmpCd.Trim())</td>
                 <td>@item.Branch</td>
                 <td>@item.LoanApprDt.FormatDate()</td>
-                <td>@item.ApprAmt.ToString(ViewData["DecimalFormat"].ToString())</td>
+                <td>@item.ApprAmt.ToString(DecimalFormat)</td>
                 <td>@item.NoInst</td>
                 <td>@item.DedStartDt.FormatDate()</td>
                 <td>@item.RecoModeDes</td>
