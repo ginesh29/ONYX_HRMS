@@ -452,7 +452,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocuments(string empCd = "")
         {
-            var documents = _employeeService.GetDocuments(empCd, string.Empty, 0, "N", _loggedInUser.UserCd);
+            var documents = _employeeService.GetDocuments(empCd, string.Empty, 0, "A", _loggedInUser.UserCd);
             CommonResponse result = new()
             {
                 Data = documents,

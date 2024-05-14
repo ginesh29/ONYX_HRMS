@@ -48,7 +48,7 @@ namespace Onyx.Controllers
             {
                 ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
                 ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserLinkedTo);
+                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "A", _loggedInUser.UserLinkedTo);
             }
             var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserLinkedTo).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
             if (_loggedInUser.UserCd != "001")
