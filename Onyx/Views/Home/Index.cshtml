@@ -33,38 +33,41 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        @if ((EmployeeDetail.DOB.Day == DateTime.Now.Day) && EmployeeDetail.DOB.Month == DateTime.Now.Month)
-        {
-            int birthdayYears = ((DateTime.Now - EmployeeDetail.DOB).Days) / 365;
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-white">
-                    <div class="inner">
-                        <h3>@birthdayYears<sup class="font-weight-normal">@birthdayYears.GetOrdinal()</sup></h3>
-                        <p>Happy Birthday</p>
-                    </div>
-                    <div class="icon">
-                        <img src="~/images/male-birthday.svg" height="90" />
-                    </div>
-                </div>
-            </div>
-        }
-        @if ((EmployeeDetail.DOJ.Day == DateTime.Now.Day) && EmployeeDetail.DOJ.Month == DateTime.Now.Month)
-        {
-            int anniversaryYears = ((DateTime.Now - EmployeeDetail.DOJ).Days) / 365;
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-white">
-                    <div class="inner">
-                        <h3>@anniversaryYears<sup class="font-weight-normal">@anniversaryYears.GetOrdinal()</sup></h3>
-                        <p>Happy Work Anniversary</p>
-                    </div>
-                    <div class="icon">
-                        <img src="~/images/male-birthday.svg" height="90" />
+    @if (loggedInUser.UserOrEmployee == "E")
+    {
+        <div class="row">
+            @if ((EmployeeDetail.DOB.Day == DateTime.Now.Day) && EmployeeDetail.DOB.Month == DateTime.Now.Month)
+            {
+                int birthdayYears = ((DateTime.Now - EmployeeDetail.DOB).Days) / 365;
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-white">
+                        <div class="inner">
+                            <h3>@birthdayYears<sup class="font-weight-normal">@birthdayYears.GetOrdinal()</sup></h3>
+                            <p>Happy Birthday</p>
+                        </div>
+                        <div class="icon">
+                            <img src="~/images/male-birthday.svg" height="90" />
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+            @if ((EmployeeDetail.DOJ.Day == DateTime.Now.Day) && EmployeeDetail.DOJ.Month == DateTime.Now.Month)
+            {
+                int anniversaryYears = ((DateTime.Now - EmployeeDetail.DOJ).Days) / 365;
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-white">
+                        <div class="inner">
+                            <h3>@anniversaryYears<sup class="font-weight-normal">@anniversaryYears.GetOrdinal()</sup></h3>
+                            <p>Happy Work Anniversary</p>
+                        </div>
+                        <div class="icon">
+                            <img src="~/images/male-birthday.svg" height="90" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 }
 @if (loggedInUser.UserLinkedTo != "Emp")
 {
