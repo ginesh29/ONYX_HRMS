@@ -1,0 +1,28 @@
+﻿@model IEnumerable<EmployeeWiseForChart_Result>
+@{
+    var xAxis = Model.Select(m => m.Des).Distinct().ToArray();
+    var yAxis = Model.Select(m => m.Count).ToArray();
+    string container = ViewBag.Container;
+}
+<canvas id="@container"></canvas>
+<script>
+    var xAxis = '@Html.Raw(Json.Serialize(xAxis))';
+    var yAxis = '@Html.Raw(Json.Serialize(yAxis))';
+    new Chart("@container", {
+        type: "bar",
+        data: {
+            labels: JSON.parse(xAxis),
+            datasets: [{
+                backgroundColor: "orange",
+                data: JSON.parse(yAxis)
+            }]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: '@ViewBag.TypeText'
+            }
+        }
+    });
+</script>

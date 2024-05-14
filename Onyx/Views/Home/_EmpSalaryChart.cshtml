@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SalaryDetailModel>
+@{
+    var prds = Model.Select(m => m.Prd).Distinct().ToArray();
+    var totalEarnings = Model.Select(m => m.PayElementDetailsCount).ToArray();
+    string container = ViewBag.Container;
+}
+<canvas id="@container"></canvas>
+<script>
+    var prds = '@Html.Raw(Json.Serialize(prds))';
+    var totalEarnings = '@Html.Raw(Json.Serialize(totalEarnings))';
+    new Chart("@container", {
+        type: "line",
+        data: {
+            labels: JSON.parse(prds),
+            datasets: [
+                {
+                    data: JSON.parse(totalEarnings),
+                    borderColor: "green",
+                    fill: false
+                },
+            ]
+        },
+        options: {
+            legend: { display: false }
+        }
+    });
+</script>

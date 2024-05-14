@@ -13,54 +13,92 @@ namespace Onyx.Controllers
         private readonly AuthService _authService;
         private readonly CommonService _commonService;
         private readonly EmployeeService _employeeService;
+        private readonly TransactionService _transactionService;
         private readonly ReportService _reportService;
         private readonly LoggedInUserModel _loggedInUser;
 
-        public HomeController(AuthService authService, ReportService reportService, CommonService commonService, EmployeeService employeeService)
+        public HomeController(AuthService authService, ReportService reportService, CommonService commonService, EmployeeService employeeService, TransactionService transactionService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
             _reportService = reportService;
             _commonService = commonService;
             _employeeService = employeeService;
+            _transactionService = transactionService;
         }
 
         #region Dashboard
         public IActionResult Index()
         {
             var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
-            EmplLoanAndLeaveApproval.HeadCounts = EmplLoanAndLeaveApproval.HeadCounts.Where(m => m.HeadCount > 0);
-            foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
+            ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
+            string[] quickLinkProcessIds = ["HRPSS1", "HRPSS2", "HRPSS3", "HRPSS4"];
+            var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserLinkedTo).Where(m => quickLinkProcessIds.Contains(m.ProcessId));
+            if (_loggedInUser.UserCd != "001")
+                quickLinkItems = quickLinkItems.Where(m => m.Visible == "Y");
+            ViewBag.QuickLinkItems = quickLinkItems;
+            if (_loggedInUser.UserOrEmployee == "E")
             {
-                item.Year = Convert.ToInt32(item.Prd[..4]);
-                item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
-                item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
+                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
+                var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
+                var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
+                ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
             }
+            return View();
+        }
+        public IActionResult EmpBasicDetail()
+        {
+            ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
+            ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
+            return PartialView("_EmpBasicDetail");
+        }
+        public IActionResult MyDocuments()
+        {
+            var EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserLinkedTo);
+            return PartialView("_MyDocuments", EmpDocs);
+        }
+        public IActionResult MyLeaves()
+        {
+
+            var leaves = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd).EmpLeaves;
+            return PartialView("_MyLeaves", leaves);
+        }
+        public IActionResult MyLoans()
+        {
+            var loans = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd).EmpLoans;
+            return PartialView("_MyLoans", loans);
+        }
+        public IActionResult EmpSalaryChart(string container)
+        {
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
             foreach (var item in EmplLoanAndLeaveApproval.UserSalaryDetails)
             {
                 item.Year = Convert.ToInt32(item.Prd[..4]);
                 item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
                 item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
             }
+            EmplLoanAndLeaveApproval.UserSalaryDetails = EmplLoanAndLeaveApproval.UserSalaryDetails.OrderBy(m => m.Year).ThenBy(m => m.Month);
+            ViewBag.Container = container.Replace("_", "");
+            return PartialView("_EmpSalaryChart", EmplLoanAndLeaveApproval.UserSalaryDetails);
+        }
+        public IActionResult UserSalaryChart(string container)
+        {
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
+            {
+                item.Year = Convert.ToInt32(item.Prd[..4]);
+                item.Month = Convert.ToInt32(item.Prd.Substring(4, 2));
+                item.Prd = $"{new DateTimeFormatInfo().GetAbbreviatedMonthName(item.Month)} {item.Year}";
+            }
             EmplLoanAndLeaveApproval.SalaryDetails = EmplLoanAndLeaveApproval.SalaryDetails.OrderBy(m => m.Year).ThenBy(m => m.Month);
-            ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
-            if (_loggedInUser.UserOrEmployee == "E")
-            {
-                ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
-                ViewBag.EmpContactDetail = _employeeService.GetAddresses(_loggedInUser.UserCd).FirstOrDefault(m => m.AddTyp.Trim() == "HADD0001");
-                ViewBag.EmpDocs = _employeeService.GetDocuments(_loggedInUser.UserCd, string.Empty, 0, "N", _loggedInUser.UserLinkedTo);
-            }
-            var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserLinkedTo).Where(m => m.ProcessId == "HRPSS1" || m.ProcessId == "HRPSS2");
-            if (_loggedInUser.UserCd != "001")
-                quickLinkItems = quickLinkItems.Where(m => m.Visible == "Y");
-            ViewBag.QuickLinkItems = quickLinkItems;
-            if (_loggedInUser.UserOrEmployee == "E")
-            {
-                var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
-                var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-                ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
-            }
-            return View();
+            ViewBag.Container = container.Replace("_", "");
+            return PartialView("_UserSalaryChart", EmplLoanAndLeaveApproval.SalaryDetails);
+        }
+        public IActionResult EmpStatisticsChart(string container)
+        {
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            ViewBag.Container = container.Replace("_", "");
+            return PartialView("_EmpStatisticsChart", EmplLoanAndLeaveApproval.HeadCounts);
         }
         public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel, int days)
         {
@@ -84,15 +122,12 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult EmployeeWiseForChart(string type)
+        public IActionResult EmpAnalysisChart(string container, string type, string typeText)
         {
             var data = _commonService.EmployeeWiseForChart(type);
-            var result = new ChartModel
-            {
-                xAxis = data.Select(m => m.Des).ToArray(),
-                yAxis = data.Select(m => m.Count).ToArray(),
-            };
-            return Json(result);
+            ViewBag.TypeText = typeText;
+            ViewBag.Container = container.Replace("_", "");
+            return PartialView("_EmpAnalysisChart", data);
         }
         public IActionResult EmpBirthdayEvents(string DateRange)
         {

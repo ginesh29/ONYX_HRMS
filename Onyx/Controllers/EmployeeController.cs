@@ -484,7 +484,7 @@ namespace Onyx.Controllers
                 model.SrNo = _employeeService.GetEmpDocNext_SrNo(empCd);
                 model.Expiry = true;
             }
-            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
+            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
             model.EmpCd = empCd;
             model.EmpName = employee.Name;
             ViewBag.DocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem

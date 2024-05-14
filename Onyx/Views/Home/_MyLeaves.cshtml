@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EmpLeave>
+<table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Trans. Date</th>
+            <th>Leave Type</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Reason</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.TransDt.FormatDate()</td>
+            <td>@item.Type</td>
+            <td>@item.FromDt.FormatDate() - @item.ToDt.FormatDate() <br />(@ExtensionMethod.GetDaysBetweenDateRange(item.FromDt, item.ToDt) days)</td>
+            <td>@item.LvStatus</td>
+            <td>@item.Reason</td>
+        </tr>
+    }
+    @if (Model.Count() == 0)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="5">@CommonMessage.EMPTYGRID</td>
+            </tr>
+        </tfoot>
+    }
+</table>

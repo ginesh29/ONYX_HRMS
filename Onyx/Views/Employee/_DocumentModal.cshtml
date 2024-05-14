@@ -8,76 +8,78 @@
         </div>
         <div class="modal-body">
             <form id="document-frm">
-                <input type="hidden" asp-for="Cd" />
-                <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
-                <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
-                    <label asp-for="EmpCd"></label>
-                    <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
-                        <option value="@Model.EmpCd">@Model.EmpName (@Model.EmpCd)</option>
-                    </select>
-                    <span asp-validation-for="EmpCd" class="text-danger"></span>
-                </div>
-                <div class=" row">
-                    <div class="col-md-6">
-                        <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
-                            <label asp-for="DocTypCd"></label>
-                            <select asp-for="DocTypCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled" : "")" asp-items="ViewBag.DocTypeItems">
-                            </select>
-                            <span asp-validation-for="DocTypCd" class="text-danger"></span>
+                <div id="preview-hidden-div">
+                    <input type="hidden" asp-for="Cd" />
+                    <input type="hidden" asp-for="SrNo" value="@Model.SrNo" />
+                    <div class="form-group @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled-container" : "")">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2 @(!string.IsNullOrEmpty(Model.EmpCd) ? "disabled" : "")">
+                            <option value="@Model.EmpCd">@Model.EmpName (@Model.EmpCd)</option>
+                        </select>
+                        <span asp-validation-for="EmpCd" class="text-danger"></span>
+                    </div>
+                    <div class=" row">
+                        <div class="col-md-6">
+                            <div class="form-group @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled-container" : "")">
+                                <label asp-for="DocTypCd"></label>
+                                <select asp-for="DocTypCd" class="form-control select-picker @(!string.IsNullOrEmpty(Model.DocTypCd) ? "disabled" : "")" asp-items="ViewBag.DocTypeItems">
+                                </select>
+                                <span asp-validation-for="DocTypCd" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DocNo"></label>
+                                <input asp-for="DocNo" class="form-control" />
+                                <span asp-validation-for="DocNo" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="DocNo"></label>
-                            <input asp-for="DocNo" class="form-control" />
-                            <span asp-validation-for="DocNo" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IssueDt"></label>
+                                <input asp-for="IssueDt" class="form-control date-input" type="text">
+                                <span asp-validation-for="IssueDt" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IssuePlace"></label>
+                                <input asp-for="IssuePlace" class="form-control" />
+                                <span asp-validation-for="IssuePlace" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="IssueDt"></label>
-                            <input asp-for="IssueDt" class="form-control date-input" type="text">
-                            <span asp-validation-for="IssueDt" class="text-danger"></span>
+                    <div class="custom-control custom-checkbox form-group">
+                        <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Expiry" onchange="showHideExpiry()">
+                        <label asp-for="Expiry" class="custom-control-label font-weight-normal">Expiry</label>
+                    </div>
+                    <div class="row" id="expiry-div">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ExpDt"></label>
+                                <input asp-for="ExpDt" class="form-control date-input" type="text">
+                                <span asp-validation-for="ExpDt" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="IssuePlace"></label>
-                            <input asp-for="IssuePlace" class="form-control" />
-                            <span asp-validation-for="IssuePlace" class="text-danger"></span>
+                    <div class="form-group">
+                        <label>Files</label>
+                        <div class="file-drop-area">
+                            <span class="choose-file-button" id="doc-file-label">Choose files</span>
+                            <span class="file-message">or drag and drop files here</span>
+                            <input asp-for="DocFiles" class="file-input" onchange="filesPreview(this)">
                         </div>
+                        <span asp-validation-for="DocFiles" class="text-danger"></span>
                     </div>
+                    <div id="Files-Preview"></div>
                 </div>
-                <div class="custom-control custom-checkbox form-group">
-                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Expiry" onchange="showHideExpiry()">
-                    <label asp-for="Expiry" class="custom-control-label font-weight-normal">Expiry</label>
-                </div>
-                <div class="row" id="expiry-div">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="ExpDt"></label>
-                            <input asp-for="ExpDt" class="form-control date-input" type="text">
-                            <span asp-validation-for="ExpDt" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Files</label>
-                    <div class="file-drop-area">
-                        <span class="choose-file-button" id="doc-file-label">Choose files</span>
-                        <span class="file-message">or drag and drop files here</span>
-                        <input asp-for="DocFiles" class="file-input" onchange="filesPreview(this)">
-                    </div>
-                    <span asp-validation-for="DocFiles" class="text-danger"></span>
-                </div>
-                <div id="Files-Preview"></div>
                 <div id="DocList"></div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-info" onclick="saveDocument(this)">Submit</button>
+            <button type="button" class="btn btn-info" onclick="saveDocument(this)" id="btn-submit">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

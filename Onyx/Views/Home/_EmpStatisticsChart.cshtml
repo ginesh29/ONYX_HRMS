@@ -1,0 +1,29 @@
+﻿@model IEnumerable<HeadCountModel>
+@{
+    var donutXaxis = Model.Where(m => m.HeadCount > 0).Select(m => m.Des).Distinct().ToArray();
+    var donutValue = Model.Where(m => m.HeadCount > 0).Select(m => m.HeadCount).ToArray();
+    string[] allBarColors = ["#b91d47", "#00aba9", "#2b5797", "#ed992c", "#1e7145", "#191970", "#556B2F", "#2F4F4F", "#800000", "#36454F", "#800020", "#000080", "#228B22", "#4B3822", "#483D8B", "#6A5ACD", "#008080"];
+    var barColors = allBarColors.Take(donutXaxis.Length).ToArray();
+    string container = ViewBag.Container;
+}
+<canvas id="@container"></canvas>
+<script>
+    var donutXaxis = '@Html.Raw(Json.Serialize(donutXaxis))';
+    var donutValue = '@Html.Raw(Json.Serialize(donutValue))';
+    var barColors = '@Html.Raw(Json.Serialize(barColors))';
+    new Chart("@container", {
+        type: "doughnut",
+        data: {
+            labels: JSON.parse(donutXaxis),
+            datasets: [{
+                backgroundColor: JSON.parse(barColors),
+                data: JSON.parse(donutValue)
+            }]
+        },
+        options: {
+            title: {
+                display: false,
+            }
+        }
+    });
+</script>

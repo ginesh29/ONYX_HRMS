@@ -1,0 +1,34 @@
+﻿@model IEnumerable<EmpLoan>
+@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+}
+<table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Trans. Date</th>
+            <th>Loan Type</th>
+            <th>Amount</th>
+            <th>No. of Inst.</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.TransDt.FormatDate()</td>
+            <td>@item.Type</td>
+            <td>@item.ApprAmt.ToString(DecimalFormat)</td>
+            <td>@item.NoInst</td>
+            <td>@item.Status</td>
+        </tr>
+    }
+    @if (Model.Count() == 0)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="5">@CommonMessage.EMPTYGRID</td>
+            </tr>
+        </tfoot>
+    }
+</table>

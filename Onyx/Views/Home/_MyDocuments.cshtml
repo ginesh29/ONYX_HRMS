@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EmpDocuments_GetRow_Result>
+<table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Doc Type</th>
+            <th>Doc No</th>
+            <th>Expiry Date</th>
+            <th>Days</th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        var days = (item.ExpDt - DateTime.Now).Days;
+        <tr>
+            <td>@item.DocTypSDes</td>
+            <td>@item.DocNo</td>
+            <td>@item.ExpDt.FormatDate()</td>
+            <td><span class="badge badge-secondary">@days day(s)</span></td>
+            <td>
+                <button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('@item.EmpCd.Trim()','@item.DocTypCd.Trim()',@item.SrNo)">
+                    <i class="fas fa-pen"></i>
+                </button>
+            </td>
+        </tr>
+    }
+    @if (Model.Count() == 0)
+    {
+        <tfoot>
+            <tr>
+                <td colspan="5">@CommonMessage.EMPTYGRID</td>
+            </tr>
+        </tfoot>
+    }
+</table>

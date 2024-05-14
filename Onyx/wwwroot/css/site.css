@@ -2,6 +2,15 @@
 .layout-fixed .brand-link {
     width: 265px;
 }
+.grid-stack-item-content {
+    background-color: #fff;
+    cursor: pointer;
+}
+.card.dashboard-card {
+    padding: 0;
+    box-shadow: none;
+    padding: 0;
+}
 
 .dashboard-quicklinks:nth-of-type(n+2) {
     padding-left: .5rem !important;

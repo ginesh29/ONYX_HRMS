@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SalaryDetailModel>
+@{
+    var prds = Model.Select(m => m.Prd).Distinct().ToArray();
+    var benefits = Model.Where(m => m.Name == "Benefits/Payments").Select(m => m.PayElementDetailsCount).ToArray();
+    var allowance = Model.Where(m => m.Name == "Allowances/Earnings").Select(m => m.PayElementDetailsCount).ToArray();
+    var deductions = Model.Where(m => m.Name == "Deductions").Select(m => m.PayElementDetailsCount).ToArray();
+    string container = ViewBag.Container;
+}
+<canvas id="@container"></canvas>
+<script>
+    var prds = '@Html.Raw(Json.Serialize(prds))';
+    var benefits = '@Html.Raw(Json.Serialize(benefits))';
+    var allowance = '@Html.Raw(Json.Serialize(allowance))';
+    var deductions = '@Html.Raw(Json.Serialize(deductions))';
+    new Chart("@container", {
+        type: "line",
+        data: {
+            labels: JSON.parse(prds),
+            datasets: [
+                {
+                    label: 'Allowances/Earnings',
+                    data: JSON.parse(allowance),
+                    borderColor: "green",
+                    fill: false
+                },
+                {
+                    label: 'Benefits/Payments',
+                    data: JSON.parse(benefits),
+                    borderColor: "blue",
+                    fill: false
+                },
+                {
+                    label: 'Deductions',
+                    data: JSON.parse(deductions),
+                    borderColor: "red",
+                    fill: false
+                },
+            ]
+        },
+        options: {
+            legend: { display: true }
+        }
+    });
+</script>

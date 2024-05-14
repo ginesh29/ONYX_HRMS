@@ -71,6 +71,8 @@
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />
                     <input type="hidden" id="ProcessId" value="@processId" />
+                    <input type="hidden" id="EmpOrUser" value="@loggedInUser.UserOrEmployee" />
+                    <input type="hidden" id="UserLinkedTo" value="@loggedInUser.UserLinkedTo" />
                     <input type="hidden" id="HasViewPermission" value="@permission?.UView" />
                     <input type="hidden" id="HasAddPermission" value="@permission?.UAdd" />
                     <input type="hidden" id="HasEditPermission" value="@permission?.UEdit" />

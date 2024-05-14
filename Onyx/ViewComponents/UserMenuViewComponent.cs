@@ -51,12 +51,7 @@ namespace Onyx.ViewComponents
             ViewBag.FundApprovalData = fundData;
             ViewBag.ProgressionData = progressionData;
             ViewBag.DocRenewalData = docRenewalData;
-            ViewBag.ProvisionAdjData = provisionAdjData;
-            if (_loggedInUser.UserOrEmployee == "E")
-            {
-                var ownLeaveLoanData = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd);
-                ViewBag.OwnLeaveLoanData = ownLeaveLoanData;
-            }
+            ViewBag.ProvisionAdjData = provisionAdjData;            
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,
