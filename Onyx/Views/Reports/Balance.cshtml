@@ -39,7 +39,11 @@
             var frm = $("#filter-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                var url = `/Reports/FetchBalanceTransactions?${frm.serialize()}`;
+                var empCd = $("#EmpCd").val();
+                var toDate = $("#ToDate").val();
+                var dateFormat = $("#LocalDateFormat").val();
+                var endDate = moment(toDate, dateFormat).format(CommonSetting.InputDateFormat)
+                var url = `/Reports/FetchBalanceTransactions?EmpCd=${empCd}&ToDate=${endDate}`;
                 $('#BalanceTransactions').load(url, function () {
                     unloadingButton(btn);
                     window["datatable"] = $('#BalanceTransactionsReportTable').DataTable(dataTableDefaultOptions);
