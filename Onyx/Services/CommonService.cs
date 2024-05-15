@@ -215,6 +215,26 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<WidgetMaster_GetRow_Result> GetWidgetMaster()
+        {
+            var procedureName = "WidgetMaster_GetRow";
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var widgets = connection.Query<WidgetMaster_GetRow_Result>
+                (procedureName, commandType: CommandType.StoredProcedure);
+            return widgets;
+        }
+        public IEnumerable<UserWidgets_GetRow_Result> GetUserWidget(string UserCd)
+        {
+            var procedureName = "UserWidgets_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_UserCd", UserCd);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var widgets = connection.Query<UserWidgets_GetRow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return widgets;
+        }
         public IEnumerable<SelectListItem> GetComponentTypes()
         {
             var componentTypes = new List<SelectListItem>()

@@ -46,10 +46,24 @@ namespace Onyx.Controllers
             }
             return View();
         }
+        public IActionResult FetchWidgetMaster()
+        {
+            var widgets = _commonService.GetWidgetMaster();
+            CommonResponse result = new()
+            {
+                Data = widgets,
+            };
+            return Json(result);
+        }
         public IActionResult FetchDashboardConfig()
         {
-            var loans = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd).EmpLoans;
-            return PartialView("_MyLoans", loans);
+            var userCd = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : _loggedInUser.UserLinkedTo;
+            var widgets = _commonService.GetUserWidget(userCd);
+            CommonResponse result = new()
+            {
+                Data = widgets,
+            };
+            return Json(result);
         }
         public IActionResult EmpBasicDetail()
         {

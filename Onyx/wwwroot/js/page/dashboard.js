@@ -1,30 +1,23 @@
 ﻿let grid = GridStack.init();
 grid.on('added removed change', function (e, items) {
     var data = grid.save();
-    console.log(data);
+    //console.log(data);
     //$.post('adviser/dashboard/updatedashboardconfig', { config: data }, function () {
     //});
 });
-var chartsJsonData = [];
+var defaultChartsJsonData = [];
+$.ajax({
+    url: "/Home/FetchWidgetMaster",
+    type: 'get',
+    async: false,
+    success: function (response) {
+        defaultChartsJsonData = response.data.filter(m => m.active);
+    }
+});
+var chartsJsonData = defaultChartsJsonData;
 var empOrUser = $("#EmpOrUser").val();
 if (empOrUser == "E")
-    chartsJsonData = [
-        {
-            "x": 0, "y": 0, "w": 6, "h": 4, "id": "emp_basic_details", "title": "Employee Basic Details", "actionUrl": "EmpBasicDetail",
-        },
-        {
-            "x": 6, "y": 0, "w": 6, "h": 4, "id": "my_documents", "title": "My Documents", "actionUrl": "MyDocuments",
-        },
-        {
-            "x": 0, "y": 4, "w": 6, "h": 4, "id": "my_leaves", "title": "My Leave", "actionUrl": "MyLeaves",
-        },
-        {
-            "x": 6, "y": 4, "w": 6, "h": 4, "id": "my_loans", "title": "My Loans", "actionUrl": "MyLoans",
-        },
-        {
-            "x": 0, "y": 8, "w": 6, "h": 4, "id": "salary_chart", "title": "Employee Salary Chart", "actionUrl": "EmpSalaryChart",
-        }
-    ];
+    chartsJsonData = chartsJsonData.filter(m => m.type == "E");
 var userLinkedTo = $("#UserLinkedTo").val();
 if (userLinkedTo != "Emp") {
     var analysisHeader = `<label class="mb-0">Type</label>
@@ -61,70 +54,50 @@ if (userLinkedTo != "Emp") {
                 <label for="type_VEH" class="custom-control-label font-weight-normal">Vehicle</label>
             </label>
         </label>
-    
+
 </div>`;
-    var leavesHeader = ``
-    let userChartsJsonData = [
-        { x: 6, y: 8, w: 6, h: 4, id: 'user-salary_chart', title: "User Salary Chart", actionUrl: "UserSalaryChart", },
-        {
-            x: 0, y: 12, w: 6, h: 4, id: 'emp_analysis_chart', title: "Employee Analysis", actionUrl: "EmpAnalysisChart", header: analysisHeader
-        },
-        { x: 6, y: 12, w: 6, h: 4, id: 'emp_statistics_chart', title: "Employee Statistics", actionUrl: "EmpStatisticsChart", },
-        {
-            x: 0, y: 16, w: 6, h: 4, id: 'leave_list', title: "Leave List", actionUrl: "EmpLeaves?type=3", header: `<label class="mb-0">No. Of Days</label>
-                            <div class="col-md-3">
-                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=3')">
-                                    ${drpDaysHtml}
-                                </select>
-                        </div>` },
-        {
-            x: 6, y: 16, w: 6, h: 4, id: 'return_list', title: "Return List", actionUrl: "EmpLeaves?type=4", header: `<label class="mb-0">No. Of Days</label>
-                            <div class="col-md-3">
-                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=4')">
-                                    ${drpDaysHtml}
-                                </select>
-                        </div>` },
-        {
-            x: 7, y: 20, w: 5, h: 4, id: 'not_joined_list', title: "Not Joined List", actionUrl: "EmpLeaves?type=5", header: `<label class="mb-0">No. Of Days</label>
-                            <div class="col-md-3">
-                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=5')">
-                                    ${drpDaysHtml}
-                                </select>
-                        </div>` },
-        {
-            x: 0, y: 20, w: 7, h: 4, id: 'birthday_events', title: "Birthday/Work Anniversary", actionUrl: "EmpBirthdayEvents", header: `<label class="mb-0">Date Range</label>
-                        <div class="col-md-4">
-                            <input id="DateRange" type="text" class="form-control">
-                        </div>` },
-        {
-            x: 0, y: 24, w: 7, h: 4, id: 'doc_expiry_waiting', title: "Document Expiry Waiting List", actionUrl: "DocExpired", subheader: `<div class="d-flex align-items-center">
+    var leavesHeader = ``;
+    var userChartsJsonData = defaultChartsJsonData.filter(m => m.type == "U");
+    userChartsJsonData.forEach((n, i) => {
+        n.header = n.header = n.des.includes("analysis") ? analysisHeader :
+            n.des.includes("_list") ? `<label class="mb-0">No. Of Days</label>
+                                       <div class="col-md-3">
+                                          <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget                         ('${n.des}','${n.url}')">
+                                              ${drpDaysHtml}
+                                          </select>
+                                       </div>`:
+                n.des.includes("birthday") ? `<label class="mb-0">Date Range</label>
+                                           <div class="col-md-4">
+                                               <input id="DateRange" type="text" class="form-control">
+                                           </div>` : "";
+        n.subheader = n.subheader = n.des.includes("waiting") ? `<div class="d-flex align-items-center">
                         ${radioTypeHtml}
                         <label class="mb-0">No of Days Before</label>
                         <div class="col-md-3">
-                            <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('doc_expiry_waiting','DocExpired')">
+                            <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('${n.des}','${n.url}')">
                             ${drpDaysHtml}
                             </select>
                         </div>
-                    </div>` },
-    ];
-    var chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
+                    </div>` : ""
+    })
+    chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
 }
 chartsJsonData.forEach((n, i) =>
     n.content = `<div class="card dashboard-card">
-                    <div class="card-header" id="${n.id}-header">
+                    <div class="card-header" id="${n.des}-header">
                         <div class="d-flex align-items-center">
                             <h5 class="card-label text-primary mr-auto">
                                  ${n.title}
                             </h5>
                             ${n.header ? n.header : ""}
                             <div class="card-toolbar d-flex">
-                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Reload Card" data-chart-container="${n.id}" data-variable="${n.id}_data" data-modal-title="${n.title}" onclick="bindWidget('${n.id}','${n.actionUrl}')">
+                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Reload Card" data-chart-container="${n.des}" data-variable="${n.des}_data" data-modal-title="${n.title}" onclick="bindWidget('${n.des}','${n.url}')">
                                    <i class="fas fa-sync-alt icon-md text-primary"></i>
                                </button>
-                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Preview" data-chart-container="${n.id}_preview" data-modal-title="${n.title}" onclick="showChartPreview(this)" data-action-url="${n.actionUrl}">
+                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Preview" data-chart-container="${n.des}_preview" data-modal-title="${n.title}" onclick="showChartPreview(this)" data-action-url="${n.url}">
                                    <i class="fas fa-expand icon-md text-primary"></i>
                                </button>
-                               <button class="btn btn-icon btn-sm btn-hover-light-danger ml-2" data-toggle="tooltip" data-original-title="Remove Card" data-chart-container="${n.id}" onClick="removeWidget    (this.parentElement.parentElement.parentElement.parentElement.parentElement,this)">
+                               <button class="btn btn-icon btn-sm btn-hover-light-danger ml-2" data-toggle="tooltip" data-original-title="Remove Card" data-chart-container="${n.des}" onClick="removeWidget    (this.parentElement.parentElement.parentElement.parentElement.parentElement,this)">
                                    <i class="fas fa-times icon-md text-danger"></i>
                                </button>
                             </div>                            
@@ -133,65 +106,66 @@ chartsJsonData.forEach((n, i) =>
                     </div>
                     <div class="card-body">
                         <div class="overlay-wrapper">
-                            <div class="overlay d-none" id="${n.id}-loader"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>
-                        <div id="${n.id}"></div>
+                            <div class="overlay d-none" id="${n.des}-loader"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>
+                        <div id="${n.des}"></div>
                     </div>                            
                    </div>
                 </div>`);
 function bindWidgetDropdown() {
     $.each(chartsJsonData, function (index, item) {
-        var d = chartsJsonData.filter(m => m.id == item.id && m.active).length;
+        var d = chartsJsonData.filter(m => m.des == item.des && m.enabled).length;
         var disabled = d ? "disabled" : "";
-        $("#drp-widgets").append(`<a id='${item.id}_drp_item' class="dropdown-item ${disabled}" href="javascript:" onclick="addWidget('${item.id}')">${item.title}</a>`);
+        $("#drp-widgets").append(`<a id='${item.des}_drp_item' class="dropdown-item ${disabled}" href="javascript:" onclick="addWidget('${item.des}')">${item.title}</a>`);
     });
 }
 function bindDashboard() {
-    //$.get('adviser/dashboard/FetchDashboardConfig', function (response) {
-    //if (response)
-    //chartsJsonData.forEach((n, i) => {
-    //    var res = response.filter(m => m.id == n.id)[0];
-    //    if (res) {
-    //        n.active = true;
-    //        n.x = res.x;
-    //        n.y = res.y;
-    //        n.w = res.w;
-    //        n.h = res.h;
-    //    }
-    //});
-    bindWidgetDropdown();
-    var activeChartsJsonData = chartsJsonData;//.filter(m => m.active);
-    grid.load(activeChartsJsonData, true);
+    $.get('/home/FetchDashboardConfig', function (response) {
+        if (response.data)
+            console.log(response.data)
+            chartsJsonData.forEach((n, i) => {
+                var res = response.data.filter(m => m.des == n.des)[0];
+                if (res) {
+                    n.enabled = true;
+                    n.x = res.x;
+                    n.y = res.y;
+                    n.w = res.w;
+                    n.h = res.h;
+                }
+            });
+        bindWidgetDropdown();
+        var activeChartsJsonData = chartsJsonData.filter(m => m.enabled);
+        grid.load(activeChartsJsonData, true);
 
-    $.each(activeChartsJsonData, function (index, item) {
-        if (activeChartsJsonData.filter(m => m.id == item.id).length) {
-            bindWidget(`${item.id}`, `${item.actionUrl}`)
-            if (item.id.includes("birthday_events")) {
-                var dateFormat = $("#LocalDateFormat").val();
-                var startDate = moment().subtract(1, "day").format(dateFormat);
-                var endDate = moment().add(1, "day").format(dateFormat);
-                var dateRangeOptions = dateRangePickerDefaultOptions;
-                dateRangeOptions.startDate = startDate;
-                dateRangeOptions.endDate = endDate;
-                $('#DateRange').val(`${startDate} - ${endDate}`);
-                $('#DateRange').daterangepicker(dateRangeOptions)
-                    .on('apply.daterangepicker', function () {
-                        setTimeout(function () {
-                            bindWidget(item.id, item.actionUrl)
-                        }, 500)
-                    });
+        $.each(activeChartsJsonData, function (index, item) {
+            if (activeChartsJsonData.filter(m => m.des == item.des).length) {
+                bindWidget(`${item.des}`, `${item.url}`)
+                if (item.des.includes("birthday_events")) {
+                    var dateFormat = $("#LocalDateFormat").val();
+                    var startDate = moment().subtract(1, "day").format(dateFormat);
+                    var endDate = moment().add(1, "day").format(dateFormat);
+                    var dateRangeOptions = dateRangePickerDefaultOptions;
+                    dateRangeOptions.startDate = startDate;
+                    dateRangeOptions.endDate = endDate;
+                    $('#DateRange').val(`${startDate} - ${endDate}`);
+                    $('#DateRange').daterangepicker(dateRangeOptions)
+                        .on('apply.daterangepicker', function () {
+                            setTimeout(function () {
+                                bindWidget(item.des, item.url)
+                            }, 500)
+                        });
+                }
             }
-        }
+        });
     });
-    //});
 }
 function addWidget(id) {
     $(`#${id}_drp_item`).addClass("disabled");
-    var widgetData = chartsJsonData.filter(m => m.id == id && !m.active)[0];
-    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
+    var widgetData = chartsJsonData.filter(m => m.des == id && !m.enabled)[0];
+    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.des}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
                         <div class="grid-stack-item-content">${widgetData.content}</div>
                      </div>`;
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);
-    bindWidget(`${widgetData.id}`, `${widgetData.actionUrl}`)
+    bindWidget(`${widgetData.des}`, `${widgetData.url}`)
 }
 function removeWidget(el, sel) {
     var id = $(sel).attr("data-chart-container");
@@ -202,20 +176,20 @@ function removeWidget(el, sel) {
 }
 function showChartPreview(el) {
     var container = $(el).attr("data-chart-container");
-    var actionUrl = $(el).attr("data-action-url");
+    var url = $(el).attr("data-action-url");
     var title = $(el).attr("data-modal-title");
     $("#ChartPreviewModal .modal-body").html("");
     $("#ChartPreviewModal .modal-body").append(`<div id='${container}'></div>`);
-    bindWidget(container, actionUrl)
+    bindWidget(container, url)
     $("#ChartPreviewModal .chart-title").text(title);
     $("#ChartPreviewModal").modal({ backdrop: 'static' });
 }
 bindDashboard();
 
-function bindWidget(el, actionUrl) {
+function bindWidget(el, url) {
     $(`#${el}-loader`).removeClass("d-none");
     $(`#${el}`).empty();
-    var url = `/Home/${actionUrl}`;
+    var url = `/Home/${url}`;
     var query = "";
     if (el.includes("chart"))
         query += `?container=${el}`

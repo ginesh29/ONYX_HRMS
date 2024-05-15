@@ -1,3 +1,237 @@
+
+
+CREATE OR ALTER   Procedure [dbo].[GetRepo_ExpiredDocument_N]
+ 	@v_CoCd			Char(5)	
+,   @v_FromDate		datetime
+,   @v_ToDate		datetime
+,   @v_Employee		Char(10)
+,   @v_DocTyp		Char(10)
+,   @v_Typ			Char(3)
+,	@v_Usercd		varchar(10)
+As				-- Drop Procedure [dbo].[GetRepo_ExpiredDocument]'100','','','626/ALH','All','EMP'
+			
+if(@v_Typ='EMP')
+begin
+		Select 
+		ED.EmpCd[Cd]
+	,	Rtrim((select FName from employee where Cd=ED.EmpCd)) +' ' +Rtrim((select Mname from employee where Cd=ED.EmpCd)) [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	ED.SrNo[SrNo]
+	,	ED.DocNo[DocNo]
+	,	ED.OthRefNo[OthRefNo]
+	,	ED.IssueDt[IssueDt]
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt[ExpDt]
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL EMPLOYEE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL EMPLOYEES' else(select FName from employee where Cd=ED.EmpCd) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Employee'[Type]
+	,	(select div from employee where cd=ED.EmpCd)  [BrCd]
+	
+	From
+		EmpDocuments ED  
+		Where	
+	    (@v_Employee='All' or @v_Employee<>'' and ED.EmpCd=@v_Employee)
+	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+		AND SrNo =(select top 1 SrNo from EmpDocuments where EmpCd=ED.EmpCd and DocTyp=ED.DocTyp order by SrNo desc )
+		and ED.EmpCd in(select cd from Employee where Active='Y')
+		and ED.DocTyp <>(select ltrim(rtrim(val)) from ParametersByProcess where ParameterCd='DOCCD_VIS')
+		and (Ed.EmpCd in(select cd from employee where Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))))
+	
+	order by ED.ExpDt ASC
+end	
+else if(@v_Typ='COM')
+begin 
+	 
+	--	Select
+	--	ED.Cocd[Cd]
+	----,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
+	--,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
+	--,	DocTyp [DocTypCd]
+	--,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	--,	'1'[SrNo]
+	--,	ED.DocNo[DocNo]
+	--,	''[OthRefNo]
+	--,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	--,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	--,	ED.IssuePlace[IssuePlace]
+	--,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	--,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	--,	'Company'[Type]
+	--From
+	--	CompanyDocuments ED  
+	--	Where	
+	--     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+	--	and ((@v_FromDate='' and @v_ToDate='') or 
+	--		 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+Select
+		ED.Cocd[Cd]
+	--,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
+	,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	'1'[SrNo]
+	,	ED.DocNo[DocNo]
+	,	''[OthRefNo]
+	,	ED.IssueDt
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Company'[Type]
+	,	Rtrim(ED.Div)  [BrCd]
+	From
+		CompanyDocuments ED 
+		Where	
+	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+	--order by ED.ExpDt ASC
+union 
+Select
+	ED.Cocd[Cd]
+	--,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
+	,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	'1'[SrNo]
+	,	ED.ContrNo [DocNo]
+	,	''[OthRefNo]
+	,	ED.FromDt
+	,	CONVERT(varchar(10), ED.FromDt,101)[FormatedIssueDt]
+	,	ED.ToDt
+	,	CONVERT(varchar(10), ED.ToDt,101)[FormatedExpDt]
+	,	ED.Address  [IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Company'[Type]
+	,	Rtrim(ED.Div)  [BrCd]
+	From
+		CompanyTenancyContract ED 
+		Where	
+	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ToDt between @v_FromDate and @v_ToDate))	 
+	order by ExpDt ASC
+end
+if(@v_Typ='VEH')
+begin			 
+	 
+		Select
+		(select Driver from CompanyVehicles where Cd=ED.VehCd)[Cd]
+	,	Rtrim((select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) +' ' +Rtrim((select Mname from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	'1'[SrNo]
+	,	ED.DocNo[DocNo]
+	,	ED.VehCd
+	,	ED.OthRefNo[OthRefNo]
+	,	ED.IssueDt
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL VEHICLE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL DRIVERS' else(select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd)) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Vehicle'[Type]
+	,	''  [BrCd]
+	From
+		VehDocuments ED  
+		Where	
+	    (@v_Employee='All' or @v_Employee<>'' and (select Driver from CompanyVehicles where Cd=ED.VehCd)=@v_Employee)
+	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))	
+			 
+	order by ED.ExpDt ASC		 
+end
+if(@v_Typ='All')
+begin		
+		Select
+		ED.EmpCd[Cd]
+	,	Rtrim((select FName from employee where Cd=ED.EmpCd)) +' ' +Rtrim((select Mname from employee where Cd=ED.EmpCd)) [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	ED.SrNo[SrNo]
+	,	ED.DocNo[DocNo]
+	,	ED.OthRefNo[OthRefNo]
+	,	ED.IssueDt
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL EMPLOYEE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL EMPLOYEES' else(select FName from employee where Cd=ED.EmpCd) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Employee'[Type]
+--	,	''  [BrCd]
+	From
+		EmpDocuments ED  
+		Where	
+	    (@v_Employee='All' or @v_Employee<>'' and ED.EmpCd=@v_Employee)
+	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+		and SrNo =(select top 1 SrNo from EmpDocuments where EmpCd=ED.EmpCd and DocTyp=ED.DocTyp order by SrNo desc )
+		and (Ed.EmpCd in(select cd from employee where Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))))
+union
+	 
+		Select
+		ED.Cocd[Cd]
+	,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	'1'[SrNo]
+	,	ED.DocNo[DocNo]
+	,	''[OthRefNo]
+	,	ED.IssueDt
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Company'[Type]
+	--,	Rtrim(ED.Div)  [BrCd]
+	From
+		CompanyDocuments ED  
+		Where	
+	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+union
+		Select
+		(select Driver from CompanyVehicles where Cd=ED.VehCd)[Cd]
+	,	Rtrim((select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) +' ' +Rtrim((select Mname from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) [Name]
+	,	DocTyp [DocTypCd]
+	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
+	,	'1'[SrNo]
+	,	ED.DocNo[DocNo]
+	,	ED.OthRefNo[OthRefNo]
+	,	ED.IssueDt
+	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
+	,	ED.ExpDt
+	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
+	,	ED.IssuePlace[IssuePlace]
+	,	Rtrim(case when @v_DocTyp='All' then 'ALL VEHICLE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL DRIVERS' else(select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd)) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	,	'Vehicle'[Type]
+	From
+		VehDocuments ED  
+		Where	
+	    (@v_Employee='All' or @v_Employee<>'' and (select Driver from CompanyVehicles where Cd=ED.VehCd)=@v_Employee)
+	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
+		and ((@v_FromDate='' and @v_ToDate='') or 
+			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
+End	
+		 
+ 
+ Go 
 CREATE OR ALTER   procedure [dbo].[WidgetMaster_GetRow]
 --drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
 	
@@ -2347,239 +2581,6 @@ End
 
 
  
- 
- Go 
-
-
-CREATE OR ALTER   Procedure [dbo].[GetRepo_ExpiredDocument_N]
- 	@v_CoCd			Char(5)	
-,   @v_FromDate		datetime
-,   @v_ToDate		datetime
-,   @v_Employee		Char(10)
-,   @v_DocTyp		Char(10)
-,   @v_Typ			Char(3)
-,	@v_Usercd		varchar(10)
-As				-- Drop Procedure [dbo].[GetRepo_ExpiredDocument]'100','','','626/ALH','All','EMP'
-			
-if(@v_Typ='EMP')
-begin
-		Select 
-		ED.EmpCd[Cd]
-	,	Rtrim((select FName from employee where Cd=ED.EmpCd)) +' ' +Rtrim((select Mname from employee where Cd=ED.EmpCd)) [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	ED.SrNo[SrNo]
-	,	ED.DocNo[DocNo]
-	,	ED.OthRefNo[OthRefNo]
-	,	ED.IssueDt[IssueDt]
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt[ExpDt]
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL EMPLOYEE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL EMPLOYEES' else(select FName from employee where Cd=ED.EmpCd) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Employee'[Type]
-	,	(select div from employee where cd=ED.EmpCd)  [BrCd]
-	
-	From
-		EmpDocuments ED  
-		Where	
-	    (@v_Employee='All' or @v_Employee<>'' and ED.EmpCd=@v_Employee)
-	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-		AND SrNo =(select top 1 SrNo from EmpDocuments where EmpCd=ED.EmpCd and DocTyp=ED.DocTyp order by SrNo desc )
-		and ED.EmpCd in(select cd from Employee where Active='Y')
-		and ED.DocTyp <>(select ltrim(rtrim(val)) from ParametersByProcess where ParameterCd='DOCCD_VIS')
-		and (Ed.EmpCd in(select cd from employee where Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))))
-	
-	order by ED.ExpDt ASC
-end	
-else if(@v_Typ='COM')
-begin 
-	 
-	--	Select
-	--	ED.Cocd[Cd]
-	----,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
-	--,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
-	--,	DocTyp [DocTypCd]
-	--,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	--,	'1'[SrNo]
-	--,	ED.DocNo[DocNo]
-	--,	''[OthRefNo]
-	--,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	--,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	--,	ED.IssuePlace[IssuePlace]
-	--,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	--,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	--,	'Company'[Type]
-	--From
-	--	CompanyDocuments ED  
-	--	Where	
-	--     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-	--	and ((@v_FromDate='' and @v_ToDate='') or 
-	--		 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-Select
-		ED.Cocd[Cd]
-	--,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
-	,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	'1'[SrNo]
-	,	ED.DocNo[DocNo]
-	,	''[OthRefNo]
-	,	ED.IssueDt
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Company'[Type]
-	,	Rtrim(ED.Div)  [BrCd]
-	From
-		CompanyDocuments ED 
-		Where	
-	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-	--order by ED.ExpDt ASC
-union 
-Select
-	ED.Cocd[Cd]
-	--,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
-	,	Rtrim((select des from branch   where Cd=ED.Div))  [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	'1'[SrNo]
-	,	ED.ContrNo [DocNo]
-	,	''[OthRefNo]
-	,	ED.FromDt
-	,	CONVERT(varchar(10), ED.FromDt,101)[FormatedIssueDt]
-	,	ED.ToDt
-	,	CONVERT(varchar(10), ED.ToDt,101)[FormatedExpDt]
-	,	ED.Address  [IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Company'[Type]
-	,	Rtrim(ED.Div)  [BrCd]
-	From
-		CompanyTenancyContract ED 
-		Where	
-	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ToDt between @v_FromDate and @v_ToDate))	 
-	order by ExpDt ASC
-end
-if(@v_Typ='VEH')
-begin			 
-	 
-		Select
-		(select Driver from CompanyVehicles where Cd=ED.VehCd)[Cd]
-	,	Rtrim((select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) +' ' +Rtrim((select Mname from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	'1'[SrNo]
-	,	ED.DocNo[DocNo]
-	,	ED.OthRefNo[OthRefNo]
-	,	ED.IssueDt
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL VEHICLE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL DRIVERS' else(select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd)) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Vehicle'[Type]
-	,	''  [BrCd]
-	From
-		VehDocuments ED  
-		Where	
-	    (@v_Employee='All' or @v_Employee<>'' and (select Driver from CompanyVehicles where Cd=ED.VehCd)=@v_Employee)
-	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))	
-			 
-	order by ED.ExpDt ASC		 
-end
-if(@v_Typ='All')
-begin		
-		Select
-		ED.EmpCd[Cd]
-	,	Rtrim((select FName from employee where Cd=ED.EmpCd)) +' ' +Rtrim((select Mname from employee where Cd=ED.EmpCd)) [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	ED.SrNo[SrNo]
-	,	ED.DocNo[DocNo]
-	,	ED.OthRefNo[OthRefNo]
-	,	ED.IssueDt
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL EMPLOYEE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL EMPLOYEES' else(select FName from employee where Cd=ED.EmpCd) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Employee'[Type]
---	,	''  [BrCd]
-	From
-		EmpDocuments ED  
-		Where	
-	    (@v_Employee='All' or @v_Employee<>'' and ED.EmpCd=@v_Employee)
-	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-		and SrNo =(select top 1 SrNo from EmpDocuments where EmpCd=ED.EmpCd and DocTyp=ED.DocTyp order by SrNo desc )
-		and (Ed.EmpCd in(select cd from employee where Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))))
-union
-	 
-		Select
-		ED.Cocd[Cd]
-	,	Rtrim((select CoName from Company where Cd=ED.Cocd))  [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	'1'[SrNo]
-	,	ED.DocNo[DocNo]
-	,	''[OthRefNo]
-	,	ED.IssueDt
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL COMPANY DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+(Select CoName From Company Where Cd=@v_CoCd)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Company'[Type]
-	--,	Rtrim(ED.Div)  [BrCd]
-	From
-		CompanyDocuments ED  
-		Where	
-	     (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-union
-		Select
-		(select Driver from CompanyVehicles where Cd=ED.VehCd)[Cd]
-	,	Rtrim((select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) +' ' +Rtrim((select Mname from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd))) [Name]
-	,	DocTyp [DocTypCd]
-	,	(select SDes from Codes where Cd=DocTyp)[DocTypSDes]
-	,	'1'[SrNo]
-	,	ED.DocNo[DocNo]
-	,	ED.OthRefNo[OthRefNo]
-	,	ED.IssueDt
-	,	CONVERT(varchar(10), ED.IssueDt,101)[FormatedIssueDt]
-	,	ED.ExpDt
-	,	CONVERT(varchar(10), ED.ExpDt,101)[FormatedExpDt]
-	,	ED.IssuePlace[IssuePlace]
-	,	Rtrim(case when @v_DocTyp='All' then 'ALL VEHICLE DOCUMENTS' else (select SDes from Codes where Cd=@v_DocTyp)end) +' OF '+Rtrim(case when @v_Employee='All' then 'ALL DRIVERS' else(select FName from employee where Cd=(select Driver from CompanyVehicles where Cd=ED.VehCd)) end)+' '++' FROM '+CONVERT(varchar(10), @v_FromDate,101) +' to '+CONVERT(varchar(10), @v_ToDate,101)[Seacrh]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	,	'Vehicle'[Type]
-	From
-		VehDocuments ED  
-		Where	
-	    (@v_Employee='All' or @v_Employee<>'' and (select Driver from CompanyVehicles where Cd=ED.VehCd)=@v_Employee)
-	    and (@v_DocTyp='All' or @v_DocTyp<>'' and ED.DocTyp=@v_DocTyp)
-		and ((@v_FromDate='' and @v_ToDate='') or 
-			 (@v_FromDate<>'' and @v_ToDate<>'' and ED.ExpDt between @v_FromDate and @v_ToDate))
-End	
-		 
  
  Go 
 CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpTransactionDetail]    
