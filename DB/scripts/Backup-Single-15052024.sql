@@ -1,3 +1,69 @@
+CREATE OR ALTER   procedure [dbo].[WidgetMaster_GetRow]
+--drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
+	
+As
+	select * from WidgetMaster  where	isnull(active,0)=1 
+ Go 
+CREATE OR ALTER   procedure [dbo].[UserWidgets_GetRow]
+--drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
+	@v_UserCd		varchar(10)
+,	@v_Widget_Id    Varchar(10)
+As
+	select 
+			U.*,M.*
+	from 
+			UserWidgets U,WidgetMaster M
+	where
+				U.Widget_Id =M.Id
+		and		(U.UserCd=@v_UserCd or @v_UserCd='')
+		and		(U.Widget_Id=@v_Widget_Id or @v_Widget_Id='')
+		and		isnull(M.active,0)=1 
+ Go 
+CREATE OR ALTER   procedure  [dbo].[UserWidgets_Delete]
+		@v_UserCd                  	varchar(10)
+	,	@v_Widget_Id              	Varchar(10)
+as
+begin
+	Begin
+	   delete from UserWidgets where UserCd = @v_UserCd and Widget_Id=@v_Widget_Id
+    End
+End 
+ Go 
+CREATE OR ALTER   procedure  [dbo].[UserWidgets_Update]
+		@v_UserCd                  	varchar(10)
+	,	@v_Widget_Id              	Varchar(10)
+	,	@v_XPos              		Int
+	,	@v_YPos              		Int
+	,	@v_Width              		Int
+	,	@v_Height              		Int
+	
+as
+begin
+	IF ((SELECT COUNT(*) FROM UserWidgets WHERE usercd = @v_UserCd and Widget_Id=@v_Widget_Id) = 0)
+	    Begin
+		insert into UserWidgets (UserCd,Widget_Id,X,Y,W,H) 
+		Values(
+	        		@v_UserCd
+	        	,	@v_Widget_Id
+	        	,	@v_XPos
+	        	,	@v_YPos
+	        	,	@v_Width
+	        	,	@v_Height
+	        	)
+	    end
+	Else
+	    Begin
+	        Update UserWidgets
+	     Set
+			X		= @v_XPos
+		,	Y		= @v_YPos
+		,	W		= @v_Width
+		,	H		= @v_Height
+		
+	where UserCd = @v_UserCd and Widget_Id=@v_Widget_Id
+    End
+End 
+ Go 
 
 
 CREATE OR ALTER     Procedure [dbo].[EmplLoanAndLeaveApproval_N]

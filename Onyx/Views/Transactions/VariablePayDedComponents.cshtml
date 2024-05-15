@@ -100,14 +100,6 @@
                             showErrorToastr("Please provide highlighted field");
                         }
                     });
-                    $(".amt").each(function () {
-                        var min = $(this).attr("data-amt");
-                        min = min > 0 ? Number(min) : 0;
-                        var id = $(this).attr("id");
-                        $(`#${id}`).rules("add", {
-                            min: min > 0 ? min : 0,
-                        });
-                    })
                 });
             }
             else
