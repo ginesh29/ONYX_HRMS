@@ -46,6 +46,11 @@ namespace Onyx.Controllers
             }
             return View();
         }
+        public IActionResult FetchDashboardConfig()
+        {
+            var loans = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd).EmpLoans;
+            return PartialView("_MyLoans", loans);
+        }
         public IActionResult EmpBasicDetail()
         {
             ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();

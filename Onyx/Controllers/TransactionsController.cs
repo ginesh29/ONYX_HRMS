@@ -36,7 +36,7 @@ namespace Onyx.Controllers
         #region Leave Transaction
         public IActionResult EmpLeaveApprovals()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -125,7 +125,7 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpLeaveConfirmReviseCancel()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -293,7 +293,7 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpDutyResumption()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -441,7 +441,7 @@ namespace Onyx.Controllers
                 Text = $"{m.ShortDes}({m.Code.Trim()})",
                 Value = m.Code.Trim()
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -910,7 +910,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -996,7 +996,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.Department}({m.Code.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -1388,7 +1388,7 @@ namespace Onyx.Controllers
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
             ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"

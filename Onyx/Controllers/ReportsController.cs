@@ -40,7 +40,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -155,7 +155,7 @@ namespace Onyx.Controllers
         #region Provisions
         public IActionResult Provisions()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -191,7 +191,7 @@ namespace Onyx.Controllers
         #region Payslip
         public IActionResult PaySlip()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -252,7 +252,7 @@ namespace Onyx.Controllers
         #region Emp Transfer
         public IActionResult EmpTransfer()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -295,7 +295,7 @@ namespace Onyx.Controllers
         #region Emp Loan
         public IActionResult EmpLoan()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -353,7 +353,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -410,7 +410,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -487,7 +487,7 @@ namespace Onyx.Controllers
         #region Employee Fixed Payroll
         public IActionResult EmployeeFixedPayroll()
         {
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
@@ -523,7 +523,7 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}({m.Cd.Trim()})"
             });
-            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserCd, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
             {
                 Value = m.Div.Trim(),
                 Text = $"{m.Branch}({m.Div.Trim()})"
