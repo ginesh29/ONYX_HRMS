@@ -55,8 +55,11 @@
         function filterShowReport(btn, report) {
             loadGridData(btn);
             if (report) {
-                var frm = $("#filter-frm").serialize();
-                var url = `/Reports/BalanceTransactionsReport?${frm}`;
+                var empCd = $("#EmpCd").val();
+                var toDate = $("#ToDate").val();
+                var dateFormat = $("#LocalDateFormat").val();
+                var endDate = moment(toDate, dateFormat).format(CommonSetting.InputDateFormat)
+                var url = `/Reports/FetchBalanceTransactions?EmpCd=${empCd}&ToDate=${endDate}`;
                 window.open(url);
             }
         }
