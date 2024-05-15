@@ -1,4 +1,3 @@
-USE [LSHRMS]
 GO
 
 /****** Object:  Table [dbo].[WidgetMaster]    Script Date: 15/05/2024 3:03:35 PM ******/
@@ -22,7 +21,6 @@ CREATE TABLE [dbo].[WidgetMaster](
 GO
 
 
-USE [LSHRMS]
 GO
 INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP001', N'emp_basic_details', N'Employee Basic Details', N'EmpBasicDetail', 1)
 GO
@@ -38,7 +36,7 @@ GO
 
 
 
-USE [LSHRMS]
+
 GO
 
 /****** Object:  Table [dbo].[UserWidgets]    Script Date: 15/05/2024 2:59:40 PM ******/
@@ -135,5 +133,21 @@ Create or ALTER procedure [dbo].[WidgetMaster_GetRow]
 	
 As
 	select * from WidgetMaster  where	isnull(active,0)=1
+
+
+
+
+
+ALTER TABLE WidgetMaster
+ADD X varchar(5);
+
+ALTER TABLE WidgetMaster
+ADD Y varchar(5);
+
+ALTER TABLE WidgetMaster
+ADD H varchar(5);
+
+ALTER TABLE WidgetMaster
+ADD W varchar(5);
 
 

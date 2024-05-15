@@ -569,7 +569,7 @@ namespace Onyx.Services
         }
         public IEnumerable<VehDocuments_GetRow_Result> GetVehicleDocuments(string vehCd)
         {
-            var procedureName = "VehDocuments_GetRow";
+            var procedureName = "VehDocuments_GetRow_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", string.Empty);
@@ -581,22 +581,29 @@ namespace Onyx.Services
         }
         public CommonResponse SaveVehicleDocument(VehDocumentModel model)
         {
-            var procedureName = "VehDocuments_Update";
-            var parameters = new DynamicParameters();
-            parameters.Add("v_VehCd", model.VehCd);
-            parameters.Add("v_DocTyp", model.DocTypCd);
-            parameters.Add("v_DocNo", model.DocNo);
-            parameters.Add("v_OthRefNo", model.OthRefNo); // NOTE: does n't exists in TelconHRP database
-            parameters.Add("v_SrNo", model.SrNo);
-            parameters.Add("v_IssueDt", model.IssueDt);
-            parameters.Add("v_IssuePlace", model.IssuePlace);
-            parameters.Add("v_ExpDt", model.ExpDt);
-            parameters.Add("v_EntryBy", model.EntryBy);
-            parameters.Add("v_Mode", model.Mode);
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return result;
+            try
+            {
+                var procedureName = "VehDocuments_Update_N";
+                var parameters = new DynamicParameters();
+                parameters.Add("v_VehCd", model.VehCd);
+                parameters.Add("v_DocTyp", model.DocTypCd);
+                parameters.Add("v_DocNo", model.DocNo);
+                parameters.Add("v_OthRefNo", model.OthRefNo); // NOTE: does n't exists in TelconHRP database
+                parameters.Add("v_SrNo", model.SrNo);
+                parameters.Add("v_IssueDt", model.IssueDt);
+                parameters.Add("v_IssuePlace", model.IssuePlace);
+                parameters.Add("v_ExpDt", model.ExpDt);
+                parameters.Add("v_EntryBy", model.EntryBy);
+                parameters.Add("v_Mode", model.Mode);
+                var connectionString = _dbGatewayService.GetConnectionString();
+                var connection = new SqlConnection(connectionString);
+                var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         public int GetVehicleDocument_SrNo(string vehCd, string docType)
         {

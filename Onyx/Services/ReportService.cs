@@ -61,7 +61,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", filterModel.EmpCd ?? "All");
-            parameters.Add("v_ToDt", filterModel.ToDate.IsNotEmptyDate() ? filterModel.ToDate.ToString(CommonSetting.InputDateFormat) : DateTime.Now.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_ToDt", !filterModel.ToDate.IsNotEmptyDate() ? filterModel.ToDate.ToString(CommonSetting.InputDateFormat) : DateTime.Now.ToString(CommonSetting.InputDateFormat));
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<Employee_LeaveHistory_GetRow_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

@@ -1,11 +1,6 @@
 ﻿@model IEnumerable<GetRepo_ExpiredDocument_Result>
 @{
     var container = ViewBag.Container;
-    var typeItems = new List<SelectListItem>{
-        new SelectListItem{Value="EMP",Text="Employee",Selected=true},
-        new SelectListItem{Value="COM",Text="Company"},
-        new SelectListItem{Value="VEH",Text="Vehicle"},
-    };
 }
 <table class="table table-sm" id="@container-table">
     <thead class="thead-dark">
@@ -31,21 +26,21 @@
                 <label class="badge badge-info">@item.value.NoOfDays day(s)</label>
             </td>
             <td>
-                @if (item.value.Type == "EMP")
+                @if (item.value.Type == "Employee")
                 {
                     <button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('@item.value.Cd.Trim()','@item.value.DocTypCd.Trim()',@item.value.SrNo)">
                         <i class="fas fa-pen"></i>
                     </button>
                 }
-                else if (item.value.Type == "VEH")
+                else if (item.value.Type == "Company")
                 {
-                    <button class="btn btn-sm btn-info" onclick="showComDocumentModal('@item.value.DocTypCd.Trim()','@item.value.DivCd.Trim()')">
+                    <button class="btn btn-sm btn-info" onclick="showComDocumentModal('@item.value.DocTypCd.Trim() _@item.value.BrCd','@item.value.BrCd')">
                         <i class="fas fa-pen"></i>
                     </button>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('@item.value.Cd.Trim()','@item.value.DocTypCd.Trim()',@item.value.SrNo)">
+                    <button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('@item.value.VehCd.Trim()','@item.value.DocTypCd.Trim()',@item.value.SrNo)">
                         <i class="fas fa-pen"></i>
                     </button>
                 }
