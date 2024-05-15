@@ -59,7 +59,6 @@ namespace Onyx.Controllers
         }
         public IActionResult MyLeaves()
         {
-
             var leaves = _transactionService.GetEmployee_LeaveLoanHistory(_loggedInUser.UserCd).EmpLeaves;
             return PartialView("_MyLeaves", leaves);
         }
@@ -112,15 +111,13 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult FetchEmpLeaves(string days, string type)
+        public IActionResult EmpLeaves(string days, string type, string container)
         {
             var leaves = _commonService.GetRowEmpLeave(days, type, _loggedInUser.CompanyCd);
             leaves = leaves.Select(m => { m.NoOfDays = (m.ToDt - DateTime.Now.Date).Days; return m; }).ToList();
-            CommonResponse result = new()
-            {
-                Data = leaves,
-            };
-            return Json(result);
+            ViewBag.Type = type;
+            ViewBag.Container = container;
+            return PartialView("_EmpLeaves", leaves);
         }
         public IActionResult EmpAnalysisChart(string container, string type, string typeText)
         {

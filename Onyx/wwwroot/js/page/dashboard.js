@@ -23,49 +23,69 @@ var empOrUser = $("#EmpOrUser").val();
 if (empOrUser == "E")
     chartsJsonData = [
         {
-            "x": 0, "y": 0, "w": 6, "h": 4, "id": "emp_basic_details", "title": "Employee Basic Details", "functionName": "bindEmpBasicDetail", "actionUrl": "EmpBasicDetail", header: ``
+            "x": 0, "y": 0, "w": 6, "h": 4, "id": "emp_basic_details", "title": "Employee Basic Details", "actionUrl": "EmpBasicDetail", header: ``
         },
         {
-            "x": 6, "y": 0, "w": 6, "h": 4, "id": "my_documents", "title": "My Documents", "functionName": "bindMyDocuments",
-            "actionUrl": "MyDocuments", header: ``
+            "x": 6, "y": 0, "w": 6, "h": 4, "id": "my_documents", "title": "My Documents", "actionUrl": "MyDocuments", header: ``
         },
         {
-            "x": 0, "y": 4, "w": 6, "h": 4, "id": "my_leaves", "title": "My Leave", "functionName": "bindMyLeaves", "actionUrl": "MyLeaves", header: ``
+            "x": 0, "y": 4, "w": 6, "h": 4, "id": "my_leaves", "title": "My Leave", "actionUrl": "MyLeaves", header: ``
         },
         {
-            "x": 6, "y": 4, "w": 6, "h": 4, "id": "my_loans", "title": "My Loans", "functionName": "bindMyLoans", "actionUrl": "MyLoans", header: ``
+            "x": 6, "y": 4, "w": 6, "h": 4, "id": "my_loans", "title": "My Loans", "actionUrl": "MyLoans", header: ``
         },
         {
-            "x": 0, "y": 8, "w": 6, "h": 4, "id": "salary_chart", "title": "Employee Salary Chart", "functionName": "bindEmpSalaryChart", "actionUrl": "EmpSalaryChart", header: ``
+            "x": 0, "y": 8, "w": 6, "h": 4, "id": "salary_chart", "title": "Employee Salary Chart", "actionUrl": "EmpSalaryChart", header: ``
         }
     ];
 var userLinkedTo = $("#UserLinkedTo").val();
 if (userLinkedTo != "Emp") {
     var analysisHeader = `<label class="mb-0">Type</label>
-                        <div class="col-md-3">
-                            <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="bindWidget('emp_analysis_chart','EmpAnalysisChart')">
-                                <option value="Dept">Department</option>
-                                <option value="Branch">Branch</option>
-                                <option value="Nationality">Nationality</option>
-                                <option value="Location">Location</option>
-                                <option value="Status">Status</option>
-                            </select>
+                            <div class="col-md-3">
+                                <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="bindWidget   ('emp_analysis_chart','EmpAnalysisChart')">
+                                    <option value="Dept">Department</option>
+                                    <option value="Branch">Branch</option>
+                                    <option value="Nationality">Nationality</option>
+                                    <option value="Location">Location</option>
+                                    <option value="Status">Status</option>
+                                </select>
                         </div>`;
+    var days = ["30", "60", "90", "120", "150"];
+    var drpHtml = "";
+    $.each(days, function (index, item) {
+        drpHtml += `<option value="${item}">${item} days</option>`;
+    });
+    var leavesHeader = ``
     let userChartsJsonData = [
-        { x: 6, y: 8, w: 6, h: 4, id: 'user-salary_chart', title: "User Salary Chart", functionName: "bindUserSalaryChart", actionUrl: "UserSalaryChart", header: `` },
+        { x: 6, y: 8, w: 6, h: 4, id: 'user-salary_chart', title: "User Salary Chart", actionUrl: "UserSalaryChart", header: `` },
         {
-            x: 0, y: 12, w: 6, h: 4, id: 'emp_analysis_chart', title: "Employee Analysis", functionName: "bindEmpAnalysis", actionUrl: "EmpAnalysisChart", header: analysisHeader
+            x: 0, y: 12, w: 6, h: 4, id: 'emp_analysis_chart', title: "Employee Analysis", actionUrl: "EmpAnalysisChart", header: analysisHeader
         },
-        { x: 6, y: 12, w: 6, h: 4, id: 'emp_statistics_chart', title: "Employee Statistics", functionName: "bindEmpStatistics", actionUrl: "EmpStatisticsChart", header: `` },
-        //{ x: 6, y: 0, w: 6, h: 4, id: 'my_documents', title: "My Documents", functionName: "bindMyDocuments", actionUrl: "MyDocuments" },
-        //{ x: 6, y: 4, w: 6, h: 4, id: 'my_leaves', title: "My Leave", functionName: "bindMyLeaves", actionUrl: "MyLeaves" },
-        //{ x: 0, y: 5, w: 6, h: 4, id: 'my_loans', title: "My Loans", functionName: "bindMyLoans", actionUrl: "MyLoans" },
+        { x: 6, y: 12, w: 6, h: 4, id: 'emp_statistics_chart', title: "Employee Statistics", actionUrl: "EmpStatisticsChart", header: `` },
+        {
+            x: 0, y: 16, w: 6, h: 4, id: 'leave_list', title: "Leave List", actionUrl: "EmpLeaves?type=3", header: `<div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('leave_list','EmpLeaves?type=3')">
+                                ${drpHtml}
+                            </select>
+                        </div>` },
+        {
+            x: 6, y: 16, w: 6, h: 4, id: 'return_list', title: "Return List", actionUrl: "EmpLeaves?type=4", header: `<div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=4')">
+                                ${drpHtml}
+                            </select>
+                        </div>` },
+        {
+            x: 0, y: 20, w: 6, h: 4, id: 'not_joined_list', title: "Not Joined List", actionUrl: "EmpLeaves?type=5", header: `<div class="col-md-3">
+                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('not_joined_list','EmpLeaves?type=5')">
+                                ${drpHtml}
+                            </select>
+                        </div>` },
     ];
     var chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
 }
 chartsJsonData.forEach((n, i) =>
-    n.content = `<div class="card dashboard-card" id="">
-                    <div class="card-header">
+    n.content = `<div class="card dashboard-card">
+                    <div class="card-header" id="${n.id}-header">
                         <div class="btn-toolbar d-flex align-items-center">
                             <h5 class="card-label text-primary mr-auto">
                                  ${n.title}
@@ -156,13 +176,18 @@ function bindWidget(el, actionUrl) {
     var url = `/Home/${actionUrl}`;
     var query = "";
     if (el.includes("chart"))
-        query += `container=${el}`
+        query += `?container=${el}`
     if (el.includes("analysis")) {
         var type = $("#Chart-Type").val();
         var typeText = $("#Chart-Type option:selected").text();
         query += `&type=${type}&typeText=${typeText}`
     }
-    url = `${url}?${query}`;
+    if (el.includes("_list")) {
+        var el2 = el.replace("_preview", "");
+        var days = $(`#${el2}-header #EmpLeaveNoOfDays`).val();
+        query += `&container=${el}&days=${days}`;
+    }
+    url = `${url}${query}`;
     $(`#${el}`).load(url, function () {
         setTimeout(function () {
             $(`#${el}-loader`).addClass("d-none");

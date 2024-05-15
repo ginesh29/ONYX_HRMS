@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EmpLeave_GetRow_Result>
+@{
+    var type = ViewBag.Type;
+    var container = ViewBag.Container;
+}
+<table class="table table-sm" id="@container-table">
+    <thead class="thead-dark">
+        <tr>
+            <th>No.</th>
+            <th>Employee</th>
+            @if (type == "5")
+            {
+                <th>Duration</th>
+            }
+            <th>Days</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Select((value, i) => new { i, value }))
+    {
+        <tr>
+            <td>@(item.i + 1)</td>
+            <td>@item.value.EmployeeName (@item.value.EmployeeCode)</td>
+            @if (type == "5")
+            {
+                <td>@item.value.FromDt.FormatDate() - @item.value.ToDt.FormatDate() <br />(@ExtensionMethod.GetDaysBetweenDateRange(item.value.FromDt, item.value.ToDt) days)</td>
+            }
+            <td>
+                <label class="badge badge-info">@item.value.NoOfDays day(s)</label>
+            </td>
+        </tr>
+    }
+</table>
+<script>
+    $(`#@container-table`).DataTable(dataTableDefaultOptions);
+</script>

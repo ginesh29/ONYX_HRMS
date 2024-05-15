@@ -7,7 +7,7 @@
         public string EmployeeCode { get; set; }
         public string EmployeeName { get; set; }
         public string LeaveType { get; set; }
-        public DateTime? FromDt { get; set; }
+        public DateTime FromDt { get; set; }
         public string FormatedFromDt { get; set; }
         public DateTime ToDt { get; set; }
         public string FormatedToDt { get; set; }
