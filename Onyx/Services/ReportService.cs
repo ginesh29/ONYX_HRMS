@@ -203,7 +203,7 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cocd", CoCd);
             parameters.Add("v_FromDate", filterModel.StartDate.IsNotEmptyDate() ? filterModel.StartDate.ToString(CommonSetting.InputDateFormat) : string.Empty);
-            parameters.Add("v_ToDate", filterModel.EndDate.IsNotEmptyDate() ? filterModel.StartDate.ToString(CommonSetting.InputDateFormat) : string.Empty);
+            parameters.Add("v_ToDate", filterModel.EndDate.IsNotEmptyDate() ? filterModel.EndDate.ToString(CommonSetting.InputDateFormat) : string.Empty);
             parameters.Add("v_Employee", "All");
             parameters.Add("v_DocTyp", filterModel.DocType ?? "All");
             parameters.Add("v_Typ", filterModel.Type);

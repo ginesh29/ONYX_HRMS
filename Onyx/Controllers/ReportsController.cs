@@ -471,12 +471,12 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel)
         {
-            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserCd, _loggedInUser.CompanyCd);
+            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd);
             return PartialView("_DocExpired", loans);
         }
         public IActionResult DocExpiredReport(ExpiredDocFilterModel filterModel)
         {
-            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserCd, _loggedInUser.CompanyCd);
+            var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd);
             return new ViewAsPdf(loans)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

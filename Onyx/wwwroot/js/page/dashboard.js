@@ -10,19 +10,19 @@ var empOrUser = $("#EmpOrUser").val();
 if (empOrUser == "E")
     chartsJsonData = [
         {
-            "x": 0, "y": 0, "w": 6, "h": 4, "id": "emp_basic_details", "title": "Employee Basic Details", "actionUrl": "EmpBasicDetail", header: ``
+            "x": 0, "y": 0, "w": 6, "h": 4, "id": "emp_basic_details", "title": "Employee Basic Details", "actionUrl": "EmpBasicDetail",
         },
         {
-            "x": 6, "y": 0, "w": 6, "h": 4, "id": "my_documents", "title": "My Documents", "actionUrl": "MyDocuments", header: ``
+            "x": 6, "y": 0, "w": 6, "h": 4, "id": "my_documents", "title": "My Documents", "actionUrl": "MyDocuments",
         },
         {
-            "x": 0, "y": 4, "w": 6, "h": 4, "id": "my_leaves", "title": "My Leave", "actionUrl": "MyLeaves", header: ``
+            "x": 0, "y": 4, "w": 6, "h": 4, "id": "my_leaves", "title": "My Leave", "actionUrl": "MyLeaves",
         },
         {
-            "x": 6, "y": 4, "w": 6, "h": 4, "id": "my_loans", "title": "My Loans", "actionUrl": "MyLoans", header: ``
+            "x": 6, "y": 4, "w": 6, "h": 4, "id": "my_loans", "title": "My Loans", "actionUrl": "MyLoans",
         },
         {
-            "x": 0, "y": 8, "w": 6, "h": 4, "id": "salary_chart", "title": "Employee Salary Chart", "actionUrl": "EmpSalaryChart", header: ``
+            "x": 0, "y": 8, "w": 6, "h": 4, "id": "salary_chart", "title": "Employee Salary Chart", "actionUrl": "EmpSalaryChart",
         }
     ];
 var userLinkedTo = $("#UserLinkedTo").val();
@@ -38,53 +38,87 @@ if (userLinkedTo != "Emp") {
                                 </select>
                         </div>`;
     var days = ["30", "60", "90", "120", "150"];
-    var drpHtml = "";
+    var drpDaysHtml = "";
     $.each(days, function (index, item) {
-        drpHtml += `<option value="${item}">${item} days</option>`;
+        drpDaysHtml += `<option value="${item}">${item} days</option>`;
     });
+    var radioTypeHtml = `<div class="mr-auto">
+        <label class="radio-inline mb-0">
+            <label class="custom-control custom-radio">
+                <input type="radio" name="DocExpiredType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_EMP" value="EMP" onchange="bindWidget('doc_expiry_waiting','DocExpired')" checked>
+                <label for="type_EMP" class="custom-control-label font-weight-normal">Employee</label>
+            </label>
+        </label>
+        <label class="radio-inline mb-0">
+            <label class="custom-control custom-radio">
+                <input type="radio" name="DocExpiredType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_COM" value="COM" onchange="bindWidget('doc_expiry_waiting','DocExpired')">
+                <label for="type_COM" class="custom-control-label font-weight-normal">Company</label>
+            </label>
+        </label>
+        <label class="radio-inline mb-0">
+            <label class="custom-control custom-radio">
+                <input type="radio" name="DocExpiredType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_VEH" value="VEH" onchange="bindWidget('doc_expiry_waiting','DocExpired')">
+                <label for="type_VEH" class="custom-control-label font-weight-normal">Vehicle</label>
+            </label>
+        </label>
+    
+</div>`;
     var leavesHeader = ``
     let userChartsJsonData = [
-        { x: 6, y: 8, w: 6, h: 4, id: 'user-salary_chart', title: "User Salary Chart", actionUrl: "UserSalaryChart", header: `` },
+        { x: 6, y: 8, w: 6, h: 4, id: 'user-salary_chart', title: "User Salary Chart", actionUrl: "UserSalaryChart", },
         {
             x: 0, y: 12, w: 6, h: 4, id: 'emp_analysis_chart', title: "Employee Analysis", actionUrl: "EmpAnalysisChart", header: analysisHeader
         },
-        { x: 6, y: 12, w: 6, h: 4, id: 'emp_statistics_chart', title: "Employee Statistics", actionUrl: "EmpStatisticsChart", header: `` },
+        { x: 6, y: 12, w: 6, h: 4, id: 'emp_statistics_chart', title: "Employee Statistics", actionUrl: "EmpStatisticsChart", },
         {
-            x: 0, y: 16, w: 6, h: 4, id: 'leave_list', title: "Leave List", actionUrl: "EmpLeaves?type=3", header: `<div class="col-md-3">
-                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('leave_list','EmpLeaves?type=3')">
-                                ${drpHtml}
-                            </select>
+            x: 0, y: 16, w: 6, h: 4, id: 'leave_list', title: "Leave List", actionUrl: "EmpLeaves?type=3", header: `<label class="mb-0">No. Of Days</label>
+                            <div class="col-md-3">
+                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=3')">
+                                    ${drpDaysHtml}
+                                </select>
                         </div>` },
         {
-            x: 6, y: 16, w: 6, h: 4, id: 'return_list', title: "Return List", actionUrl: "EmpLeaves?type=4", header: `<div class="col-md-3">
-                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=4')">
-                                ${drpHtml}
-                            </select>
+            x: 6, y: 16, w: 6, h: 4, id: 'return_list', title: "Return List", actionUrl: "EmpLeaves?type=4", header: `<label class="mb-0">No. Of Days</label>
+                            <div class="col-md-3">
+                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=4')">
+                                    ${drpDaysHtml}
+                                </select>
                         </div>` },
         {
-            x: 0, y: 20, w: 6, h: 4, id: 'not_joined_list', title: "Not Joined List", actionUrl: "EmpLeaves?type=5", header: `<div class="col-md-3">
-                            <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('not_joined_list','EmpLeaves?type=5')">
-                                ${drpHtml}
-                            </select>
+            x: 7, y: 20, w: 5, h: 4, id: 'not_joined_list', title: "Not Joined List", actionUrl: "EmpLeaves?type=5", header: `<label class="mb-0">No. Of Days</label>
+                            <div class="col-md-3">
+                                <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('return_list','EmpLeaves?type=5')">
+                                    ${drpDaysHtml}
+                                </select>
                         </div>` },
         {
-            x: 0, y: 20, w: 6, h: 4, id: 'birthday_events', title: "Birthday/Work Anniversary", actionUrl: "EmpBirthdayEvents", header: `<label class="mb-0">Date Range</label>
+            x: 0, y: 20, w: 7, h: 4, id: 'birthday_events', title: "Birthday/Work Anniversary", actionUrl: "EmpBirthdayEvents", header: `<label class="mb-0">Date Range</label>
                         <div class="col-md-4">
                             <input id="DateRange" type="text" class="form-control">
                         </div>` },
+        {
+            x: 0, y: 24, w: 7, h: 4, id: 'doc_expiry_waiting', title: "Document Expiry Waiting List", actionUrl: "DocExpired", subheader: `<div class="d-flex align-items-center">
+                        ${radioTypeHtml}
+                        <label class="mb-0">No of Days Before</label>
+                        <div class="col-md-3">
+                            <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('doc_expiry_waiting','DocExpired')">
+                            ${drpDaysHtml}
+                            </select>
+                        </div>
+                    </div>` },
     ];
     var chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
 }
 chartsJsonData.forEach((n, i) =>
     n.content = `<div class="card dashboard-card">
                     <div class="card-header" id="${n.id}-header">
-                        <div class="btn-toolbar d-flex align-items-center">
+                        <div class="d-flex align-items-center">
                             <h5 class="card-label text-primary mr-auto">
                                  ${n.title}
                             </h5>
-                            ${n.header}
+                            ${n.header ? n.header : ""}
                             <div class="card-toolbar d-flex">
-                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Reload Card" data-chart-container="${n.id}" data-variable="${n.id}_data" data-modal-title="${n.title}"  onclick="bindWidget('${n.id}','${n.actionUrl}')">
+                               <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Reload Card" data-chart-container="${n.id}" data-variable="${n.id}_data" data-modal-title="${n.title}" onclick="bindWidget('${n.id}','${n.actionUrl}')">
                                    <i class="fas fa-sync-alt icon-md text-primary"></i>
                                </button>
                                <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Preview" data-chart-container="${n.id}_preview" data-modal-title="${n.title}" onclick="showChartPreview(this)" data-action-url="${n.actionUrl}">
@@ -93,8 +127,9 @@ chartsJsonData.forEach((n, i) =>
                                <button class="btn btn-icon btn-sm btn-hover-light-danger ml-2" data-toggle="tooltip" data-original-title="Remove Card" data-chart-container="${n.id}" onClick="removeWidget    (this.parentElement.parentElement.parentElement.parentElement.parentElement,this)">
                                    <i class="fas fa-times icon-md text-danger"></i>
                                </button>
-                            </div>
+                            </div>                            
                         </div>
+                        ${n.subheader ? n.subheader : ""}
                     </div>
                     <div class="card-body">
                         <div class="overlay-wrapper">
@@ -130,6 +165,21 @@ function bindDashboard() {
     $.each(activeChartsJsonData, function (index, item) {
         if (activeChartsJsonData.filter(m => m.id == item.id).length) {
             bindWidget(`${item.id}`, `${item.actionUrl}`)
+            if (item.id.includes("birthday_events")) {
+                var dateFormat = $("#LocalDateFormat").val();
+                var startDate = moment().subtract(1, "day").format(dateFormat);
+                var endDate = moment().add(1, "day").format(dateFormat);
+                var dateRangeOptions = dateRangePickerDefaultOptions;
+                dateRangeOptions.startDate = startDate;
+                dateRangeOptions.endDate = endDate;
+                $('#DateRange').val(`${startDate} - ${endDate}`);
+                $('#DateRange').daterangepicker(dateRangeOptions)
+                    .on('apply.daterangepicker', function () {
+                        setTimeout(function () {
+                            bindWidget(item.id, item.actionUrl)
+                        }, 500)
+                    });
+            }
         }
     });
     //});
@@ -178,6 +228,15 @@ function bindWidget(el, actionUrl) {
         var el2 = el.replace("_preview", "");
         var days = $(`#${el2}-header #EmpLeaveNoOfDays`).val();
         query += `&container=${el}&days=${days}`;
+    }
+    if (el.includes("birthday")) {
+        var dateRange = $("#DateRange").val();
+        query += `?DateRange=${encodeURI(dateRange)}`
+    }
+    if (el.includes("waiting")) {
+        var days = $(`#ExpiredDocNoOfDays`).val();
+        var type = $('input[name=DocExpiredType]:checked').val();
+        query += `?type=${type}&container=${el}&days=${days}`;
     }
     url = `${url}${query}`;
     $(`#${el}`).load(url, function () {

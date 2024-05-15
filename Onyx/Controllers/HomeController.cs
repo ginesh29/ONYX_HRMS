@@ -99,17 +99,14 @@ namespace Onyx.Controllers
             ViewBag.Container = container.Replace("_", "");
             return PartialView("_EmpStatisticsChart", EmplLoanAndLeaveApproval.HeadCounts);
         }
-        public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel, int days)
+        public IActionResult DocExpired(ExpiredDocFilterModel filterModel, int days, string container)
         {
             filterModel.StartDate = DateTime.Now.AddDays(1).Date;
             filterModel.EndDate = DateTime.Now.AddDays(days).Date;
-            var docs = _reportService.GetDocExpired(filterModel, _loggedInUser.UserCd, _loggedInUser.CompanyCd);
+            var docs = _reportService.GetDocExpired(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd);
             docs = docs.Select(m => { m.NoOfDays = (m.ExpDt - DateTime.Now.Date).Days; return m; }).ToList();
-            CommonResponse result = new()
-            {
-                Data = docs,
-            };
-            return Json(result);
+            ViewBag.Container = container.Replace("_", "");
+            return PartialView("_DocExpired", docs);
         }
         public IActionResult EmpLeaves(string days, string type, string container)
         {

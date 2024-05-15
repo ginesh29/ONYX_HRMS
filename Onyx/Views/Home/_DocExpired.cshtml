@@ -1,0 +1,58 @@
+﻿@model IEnumerable<GetRepo_ExpiredDocument_Result>
+@{
+    var container = ViewBag.Container;
+    var typeItems = new List<SelectListItem>{
+        new SelectListItem{Value="EMP",Text="Employee",Selected=true},
+        new SelectListItem{Value="COM",Text="Company"},
+        new SelectListItem{Value="VEH",Text="Vehicle"},
+    };
+}
+<table class="table table-sm" id="@container-table">
+    <thead class="thead-dark">
+        <tr>
+            <th>No.</th>
+            <th>Employee</th>
+            <th>Doc. Type</th>
+            <th>Doc. No.</th>
+            <th>Expiry Date</th>
+            <th>Days</th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Select((value, i) => new { i, value }))
+    {
+        <tr>
+            <td>@(item.i + 1)</td>
+            <td>@item.value.Name (@item.value.Cd.Trim())</td>
+            <td>@item.value.DocTypSDes</td>
+            <td>@item.value.DocNo</td>
+            <td>@item.value.ExpDt.FormatDate()</td>
+            <td>
+                <label class="badge badge-info">@item.value.NoOfDays day(s)</label>
+            </td>
+            <td>
+                @if (item.value.Type == "EMP")
+                {
+                    <button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('@item.value.Cd.Trim()','@item.value.DocTypCd.Trim()',@item.value.SrNo)">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                }
+                else if (item.value.Type == "VEH")
+                {
+                    <button class="btn btn-sm btn-info" onclick="showComDocumentModal('@item.value.DocTypCd.Trim()','@item.value.DivCd.Trim()')">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('@item.value.Cd.Trim()','@item.value.DocTypCd.Trim()',@item.value.SrNo)">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                }
+            </td>
+        </tr>
+    }
+</table>
+<script>
+    $(`#@container-table`).DataTable(dataTableDefaultOptions);
+</script>

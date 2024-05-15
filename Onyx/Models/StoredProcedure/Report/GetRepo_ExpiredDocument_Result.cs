@@ -7,6 +7,7 @@
         public string DocTypCd { get; set; }
         public string DocTypSDes { get; set; }
         public decimal SrNo { get; set; }
+        public string DivCd { get; set; }
         public string DocNo { get; set; }
         public string OthRefNo { get; set; }
         public DateTime IssueDt { get; set; }
