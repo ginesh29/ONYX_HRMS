@@ -1,17 +1,4 @@
-﻿var dateFormat = $("#LocalDateFormat").val();
-var startDate = moment().subtract(1, "day").format(dateFormat);
-var endDate = moment().add(1, "day").format(dateFormat);
-var dateRangeOptions = dateRangePickerDefaultOptions;
-dateRangeOptions.startDate = startDate;
-dateRangeOptions.endDate = endDate;
-$('#DateRange').val(`${startDate} - ${endDate}`);
-$('#DateRange').daterangepicker(dateRangeOptions)
-    .on('apply.daterangepicker', function () {
-        setTimeout(function () {
-            loadBirthdayEvents();
-        }, 500)
-    });
-let grid = GridStack.init();
+﻿let grid = GridStack.init();
 grid.on('added removed change', function (e, items) {
     var data = grid.save();
     console.log(data);
@@ -79,6 +66,11 @@ if (userLinkedTo != "Emp") {
                             <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('not_joined_list','EmpLeaves?type=5')">
                                 ${drpHtml}
                             </select>
+                        </div>` },
+        {
+            x: 0, y: 20, w: 6, h: 4, id: 'birthday_events', title: "Birthday/Work Anniversary", actionUrl: "EmpBirthdayEvents", header: `<label class="mb-0">Date Range</label>
+                        <div class="col-md-4">
+                            <input id="DateRange" type="text" class="form-control">
                         </div>` },
     ];
     var chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
