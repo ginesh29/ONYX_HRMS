@@ -136,4 +136,14 @@ Create or ALTER procedure [dbo].[WidgetMaster_GetRow]
 As
 	select * from WidgetMaster  where	isnull(active,0)=1
 
+ALTER TABLE WidgetMaster
+ADD X varchar(5);
 
+ALTER TABLE WidgetMaster
+ADD Y varchar(5);
+
+ALTER TABLE WidgetMaster
+ADD H varchar(5);
+
+ALTER TABLE WidgetMaster
+ADD W varchar(5);
