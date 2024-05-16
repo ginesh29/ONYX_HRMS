@@ -135,27 +135,16 @@ As
 	select * from WidgetMaster  where	isnull(active,0)=1
 
 ALTER TABLE WidgetMaster
-ADD X varchar(5);
-
-<<<<<<< HEAD
-
-
+ADD Type varchar(1);
 
 ALTER TABLE WidgetMaster
 ADD X varchar(5);
 
-=======
->>>>>>> 8e3b9314a51454696e5cf79a4ca098435077a26c
 ALTER TABLE WidgetMaster
 ADD Y varchar(5);
 
 ALTER TABLE WidgetMaster
-ADD H varchar(5);
+ADD W varchar(5);
 
 ALTER TABLE WidgetMaster
-ADD W varchar(5);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 8e3b9314a51454696e5cf79a4ca098435077a26c
+ADD H varchar(5);

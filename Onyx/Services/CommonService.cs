@@ -235,6 +235,30 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return widgets;
         }
+        public void SaveUserWidget(WidgetModel widget, string UserCd)
+        {
+            var procedureName = "UserWidgets_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_UserCd", UserCd);
+            parameters.Add("v_Widget_Id", widget.Id);
+            parameters.Add("v_XPos", widget.X);
+            parameters.Add("v_YPos", widget.Y);
+            parameters.Add("v_Width", widget.W);
+            parameters.Add("v_Height", widget.H);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public void DeleteUserWidget(string UserCd, string WidgetId = null)
+        {
+            var procedureName = "UserWidgets_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_UserCd", UserCd);
+            parameters.Add("v_Widget_Id", WidgetId);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
         public IEnumerable<SelectListItem> GetComponentTypes()
         {
             var componentTypes = new List<SelectListItem>()

@@ -396,7 +396,11 @@ textarea {
     cursor: not-allowed;
     pointer-events: none;
 }
-
+.dropdown-item.disabled, .dropdown-item:disabled {
+    color: #7E8299;
+    pointer-events: none;
+    background-color: transparent;
+}
 .file-drop-area {
     align-items: center;
     padding: 25px;

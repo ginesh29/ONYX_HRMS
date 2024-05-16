@@ -1,9 +1,7 @@
 ﻿let grid = GridStack.init();
 grid.on('added removed change', function (e, items) {
     var data = grid.save();
-    //console.log(data);
-    //$.post('adviser/dashboard/updatedashboardconfig', { config: data }, function () {
-    //});
+    postAjax('/home/updatedashboardconfig', { widgets: data });
 });
 var defaultChartsJsonData = [];
 $.ajax({
@@ -121,7 +119,6 @@ function bindWidgetDropdown() {
 function bindDashboard() {
     $.get('/home/FetchDashboardConfig', function (response) {
         if (response.data)
-            console.log(response.data)
             chartsJsonData.forEach((n, i) => {
                 var res = response.data.filter(m => m.des == n.des)[0];
                 if (res) {
@@ -158,10 +155,10 @@ function bindDashboard() {
         });
     });
 }
-function addWidget(id) {
-    $(`#${id}_drp_item`).addClass("disabled");
-    var widgetData = chartsJsonData.filter(m => m.des == id && !m.enabled)[0];
-    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.des}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
+function addWidget(des) {
+    $(`#${des}_drp_item`).addClass("disabled");
+    var widgetData = chartsJsonData.filter(m => m.des == des && !m.enabled)[0];
+    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
                         <div class="grid-stack-item-content">${widgetData.content}</div>
                      </div>`;
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);

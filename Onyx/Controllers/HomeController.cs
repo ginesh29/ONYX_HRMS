@@ -65,6 +65,13 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult UpdateDashboardConfig(IEnumerable<WidgetModel> widgets)
+        {
+            var userCd = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : _loggedInUser.UserLinkedTo;
+            foreach (var item in widgets)
+                _commonService.SaveUserWidget(item, userCd);
+            return Json(null);
+        }
         public IActionResult EmpBasicDetail()
         {
             ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
