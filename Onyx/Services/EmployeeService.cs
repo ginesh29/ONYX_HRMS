@@ -96,9 +96,9 @@ namespace Onyx.Services
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_Salute", model.Salute);
-            parameters.Add("v_Fname", model.Fname);
+            parameters.Add("v_Fname", model.Fname ?? string.Empty);
             parameters.Add("v_Mname", model.Mname ?? string.Empty);
-            parameters.Add("v_Lname", model.Lname);
+            parameters.Add("v_Lname", model.Lname ?? string.Empty);
             parameters.Add("v_Sex", model.Sex);
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_Div", model.Div);
@@ -141,7 +141,7 @@ namespace Onyx.Services
             parameters.Add("v_LvPrd", model.LvPrd);
             parameters.Add("v_EmpTyp", model.EmpTyp);
             parameters.Add("v_Status", model.Status);
-            parameters.Add("v_PassportLocation", model.PassportLocation);
+            parameters.Add("v_PassportLocation", model.PassportLocation ?? string.Empty);
             parameters.Add("v_CalcBasis", model.CalcBasis);
             parameters.Add("v_GT", model.GTValue ? "Y" : "N");
             parameters.Add("v_LS", model.LSValue ? "Y" : "N");
