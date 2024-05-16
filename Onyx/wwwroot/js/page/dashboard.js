@@ -1,9 +1,14 @@
 ﻿let grid = GridStack.init();
 grid.on('added removed change', function (e, items) {
-    var data = grid.save();
-    postAjax('/home/updatedashboardconfig', { widgets: data });
+    if (e.type == "removed")
+        deleteAjax(`/home/deletedashboardconfig?widegetId=${items[0].id}`);
+    else {
+        var data = grid.save();
+        postAjax('/home/updatedashboardconfig', { widgets: data });
+    }
 });
 var defaultChartsJsonData = [];
+var chartsJsonData = [];
 $.ajax({
     url: "/Home/FetchWidgetMaster",
     type: 'get',
@@ -12,11 +17,11 @@ $.ajax({
         defaultChartsJsonData = response.data.filter(m => m.active);
     }
 });
-var chartsJsonData = defaultChartsJsonData;
 var empOrUser = $("#EmpOrUser").val();
-if (empOrUser == "E")
-    chartsJsonData = chartsJsonData.filter(m => m.type == "E");
 var userLinkedTo = $("#UserLinkedTo").val();
+if (empOrUser == "E")
+    chartsJsonData = defaultChartsJsonData.filter(m => m.type == "E");
+
 if (userLinkedTo != "Emp") {
     var analysisHeader = `<label class="mb-0">Type</label>
                             <div class="col-md-3">
@@ -80,6 +85,8 @@ if (userLinkedTo != "Emp") {
     })
     chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
 }
+
+
 chartsJsonData.forEach((n, i) =>
     n.content = `<div class="card dashboard-card">
                     <div class="card-header" id="${n.des}-header">
@@ -164,15 +171,11 @@ function addWidget(des) {
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);
     bindWidget(`${widgetData.des}`, `${widgetData.url}`)
 }
-
 function removeWidget(id) {
     $(`#${id}_drp_item`).removeClass("disabled");
-    var el = $(`.grid-stack-item[gs-id="${id}"]`);
+    var el = $(`.grid-stack-item[gs-id='${id}']`)[0];
     grid.removeWidget(el, true);
-    el.remove();
     $('[data-toggle="tooltip"], .tooltip').tooltip("hide");
-    var data = chartsJsonData.filter(m => m.id == id)[0];
-    deleteAjax(`/home/deletedashboardconfig?widegetId=${data.id}`);
 }
 function showChartPreview(el) {
     var container = $(el).attr("data-chart-container");
