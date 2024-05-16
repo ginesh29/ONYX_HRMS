@@ -95,7 +95,7 @@ chartsJsonData.forEach((n, i) =>
                                <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Preview" data-chart-container="${n.des}_preview" data-modal-title="${n.title}" onclick="showChartPreview(this)" data-action-url="${n.url}">
                                    <i class="fas fa-expand icon-md text-primary"></i>
                                </button>
-                               <button class="btn btn-icon btn-sm btn-hover-light-danger ml-2" data-toggle="tooltip" data-original-title="Remove Card" data-chart-container="${n.des}" onClick="removeWidget    (this.parentElement.parentElement.parentElement.parentElement.parentElement,this)">
+                               <button class="btn btn-icon btn-sm btn-hover-light-danger ml-2" data-toggle="tooltip" data-original-title="Remove Card" data-chart-container="${n.id}" onClick="removeWidget('${n.id}')">
                                    <i class="fas fa-times icon-md text-danger"></i>
                                </button>
                             </div>                            
@@ -164,12 +164,15 @@ function addWidget(des) {
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);
     bindWidget(`${widgetData.des}`, `${widgetData.url}`)
 }
-function removeWidget(el, sel) {
-    var id = $(sel).attr("data-chart-container");
+
+function removeWidget(id) {
     $(`#${id}_drp_item`).removeClass("disabled");
+    var el = $(`.grid-stack-item[gs-id="${id}"]`);
     grid.removeWidget(el, true);
     el.remove();
     $('[data-toggle="tooltip"], .tooltip').tooltip("hide");
+    var data = chartsJsonData.filter(m => m.id == id)[0];
+    deleteAjax(`/home/deletedashboardconfig?widegetId=${data.id}`);
 }
 function showChartPreview(el) {
     var container = $(el).attr("data-chart-container");

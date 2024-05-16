@@ -72,6 +72,12 @@ namespace Onyx.Controllers
                 _commonService.SaveUserWidget(item, userCd);
             return Json(null);
         }
+        public IActionResult DeleteDashboardConfig(string widegetId)
+        {
+            var userCd = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : _loggedInUser.UserLinkedTo;
+            _commonService.DeleteUserWidget(userCd, widegetId);
+            return Json(null);
+        }
         public IActionResult EmpBasicDetail()
         {
             ViewBag.EmployeeDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
