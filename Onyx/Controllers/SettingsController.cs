@@ -26,7 +26,7 @@ namespace Onyx.Controllers
         }
 
         #region Company
-        public IActionResult CompanyDetails()
+        public IActionResult Company()
         {
             var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
             var companyObj = new CompanyModel
@@ -47,7 +47,7 @@ namespace Onyx.Controllers
                 FinEndDt = company.FinEndDt,
                 QtyDecs = company.QtyDecs,
             };
-            return View(companyObj);
+            return View("CompanyDetails", companyObj);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateCompany(CompanyModel model)
