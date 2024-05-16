@@ -173,6 +173,7 @@ Create or ALTER procedure [dbo].[UserWidgets_GetRow]
 	@v_UserCd		varchar(10)
 --,	@v_Widget_Id    Varchar(10)
 As
+	Go
 	select 
 			U.*,M.*
 	from 
@@ -183,7 +184,7 @@ As
 		--and		(U.Widget_Id=@v_Widget_Id or @v_Widget_Id='')
 		and		isnull(M.active,0)=1
 
-
+End
 Create or ALTER procedure [dbo].[WidgetMaster_GetRow]
 --drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
 	
