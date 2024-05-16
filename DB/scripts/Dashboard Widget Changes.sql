@@ -1,18 +1,20 @@
 GO
-
-/****** Object:  Table [dbo].[WidgetMaster]    Script Date: 15/05/2024 3:03:35 PM ******/
+/** Object:  Table [dbo].[WidgetMaster]    Script Date: 16/05/2024 12:31:04 **/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
 CREATE TABLE [dbo].[WidgetMaster](
 	[Id] [varchar](10) NOT NULL,
 	[Des] [varchar](100) NULL,
 	[Title] [varchar](100) NULL,
 	[Url] [varchar](500) NULL,
 	[Active] [bit] NULL,
+	[Type] [varchar](1) NULL,
+	[X] [varchar](5) NULL,
+	[Y] [varchar](5) NULL,
+	[W] [varchar](5) NULL,
+	[H] [varchar](5) NULL,
  CONSTRAINT [PK_WidgetMaster] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -21,22 +23,50 @@ CREATE TABLE [dbo].[WidgetMaster](
 GO
 
 
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP001', N'emp_basic_details', N'Employee Basic Details', N'EmpBasicDetail', 1, N'E', N'0', N'0', N'6', N'4')
 GO
-INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP001', N'emp_basic_details', N'Employee Basic Details', N'EmpBasicDetail', 1)
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP0010', N'return_list', N'Return List', N'EmpLeaves?type=4', 1, N'U', N'7', N'20', N'5', N'4')
 GO
-INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP002', N'my_documents', N'My Documents', N'MyDocuments', 1)
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP0011', N'not_joined_list', N'Not Joined List', N'EmpLeaves?type=5', 1, N'U', N'6', N'16', N'6', N'4')
 GO
-INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP003', N'my_leaves', N'My Leave', N'MyLeaves', 1)
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP0012', N'birthday_events', N'Birthday/Work Anniversary', N'EmpBirthdayEvents', 1, N'U', N'0', N'24', N'7', N'4')
 GO
-INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP004', N'my_loans', N'My Loans', N'MyLoans', 1)
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP0013', N'doc_expiry_waiting', N'Document Expiry Waiting List', N'DocExpired', 1, N'U', N'0', N'20', N'7', N'4')
 GO
-INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active]) VALUES (N'COMP005', N'salary_chart', N'Employee Salary Chart', N'EmpSalaryChart', 1)
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP002', N'my_documents', N'My Documents', N'MyDocuments', 1, N'E', N'6', N'0', N'6', N'4')
 GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP003', N'my_leaves', N'My Leave', N'MyLeaves', 1, N'E', N'0', N'4', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP004', N'my_loans', N'My Loans', N'MyLoans', 1, N'E', N'6', N'4', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP005', N'salary_chart', N'Employee Salary Chart', N'EmpSalaryChart', 1, N'E', N'0', N'8', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP006', N'user-salary_chart', N'User Salary Chart', N'UserSalaryChart', 1, N'U', N'6', N'8', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP007', N'emp_analysis_chart', N'Employee Analysis', N'EmpAnalysisChart', 1, N'U', N'0', N'12', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP008', N'emp_statistics_chart', N'Employee Statistics', N'EmpStatisticsChart', 1, N'U', N'6', N'12', N'6', N'4')
+GO
+INSERT [dbo].[WidgetMaster] ([Id], [Des], [Title], [Url], [Active], [Type], [X], [Y], [W], [H]) VALUES (N'COMP009', N'leave_list', N'Leave List', N'EmpLeaves?type=3', 1, N'U', N'0', N'16', N'6', N'4')
+GO
+
+
+--select * from WidgetMaster
 
 
 
 
 
+
+USE [LSHRMS]
+GO
+
+/****** Object:  Table [dbo].[UserWidgets]    Script Date: 16/05/2024 10:50:27 AM ******/
+SET ANSI_NULLS ON
+GO--drop table UserWidgets
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 USE [LSHRMS]
 GO
@@ -62,6 +92,16 @@ CREATE TABLE [dbo].[UserWidgets](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+ALTER TABLE [dbo].[UserWidgets]  WITH CHECK ADD  CONSTRAINT [FK_UserWidgets_WidgetMaster] FOREIGN KEY([Widget_Id])
+REFERENCES [dbo].[WidgetMaster] ([Id])
+GO
+
+ALTER TABLE [dbo].[UserWidgets] CHECK CONSTRAINT [FK_UserWidgets_WidgetMaster]
+GO
+
+
+
 
 ALTER TABLE [dbo].[UserWidgets]  WITH CHECK ADD  CONSTRAINT [FK_UserWidgets_WidgetMaster] FOREIGN KEY([Widget_Id])
 REFERENCES [dbo].[WidgetMaster] ([Id])
@@ -131,8 +171,9 @@ End
 Create or ALTER procedure [dbo].[UserWidgets_GetRow]
 --drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
 	@v_UserCd		varchar(10)
-,	@v_Widget_Id    Varchar(10)
+--,	@v_Widget_Id    Varchar(10)
 As
+	Go
 	select 
 			U.*,M.*
 	from 
@@ -140,10 +181,10 @@ As
 	where
 				U.Widget_Id =M.Id
 		and		(U.UserCd=@v_UserCd or @v_UserCd='')
-		and		(U.Widget_Id=@v_Widget_Id or @v_Widget_Id='')
+		--and		(U.Widget_Id=@v_Widget_Id or @v_Widget_Id='')
 		and		isnull(M.active,0)=1
 
-
+End
 Create or ALTER procedure [dbo].[WidgetMaster_GetRow]
 --drop procedure [dbo].[dbo].[UserWidgets_GetRow] '',''
 	
