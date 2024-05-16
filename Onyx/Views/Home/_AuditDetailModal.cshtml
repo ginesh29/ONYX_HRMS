@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ActivityLogDetail_Getrow_Result>
+@{
+    ViewData["Title"] = "Audit Log";
+    ActivityLogHead_Getrow_Result auditHead = ViewBag.AuditHead;
+}
+<div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Audit Log Detail</h4>            
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div>ActivityId: @auditHead.ActivityId | Activity By: @auditHead.UserCd | Ip: @auditHead.IP | OS: @auditHead.OS | Browser: @auditHead.Browser</div>
+            <div class="mb-3">Start Time: @auditHead.StartTime | End Time: @auditHead.EndTime</div>
+            <table class="table table-sm" id="AuditDetailDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>No.</th>
+                        <th>ProcessId</th>
+                        <th>Time Stamp</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.Select((value, i) => new { i, value }))
+                {
+                    <tr>
+                        <td width="5%">@(item.i + 1)</td>
+                        <td width="10%">@item.value.ProcessId</td>
+                        <td width="20%" class="text-primary">@item.value.TimeStamp</td>
+                        <td>@item.value.Mesg</td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

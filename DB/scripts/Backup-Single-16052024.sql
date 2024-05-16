@@ -1,9 +1,38 @@
 CREATE OR ALTER   Procedure [dbo].[ActivityLogHead_Getrow]
-
+	@v_ActivityId		bigint=''
 As		-- Drop Procedure [dbo].[ActivityLogHead_Getrow]
 Begin
-	select * from ActivityLogHead
+	select * from ActivityLogHead where ActivityId = @v_ActivityId or @v_ActivityId=''
 End
+
+ 
+ Go 
+CREATE OR ALTER Procedure [dbo].[ActivityLogDetail_Update]
+	@v_ActivityId		bigint=''
+,	@v_ProcessId		Char(5)=''
+,	@v_ActivityAbbr		Char(5)=''
+,	@v_TimeStamp		datetime
+,	@v_Mesg				VarChar(max)=''
+As		-- Drop Procedure [dbo].[ActivityLogDetail_Update]'03','13','','','','','','','05/13/2015','U'
+Begin
+		Insert into ActivityLogDetail
+		Values(
+			@v_ActivityId
+		,	(select isnull(MAX(SrNo)+1,1) from ActivityLogDetail where ActivityId=@v_ActivityId)
+		,	@v_ProcessId
+		,	(select Cd from SysCodes where Typ='HRACT' and Abbr=@v_ActivityAbbr)
+		,	@v_Mesg
+		,	@v_TimeStamp)
+End
+
+ 
+ Go 
+CREATE OR ALTER   Procedure [dbo].[ActivityLogDetail_Getrow]
+	@v_ActivityId		bigint=''
+As		-- Drop Procedure [dbo].[ActivityLogDetail_Getrow]
+Begin
+		select * from ActivityLogDetail where ActivityId=@v_ActivityId
+End 
 
  
  Go 

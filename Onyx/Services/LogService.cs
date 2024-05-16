@@ -34,14 +34,27 @@ namespace Onyx.Services
             return result;
         }
 
-        public IEnumerable<ActivityLogHead_Getrow_Result> GetActivityLogHeads()
+        public IEnumerable<ActivityLogHead_Getrow_Result> GetActivityLogHeads(string ActivityId = "")
         {
             var procedureName = "ActivityLogHead_Getrow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_ActivityId", ActivityId);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
-            var widgets = connection.Query<ActivityLogHead_Getrow_Result>
-                (procedureName, commandType: CommandType.StoredProcedure);
-            return widgets;
+            var data = connection.Query<ActivityLogHead_Getrow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
+        public IEnumerable<ActivityLogDetail_Getrow_Result> GetActivityLogDetails(string ActivityId = "")
+        {
+            var procedureName = "ActivityLogDetail_Getrow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_ActivityId", ActivityId);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<ActivityLogDetail_Getrow_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
     }
 }

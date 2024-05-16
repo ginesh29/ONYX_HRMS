@@ -187,6 +187,13 @@ namespace Onyx.Controllers
             var data = _logService.GetActivityLogHeads();
             return View(data);
         }
+        public IActionResult AuditDetail(string id)
+        {
+            var data = _logService.GetActivityLogDetails(id);
+            var auditHead = _logService.GetActivityLogHeads(id).FirstOrDefault();
+            ViewBag.AuditHead = auditHead;
+            return PartialView("_AuditDetailModal", data);
+        }
         public async Task<IActionResult> UpdateClaim(string claimType, string claimValue)
         {
             await _authService.UpdateClaim(claimType, claimValue);

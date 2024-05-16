@@ -120,7 +120,7 @@ function bindWidgetDropdown() {
     $.each(chartsJsonData, function (index, item) {
         var d = chartsJsonData.filter(m => m.des == item.des && m.enabled).length;
         var disabled = d ? "disabled" : "";
-        $("#drp-widgets").append(`<a id='${item.des}_drp_item' class="dropdown-item ${disabled}" href="javascript:" onclick="addWidget('${item.des}')">${item.title}</a>`);
+        $("#drp-widgets").append(`<a id='${item.id}_drp_item' class="dropdown-item ${disabled}" href="javascript:" onclick="addWidget('${item.des}')">${item.title}</a>`);
     });
 }
 function bindDashboard() {
@@ -162,9 +162,9 @@ function bindDashboard() {
         });
     });
 }
-function addWidget(des) {
-    $(`#${des}_drp_item`).addClass("disabled");
+function addWidget(des) {    
     var widgetData = chartsJsonData.filter(m => m.des == des && !m.enabled)[0];
+    $(`#${widgetData.id}_drp_item`).addClass("disabled");
     var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
                         <div class="grid-stack-item-content">${widgetData.content}</div>
                      </div>`;

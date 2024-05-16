@@ -2,6 +2,10 @@
 .layout-fixed .brand-link {
     width: 265px;
 }
+.os-theme-dark > .os-scrollbar-vertical,
+.os-theme-light > .os-scrollbar-vertical {
+    width: 8px !important;
+}
 .grid-stack-item-content {
     background-color: #fff;
     cursor: pointer;

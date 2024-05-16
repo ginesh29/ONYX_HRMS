@@ -132,13 +132,12 @@ namespace Onyx.Services
         }
         public int SetActivityLogDetail(string ActivityId, string ProcessId, string ActivityAbbr, string Message)
         {
-            string UserIdWithName = _loggedInUser.UserCd != _loggedInUser.UserLinkedTo ? $"{_loggedInUser.UserLinkedTo}({_loggedInUser.UserCd})" : _loggedInUser.UserLinkedTo;
-            Message = $"[{DateTime.Now}] {UserIdWithName} {Message}";
             var procedureName = "ActivityLogDetail_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_ActivityId", ActivityId);
             parameters.Add("v_ProcessId", ProcessId);
             parameters.Add("v_ActivityAbbr", ActivityAbbr);
+            parameters.Add("v_TimeStamp", DateTime.Now);
             parameters.Add("v_Mesg", Message);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
