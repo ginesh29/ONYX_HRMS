@@ -37,14 +37,16 @@ GO
 
 
 
+
+USE [LSHRMS]
 GO
 
-/****** Object:  Table [dbo].[UserWidgets]    Script Date: 15/05/2024 2:59:40 PM ******/
+/****** Object:  Table [dbo].[UserWidgets]    Script Date: 16/05/2024 10:50:27 AM ******/
 SET ANSI_NULLS ON
-GO
+GO--drop table UserWidgets
 
 SET QUOTED_IDENTIFIER ON
-GO--drop table UserWidgets 
+GO
 
 CREATE TABLE [dbo].[UserWidgets](
 	[UserCd] [varchar](10) NOT NULL,
@@ -55,10 +57,24 @@ CREATE TABLE [dbo].[UserWidgets](
 	[H] [int] NULL,
  CONSTRAINT [PK_UserWidgets] PRIMARY KEY CLUSTERED 
 (
-	[UserCd] ASC
-	
+	[UserCd] ASC,
+	[Widget_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[UserWidgets]  WITH CHECK ADD  CONSTRAINT [FK_UserWidgets_WidgetMaster] FOREIGN KEY([Widget_Id])
+REFERENCES [dbo].[WidgetMaster] ([Id])
+GO
+
+ALTER TABLE [dbo].[UserWidgets] CHECK CONSTRAINT [FK_UserWidgets_WidgetMaster]
+GO
+
+
+
+
+
+	
 GO
 
 ALTER TABLE [dbo].[UserWidgets]  WITH CHECK ADD  CONSTRAINT [FK_UserWidgets_WidgetMaster] FOREIGN KEY([Widget_Id])
