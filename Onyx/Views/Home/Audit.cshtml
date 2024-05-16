@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ActivityLogHead_Getrow_Result>
+@{
+    ViewData["Title"] = "Audit Log";
+}
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm" id="AuditDataTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Activity Id</th>
+                    <th>Activity By</th>
+                    <th>Ip Adress</th>
+                    <th>OS</th>
+                    <th>Browser</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+            @foreach (var item in Model.Select((value, i) => new { i, value }))
+            {
+                <tr>
+                    <td>@(item.i + 1)</td>
+                    <td>@item.value.ActivityId</td>
+                    <td>@item.value.UserCd</td>
+                    <td>@item.value.IP</td>
+                    <td>@item.value.OS</td>
+                    <td>@item.value.Browser</td>
+                    <td>@item.value.StartTime</td>
+                    <td>@item.value.EndTime</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $("#AuditDataTable").DataTable(dataTableDefaultOptions);
+    </script>
+}

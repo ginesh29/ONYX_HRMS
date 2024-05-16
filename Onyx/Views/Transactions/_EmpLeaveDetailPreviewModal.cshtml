@@ -14,7 +14,7 @@
     var LeaveTotal = LeaveOpening + LeaveCum;
     var Leave = LeaveOpening + LeaveCum;
     var LeaveTaken = leaveDetail.LeaveTaken;
-    var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
+    var LeaveBalance = Leave - LeaveTaken;
     var LeaveEligibility = LeaveBalance >= leaveDetail.ReqLv ? "Yes" : "No";
     var LeaveEligibilityColor = LeaveEligibility == "Yes" ? "success" : "danger";
 

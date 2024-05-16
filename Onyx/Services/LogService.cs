@@ -2,9 +2,7 @@
 using Onyx.Models.ViewModels;
 using System.Data.SqlClient;
 using System.Data;
-using System.Net.Sockets;
-using System.Net;
-using Microsoft.AspNetCore.Http;
+using Onyx.Models.StoredProcedure;
 
 namespace Onyx.Services
 {
@@ -12,6 +10,7 @@ namespace Onyx.Services
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+
         public string SetActivityLogHead(ActivityLogModel model)
         {
             var ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
@@ -33,6 +32,16 @@ namespace Onyx.Services
             string result = connection.QueryFirstOrDefault<string>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
+        }
+
+        public IEnumerable<ActivityLogHead_Getrow_Result> GetActivityLogHeads()
+        {
+            var procedureName = "ActivityLogHead_Getrow";
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var widgets = connection.Query<ActivityLogHead_Getrow_Result>
+                (procedureName, commandType: CommandType.StoredProcedure);
+            return widgets;
         }
     }
 }
