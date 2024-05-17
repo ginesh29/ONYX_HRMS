@@ -50,31 +50,27 @@
             var LeaveOpening = item.LeaveOp;
             var LeaveCum = item.Leave;
             var LeaveTotal = LeaveOpening + LeaveCum;
-            var Leave = LeaveOpening + LeaveCum;
             var LeaveTaken = item.LeaveTaken;
-            var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
+            var LeaveBalance = LeaveTotal - LeaveTaken;
 
             var LeaveSalDaysOpening = item.LvSalDaysOp;
             var LeaveSalDaysCum = item.LvSalDays;
             var LeaveSalDaysTotal = LeaveSalDaysOpening + LeaveSalDaysCum;
-            var LeaveSalDays = LeaveSalDaysOpening + LeaveSalDaysCum;
             var LeaveSalDaysTaken = item.LvSalDaysTaken;
-            var LeaveSalDaysBalance = LeaveSalDaysOpening + LeaveSalDays - LeaveSalDaysTaken;
+            var LeaveSalDaysBalance = LeaveSalDaysTotal - LeaveSalDaysTaken;
 
             var LeaveSalOpening = item.LvSalaryOp;
             var LeaveSalCum = item.LvSalary;
             var LeaveSalTotal = LeaveSalOpening + LeaveSalCum;
-            var LeaveSal = LeaveSalOpening + LeaveSalCum;
             var LeaveSalTaken = item.LvSalaryTaken;
-            var LeaveSalBalance = LeaveSalOpening + LeaveSal - LeaveSalTaken;
+            var LeaveSalBalance = LeaveSalTotal - LeaveSalTaken;
             var LeaveSalEligibility = LeaveSalBalance >= item.LvSalYr ? "Yes" : "No";
 
             var LeaveTicketOpening = item.LvTicketOp;
             var LeaveTicketCum = item.LvTicket;
             var LeaveTicketTotal = LeaveTicketOpening + LeaveTicketCum;
-            var LeaveTicket = LeaveTicketOpening + LeaveTicketCum;
             var LeaveTicketTaken = item.LvTicketTaken;
-            var LeaveTicketBalance = LeaveTicketOpening + LeaveTicket - LeaveTicketTaken;
+            var LeaveTicketBalance = LeaveTicketTotal - LeaveTicketTaken;
             var LeaveTicketEligibility = LeaveTicketBalance >= item.LvTicYr ? "Yes" : "No";
             <tr>
                 <td>@item.Name (@item.Code.Trim())</td>

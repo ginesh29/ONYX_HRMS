@@ -370,9 +370,12 @@ function initControls() {
         $(this).val(startDate);
     });
     $('.date-input').each(function () {
-        var date = moment($(this).val(), 'DD/MM/YYYY HH:mm:ss');
-        var formattedDate = date.format('DD/MM/YYYY');
-        $(this).val(formattedDate);
+        var dt = $(this).val();
+        if (dt) {
+            var date = moment(dt, 'DD/MM/YYYY HH:mm:ss');
+            var formattedDate = date.format('DD/MM/YYYY');
+            $(this).val(formattedDate);
+        }
     });
 
     $('.month-year-input').attr("placeholder", "mm/yyyy");
