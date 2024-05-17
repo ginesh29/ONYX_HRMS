@@ -361,7 +361,7 @@ function initControls() {
         locale: {
             format: CommonSetting.DisplayDateFormat
         },
-        //autoUpdateInput: false,
+        autoUpdateInput: false,
         autoApply: true,
         singleDatePicker: true,
         showDropdowns: true,
@@ -369,6 +369,12 @@ function initControls() {
         var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
         $(this).val(startDate);
     });
+    $('.date-input').each(function () {
+        var date = moment($(this).val(), 'DD/MM/YYYY HH:mm:ss');
+        var formattedDate = date.format('DD/MM/YYYY');
+        $(this).val(formattedDate);
+    });
+
     $('.month-year-input').attr("placeholder", "mm/yyyy");
     $('.month-year-input').datetimepicker({
         viewMode: 'months',
