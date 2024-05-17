@@ -70,18 +70,17 @@ if (userLinkedTo != "Emp") {
                                           </select>
                                        </div>`:
                 n.des.includes("birthday") ? `<label class="mb-0">Date Range</label>
-                                           <div class="col-md-4">
+                                           <div class="col-md-5">
                                                <input id="DateRange" type="text" class="form-control">
-                                           </div>` : "";
-        n.subheader = n.subheader = n.des.includes("waiting") ? `<div class="d-flex align-items-center">
+                                           </div>`:
+                    n.des.includes("waiting") ? `
                         ${radioTypeHtml}
                         <label class="mb-0">No of Days Before</label>
                         <div class="col-md-3">
                             <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('${n.des}','${n.url}')">
                             ${drpDaysHtml}
                             </select>
-                        </div>
-                    </div>` : ""
+                        </div>` : ""
     })
     chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
 }
@@ -94,7 +93,6 @@ chartsJsonData.forEach((n, i) =>
                             <h5 class="card-label text-primary mr-auto">
                                  ${n.title}
                             </h5>
-                            ${n.header ? n.header : ""}
                             <div class="card-toolbar d-flex">
                                <button class="btn btn-icon btn-sm btn-hover-light-primary ml-2" data-toggle="tooltip" data-original-title="Reload Card" data-chart-container="${n.des}" data-variable="${n.des}_data" data-modal-title="${n.title}" onclick="bindWidget('${n.des}','${n.url}')">
                                    <i class="fas fa-sync-alt icon-md text-primary"></i>
@@ -107,7 +105,9 @@ chartsJsonData.forEach((n, i) =>
                                </button>
                             </div>                            
                         </div>
-                        ${n.subheader ? n.subheader : ""}
+                        <div class="d-flex align-items-center">
+                            ${n.header ? n.header : ""}
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="overlay-wrapper">
@@ -162,10 +162,13 @@ function bindDashboard() {
         });
     });
 }
-function addWidget(des) {    
-    var widgetData = chartsJsonData.filter(m => m.des == des && !m.enabled)[0];
+function addWidget(des) {
+    var widgetData = defaultChartsJsonData.filter(m => m.des == des && !m.enabled)[0];
     $(`#${widgetData.id}_drp_item`).addClass("disabled");
-    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${widgetData.x}" gs-y="${widgetData.y}" gs-w="${widgetData.w}" gs-h="${widgetData.h}">
+    var widgetLength = $(".grid-stack-item").length;
+    var x = widgetLength % 2 == 0 ? 0 : 6;
+    var maxY = _.maxBy(chartsJsonData, 'y') && _.maxBy(chartsJsonData, 'y').y;
+    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${x}" gs-y="${maxY}" gs-w="6" gs-h="4">
                         <div class="grid-stack-item-content">${widgetData.content}</div>
                      </div>`;
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);

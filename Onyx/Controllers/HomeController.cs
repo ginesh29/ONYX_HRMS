@@ -15,10 +15,9 @@ namespace Onyx.Controllers
         private readonly EmployeeService _employeeService;
         private readonly TransactionService _transactionService;
         private readonly ReportService _reportService;
-        private readonly LogService _logService;
         private readonly LoggedInUserModel _loggedInUser;
 
-        public HomeController(AuthService authService, ReportService reportService, CommonService commonService, EmployeeService employeeService, TransactionService transactionService, LogService logService)
+        public HomeController(AuthService authService, ReportService reportService, CommonService commonService, EmployeeService employeeService, TransactionService transactionService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
@@ -26,7 +25,6 @@ namespace Onyx.Controllers
             _commonService = commonService;
             _employeeService = employeeService;
             _transactionService = transactionService;
-            _logService = logService;
         }
 
         #region Dashboard
@@ -181,19 +179,7 @@ namespace Onyx.Controllers
                 }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
             return PartialView("_EmpBirthdayEvents", events);
         }
-        #endregion
-        public IActionResult Audit()
-        {
-            var data = _logService.GetActivityLogHeads();
-            return View(data);
-        }
-        public IActionResult AuditDetail(string id)
-        {
-            var data = _logService.GetActivityLogDetails(id);
-            var auditHead = _logService.GetActivityLogHeads(id).FirstOrDefault();
-            ViewBag.AuditHead = auditHead;
-            return PartialView("_AuditDetailModal", data);
-        }
+        #endregion        
         public async Task<IActionResult> UpdateClaim(string claimType, string claimValue)
         {
             await _authService.UpdateClaim(claimType, claimValue);

@@ -44,7 +44,7 @@
     <script>
         $("#AuditDataTable").DataTable(dataTableDefaultOptions);
         function showActivityDetailModal(id) {
-            $("#AuditDetailModal").load(`/Home/AuditDetail?id=${id}`, function (response) {
+            $("#AuditDetailModal").load(`/Settings/AuditDetail?id=${id}`, function (response) {
                 if ($.fn.DataTable.isDataTable('#AuditDetailDataTable'))
                     $('#AuditDetailDataTable').DataTable().destroy();
                 var columnDefs = [

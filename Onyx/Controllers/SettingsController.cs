@@ -13,9 +13,10 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly UserService _userService;
         private readonly CommonService _commonService;
+        private readonly LogService _logService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly FileHelper _fileHelper;
-        public SettingsController(AuthService authService, SettingService settingService, CommonService commonService, UserService userService)
+        public SettingsController(AuthService authService, SettingService settingService, CommonService commonService, UserService userService, LogService logService)
         {
             _authService = authService;
             _loggedInUser = _authService.GetLoggedInUser();
@@ -23,6 +24,7 @@ namespace Onyx.Controllers
             _commonService = commonService;
             _fileHelper = new FileHelper();
             _userService = userService;
+            _logService = logService;
         }
 
         #region Company
@@ -414,6 +416,21 @@ namespace Onyx.Controllers
                 Message = CommonMessage.DELETED
             };
             return Json(result);
+        }
+        #endregion
+
+        #region Audit
+        public IActionResult UserAudit()
+        {
+            var data = _logService.GetActivityLogHeads();
+            return View(data);
+        }
+        public IActionResult AuditDetail(string id)
+        {
+            var data = _logService.GetActivityLogDetails(id);
+            var auditHead = _logService.GetActivityLogHeads(id).FirstOrDefault();
+            ViewBag.AuditHead = auditHead;
+            return PartialView("_AuditDetailModal", data);
         }
         #endregion
     }
