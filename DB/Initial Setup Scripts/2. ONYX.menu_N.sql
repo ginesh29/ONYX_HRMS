@@ -212,3 +212,5 @@ INSERT [dbo].[MenuCtrl_N] ([AppCd], [MenuId], [Prnt], [Caption], [MenuOrder], [T
 GO
 INSERT [dbo].[MenuCtrl_N] ([AppCd], [MenuId], [Prnt], [Caption], [MenuOrder], [Typ], [Frm], [Active], [Abbr], [ProcessId]) VALUES (N'H    ', N'91        ', N'9         ', N'Emp. Incentives', CAST(100 AS Numeric(5, 0)), N'O', N'/INCENTIVES/EmpIncentives', N'Y', NULL, N'HREMPI')
 GO
+insert into MenuCtrl_N values('H','114','11','Company',6,'O','/Settings/Company','Y',NULL,'HRPS14')
+insert into MenuCtrl_N values('H','115','11','UserAudt',7,'O','/Settings/Useraudit','Y',NULL,'HRPS15')
