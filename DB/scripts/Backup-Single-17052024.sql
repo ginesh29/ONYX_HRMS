@@ -1,3 +1,107 @@
+CREATE OR ALTER procedure [dbo].[Company_GetRow]
+--drop procedure [dbo].[Company_GetRow]'01','0'
+	@v_Cd	Char(5)
+,	@v_Typ	Char(2)   ='' 
+As
+	Declare @Prd int
+	Declare @Year int
+	select @Prd=val from Parameters where Cd='CUR_MONTH'    
+	select @Year=Val from Parameters where Cd='CUR_YEAR'
+	select 
+			Cd
+	,		CoName
+	,		Add1
+	,		Add2
+	,		Add3
+	,		Phone
+	,		Logo
+	,		LoginBg
+	,		Fax
+	,		Email
+	,		QtyDecs
+	,		AmtDecs
+	,		BaseCurr
+	,		RptCurr
+	,		FinBeginDt
+	,		CONVERT(varchar(20),FinBeginDt,103)[FormatedFinBeginDt]
+	,		FinEndDt
+	,		CONVERT(varchar(20),FinEndDt,103)[FormatedFinEndDt]
+	,		@Prd[Prd]
+	,		@Year[Year]
+	--,		rtrim(Day(getDate()))+'/'+rtrim(Month(getDate()))+'/'+rtrim(Year(getDate()))[DayDate]
+	,		LEFT(CONVERT(varchar,getdate(),105),10) [DayDate]
+	from 
+			Company
+	where
+			(@v_Typ='0') or
+			(@v_Typ='1' and Cd=@v_Cd) 
+
+ 
+ Go 
+CREATE OR ALTER procedure [dbo].[Company_Update]
+		@v_Cd                  	Char(5)
+	,	@v_CoName              	Varchar(50)
+	,	@v_Add1                	Varchar(50)
+	,	@v_Add2                	Varchar(50)
+	,	@v_Add3                	Varchar(50)
+	,	@v_Phone               	Varchar(20)
+	,	@v_Fax                 	Varchar(20)
+	,	@v_Email               	Varchar(40)
+	,	@v_AmtDecs             	Numeric(1,0)
+	,	@v_BaseCurr            	Char(5)
+	,	@v_RptCurr             	Char(5)=''
+	,	@v_FinBeginDt	Datetime =''
+	,	@v_FinEndDt	DateTime=''
+	,	@v_QtyDecs             	Numeric(1,0)
+	,	@v_Logo	varchar(max)
+	,	@v_LoginBg varchar(max)
+as
+begin
+	IF (SELECT COUNT(*) FROM Company WHERE Cd = @v_Cd) = 0
+	    Begin
+		insert into Company (Cd,CoName,Add1,Add2,Add3,Phone,Fax,Email,QtyDecs,AmtDecs,BaseCurr,RptCurr,FinBeginDt,FinEndDt,Logo,LoginBg) 
+		Values(
+	        		@v_Cd
+	        	,	@v_CoName
+	        	,	@v_Add1
+	        	,	@v_Add2
+	        	,	@v_Add3
+	        	,	@v_Phone
+	        	,	@v_Fax
+	        	,	@v_Email
+	        	,	@v_QtyDecs
+	        	,	@v_AmtDecs
+	        	,	@v_BaseCurr
+	        	,	@v_RptCurr
+		,	@V_FinBeginDt
+		,	@v_FinEndDt
+		,	@v_Logo
+		,	@v_LoginBg)
+	    end
+	Else
+	    Begin
+	        Update Company
+	          Set
+			CoName	= @v_CoName
+		,	Add1		= @v_Add1
+		,	Add2		= @v_Add2
+		,	Add3		= @v_Add3
+		,	Phone		= @v_Phone
+		,	Fax		= @v_Fax
+		,	Email		= @v_Email
+		,	QtyDecs             = @v_QtyDecs
+		,	AmtDecs	= @v_AmtDecs
+		,	BaseCurr            = @v_BaseCurr
+		,	RptCurr             	= @v_RptCurr
+		,	FinBeginDt	= @v_FinBeginDt
+		,	FinEndDt	= @v_FinEndDt
+		,	Logo	=	@v_Logo
+		,	LoginBg =	@v_LoginBg
+	where Cd = @v_Cd
+    End
+End
+ 
+ Go 
 CREATE OR ALTER   Procedure [dbo].[ActivityLogHead_Getrow]
 	@v_ActivityId		bigint=''
 As		-- Drop Procedure [dbo].[ActivityLogHead_Getrow]
@@ -877,106 +981,6 @@ End
 --SELECT   Sum(AmtVal)[LoanRecoveryAmount] from EmpLoanDetail where EffDate>= DATEADD(MONTH, DATEDIFF(MONTH, 0, @startdate) , 0) and EndDate<=cast(EOMONTH(@startdate) as datetime) and Typ='D'
 
 --Admin Dashboard salary details graph 
- Go 
-CREATE OR ALTER procedure [dbo].[Company_GetRow]
---drop procedure [dbo].[Company_GetRow]'01','0'
-	@v_Cd	Char(5)
-,	@v_Typ	Char(2)   ='' 
-As
-	Declare @Prd int
-	Declare @Year int
-	select @Prd=val from Parameters where Cd='CUR_MONTH'    
-	select @Year=Val from Parameters where Cd='CUR_YEAR'
-	select 
-			Cd
-	,		CoName
-	,		Add1
-	,		Add2
-	,		Add3
-	,		Phone
-	,		Logo
-	,		Fax
-	,		Email
-	,		QtyDecs
-	,		AmtDecs
-	,		BaseCurr
-	,		RptCurr
-	,		FinBeginDt
-	,		CONVERT(varchar(20),FinBeginDt,103)[FormatedFinBeginDt]
-	,		FinEndDt
-	,		CONVERT(varchar(20),FinEndDt,103)[FormatedFinEndDt]
-	,		@Prd[Prd]
-	,		@Year[Year]
-	--,		rtrim(Day(getDate()))+'/'+rtrim(Month(getDate()))+'/'+rtrim(Year(getDate()))[DayDate]
-	,		LEFT(CONVERT(varchar,getdate(),105),10) [DayDate]
-	from 
-			Company
-	where
-			(@v_Typ='0') or
-			(@v_Typ='1' and Cd=@v_Cd) 
-
- 
- Go 
-CREATE OR ALTER procedure [dbo].[Company_Update]
-		@v_Cd                  	Char(5)
-	,	@v_CoName              	Varchar(50)
-	,	@v_Add1                	Varchar(50)
-	,	@v_Add2                	Varchar(50)
-	,	@v_Add3                	Varchar(50)
-	,	@v_Phone               	Varchar(20)
-	,	@v_Fax                 	Varchar(20)
-	,	@v_Email               	Varchar(40)
-	,	@v_AmtDecs             	Numeric(1,0)
-	,	@v_BaseCurr            	Char(5)
-	,	@v_RptCurr             	Char(5)=''
-	,	@v_FinBeginDt	Datetime =''
-	,	@v_FinEndDt	DateTime=''
-	,	@v_QtyDecs             	Numeric(1,0)
-	,	@v_Logo	varchar(max)
-as
-begin
-	IF (SELECT COUNT(*) FROM Company WHERE Cd = @v_Cd) = 0
-	    Begin
-		insert into Company (Cd,CoName,Add1,Add2,Add3,Phone,Fax,Email,QtyDecs,AmtDecs,BaseCurr,RptCurr,FinBeginDt,FinEndDt,Logo) 
-		Values(
-	        		@v_Cd
-	        	,	@v_CoName
-	        	,	@v_Add1
-	        	,	@v_Add2
-	        	,	@v_Add3
-	        	,	@v_Phone
-	        	,	@v_Fax
-	        	,	@v_Email
-	        	,	@v_QtyDecs
-	        	,	@v_AmtDecs
-	        	,	@v_BaseCurr
-	        	,	@v_RptCurr
-		,	@V_FinBeginDt
-		,	@v_FinEndDt
-		,	@v_Logo )
-	    end
-	Else
-	    Begin
-	        Update Company
-	          Set
-			CoName	= @v_CoName
-		,	Add1		= @v_Add1
-		,	Add2		= @v_Add2
-		,	Add3		= @v_Add3
-		,	Phone		= @v_Phone
-		,	Fax		= @v_Fax
-		,	Email		= @v_Email
-		,	QtyDecs             = @v_QtyDecs
-		,	AmtDecs	= @v_AmtDecs
-		,	BaseCurr            = @v_BaseCurr
-		,	RptCurr             	= @v_RptCurr
-		,	FinBeginDt	= @v_FinBeginDt
-		,	FinEndDt	= @v_FinEndDt
-		,	Logo	=	@v_Logo
-	where Cd = @v_Cd
-    End
-End
- 
  Go 
 
 CREATE OR ALTER    Procedure [dbo].[EmplLoanAndLeaveHistory_N]

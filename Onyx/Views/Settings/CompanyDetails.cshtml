@@ -12,6 +12,7 @@
                     <input type="hidden" asp-for="FinEndDt" />
                     <input type="hidden" asp-for="QtyDecs" />
                     <input type="hidden" asp-for="Logo" />
+                    <input type="hidden" asp-for="LoginBg" />
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group">
@@ -89,14 +90,29 @@
                             <div class="form-group">
                                 <label asp-for="LogoFile">Logo</label>
                                 <div class="custom-file">
-                                    <input asp-for="LogoFile" class="custom-file-input" onchange="previewLogo(event)">
-                                    <label class="custom-file-label" id="logo-file-label" asp-for="LogoFile">@(!string.IsNullOrEmpty(Model.Logo) ? Model.Logo : "Choose file")</label>
+                                    <input asp-for="LogoFile" class="custom-file-input" onchange="previewLogo(event,'Logo')">
+                                    <label class="custom-file-label" id="Logo-file-label" asp-for="LogoFile">@(!string.IsNullOrEmpty(Model.Logo) ? Model.Logo : "Choose file")</label>
                                 </div>
                                 <span asp-validation-for="LogoFile" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <img id="Logo-Preview" style="height:100px" src="~/uploads/company-logo/@Model.Logo" class="@(string.IsNullOrEmpty(Model.Logo) ? "d-none" :"")" asp-append-version="true">
+                            <img id="Logo-Preview" style="height:100px" src="~/uploads/company/@Model.Logo" class="@(string.IsNullOrEmpty(Model.Logo) ? "d-none" :"")" asp-append-version="true">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LoginBgFile">Login Background</label>
+                                <div class="custom-file">
+                                    <input asp-for="LoginBgFile" class="custom-file-input" onchange="previewLogo(event,'LoginBg')">
+                                    <label class="custom-file-label" id="LoginBg-file-label" asp-for="LoginBgFile">@(!string.IsNullOrEmpty(Model.LoginBg) ? Model.LoginBg : "Choose file")</label>
+                                </div>
+                                <span asp-validation-for="LoginBgFile" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <img id="LoginBg-Preview" style="height:100px" src="~/uploads/company/@Model.LoginBg" class="@(string.IsNullOrEmpty(Model.LoginBg) ? "d-none" :"")" asp-append-version="true">
                         </div>
                     </div>
                 </form>
@@ -122,15 +138,22 @@
                 });
             }
         }
-        function previewLogo(event) {
-            var reader = new FileReader();
-            reader.onload = function () {
-                var output = document.getElementById('Logo-Preview');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(event.target.files[0]);
-            var filename = $("#LogoFile").val().split("\\").pop();
-            $("#logo-file-label").text(filename);
+        function previewLogo(event, type) {            
+            var reader = new FileReader()
+            var ext = event.target.files[0].name.split('.').pop().toLowerCase();
+            if (imageExtensions.includes(ext)) {
+                reader.onload = function () {
+                    var output = document.getElementById(`${type}-Preview`);
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+                var filename = $(`#${type}File`).val().split("\\").pop();
+                debugger
+                $(`#${type}-file-label`).text(filename);
+                $(`#${type}-Preview`).removeClass("d-none");
+            }
+            else
+                showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         };
     </script>
 }

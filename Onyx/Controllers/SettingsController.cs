@@ -28,6 +28,16 @@ namespace Onyx.Controllers
         }
 
         #region Company
+        [AllowAnonymous]
+        public IActionResult GetCompany(string CoCd, string CoAbbr)
+        {
+            var company = _settingService.GetCompany(CoCd, CoAbbr);
+            CommonResponse result = new()
+            {
+                Data = company,
+            };
+            return Json(result);
+        }
         public IActionResult Company()
         {
             var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
@@ -48,6 +58,7 @@ namespace Onyx.Controllers
                 FinBeginDt = company.FinBeginDt,
                 FinEndDt = company.FinEndDt,
                 QtyDecs = company.QtyDecs,
+                LoginBg = company.LoginBg
             };
             return View("CompanyDetails", companyObj);
         }
@@ -58,12 +69,23 @@ namespace Onyx.Controllers
             {
                 var ext = Path.GetExtension(model.LogoFile.FileName);
                 var logoFilename = $"logo-{model.CoCd}{ext}";
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/company-logo", logoFilename);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/company", logoFilename);
                 if (System.IO.File.Exists(filePath))
                     System.IO.File.Delete(filePath);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                     await model.LogoFile.CopyToAsync(stream);
                 model.Logo = logoFilename;
+            }
+            if (model.LoginBgFile != null)
+            {
+                var ext = Path.GetExtension(model.LoginBgFile.FileName);
+                var loginbgFilename = $"loginbg-{model.CoCd}{ext}";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/company", loginbgFilename);
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                    await model.LoginBgFile.CopyToAsync(stream);
+                model.LoginBg = loginbgFilename;
             }
             model.CoCd = _loggedInUser.CompanyCd;
             _settingService.SaveCompany(model);
@@ -76,6 +98,7 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
         #region Branch
         public IActionResult Branches()
         {

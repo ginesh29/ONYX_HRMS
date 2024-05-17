@@ -26,7 +26,6 @@ namespace Onyx.Services
         {
             try
             {
-
                 var procedureName = "Company_Update";
                 var parameters = new DynamicParameters();
                 parameters.Add("v_Cd", model.CoCd);
@@ -44,6 +43,7 @@ namespace Onyx.Services
                 parameters.Add("v_FinEndDt", model.FinEndDt);
                 parameters.Add("v_QtyDecs", model.QtyDecs);
                 parameters.Add("v_Logo", model.Logo);
+                parameters.Add("v_LoginBg", model.LoginBg);
                 var connectionString = _dbGatewayService.GetConnectionString();
                 var connection = new SqlConnection(connectionString);
                 connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);

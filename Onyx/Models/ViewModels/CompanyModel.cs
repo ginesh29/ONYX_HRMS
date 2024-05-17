@@ -35,5 +35,8 @@ namespace Onyx.Models.ViewModels
         public int? Prd { get; set; }
         public int? Year { get; set; }
         public string DayDate { get; set; }
+        public string LoginBg { get; set; }
+        [Display(Name = "Login Background")]
+        public IFormFile LoginBgFile { get; set; }
     }
 }

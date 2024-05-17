@@ -11,8 +11,30 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-            <div>ActivityId: @auditHead.ActivityId | Activity By: @auditHead.UserCd | Ip: @auditHead.IP | OS: @auditHead.OS | Browser: @auditHead.Browser</div>
-            <div class="mb-3">Start Time: @auditHead.StartTime | End Time: @auditHead.EndTime</div>
+           @*  <div>ActivityId: @auditHead.ActivityId | Activity By: @auditHead.UserCd | Ip: @auditHead.IP | OS: @auditHead.OS | Browser: @auditHead.Browser</div>
+            <div class="mb-3">Start Time: @auditHead.StartTime | End Time: @auditHead.EndTime</div> *@
+            <table class="table table-sm" id="AuditDataTable">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Activity Id</th>
+                        <th>Activity By</th>
+                        <th>Ip Adress</th>
+                        <th>OS</th>
+                        <th>Browser</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>@auditHead.ActivityId</td>
+                    <td>@auditHead.UserCd</td>
+                    <td>@auditHead.IP</td>
+                    <td>@auditHead.OS</td>
+                    <td>@auditHead.Browser</td>
+                    <td>@auditHead.StartTime</td>
+                    <td>@auditHead.EndTime</td>
+                </tr>
+            </table>
             <table class="table table-sm" id="AuditDetailDataTable">
                 <thead class="thead-dark">
                     <tr>

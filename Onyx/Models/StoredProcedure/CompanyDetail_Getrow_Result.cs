@@ -9,6 +9,7 @@
         public string Add3 { get; set; }
         public string Phone { get; set; }
         public string Logo { get; set; }
+        public string LoginBg { get; set; }
         public string Fax { get; set; }
         public string Email { get; set; }
         public int QtyDecs { get; set; }
