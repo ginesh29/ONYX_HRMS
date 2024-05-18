@@ -411,7 +411,14 @@ function initControls() {
         var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
         $("#Days").text(`(${days} days)`);
     }).on('change.daterangepicker', function (ev, picker) {
-        if (!$(this).val()) {
+        if ($(this).val()) {
+            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+            var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
+            $(this).val(`${startDate} - ${endDate}`);
+            var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
+            $("#Days").text(`(${days} days)`);
+        }
+        else {
             $(this).val("");
             $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
             $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
