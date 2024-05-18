@@ -26,7 +26,10 @@ namespace Onyx.Controllers
             _employeeService = employeeService;
             _transactionService = transactionService;
         }
-
+        public IActionResult Test()
+        {
+            return View();
+        }
         #region Dashboard
         public IActionResult Index()
         {

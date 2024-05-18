@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
@@ -445,8 +446,16 @@ namespace Onyx.Controllers
         #region Audit
         public IActionResult UserAudit()
         {
-            var data = _logService.GetActivityLogHeads();
-            return View(data);
+            return View();
+        }
+        public IActionResult FetchAuditHead(DateTime startDate, DateTime endDate)
+        {
+            var departments = _logService.GetActivityLogHeads(string.Empty, startDate, endDate);
+            CommonResponse result = new()
+            {
+                Data = departments,
+            };
+            return Json(result);
         }
         public IActionResult AuditDetail(string id)
         {

@@ -55,7 +55,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label asp-for="Amt"></label>
-                                <input asp-for="Amt" class="form-control decimal-input" />
+                                <input asp-for="Amt" class="form-control decimal-input" type="text" />
                                 <span asp-validation-for="Amt" class="text-danger"></span>
                             </div>
                         </div>
@@ -106,3 +106,13 @@
         </div>
     </div>
 </div>
+<script>
+    $("#decimal-input").inputmask({
+        alias: "decimal",
+        digits: 2,
+        rightAlign: false,
+        placeholder: "0",
+        radixPoint: ".",
+        allowMinus: true
+    });
+</script>
