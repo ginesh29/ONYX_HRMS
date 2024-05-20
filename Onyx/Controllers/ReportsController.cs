@@ -615,14 +615,14 @@ namespace Onyx.Controllers
         {
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt > 0);
+            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt != 0);
             return PartialView("_PayAnalysis", data);
         }
         public IActionResult PayAnalysisReport()
         {
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt > 0);
+            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt != 0);
             return new ViewAsPdf(data)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
