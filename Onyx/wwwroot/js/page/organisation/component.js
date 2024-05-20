@@ -12,7 +12,7 @@
             { data: "typeDesc" },
             {
                 data: function (row) {
-                    return !row.perc_Amt ? row.perc_Amt : formatDecimal(row.perc_Amt)
+                    return row.perc_Amt;
                 },
             },
             { data: "perc_Val" },

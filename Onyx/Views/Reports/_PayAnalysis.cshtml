@@ -3,6 +3,14 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
     var groupedData = Model.GroupBy(m => new { m.Code, m.Name });
+    var componentTypes = new List<SelectListItem>()
+    {
+        new() {Text="Fixed", Value="F"},
+        new() { Text="Variable", Value="V"},
+        new() { Text="Per-day", Value="D"},
+        new() { Text="Hourly", Value="H"},
+        new() { Text="Pro-rata", Value="P"}
+    };
 }
 <div>
     @foreach (var grp in groupedData)
@@ -28,10 +36,11 @@
             </thead>
             @foreach (var item in grp)
             {
+                var type = componentTypes.FirstOrDefault(m => m.Value == item.TransactionType)?.Text;
                 <tr>
                     <td>@item.TypeDes</td>
                     <td>@item.PayType</td>
-                    <td>@item.TransactionType</td>
+                    <td>@type</td>
                     <td>@item.Curr</td>
                     <td>@item.Amt.ToString(DecimalFormat)</td>
                     <td>@(item.ExRate > 0 ? item.ExRate.ToString(DecimalFormat) : "")</td>

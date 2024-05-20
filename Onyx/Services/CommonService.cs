@@ -7,10 +7,9 @@ using System.Data.SqlClient;
 
 namespace Onyx.Services
 {
-    public class CommonService(DbGatewayService dbGatewayService, AuthService authService)
+    public class CommonService(DbGatewayService dbGatewayService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        private readonly LoggedInUserModel _loggedInUser = authService.GetLoggedInUser();
         public IEnumerable<Branch_UserCo_GetRow_Result> GetUserCompanies(string UserCd)
         {
             var procedureName = "Branch_UserCo_GetRow";
