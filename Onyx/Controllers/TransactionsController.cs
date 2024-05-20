@@ -1070,8 +1070,9 @@ namespace Onyx.Controllers
                     _transactionService.ImportVariablePayComponentExcelData(validData, filterModel, _loggedInUser.CompanyCd);
                 return PartialView("_VariablePayDedComponentsExcelData", new { Data = excelData, Message });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return Json("File not supported. Download again & refill data");
             }
         }

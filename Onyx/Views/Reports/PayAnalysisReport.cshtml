@@ -1,8 +1,7 @@
-﻿@model dynamic
+﻿@model IEnumerable<GetRepo_FixedEarnDed_Result>
 @{
-    IEnumerable<EmpLeaveMaster_GetRow_Result> data = Model.Data;
-    ViewData["Title"] = Model.ReportType == "LeaveMaster" ? "Employee Leave Master Report" : "Employee Annual Leave Due Report";
     Layout = null;
+    ViewData["Title"] = "Pay Analysis Report";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +10,6 @@
 </head>
 <body>
     <partial name="_ReportHeader" />
-    <partial name="_LeaveMaster" model="Model" />
+    <partial name="_PayAnalysis" model="Model" />
 </body>
 </html>

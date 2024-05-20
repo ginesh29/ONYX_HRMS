@@ -38,7 +38,7 @@ namespace Onyx.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
         }
     }

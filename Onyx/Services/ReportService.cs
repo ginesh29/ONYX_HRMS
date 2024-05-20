@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
+using Onyx.Models.StoredProcedure;
 
 namespace Onyx.Services
 {
@@ -212,16 +213,17 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public IEnumerable<EmpLeaveMaster_GetRow_Result> GetPayAnalysis(string CoCd)
+        public IEnumerable<GetRepo_FixedEarnDed_Result> GetPayAnalysis(string CoCd, string Prd, string Year)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
-            var procedureName = "GetRepo_FixedEarnDed";
+            var procedureName = "GetRepo_FixedEarnDed_N";
             var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            parameters.Add("v_RPrd", Prd);
+            parameters.Add("v_RYear", Year);
             parameters.Add("v_EmpCd", string.Empty);
-            parameters.Add("v_LvTyp", string.Empty);
-            parameters.Add("v_Cocd", CoCd);
             var connection = new SqlConnection(connectionString);
-            var result = connection.Query<EmpLeaveMaster_GetRow_Result>
+            var result = connection.Query<GetRepo_FixedEarnDed_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

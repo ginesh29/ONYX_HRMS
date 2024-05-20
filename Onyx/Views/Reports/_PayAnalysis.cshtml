@@ -1,51 +1,43 @@
-﻿@model dynamic
+﻿@model IEnumerable<GetRepo_FixedEarnDed_Result>
 @{
-    IEnumerable<EmpLeaveMaster_GetRow_Result> data = Model.Data;
-    var ReportType = Model.ReportType;
-    var dateFormat = ExtensionMethod.GetDateFormat();
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+    var groupedData = Model.GroupBy(m => new { m.Code, m.Name });
 }
-<div class="table-responsive">
-    <table class="table table-sm" id="LeaveMasterReportTable">
-        <thead class="thead-dark">
-            <tr>
-                <th>Employee</th>
-                @if (ReportType == "LeaveMaster")
-                {
-                    <th>Leave Type</th>
-                    <th>Max. Leave</th>
-                }
-                <th>Opening Bal.</th>
-                <th>Used</th>
-                <th>Accrued</th>
-                <th>Cum.Unpaid</th>
-                @if (ReportType != "LeaveMaster")
-                {
-                    <th>Balance</th>
-                    <th>Leave Due Date</th>
-                }
-            </tr>
-        </thead>
-        @foreach (var item in data)
-        {
-            <tr>
-                <td>@item.EmpName (@item.EmpCd.Trim())</td>
-                @if (ReportType == "LeaveMaster")
-                {
-                    <td>@item.LvTyp</td>
-                    <td>@item.MaxLv.ToString(DecimalFormat)</td>
-                }
-                <td>@item.LvOpBal.ToString(DecimalFormat)</td>
-                <td>@item.LvUsed.ToString(DecimalFormat)</td>
-                <td>@item.LvAccr.ToString(DecimalFormat)</td>
-                <td>@item.CumLvNoPay.Value.ToString(DecimalFormat)</td>
-                @if (ReportType != "LeaveMaster")
-                {
-                    <td>@item.BalanceLeave.ToString(DecimalFormat)</td>
-                    <td>@item.LeaveDueDate.FormatDate()</td>
-                }
-            </tr>
-        }
-    </table>
+<div>
+    @foreach (var grp in groupedData)
+    {
+        var totalAmt = grp.Where(m => m.ExRate > 0).Sum(m => m.Amt);
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th colspan="6">@grp.Key.Name (@grp.Key.Code.Trim())</th>
+                    <th width="200">Net Pay: @totalAmt.ToString(DecimalFormat)</th>
+                </tr>
+            </thead>
+            <thead class="thead-light">
+                <tr>
+                    <th>Earnig Type</th>
+                    <th>Pay Description</th>
+                    <th>Transaction Type</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th>Ex. Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            @foreach (var item in grp)
+            {
+                <tr>
+                    <td>@item.TypeDes</td>
+                    <td>@item.PayType</td>
+                    <td>@item.TransactionType</td>
+                    <td>@item.Curr</td>
+                    <td>@item.Amt.ToString(DecimalFormat)</td>
+                    <td>@(item.ExRate > 0 ? item.ExRate.ToString(DecimalFormat) : "")</td>
+                    <td>@(item.ExRate > 0 ? item.Amt.ToString(DecimalFormat) : "")</td>
+                </tr>
+            }
+        </table>
+    }
 </div>
