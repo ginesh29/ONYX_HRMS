@@ -26,7 +26,7 @@ namespace Onyx.ViewComponents
             var employee = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? _employeeService.FindEmployee(_loggedInUser.UserCd, _loggedInUser.CompanyCd) : null;
             var month = Convert.ToInt32(_commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH")?.Val);
             var year = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR")?.Val;
-            bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/emp-photo/{_loggedInUser.CompanyCd}", employee.Imagefile));
+            bool imageExist = employee != null && File.Exists(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/{_loggedInUser.CompanyCd}/emp-photo", employee.Imagefile));
             var companies = _commonService.GetUserCompanies(_loggedInUser.UserLinkedTo).Select(m => new SelectListItem { Value = m.CoCd, Text = m.CoName });
             if (companies.Count() == 1)
                 companies = companies.Select(m => { m.Selected = true; return m; });
@@ -51,7 +51,7 @@ namespace Onyx.ViewComponents
             ViewBag.FundApprovalData = fundData;
             ViewBag.ProgressionData = progressionData;
             ViewBag.DocRenewalData = docRenewalData;
-            ViewBag.ProvisionAdjData = provisionAdjData;            
+            ViewBag.ProvisionAdjData = provisionAdjData;
             var userMenu = new UserMenuModel
             {
                 EmployeeName = employee != null ? $"{employee.Fname} {employee.Lname}" : null,
