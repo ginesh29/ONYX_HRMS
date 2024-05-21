@@ -5,6 +5,7 @@ using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Controllers
 {
@@ -111,7 +112,7 @@ namespace Onyx.Controllers
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
             var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
-            return PartialView("_EmpTransactions", new { Data = transactions });
+            return PartialView("_EmpTransactions", transactions);
         }
         public IActionResult EmpTransactionsReport(EmpTransactionFilterModel filterModel)
         {
@@ -119,10 +120,8 @@ namespace Onyx.Controllers
             filterModel.StartPeriod = $"{spStartPeriod[1]}{spStartPeriod[0]}";
             var spEndPeriod = filterModel.EndPeriod.Split('/');
             filterModel.EndPeriod = $"{spEndPeriod[1]}{spEndPeriod[0]}";
-            var employee = _employeeService.GetEmployees(_loggedInUser.CompanyCd, _loggedInUser.UserCd, _loggedInUser.UserCd).Employees.FirstOrDefault();
-            var ReportGeneratedBy = _loggedInUser.UserType == (int)UserTypeEnum.Employee ? employee.Name : _loggedInUser.UserCd;
             var transactions = _reportService.GetEmpTransactions(filterModel, _loggedInUser.CompanyCd);
-            return new ViewAsPdf(new { Data = transactions, ReportGeneratedBy })
+            return new ViewAsPdf(transactions)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
                 PageOrientation = Orientation.Landscape
@@ -632,7 +631,6 @@ namespace Onyx.Controllers
             filterModel.Year = currentYear;
             filterModel.Period = currentMonth;
             var data = _reportService.GetPayAnalysis(filterModel, _loggedInUser.CompanyCd).Where(m => m.Amt != 0);
-            //return View(data);
             return new ViewAsPdf(data)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

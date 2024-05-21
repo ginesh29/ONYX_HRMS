@@ -1,3 +1,138 @@
+CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpTransactionDetail_N]    
+@v_CoCd   Char(5)   
+, @v_EmpCd char(10)   
+, @v_RFrmPrd  Char(6)   
+, @v_RToPrd  Char(6)   
+As    -- Drop Procedure [GetRepo_EmpTransactionDetail_N] '100','dtd01431','202010','202404'  
+Begin     
+
+/*
+declare @v_CoCd   Char(5)   
+declare @v_EmpCd char(10)   
+declare @v_RFrmPrd  Char(6)   
+declare @v_RToPrd  Char(6)
+Select @v_CoCd   ='01' 
+Select @v_EmpCd ='001' 
+Select @v_RFrmPrd  ='201001'   
+Select @v_RToPrd  ='201506'
+*/
+
+Declare @Prd int   
+Declare @Year int   
+Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd     
+	Select Cd[Cd]     
+	, rtrim(Fname) +' '+rtrim(MName) +' '+rtrim(Lname)[EmpName]    
+	, (select SDes from Branch where Cd=Employee.Div) [Branch]
+	, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
+	  +left(@v_RFrmPrd,4)     
+	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
+	  +left(@v_RToPrd,4)[Period]  
+	  ,Doj
+	  ,(select des from branch where cd=Div)[Branch]
+	from Employee    
+	where Cd=@v_EmpCd               
+	
+If @Year *100 +@Prd between @v_RFrmPrd and @v_RToPrd    
+Begin
+Select      
+	(Select DateName( month , DateAdd( month ,convert (numeric,@Prd), 0 ) - 1 ))[Month]    
+	, @Year[Yr]    
+	, convert(char(4),@Year)+ +right ('00'+ltrim(str( @Prd)),2 )[Prd]
+	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
+	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd ),0),'###,###,###.###')[LOP]  
+	, IsNull((select sum(Amt) from EmpTrans where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd ),0)[Advance]    
+	, IsNull((select sum(Amt) from EmpTrans where EdCd='Over.' and EdTyp='HEDT01    ' and EmpCd=emp.Cd ),0)[OverTime]   
+	, IsNull((select sum(Amt) from EmpTrans where EdCd='155  ' and EdTyp='HEDT03    ' and EmpCd=emp.Cd ),0)[Commision]   
+	, IsNull((select sum(Amt) from EmpTrans where EdCd not in ('LTA','LSA','155','S.S','202','203') and  EdTyp='HEDT03' and EmpCd=emp.Cd ),0)[Others] 
+	, IsNull((select sum(Amt) from EmpTrans where EdCd in('S.S  ','207  ') and  EdTyp='HEDT01' and EmpCd=emp.Cd ),0)[Savings] 
+	, format(IsNull((select sum(Amt) from EmpTrans where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd  ),0),'###,###,###.###')[LeaveSalary]   
+	, format(IsNull((select sum(Amt) from EmpTrans where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd ),0),'###,###,###.###')[LeaveTicket]  
+	, format(IsNull((select sum(Amt) from EmpTrans where  EdTyp='HEDT02' and edcd  in('203','201') and EmpCd=@v_EmpCd ),0),'###,###,###.###')[LoanRecovery] 
+	, format(IsNull((select sum(Amt) from EmpTrans where  EdTyp='HEDT02'  and edcd not in('203','201') and EmpCd=@v_EmpCd ),0),'###,###,###.###')[OtherRecovery] 
+	, format(
+		
+		IsNull((select sum(Amt) from EmpTrans where  EdTyp in('HEDT01','HEDT03')  and  EmpCd=@v_EmpCd ),0)-
+		
+		IsNull((select sum(Amt) from EmpTrans where  EdTyp='HEDT02'  and  EmpCd=@v_EmpCd ),0),'###,###,###.###')[NetSalary] 
+
+	From     EmpTrans EmT     , Employee Emp     
+	where emp.Cd=@v_EmpCd and emt.EmpCd=@v_EmpCd     
+	group by emt.EmpCd,emp.Basic,emp.Cd  
+	
+	
+union       
+	
+
+Select      
+	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
+	, left(Prd,4)[Yr] 
+	, emt.Prd    [Prd]
+	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
+	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Advance]    
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd='Over.' and EdTyp='HEDT01    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[OverTime]   
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd='155  ' and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Commision]   
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd not in ('LTA','LSA','155','S.S','202','203') and  EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Others] 
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('S.S  ','207  ') and  EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Savings] 
+	, format(IsNull((select sum(Amt) from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LeaveSalary]   
+	, format(IsNull((select sum(Amt) from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LeaveTicket]  
+	, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd  in('203','201') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[LoanRecovery] 
+	, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02'  and edcd not in('203','201') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[OtherRecovery] 
+	, format(
+		
+		IsNull((select sum(Amt) from EmpTransYtd where  EdTyp in('HEDT01','HEDT03')  and  EmpCd=@v_EmpCd and Prd=emt.Prd),0)-
+		
+		IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02'  and  EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[NetSalary] 
+	From     
+	EmpTransYtd EmT     , 
+	Employee Emp     
+	where 
+		emp.Cd=@v_EmpCd 
+	and emt.EmpCd=@v_EmpCd 
+	and emt.Prd between @v_RFrmPrd and @v_RToPrd     
+	group by 
+	emt.EmpCd,Prd,emp.Basic,emp.Cd     
+	order by Prd asc    
+End
+else       
+Begin
+Select      
+    
+	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
+	, left(Prd,4)[Yr] 
+	, emt.Prd    [Prd]
+	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
+	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Advance]    
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd='Over.' and EdTyp='HEDT01    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[OverTime]   
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd='155  ' and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Commision]   
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd not in ('LTA','LSA','155','S.S','202','203') and  EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Others] 
+	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('S.S  ','207  ') and  EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Savings] 
+	, format(IsNull((select sum(Amt) from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LeaveSalary]   
+	, format(IsNull((select sum(Amt) from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LeaveTicket]  
+	, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd  in('203','201') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[LoanRecovery] 
+	, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02'  and edcd not in('203','201') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[OtherRecovery] 
+	, format(
+		
+		IsNull((select sum(Amt) from EmpTransYtd where  EdTyp in('HEDT01','HEDT03')  and  EmpCd=@v_EmpCd and Prd=emt.Prd),0)-
+		
+		IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02'  and  EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[NetSalary] 
+	From     
+	EmpTransYtd EmT     , 
+	Employee Emp     
+	where 
+		emp.Cd=@v_EmpCd 
+	and emt.EmpCd=@v_EmpCd 
+	and emt.Prd between @v_RFrmPrd and @v_RToPrd     
+	group by 
+	emt.EmpCd,Prd,emp.Basic,emp.Cd     
+	order by Prd asc        
+	
+
+	ENd
+End 
+ Go 
 
 CREATE OR ALTER     Procedure [dbo].[GetRepo_FixedEarnDed_N]
 @v_CoCd Varchar(30)
@@ -9228,179 +9363,6 @@ Begin
 	Order By
 		TransNo
 End
- 
- 
- Go 
-CREATE OR ALTER     Procedure [dbo].[GetRepo_EmpTransactionDetail_N]    
-	@v_CoCd   Char(5)   
-,	@v_EmpCd char(10)   
-,	@v_RFrmPrd  Char(6)   
-,	@v_RToPrd  Char(6)   
-As    -- Drop Procedure [GetRepo_EmpTransactionDetail_N] '01','523','202110','202310'  
-Begin     
-
-/*
-declare @v_CoCd   Char(5)   
-declare @v_EmpCd char(10)   
-declare @v_RFrmPrd  Char(6)   
-declare @v_RToPrd  Char(6)
-Select @v_CoCd   ='01' 
-Select @v_EmpCd ='001' 
-Select @v_RFrmPrd  ='201001'   
-Select @v_RToPrd  ='201506'
-*/
-
-Declare @Prd int   
-Declare @Year int   
-Select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd='01'   
-Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd='01'         
-	--Select Cd[Cd]     
-	--, rtrim(Fname) +' '+rtrim(MName) +' '+rtrim(Lname)[EmpName]    
-	--, (select SDes from Branch where Cd=Employee.Div) [Branch]
-	--, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	--  +left(@v_RFrmPrd,4)     
-	--  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	--  +left(@v_RToPrd,4)[Period]  
-	--from Employee    
-	--where Cd=@v_EmpCd               
-	
-If @Year *100 +@Prd between @v_RFrmPrd and @v_RToPrd    
-Begin
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,@Prd), 0 ) - 1 ))[Month]    
-	, @Year[Yr]    
-	, convert(char(4),@Year)+ +right ('00'+ltrim(str( @Prd)),2 )[Prd]
-		, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	,	round((select isnull(sum(amt),0) from emptrans where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd ),2)[BasicSalaray]
-	--,	round(IsNull((Select isnull(sum(Amt),0) from EmpTrans where EdTyp in('HEDT01 ','HEDT03') and edcd<>'STFFP' and TrnInd='M' and EmpCd=EmT.Empcd ),0),2)[ExtraMnthly]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ') and EdTyp='HEDT02' and EmpCd=EmT.Empcd ),0),2)[Deductions]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='004' and EdTyp='HEDT02' and EmpCd=EmT.Empcd ),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[TMF]
-
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in ('MGRIN','207' )  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[Incentives]
-
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='053'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd  ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd in('LTA','008  ')   and EdTyp='HEDT03' and EmpCd=EmT.Empcd  ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTrans where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd  ),0),2)[Pension]
-	into #EmpTrans
-	From     EmpTrans EmT, Employee Emp     
-	where	emp.Cd=@v_EmpCd 
-			and emt.EmpCd=@v_EmpCd     
-	group by emt.EmpCd,emp.Basic,emp.Cd  ,emp.Fname,emp.Mname,emp.Lname,emp.Div 
-	
-	
-union       
-	
-
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, EmT.Prd  [Prd] 
-	, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	--, Isnull(Emp.Basic,0)+ IsNull((Select sum(Amt) from EmpTransYtd where EdCd<>'001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Eligible]    
-	--, Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LOP]
-	--, IsNull((select Amt from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LS]   
-	--, IsNull((select Amt from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[LT]     
-	--, IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd in ('004','205','209','204') and EmpCd=@v_EmpCd and Prd=EmT.Prd),0)[Recovery]    
-	--, IsNull((select sum(Amt) from EmpLoan where datepart(YYYY,LoanApprDt)*100+datepart(MM,LoanApprDt)=EmT.Prd and EmpCd=@v_EmpCd),0)[Advance]    
-	,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and Prd=EmT.Prd),2)[BasicSalaray]
-
-	--,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdTyp in('HEDT01 ','HEDT03') and edcd<>'STFFP'   and TrnInd='M' and EmpCd=EmT.Empcd ),0),2)[ExtraMnthly]
-	,	round(IsNull((select sum(Amt) from EmpTransYtd where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ') and EdTyp='HEDT02'  and EmpCd=EmT.Empcd and Prd=EmT.Prd),0),2)[Deductions]
-	--,	round(IsNull((select sum(Amt) from EmpTransYtd where EdCd='004' and EdTyp='HEDT02'  and EmpCd=EmT.Empcd    and Prd=EmT.Prd),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  and prd=EmT.Prd),0),2)[TMF]
-
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('207  ','MGRIN')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Incentives]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='053  '  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('LTA','008  ')  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Pension]
-	From     EmpTransYtd EmT     , Employee Emp     
-	where emp.Cd=@v_EmpCd and emt.EmpCd=@v_EmpCd and EmT.Prd between @v_RFrmPrd and @v_RToPrd     
-	group by EmT.EmpCd,Prd,emp.Basic,emp.Cd  ,emp.Fname,emp.Mname,emp.Lname,emp.Div 
-	order by  Prd asc
-	select *,[Month]+' '+cast(Yr as char(4))[Decsription] from  #EmpTrans
-	drop table #EmpTrans
-	End
-else       
-Begin
-Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, emt.Prd    [Prd]
-	, (Select DateName( month , DateAdd( month , CONVERT(numeric, right(@v_RFrmPrd,2)) , 0 ) - 1 ))  
-	  +left(@v_RFrmPrd,4)     
-	  +' to '+(Select DateName( month , DateAdd( month , CONVERT(numeric,right(@v_RToPrd,2)) , 0 ) - 1 ))    
-	  +left(@v_RToPrd,4)[Period] 
-	,Emp.Cd[Cd]     
-		,	rtrim(Emp.Fname) +' '+rtrim(Emp.MName)+' '+rtrim(Lname)   [EmpName] 
-		, (select SDes from Branch where Cd=emp.Div) [Branch]
-	--,format( Isnull(Emp.Basic,0),'###,###,###.###')[Eligible]    
-	--, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
-	--, format(IsNull((select Amt from EmpTransYtd where EdCd='LSA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LS]   
-	--, format(IsNull((select Amt from EmpTransYtd where EdCd='LTA' and EdTyp='HEDT03' and EmpCd=emp.Cd and Prd=EmT.Prd),0),'###,###,###.###')[LT]   
-	--, format(IsNull((select sum(Amt) from EmpTransYtd where  EdTyp='HEDT02' and edcd in ('004','205','209','204') and EmpCd=@v_EmpCd and Prd=emt.Prd),0),'###,###,###.###')[Recovery]    
-	--, IsNull((select sum(Amt) from EmpLoan where datepart(YYYY,LoanApprDt)*100+datepart(MM,LoanApprDt)=EmT.Prd and EmpCd=@v_EmpCd),0)[Advance]    
-	,	round((select isnull(sum(amt),0) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and Prd=EmT.Prd),2)[BasicSalaray]
-	--,	round(IsNull((Select sum(Amt) from EmpTransYtd where EdTyp in('HEDT01 ','HEDT03') and edcd not in('STFFP','MGRIN','208') and TrnInd='M' and EmpCd=EmT.Empcd and  Prd=EmT.Prd),0),2)[ExtraMnthly]
-	,	round(IsNull((select sum(Amt) from EmpTransYtd where edcd not in('TMF1','TMF2','TMF3','004','PENSI','211','203','201  ')and EdTyp='HEDT02'  and EmpCd=EmT.Empcd and Prd=EmT.Prd),0),2)[Deductions]
-	--,	round(IsNull((select sum(Amt) from EmpTransYtd where EdCd='004' and EdTyp='HEDT02'   and EmpCd=EmT.Empcd    and Prd=EmT.Prd),0),2)[Recovery]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('TMF1','TMF2','TMF3') and EdTyp='HEDT02' and EmpCd=EmT.Empcd  and prd=EmT.Prd ),0),2)[TMF]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='FOTA' and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[FOTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('052','051','004','FOTA')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Allowance]
-	--,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='051'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LivingAllowance]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='OT'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[OverTime]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('207  ','MGRIN')  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Incentives]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='053  '  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[LastSalary]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='208'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('211','004','203','201  ')  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffAdvCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('FUNDW','STFFP')  and EdTyp in('HEDT01','HEDT03') and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[StaffFundGiven]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='STFFP'  and EdTyp='HEDT01' and EmpCd=EmT.Empcd and prd=EmT.Prd  ),0),2)[StaffFundCollected]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='TMFPA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[TMFPay]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='LSA'  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LSA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd in('LTA','008  ')  and EdTyp='HEDT03' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[LTA]
-	,	round(IsNull((select isnull(sum(Amt),0) from EmpTransYtd where EdCd='PENSI'  and EdTyp='HEDT02' and EmpCd=EmT.Empcd and prd=EmT.Prd ),0),2)[Pension]
-	into #EmpTransYtd
-	From     EmpTransYtd EmT     , Employee Emp     
-	where emp.Cd=@v_EmpCd and emt.EmpCd=@v_EmpCd and emt.Prd between @v_RFrmPrd and @v_RToPrd     
-	group by emt.EmpCd,Prd,emp.Basic,emp.Cd   ,emp.Fname,emp.Mname,emp.Lname ,emp.Div 
-	order by Prd asc 
-	select *,[Month]+' '+cast(Yr as char(4))[Decsription] from #EmpTransYtd
-	drop table #EmpTransYtd
-	--EdCd ='004' and
-ENd
-End 
  
  
  Go 

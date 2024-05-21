@@ -1,74 +1,51 @@
-﻿@model dynamic
-@{
-    var grandTotal = 0;
-    IEnumerable<GetRepo_EmpTransactionDetail_Result> data = Model.Data;
-    var detail = data.FirstOrDefault();
-}
-<div class="table-responsive">
-    <table class="table table-sm" id="EmpTransactionsReportTable">
+﻿@model EmpTransactionModel
+<div class="@ViewBag.TableResponsiveClass">
+    <table class="table table-sm" id="EmpTransactions" style="font-size:x-small;">
         <thead class="thead-dark">
             <tr>
-                <th>Period</th>
-                <th>Basic</th>
-                <th>Allowance</th>
-                <th>OT</th>
-                <th>Last Sal.</th>
-                <th>LSA</th>
-                <th>LTA</th>
-                <th>TMF Pay</th>
-                <th>TMF.Coll</th>
-                <th>St. ADV.Given</th>
-                <th>St. ADV.Coll</th>
-                <th>St. Fun.Given</th>
-                <th>St. Fun.Coll</th>
-                <th>Other Deductions</th>
-                <th>Pension</th>
-                <th>Net Salary</th>
+                @foreach (var columnName in ((IDictionary<string, object>)Model.ReportData[0]).Keys)
+                {
+                    if (columnName != "Prd")
+                    {
+                        <th>@columnName</th>
+                    }
+                }
             </tr>
         </thead>
-        @foreach (var item in data)
-        {
-            var netSalary = item.BasicSalaray + item.Allowance + item.OverTime + item.LastSalary + item.LSA + item.LTA + item.TMFPay - item.TMF + item.StaffAdvGiven - item.StaffAdvCollected + item.StaffFundGiven - item.StaffFundCollected - item.Deductions + item.Pension;
-            grandTotal += netSalary;
-            <tr>
-                <th>@item.Month.Substring(0, 3) @item.Yr</th>
-                <td>@item.BasicSalaray</td>
-                <td>@item.Allowance</td>
-                <td>@item.OverTime</td>
-                <td>@item.LastSalary</td>
-                <td>@item.LSA</td>
-                <td>@item.LTA</td>
-                <td>@item.TMFPay</td>
-                <td>@item.TMF</td>
-                <td>@item.StaffAdvGiven</td>
-                <td>@item.StaffAdvCollected</td>
-                <td>@item.StaffFundGiven</td>
-                <td>@item.StaffFundCollected</td>
-                <td>@item.Deductions</td>
-                <td>@item.Pension</td>
-                <td>@netSalary</td>
-            </tr>
-        }
-        @if (data.Count() > 0)
-        {
-            <tfoot class="table-secondary">
+        <tbody>
+            @foreach (var row in Model.ReportData)
+            {
                 <tr>
-                    <th>Grand Total</th>
-                    <td>@data.Sum(m => m.BasicSalaray)</td>
-                    <td>@data.Sum(m => m.Allowance)</td>
-                    <td>@data.Sum(m => m.OverTime)</td>
-                    <td>@data.Sum(m => m.LastSalary)</td>
-                    <td>@data.Sum(m => m.LSA)</td>
-                    <td>@data.Sum(m => m.LTA)</td>
-                    <td>@data.Sum(m => m.TMFPay)</td>
-                    <td>@data.Sum(m => m.TMF)</td>
-                    <td>@data.Sum(m => m.StaffAdvGiven)</td>
-                    <td>@data.Sum(m => m.StaffAdvCollected)</td>
-                    <td>@data.Sum(m => m.StaffFundGiven)</td>
-                    <td>@data.Sum(m => m.StaffFundCollected)</td>
-                    <td>@data.Sum(m => m.Deductions)</td>
-                    <td>@data.Sum(m => m.Pension)</td>
-                    <td>@grandTotal</td>
+                    @foreach (var column in (IDictionary<string, object>)row)
+                    {
+                        if (column.Key != "Prd")
+                        {
+                            <td>@column.Value</td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+        @if (Model.ReportData.Count() > 0)
+        {
+            <tfoot>
+                <tr class="table-secondary">
+                    @foreach (var columnName in ((IDictionary<string, object>)Model.ReportData[0]).Keys)
+                    {
+                        if (columnName != "Prd")
+                        {
+                            <td>
+                                @if (Model.Totals != null && Model.Totals.ContainsKey(columnName))
+                                {
+                                    @Model.Totals[columnName]
+                                }
+                                else
+                                {
+                                    @Html.Raw("&nbsp;")
+                                }
+                            </td>
+                        }
+                    }
                 </tr>
             </tfoot>
         }

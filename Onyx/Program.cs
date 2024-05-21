@@ -30,6 +30,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseHsts();
 }
 app.UseDeveloperExceptionPage();
@@ -40,7 +41,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<CookieExpirationMiddleware>();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -4,6 +4,9 @@ using System.Data;
 using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Models.StoredProcedure;
+using Onyx.Models.ViewModels;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Onyx.Services
 {
@@ -40,7 +43,7 @@ namespace Onyx.Services
             return result;
         }
 
-        public IEnumerable<GetRepo_EmpTransactionDetail_Result> GetEmpTransactions(EmpTransactionFilterModel filterModel, string CoCd)
+        public EmpTransactionModel GetEmpTransactions(EmpTransactionFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpTransactionDetail_N";
@@ -50,9 +53,11 @@ namespace Onyx.Services
             parameters.Add("v_RFrmPrd", filterModel.StartPeriod);
             parameters.Add("v_RToPrd", filterModel.EndPeriod);
             var connection = new SqlConnection(connectionString);
-            var result = connection.Query<GetRepo_EmpTransactionDetail_Result>
-                (procedureName, parameters, commandType: CommandType.StoredProcedure);
-            return result;
+            var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            var Header = multiResult.ReadFirstOrDefault<dynamic>();
+            var Data = multiResult.Read<dynamic>();
+            var Total = Data.ToList().GetDynamicListTotal();            
+            return new EmpTransactionModel { Header = Header, ReportData = Data.ToList(), Totals = Total };
         }
         public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(BalanceTransactionFilterModel filterModel, string CoCd)
         {

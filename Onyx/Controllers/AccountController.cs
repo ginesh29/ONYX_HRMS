@@ -146,16 +146,16 @@ namespace Onyx.Controllers
                 if (user != null)
                 {
                     var userFromDb = _userService.GetUsers(_loggedInUser.UserCd, _loggedInUser.CoAbbr).FirstOrDefault();
-                    userFromDb.UPwd = model.ConfirmPassword;
                     _settingService.SaveUser(new UserModel
                     {
+                        Cd = userFromDb.Code,
                         Code = userFromDb.Code,
                         LoginId = userFromDb.LoginId,
                         Abbr = userFromDb.Abbr,
-                        UPwd = userFromDb.UPwd,
+                        UPwd = model.ConfirmPassword.Encrypt(),
                         Username = userFromDb.Username,
                         ExpiryDt = userFromDb.ExpiryDt,
-                        EntryBy = userFromDb.EntryBy,
+                        EntryBy = _loggedInUser.UserCd,
                     });
                     result.Success = true;
                     result.Message = "Password changed Successfully";

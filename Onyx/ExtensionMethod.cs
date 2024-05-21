@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx
 {
@@ -274,6 +275,29 @@ namespace Onyx
                 result += $"{days} day{(days > 1 ? "s" : "")}";
             }
             return result;
+        }
+        public static Dictionary<string, decimal> GetDynamicListTotal(this List<dynamic> list)
+        {
+            var totals = new Dictionary<string, decimal>();
+            foreach (var row in list)
+            {
+                var rowDict = (IDictionary<string, object>)row;
+                foreach (var key in rowDict.Keys)
+                {
+                    if (decimal.TryParse(rowDict[key]?.ToString(), out decimal value))
+                    {
+                        if (totals.ContainsKey(key))
+                        {
+                            totals[key] += value;
+                        }
+                        else
+                        {
+                            totals[key] = value;
+                        }
+                    }
+                }
+            }
+            return totals;
         }
     }
 }
