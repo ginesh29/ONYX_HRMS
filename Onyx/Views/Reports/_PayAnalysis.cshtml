@@ -49,4 +49,8 @@
             }
         </table>
     }
+    @if (Model.Count() == 0)
+    {
+        <span>@CommonMessage.EMPTYGRID</span>
+    }
 </div>

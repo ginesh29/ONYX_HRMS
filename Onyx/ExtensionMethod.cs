@@ -230,5 +230,50 @@ namespace Onyx
                 _ => "th",
             };
         }
+        public static string ConvertDaysToYearsMonthsDays(int totalDays)
+        {
+            DateTime startDate = new(1, 1, 1);
+            DateTime endDate = startDate.AddDays(totalDays);
+
+            int years = endDate.Year - startDate.Year;
+            int months = endDate.Month - startDate.Month;
+            int days = endDate.Day - startDate.Day;
+
+            if (days < 0)
+            {
+                months--;
+                days += DateTime.DaysInMonth(endDate.AddMonths(-1).Year, endDate.AddMonths(-1).Month);
+            }
+
+            if (months < 0)
+            {
+                years--;
+                months += 12;
+            }
+            string result = "";
+            if (years > 0)
+            {
+                result += $"{years} year{(years > 1 ? "s" : "")}";
+            }
+
+            if (months > 0)
+            {
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result += ", ";
+                }
+                result += $"{months} month{(months > 1 ? "s" : "")}";
+            }
+
+            if (days > 0)
+            {
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result += ", ";
+                }
+                result += $"{days} day{(days > 1 ? "s" : "")}";
+            }
+            return result;
+        }
     }
 }

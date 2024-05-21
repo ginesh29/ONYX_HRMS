@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Counters";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showCounterModal('')">New Counter</button>
+        </div>
+        <table class="table table-sm" id="CountersDataTable">
+            <thead>
+                <tr class="thead-dark">
+                    <th>No.</th>
+                    <th>Code</th>
+                    <th>Counter Name</th>
+                    <th>Active</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="CounterModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/token/counter.js" asp-append-version="true"></script>
+}

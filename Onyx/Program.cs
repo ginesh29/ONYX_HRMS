@@ -20,6 +20,7 @@ builder.Services.AddSingleton<EmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
 builder.Services.AddSingleton<TransactionService>();
+builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddControllersWithViews();

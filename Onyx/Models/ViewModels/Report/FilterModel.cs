@@ -131,4 +131,14 @@ namespace Onyx.Models.ViewModels.Report
         public string Month { get; set; }
         public string Type { get; set; }
     }
+    public class PayAnalysisFilterModel
+    {
+        [Required(ErrorMessage = ValidationMessage.REQUIREDSELECTVALIDATION)]
+        [Display(Name = "Branch")]
+        public string BranchCd { get; set; }
+        public string Period { get; set; }
+        public string EmpCd { get; set; }
+        public string Year { get; set; }
+        public string Status { get; set; }
+    }
 }

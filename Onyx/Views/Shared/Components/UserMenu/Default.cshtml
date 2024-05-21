@@ -387,9 +387,12 @@
                     <p>
                         @if (!string.IsNullOrEmpty(Model.EmployeeName))
                         {
-                            <span>@Model.EmployeeName -</span>
+                            <span>@Model.EmployeeName</span>
                         }
-                        @Model.Username
+                        else
+                        {
+                            <span>@Model.Username</span>
+                        }
                         <small>Current period : @Model.CurrentPeriod</small>
                         <small>Current logged : @Model.CurrentLogged</small>
                     </p>

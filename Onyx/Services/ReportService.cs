@@ -213,15 +213,16 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public IEnumerable<GetRepo_FixedEarnDed_Result> GetPayAnalysis(string CoCd, string Prd, string Year)
+        public IEnumerable<GetRepo_FixedEarnDed_Result> GetPayAnalysis(PayAnalysisFilterModel filterModel, string CoCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_FixedEarnDed_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
-            parameters.Add("v_RPrd", Prd);
-            parameters.Add("v_RYear", Year);
-            parameters.Add("v_EmpCd", string.Empty);
+            parameters.Add("v_RPrd", filterModel.Period);
+            parameters.Add("v_RYear", filterModel.Year);
+            parameters.Add("v_BranchCd", filterModel.BranchCd ?? string.Empty);
+            parameters.Add("v_EmpCd", filterModel.EmpCd ?? string.Empty);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_FixedEarnDed_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);

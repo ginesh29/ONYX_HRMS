@@ -1,32 +1,57 @@
-﻿@{
+﻿@model EmpLoanFilterModel
+@{
     ViewData["Title"] = "Pay Analysis Report";
 }
 <div class="card">
     <div class="card-body">
-        <div class="report-btn-div mb-3">
-            <button class="btn btn-outline-danger d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
-        </div>
+        <form id="filter-frm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="EmpCd"></label>
+                        <select asp-for="EmpCd" class="form-control select2" data-placeholder="@CommonSetting.DEFAULTSELECT">
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="EmpCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="BranchCd"></label>
+                        <select asp-for="BranchCd" class="form-control select-picker" asp-items="ViewBag.BranchItems">
+                        </select>
+                        <span asp-validation-for="BranchCd" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="report-btn-div">
+                    <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
+                    <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+                </div>
+            </div>
+        </form>
         <div id="PayAnalysis"></div>
     </div>
 </div>
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        loadGridData();
+        bindEmployeeDropdown();
         function loadGridData(btn) {
             loadingButton(btn);
-            var url = `/Reports/FetchPayAnalysis`;
+            var frm = $("#filter-frm");
+            var url = `/Reports/FetchPayAnalysis?${frm.serialize()}`;
             $('#PayAnalysis').load(url, function () {
                 unloadingButton(btn);
                 window["datatable"] = $('#PayAnalysisReportTable').DataTable(dataTableDefaultOptions);
                 if ($("table").length)
-                    $("#btn-pdf,#btn-excel").removeClass("d-none");
+                    $("#btn-pdf").removeClass("d-none");
             });
         }
         function filterShowReport(btn, report) {
             loadGridData(btn);
             if (report) {
-                var url = `/Reports/PayAnalysisReport`;
+                var frm = $("#filter-frm").serialize();
+                var url = `/Reports/PayAnalysisReport?${frm}`;
                 window.open(url);
             }
         }

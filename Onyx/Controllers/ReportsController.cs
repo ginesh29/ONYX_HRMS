@@ -609,20 +609,29 @@ namespace Onyx.Controllers
         #region Leave Analysis
         public IActionResult PayAnalysis()
         {
+            ViewBag.BranchItems = _commonService.GetUserBranches(_loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).Where(m => m.UserDes != null).Select(m => new SelectListItem
+            {
+                Value = m.Div.Trim(),
+                Text = $"{m.Branch}({m.Div.Trim()})"
+            });
             return View();
         }
-        public IActionResult FetchPayAnalysis()
+        public IActionResult FetchPayAnalysis(PayAnalysisFilterModel filterModel)
         {
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt != 0);
+            filterModel.Year = currentYear;
+            filterModel.Period = currentMonth;
+            var data = _reportService.GetPayAnalysis(filterModel, _loggedInUser.CompanyCd).Where(m => m.Amt != 0);
             return PartialView("_PayAnalysis", data);
         }
-        public IActionResult PayAnalysisReport()
+        public IActionResult PayAnalysisReport(PayAnalysisFilterModel filterModel)
         {
             var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
             var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
-            var data = _reportService.GetPayAnalysis(_loggedInUser.CompanyCd, currentMonth, currentYear).Where(m => m.Amt != 0);
+            filterModel.Year = currentYear;
+            filterModel.Period = currentMonth;
+            var data = _reportService.GetPayAnalysis(filterModel, _loggedInUser.CompanyCd).Where(m => m.Amt != 0);
             return new ViewAsPdf(data)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
