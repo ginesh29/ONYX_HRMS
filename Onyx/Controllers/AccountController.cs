@@ -64,6 +64,7 @@ namespace Onyx.Controllers
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
                         AmtDecs = company.AmtDecs,
+                        LoginId = model.LoginId,
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
@@ -90,6 +91,7 @@ namespace Onyx.Controllers
                         UserType = (int)model.UserType,
                         Browser = model.Browser,
                         AmtDecs = company.AmtDecs,
+                        LoginId = model.LoginId,
                     };
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
@@ -138,13 +140,13 @@ namespace Onyx.Controllers
             {
                 var user = _userService.ValidateUser(new LoginModel
                 {
-                    LoginId = _loggedInUser.UserCd,
+                    LoginId = _loggedInUser.LoginId,
                     Password = model.OldPassword
                 });
                 if (user != null)
                 {
-                    var userFromDb = _userService.GetUsers(_loggedInUser.UserCd, _loggedInUser.CompanyCd).FirstOrDefault();
-                    userFromDb.UPwd = model.ConfirmPassword.Encrypt();
+                    var userFromDb = _userService.GetUsers(_loggedInUser.UserCd, _loggedInUser.CoAbbr).FirstOrDefault();
+                    userFromDb.UPwd = model.ConfirmPassword;
                     _settingService.SaveUser(new UserModel
                     {
                         Code = userFromDb.Code,
@@ -166,8 +168,8 @@ namespace Onyx.Controllers
                 var employee = _userService.ValidateEmployee(new LoginModel
                 {
 
-                    LoginId = _loggedInUser.UserCd,
-                    Password = model.OldPassword
+                    LoginId = _loggedInUser.LoginId,
+                    Password = model.OldPassword,
                 });
                 if (employee != null)
                 {

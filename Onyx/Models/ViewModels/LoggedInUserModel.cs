@@ -12,5 +12,6 @@
         public string Browser { get; set; }
         public string ActivityId { get; set; }
         public int AmtDecs { get; set; }
+        public string LoginId { get; set; }
     }
 }

@@ -632,6 +632,7 @@ namespace Onyx.Controllers
             filterModel.Year = currentYear;
             filterModel.Period = currentMonth;
             var data = _reportService.GetPayAnalysis(filterModel, _loggedInUser.CompanyCd).Where(m => m.Amt != 0);
+            //return View(data);
             return new ViewAsPdf(data)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

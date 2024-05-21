@@ -23,6 +23,7 @@ namespace Onyx.Services
                 new("CompanyCd", model.CompanyCd),
                 new("CoAbbr", model.CoAbbr),
                 new("AmtDecs", model.AmtDecs.ToString()),
+                new("LoginId", model.LoginId),
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -61,6 +62,7 @@ namespace Onyx.Services
                     user.Browser = claims.FirstOrDefault(m => m.Type == "Browser")?.Value;
                     user.ActivityId = claims.FirstOrDefault(m => m.Type == "ActivityId")?.Value;
                     user.AmtDecs = Convert.ToInt32(claims.FirstOrDefault(m => m.Type == "AmtDecs")?.Value);
+                    user.LoginId = claims.FirstOrDefault(m => m.Type == "LoginId")?.Value;
                 }
             }
             return user;

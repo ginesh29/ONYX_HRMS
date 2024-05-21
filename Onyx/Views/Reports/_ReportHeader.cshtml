@@ -5,17 +5,25 @@
     string add1 = !string.IsNullOrEmpty(companyDetail.Add2) ? $"{companyDetail.Add1}," : companyDetail.Add1;
     string add2 = !string.IsNullOrEmpty(companyDetail.Add3) ? $"{companyDetail.Add2}," : companyDetail.Add2;
 }
-<div class="row">
-    <div class="col-12">
-        <h4>
-            <img src="~/uploads/company/@companyDetail.Logo" height="40" />
-            @companyDetail.CoName
-            <small class="float-right"><span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now</small>
-        </h4>
-    </div>
-    <div class="col-12">
-        <h5>Address: @add1 @add2 @companyDetail.Add3</h5>
-    </div>
-    <!-- /.col -->
+<div class="col-12">
+    <table>
+        <tr>
+            <td>
+                <img src="~/uploads/company/@companyDetail.Logo" height="100" />
+            </td>
+            <td width="400">
+                <h4>
+                    @companyDetail.CoName<br />
+                    @add1 @add2 @companyDetail.Add3<br />
+                    @companyDetail.Phone
+                </h4>
+            </td>
+            <td>
+                <h5>
+                    <span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now
+                </h5>
+            </td>
+        </tr>
+    </table>
 </div>
 <h3 class="text-center mb-3">@ViewData["Title"]</h3>

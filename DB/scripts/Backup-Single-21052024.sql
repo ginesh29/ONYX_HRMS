@@ -1,3 +1,181 @@
+
+CREATE OR ALTER     Procedure [dbo].[GetRepo_FixedEarnDed_N]
+@v_CoCd Varchar(30)
+,	@v_RPrd Char(2)
+,	@v_RYear Char(4)
+,	@v_EmpCd Char(10)
+,	@v_BranchCd Char(10)
+--Drop procedure [dbo].[GetRepo_FixedEarnDed]  'A4M Group - UAE ','09 ','2014 ','   '
+as
+	Declare @AmtDecs int
+	Declare @Prd int
+	Declare @Year int
+	select @v_CoCd=Cd from Company where Cd=@v_CoCd
+	select @AmtDecs=AmtDecs from Company where Cd=@v_CoCd
+	select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
+	select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
+
+	if cast(@v_RPrd as int) = @Prd and cast(@v_RYear as int)=@Year
+		Select
+			EmpTrans.EmpCd[Code]
+		,	Emp.Fname[FName]
+		,	Emp.Mname[MName]
+		,	Emp.Lname[LName]
+		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
+		,	EmpTrans.EdCd[TypeCode]
+		,	Sys.Sdes[TypeDes]
+		,	EmpTrans.EdTyp
+		,	CoEd.Sdes[PayType]
+		,	case EdTyp 
+			when 'HEDT02' then -EmpTrans.Amt
+			else EmpTrans.Amt
+			end[Amt]
+		,	Curr[Curr]
+		,	ExRate
+		,	CoEd.TrnTyp[TransactionType]
+		,	Br.Sdes[Branch]
+		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
+		,	(select SDes from CC where Cd=Emp.CC)[CC]
+		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
+		,	@AmtDecs[AmtDecs]
+		,	case EdTyp
+			when 'HEDT02' then 'Deductions'
+			else 'Earnings'
+			end[PTYP]
+		From
+			EmpTrans 		EmpTrans
+		,	CompanyEarnDed 	CoED
+		,	Employee 		Emp
+		,	SysCodes		Sys
+		,	Company		Co
+		,	Branch			Br
+		where
+			Emp.cd=EmpTrans.Empcd
+		and	(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
+		and	Sys.Cd=EmpTrans.EdTyp
+		and	CoEd.Cd=EmpTrans.Edcd
+		and	CoEd.Typ=EmpTrans.EdTyp
+		and	Co.Cd=Emp.Cocd
+		and	Co.Cd=@v_CoCd
+		and	Br.cd=Emp.Div
+		and	EdTyp<>'HEDT04'
+		and	Emp.Status<>'HSTATNP'
+		and (Emp.Div = @v_BranchCd or @v_BranchCd ='')
+		union
+		Select
+			Emp.Cd[Code]
+		,	Emp.Fname[FName]
+		,	Emp.Mname[MName]
+		,	Emp.Lname[LName]
+		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
+		,	''[TypeCode]
+		,	'Others'[TypeDes]
+		,	''[EdTyp]
+		,	'Rounding'[PayType]
+		,	isnull((select RoundedAmt-NetSalary from EmpSalRound where EmpCd=Emp.Cd),0)[Amt]
+		,	BaseCurr[Curr]
+		,	1[ExRate]
+		,	''[TransactionType]
+		,	Br.Sdes[Branch]
+		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
+		,	(select SDes from CC where Cd=Emp.CC)[CC]
+		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
+		,	@AmtDecs[AmtDecs]
+		,	''[PTYP]
+		From
+			Employee 		Emp
+		,	Company		Co
+		,	Branch			Br
+		where
+		(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
+		and	Co.Cd=Emp.Cocd
+		and	Co.Cd=@v_CoCd
+		and	Br.cd=Emp.Div
+		and	Emp.Status<>'HSTATNP'
+		and (Emp.Div = @v_BranchCd or @v_BranchCd ='')
+	else
+		Select
+			EmpTrans.EmpCd[Code]
+		,	Emp.Fname[FName]
+		,	Emp.Mname[MName]
+		,	Emp.Lname[LName]
+		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
+		,	EmpTrans.EdCd[TypeCode]
+		,	Sys.Sdes[TypeDes]
+		,	EmpTrans.EdTyp
+		,	CoEd.Sdes[PayType]
+		,	case EdTyp 
+			when 'HEDT02' then -EmpTrans.Amt
+			else EmpTrans.Amt
+			end[Amt]
+		,	Curr
+		,	ExRate
+		,	CoEd.TrnTyp[Transaction Type]
+		,	Br.Sdes[Branch]
+		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
+		,	(select SDes from CC where Cd=Emp.CC)[CC]
+		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
+		,	@AmtDecs[AmtDecs]
+		,	case EdTyp
+			when 'HEDT02' then 'Deductions'
+			else 'Earnings'
+			end[PTYP]
+		From
+			EmpTransYtd 		EmpTrans
+		,	CompanyEarnDed 	CoED
+		,	Employee 		Emp
+		,	SysCodes		Sys
+		,	Company		Co
+		,	Branch			Br
+		where
+			Emp.cd=EmpTrans.Empcd
+		and (@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)	
+		and	Sys.Cd=EmpTrans.EdTyp
+		and	CoEd.Cd=EmpTrans.Edcd
+		and	CoEd.Typ=EmpTrans.EdTyp
+		and	Co.Cd=Emp.Cocd
+		and	Co.Cd=@v_CoCd
+		and	Br.cd=Emp.Div
+		and	EdTyp<>'HEDT04'
+		and	Emp.Status<>'HSTATNP'
+		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
+		and (Emp.Div = @v_BranchCd or @v_BranchCd ='')
+		union
+		Select
+			Emp.Cd[Code]
+		,	Emp.Fname[FName]
+		,	Emp.Mname[MName]
+		,	Emp.Lname[LName]
+		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
+		,	''[TypeCode]
+		,	'Others'[TypeDes]
+		,	''[EdTyp]
+		,	'Rounding'[PayType]
+		,	isnull((select RoundedAmt-NetSalary from EmpSalRoundYtd where EmpCd=Emp.Cd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2) ),0)[Amt]
+		,	BaseCurr[Curr]
+		,	1[ExRate]
+		,	''[TransactionType]
+		,	Br.Sdes[Branch]
+		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
+		,	(select SDes from CC where Cd=Emp.CC)[CC]
+		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
+		,	@AmtDecs[AmtDecs]
+		,	''[PTYP]
+		From
+			Employee 		Emp
+		,	Company		Co
+		,	Branch			Br
+		where
+		(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
+		and	Co.Cd=Emp.Cocd
+		and	Co.Cd=@v_CoCd
+		and	Br.cd=Emp.Div
+		and	Emp.Status<>'HSTATNP'
+		and (Emp.Div = @v_BranchCd or @v_BranchCd ='')
+
+ 
+ 
+ Go 
 -- =============================================
 -- Author:		<Author,,Name>
 -- CREATE OR ALTER date: <CREATE OR ALTER Date,,>
@@ -93,179 +271,6 @@ As		-- Drop Procedure [dbo].[ActivityLogDetail_Getrow] '5'
 Begin
 		select ActivityId,srno,(select caption from MenuCtrl_N where ProcessId=ActivityLogDetail.ProcessId)[ProcessId],ActivityTyp,Mesg,TimeStamp from ActivityLogDetail where ActivityId=@v_ActivityId
 End 
- Go 
-
-CREATE OR ALTER     Procedure [dbo].[GetRepo_FixedEarnDed_N]
-@v_CoCd Varchar(30)
-,	@v_RPrd Char(2)
-,	@v_RYear Char(4)
-,	@v_EmpCd Char(10)
---Drop procedure [dbo].[GetRepo_FixedEarnDed]  'A4M Group - UAE ','09 ','2014 ','   '
-as
-	Declare @AmtDecs int
-	Declare @Prd int
-	Declare @Year int
-	select @v_CoCd=Cd from Company where Cd=@v_CoCd
-	select @AmtDecs=AmtDecs from Company where Cd=@v_CoCd
-	select @Prd=val from Parameters where Cd='CUR_MONTH' and CoCd=@v_CoCd
-	select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
-
-	if cast(@v_RPrd as int) = @Prd and cast(@v_RYear as int)=@Year
-		Select
-			EmpTrans.EmpCd[Code]
-		,	Emp.Fname[FName]
-		,	Emp.Mname[MName]
-		,	Emp.Lname[LName]
-		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
-		,	EmpTrans.EdCd[TypeCode]
-		,	Sys.Sdes[TypeDes]
-		,	EmpTrans.EdTyp
-		,	CoEd.Sdes[PayType]
-		,	case EdTyp 
-			when 'HEDT02' then -EmpTrans.Amt
-			else EmpTrans.Amt
-			end[Amt]
-		,	Curr[Curr]
-		,	ExRate
-		,	CoEd.TrnTyp[TransactionType]
-		,	Br.Sdes[Branch]
-		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
-		,	(select SDes from CC where Cd=Emp.CC)[CC]
-		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
-		,	@AmtDecs[AmtDecs]
-		,	case EdTyp
-			when 'HEDT02' then 'Deductions'
-			else 'Earnings'
-			end[PTYP]
-		From
-			EmpTrans 		EmpTrans
-		,	CompanyEarnDed 	CoED
-		,	Employee 		Emp
-		,	SysCodes		Sys
-		,	Company		Co
-		,	Branch			Br
-		where
-			Emp.cd=EmpTrans.Empcd
-		and	(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
-		and	Sys.Cd=EmpTrans.EdTyp
-		and	CoEd.Cd=EmpTrans.Edcd
-		and	CoEd.Typ=EmpTrans.EdTyp
-		and	Co.Cd=Emp.Cocd
-		and	Co.Cd=@v_CoCd
-		and	Br.cd=Emp.Div
-		and	EdTyp<>'HEDT04'
-		and	Emp.Status<>'HSTATNP'
-		union
-		Select
-			Emp.Cd[Code]
-		,	Emp.Fname[FName]
-		,	Emp.Mname[MName]
-		,	Emp.Lname[LName]
-		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
-		,	''[TypeCode]
-		,	'Others'[TypeDes]
-		,	''[EdTyp]
-		,	'Rounding'[PayType]
-		,	isnull((select RoundedAmt-NetSalary from EmpSalRound where EmpCd=Emp.Cd),0)[Amt]
-		,	BaseCurr[Curr]
-		,	1[ExRate]
-		,	''[TransactionType]
-		,	Br.Sdes[Branch]
-		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
-		,	(select SDes from CC where Cd=Emp.CC)[CC]
-		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
-		,	@AmtDecs[AmtDecs]
-		,	''[PTYP]
-		From
-			Employee 		Emp
-		,	Company		Co
-		,	Branch			Br
-		where
-		(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
-		and	Co.Cd=Emp.Cocd
-		and	Co.Cd=@v_CoCd
-		and	Br.cd=Emp.Div
-		and	Emp.Status<>'HSTATNP'
-	else
-		Select
-			EmpTrans.EmpCd[Code]
-		,	Emp.Fname[FName]
-		,	Emp.Mname[MName]
-		,	Emp.Lname[LName]
-		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
-		,	EmpTrans.EdCd[TypeCode]
-		,	Sys.Sdes[TypeDes]
-		,	EmpTrans.EdTyp
-		,	CoEd.Sdes[PayType]
-		,	case EdTyp 
-			when 'HEDT02' then -EmpTrans.Amt
-			else EmpTrans.Amt
-			end[Amt]
-		,	Curr
-		,	ExRate
-		,	CoEd.TrnTyp[Transaction Type]
-		,	Br.Sdes[Branch]
-		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
-		,	(select SDes from CC where Cd=Emp.CC)[CC]
-		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
-		,	@AmtDecs[AmtDecs]
-		,	case EdTyp
-			when 'HEDT02' then 'Deductions'
-			else 'Earnings'
-			end[PTYP]
-		From
-			EmpTransYtd 		EmpTrans
-		,	CompanyEarnDed 	CoED
-		,	Employee 		Emp
-		,	SysCodes		Sys
-		,	Company		Co
-		,	Branch			Br
-		where
-			Emp.cd=EmpTrans.Empcd
-		and (@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)	
-		and	Sys.Cd=EmpTrans.EdTyp
-		and	CoEd.Cd=EmpTrans.Edcd
-		and	CoEd.Typ=EmpTrans.EdTyp
-		and	Co.Cd=Emp.Cocd
-		and	Co.Cd=@v_CoCd
-		and	Br.cd=Emp.Div
-		and	EdTyp<>'HEDT04'
-		and	Emp.Status<>'HSTATNP'
-		and	Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2)
-		union
-		Select
-			Emp.Cd[Code]
-		,	Emp.Fname[FName]
-		,	Emp.Mname[MName]
-		,	Emp.Lname[LName]
-		,	Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
-		,	''[TypeCode]
-		,	'Others'[TypeDes]
-		,	''[EdTyp]
-		,	'Rounding'[PayType]
-		,	isnull((select RoundedAmt-NetSalary from EmpSalRoundYtd where EmpCd=Emp.Cd and Prd=rtrim(@v_RYear)+right('0'+rtrim(@v_RPrd),2) ),0)[Amt]
-		,	BaseCurr[Curr]
-		,	1[ExRate]
-		,	''[TransactionType]
-		,	Br.Sdes[Branch]
-		,	(Select SDes from Codes where Cd=Emp.LocCd)[Location]
-		,	(select SDes from CC where Cd=Emp.CC)[CC]
-		,	(select Sdes from Dept Where cd=Emp.Dept)[Department]
-		,	@AmtDecs[AmtDecs]
-		,	''[PTYP]
-		From
-			Employee 		Emp
-		,	Company		Co
-		,	Branch			Br
-		where
-		(@v_EmpCd='' or @v_EmpCd<>'' and Emp.cd=@v_EmpCd)
-		and	Co.Cd=Emp.Cocd
-		and	Co.Cd=@v_CoCd
-		and	Br.cd=Emp.Div
-		and	Emp.Status<>'HSTATNP'
-
- 
- 
  Go 
 CREATE OR ALTER procedure [dbo].[Company_GetRow]
 --drop procedure [dbo].[Company_GetRow]'01','0'
