@@ -5,10 +5,12 @@
     var avatarFileExist = EmployeeDetail.ImageFilePath.FileExist("emp-photo", loggedInUser.CompanyCd);
     var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(EmployeeDetail.ImageFilePath) ? $"/uploads/{loggedInUser.CompanyCd}/emp-photo/{EmployeeDetail.ImageFilePath}" : "/images/avatar.png";
     var address = $"{EmpContactDetail.AddressLine1}, {EmpContactDetail.AddressLine2}, {EmpContactDetail.AddressLine3}";
+    var servicePeriodDays = (DateTime.Now - EmployeeDetail.DOJ).Days;
+    var servicePeriod = ExtensionMethod.ConvertDaysToYearsMonthsDays(servicePeriodDays);
 }
 <div class="row">
     <div class="col-7">
-        <p class="text-muted text-sm mb-0"><b>Code: </b> @EmployeeDetail.Cd</p>
+        <p class="text-muted text-sm mb-0"><b>Code: </b> @EmployeeDetail.Cd</p>        
         <p class="text-muted text-sm mb-0"><b>Branch: </b> @EmployeeDetail.Branch</p>
         <p class="text-muted text-sm mb-0"><b>Sponsor: </b> @EmployeeDetail.Sponsor</p>
         <p class="text-muted text-sm mb-0"><b>Designation: </b> @EmployeeDetail.Designation</p>
@@ -31,6 +33,7 @@
     </div>
     <div class="col-md-7">
         <h5 class="lead mt-3 mb-0 text-center text-primary"><b>@EmployeeDetail.Salutation @EmployeeDetail.Name</b></h5>
+        <p class="text-muted text-sm mb-0"><b>Service Period: </b> @servicePeriod</p>
         <p class="text-muted text-sm mb-0"><b>S/O: </b> @EmployeeDetail.Father</p>
         <p class="text-muted text-sm mb-0"><b>Email: </b> @EmpContactDetail?.Email</p>
         <p class="text-muted text-sm mb-0"><b>Mob No.: </b> @EmpContactDetail?.Mobile</p>

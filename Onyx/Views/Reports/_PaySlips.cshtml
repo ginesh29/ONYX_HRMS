@@ -63,13 +63,25 @@
                         <tr>
                             <td>@item.PayCode</td>
                             <td>@item.Curr1</td>
-                            <td class="border-right">@item.Amt1.ToString(DecimalFormat) <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="Hello"></i></td>
+                            <td class="border-right">
+                                @item.Amt1.ToString(DecimalFormat)
+                                @if (!string.IsNullOrEmpty(item.Narr))
+                                {
+                                    <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr"></i>
+                                }
+                            </td>
                             <td>@item.PayCode1</td>
                             <td>@item.Curr2</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(item.PayCode1))
                                 {
-                                    <span>@item.Amt2.ToString(DecimalFormat) <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="Hello"></i></span>
+                                    <span>
+                                        @item.Amt2.ToString(DecimalFormat)
+                                        @if (!string.IsNullOrEmpty(item.Narr))
+                                        {
+                                            <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr"></i>
+                                        }
+                                    </span>
                                 }
                             </td>
                         </tr>

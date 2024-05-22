@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" method="post">
+    <select class="select-picker ml-3" name="culture" id="language-switcher" onchange="this.form.submit();" data-width="150px">
+        <option value="en" data-icon="flag-icon flag-icon-us">English</option>
+        <option value="ar" data-icon="flag-icon flag-icon-ae">العربية</option>
+        <option value="fa-IR" data-icon="flag-icon flag-icon-ir">فارسی</option>
+    </select>
+</form>
+@* <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+        <i class="flag-icon flag-icon-ae"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right p-0" style="left: inherit; right: 0px;">
+        <a href="#" class="dropdown-item">
+        <i class="flag-icon flag-icon-us mr-2"></i> English
+        </a>
+        <a href="#" class="dropdown-item active">
+        <i class="flag-icon flag-icon-ae mr-2"></i> Arabic
+        </a>
+        <a href="#" class="dropdown-item">
+        <i class="flag-icon flag-icon-ir mr-2"></i> Iranian
+        </a>
+        </div>
+        </li> *@

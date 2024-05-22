@@ -70,9 +70,7 @@
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
                             @{
-                                i = 0;
-                                var servicePeriodDays = (DateTime.Now - Model.Doj.Value).Days;
-                                var servicePeriod = ExtensionMethod.ConvertDaysToYearsMonthsDays(servicePeriodDays);
+                                i = 0;                                
                             }
                             @foreach (var item in sections)
                             {
@@ -80,6 +78,8 @@
                                     <div style="min-height:400px">
                                         @if (!string.IsNullOrEmpty(Model.Code))
                                         {
+                                            var servicePeriodDays = (DateTime.Now - Model.Doj.Value).Days;
+                                            var servicePeriod = ExtensionMethod.ConvertDaysToYearsMonthsDays(servicePeriodDays);
                                             <div class="d-flex">
                                                 <h5 class="text-primary pr-3 border-right">@Model.Name (@Model.Code)</h5>
                                                 <h5><span class="text-info pl-3">Service Period: </span>@servicePeriod</h5>
