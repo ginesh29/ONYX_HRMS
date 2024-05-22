@@ -1039,7 +1039,7 @@ namespace Onyx.Controllers
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
                 item.Curr = employeeDetail.BasicCurr.Trim();
-                item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
+                //item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
                 item.TransId = "M";
                 _transactionService.EmpTrans_Update(item, model.FilterModel);
             }

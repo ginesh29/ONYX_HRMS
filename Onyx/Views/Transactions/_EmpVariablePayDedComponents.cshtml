@@ -22,6 +22,7 @@
                 <th>Branch</th>
                 <th>Department</th>
                 <th width="100">Amount</th>
+                <th>Narration</th>
             </tr>
         </thead>
         @foreach (var item in Model.VariableComponentsData.Select((value, i) => new { i, value }))
@@ -51,6 +52,9 @@
                 </td>
                 <td>
                     <input asp-for="@Model.VariableComponentsData[item.i].Amt" class="form-control form-control-sm decimal-input amt" data-amt="@Model.VariableComponentsData[item.i].Amt" />
+                </td>
+                <td>
+                    <input asp-for="@Model.VariableComponentsData[item.i].Narr" class="form-control form-control-sm " />
                 </td>
             </tr>
         }

@@ -939,7 +939,7 @@ namespace Onyx.Services
         }
         public void DeleteEmpTrans(string empCd, string PayCode, string PayType, string Branch)
         {
-            var procedureName = "EmpTrans_Delete_N";
+            var procedureName = "EmpTrans_Delete";
             var parameters = new DynamicParameters();
             parameters.Add("v_EdCd", PayCode);
             parameters.Add("v_EdTyp", PayType);
