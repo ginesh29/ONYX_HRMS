@@ -65,5 +65,6 @@
         public string ODays { get; set; }
         public decimal? W_days { get; set; }
         public int? Up_Hdays { get; set; }
+        public string Narr { get; set; }
     }
 }

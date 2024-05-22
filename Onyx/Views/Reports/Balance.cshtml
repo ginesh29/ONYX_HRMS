@@ -43,7 +43,7 @@
                 var toDate = $("#ToDate").val();
                 var dateFormat = $("#LocalDateFormat").val();
                 var endDate = moment(toDate, dateFormat).format(CommonSetting.InputDateFormat)
-                var url = `/Reports/FetchBalanceTransactions?EmpCd=${empCd}&ToDate=${endDate}`;
+                var url = `/Reports/FetchBalanceTransactions?EmpCd=${encodeURI(empCd)}&ToDate=${endDate}`;
                 $('#BalanceTransactions').load(url, function () {
                     unloadingButton(btn);
                     window["datatable"] = $('#BalanceTransactionsReportTable').DataTable(dataTableDefaultOptions);
@@ -59,7 +59,7 @@
                 var toDate = $("#ToDate").val();
                 var dateFormat = $("#LocalDateFormat").val();
                 var endDate = moment(toDate, dateFormat).format(CommonSetting.InputDateFormat)
-                var url = `/Reports/BalanceTransactionsReport?EmpCd=${empCd}&ToDate=${endDate}`;
+                var url = `/Reports/BalanceTransactionsReport?EmpCd=${encodeURI(empCd)}&ToDate=${endDate}`;
                 window.open(url);
             }
         }

@@ -5,8 +5,6 @@ using Onyx.Models.StoredProcedure.Report;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
-using System.Collections.Generic;
-using System.Dynamic;
 
 namespace Onyx.Services
 {

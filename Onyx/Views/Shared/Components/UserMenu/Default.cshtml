@@ -14,6 +14,7 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
+
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
@@ -375,7 +376,7 @@
                 </select>
             </div>
         </li>
-        @* <li class="nav-item dropdown">
+        <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
                 <i class="flag-icon flag-icon-us"></i>
             </a>
@@ -393,7 +394,7 @@
                     <i class="flag-icon flag-icon-es mr-2"></i> Spanish
                 </a>
             </div>
-        </li> *@
+        </li>
         <!-- Navbar Search -->
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
