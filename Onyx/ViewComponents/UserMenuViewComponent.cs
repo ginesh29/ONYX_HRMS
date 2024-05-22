@@ -43,7 +43,7 @@ namespace Onyx.ViewComponents
                 item.EP_TypeCd = item.EP_TypeCd.Trim();
                 item.Detail = _transactionService.GetEmpProgressionDetail(item.TransNo.Trim());
             }
-            var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "1");
+            var docRenewalData = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserLinkedTo, _loggedInUser.UserOrEmployee, "1");
             var provisionAdjData = _transactionService.GetEmpProvisionAdjData(string.Empty, "6", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee);
             ViewBag.LeaveApprovalData = leaveData;
             ViewBag.LoanApprovalData = loanData;

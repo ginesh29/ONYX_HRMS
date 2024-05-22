@@ -391,7 +391,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpTransferData()
         {
-            var transferData = _transactionService.GetEmpTransferData(_loggedInUser.UserCd);
+            var transferData = _transactionService.GetEmpTransferData(_loggedInUser.UserLinkedTo);
             CommonResponse result = new()
             {
                 Data = transferData,
@@ -400,7 +400,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetEmpTransfer(string empCd, int srNo)
         {
-            var empTransfer = _transactionService.GetEmpTransferData(_loggedInUser.UserCd).FirstOrDefault(m => m.SrNo == srNo && m.EmpCd.Trim() == empCd);
+            var empTransfer = _transactionService.GetEmpTransferData(_loggedInUser.UserLinkedTo).FirstOrDefault(m => m.SrNo == srNo && m.EmpCd.Trim() == empCd);
             var model = new EmpTransferModel();
             if (empTransfer != null)
                 model = new EmpTransferModel
@@ -594,7 +594,7 @@ namespace Onyx.Controllers
         public IActionResult GetEmpLoanApproval(string transNo)
         {
             var loanDetails = _transactionService.GetEmpLoanDetail(transNo, "2", _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd).FirstOrDefault();
-            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserCd).Employees.FirstOrDefault();
+            var empDetail = _employeeService.GetEmployees(_loggedInUser.CompanyCd, loanDetails.EmployeeCode.Trim(), _loggedInUser.UserLinkedTo).Employees.FirstOrDefault();
             loanDetails.EmployeeCode = loanDetails.EmployeeCode.Trim();
             loanDetails.Mobile = empDetail.MobNo?.Trim();
             loanDetails.Salary = Convert.ToInt32(empDetail.Total);
@@ -1179,7 +1179,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalEmpDocument(string empCd, string docTypeCd, int srNo)
         {
-            var empDocument = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserCd).FirstOrDefault();
+            var empDocument = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserLinkedTo).FirstOrDefault();
             var model = new EmpDocumentModel();
             if (empDocument != null)
                 model = new EmpDocumentModel
@@ -1314,7 +1314,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmpDocRenewalData()
         {
-            var docs = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "1");
+            var docs = _transactionService.GetEmpDocIssueRcpt(string.Empty, string.Empty, 0, _loggedInUser.UserLinkedTo, _loggedInUser.UserOrEmployee, "1");
             CommonResponse result = new()
             {
                 Data = docs,
@@ -1323,7 +1323,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetRenewalDocumentApproval(string empCd, string docTypeCd, int srNo)
         {
-            var document = _transactionService.GetEmpDocIssueRcpt(empCd, docTypeCd, srNo, _loggedInUser.UserCd, _loggedInUser.UserOrEmployee, "2").FirstOrDefault();
+            var document = _transactionService.GetEmpDocIssueRcpt(empCd, docTypeCd, srNo, _loggedInUser.UserLinkedTo, _loggedInUser.UserOrEmployee, "2").FirstOrDefault();
             document.DocType = document.DocType.Trim();
             document.DocStat = document.DocStat.Trim();
             ViewBag.EmpDocTypeItems = _settingService.GetCodeGroupItems(CodeGroup.EmpDocType).Select(m => new SelectListItem

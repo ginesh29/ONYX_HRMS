@@ -392,7 +392,7 @@ namespace Onyx.Controllers
                 if (model.Invite)
                 {
                     _organisationService.SaveCalendarEventAttendees(model.Cd, model.Attendees);
-                    var emps = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Where(m => model.Attendees.Contains(m.Cd.Trim()));
+                    var emps = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserLinkedTo).Where(m => model.Attendees.Contains(m.Cd.Trim()));
                     var recipients = emps.Where(m => !string.IsNullOrEmpty(m.Email)).Select(m => new EmailRecipientModel
                     {
                         RecipientEmail = m.Email,
@@ -508,7 +508,7 @@ namespace Onyx.Controllers
             if (result.Success)
             {
                 _organisationService.DeleteNotificationDetail(model.SrNo, model.ProcessId, _loggedInUser.CompanyCd);
-                var emps = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd);
+                var emps = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserLinkedTo);
                 if (model.Attendees != null)
                     emps = emps.Where(m => model.Attendees.Contains(m.Cd.Trim())).ToList();
                 var recipients = emps.Select(m => new EmailRecipientModel

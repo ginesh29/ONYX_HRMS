@@ -88,7 +88,7 @@ namespace Onyx.Controllers
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
             var designations = filterModel.Designations != null ? string.Join(",", filterModel.Designations) : null;
             var empTypes = filterModel.EmployeeTypes != null ? string.Join(",", filterModel.EmployeeTypes) : null;
-            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, name, _loggedInUser.UserCd, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.LeaveStatus, filterModel.Active, pageNumber, size);
+            var employeesData = _employeeService.GetEmployees(_loggedInUser.CompanyCd, name, _loggedInUser.UserLinkedTo, branches, departments, sponsors, designations, filterModel.EmployeeStatus, empTypes, filterModel.LeaveStatus, filterModel.Active, pageNumber, size);
             var pagedEmployees = new StaticPagedList<Employee_GetRow_Result>(employeesData.Employees, pageNumber, size, employeesData.TotalCount);
             return PartialView("_EmployeesList", new { Data = pagedEmployees, FilterModel = filterModel });
         }
@@ -193,7 +193,7 @@ namespace Onyx.Controllers
                 Value = m.Code.Trim(),
                 Text = $"{m.ShortDes}({m.Code.Trim()})"
             });
-            ViewBag.ReportingToItems = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd).Select(m => new SelectListItem
+            ViewBag.ReportingToItems = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserLinkedTo).Select(m => new SelectListItem
             {
                 Value = m.Cd.Trim(),
                 Text = $"{m.Name}({m.Cd.Trim()})"
@@ -268,7 +268,7 @@ namespace Onyx.Controllers
         {
             _employeeService.SaveBasicSalary(empCd, basic);
             var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
-            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserCd);
+            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserLinkedTo);
             var totalIncome = components.Where(m => m.Type != "Deductions").Sum(m => m.Amt);
             var totalDeductions = components.Where(m => m.Type == "Deductions").Sum(m => m.Amt);
             var TotalSalary = employee.Basic + totalIncome - totalDeductions;
@@ -453,7 +453,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocuments(string empCd = "")
         {
-            var documents = _employeeService.GetDocuments(empCd, string.Empty, 0, "A", _loggedInUser.UserCd);
+            var documents = _employeeService.GetDocuments(empCd, string.Empty, 0, "A", _loggedInUser.UserLinkedTo);
             CommonResponse result = new()
             {
                 Data = documents,
@@ -462,7 +462,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetDocument(string empCd, string docTypeCd, int srNo)
         {
-            var document = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserCd).FirstOrDefault();
+            var document = _employeeService.GetDocuments(empCd, docTypeCd, srNo, "A", _loggedInUser.UserLinkedTo).FirstOrDefault();
             var model = new EmpDocumentModel();
             if (document != null)
                 model = new EmpDocumentModel
@@ -575,7 +575,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchComponents(string empCd = "")
         {
-            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserCd);
+            var components = _employeeService.GetComponents(empCd, _loggedInUser.UserLinkedTo);
             CommonResponse result = new()
             {
                 Data = components,
@@ -584,7 +584,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetComponent(string empCd, string edCd, string edTyp, int srNo)
         {
-            var component = _employeeService.GetComponents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
+            var component = _employeeService.GetComponents(empCd, _loggedInUser.UserLinkedTo).FirstOrDefault(m => m.EdCd.Trim() == edCd && m.EdTyp.Trim() == edTyp && m.SrNo == srNo);
             var employee = _employeeService.FindEmployee(empCd, _loggedInUser.CompanyCd);
             var model = new EmpEarnDedModel();
             if (component != null)
@@ -728,7 +728,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchBankAccounts()
         {
-            var bankaccounts = _employeeService.GetBankAccounts(_loggedInUser.UserCd);
+            var bankaccounts = _employeeService.GetBankAccounts(_loggedInUser.UserLinkedTo);
             CommonResponse result = new()
             {
                 Data = bankaccounts,
@@ -737,7 +737,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetBankAccount(string empCd, string bankCd, string bankBrCd, int srNo)
         {
-            var bankAccount = _employeeService.GetBankAccounts(_loggedInUser.UserCd).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd && m.SrNo == srNo);
+            var bankAccount = _employeeService.GetBankAccounts(_loggedInUser.UserLinkedTo).FirstOrDefault(m => m.EmpCd.Trim() == empCd && m.BankCd.Trim() == bankCd && m.BankBrCd.Trim() == bankBrCd && m.SrNo == srNo);
             var model = new EmpBankAcModel();
             if (bankAccount != null)
                 model = new EmpBankAcModel
@@ -819,7 +819,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCalendarEvents(string empCd = "")
         {
-            var events = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserCd).Select(m => new CalendarModel
+            var events = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserLinkedTo).Select(m => new CalendarModel
             {
                 Id = m.SrNo.ToString(),
                 AllDay = true,
@@ -832,7 +832,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetCalendarEvent(int srNo, string empCd = "")
         {
-            var calendarEvent = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserCd).FirstOrDefault(m => m.SrNo == srNo);
+            var calendarEvent = _employeeService.GetCalendarEvents(empCd, _loggedInUser.UserLinkedTo).FirstOrDefault(m => m.SrNo == srNo);
             var model = new EmpCalendarModel();
             if (calendarEvent != null)
                 model = new EmpCalendarModel
