@@ -432,12 +432,12 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd);
+            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             return PartialView("_LeaveAnalysis", loans);
         }
         public IActionResult LeaveAnalysisReport(EmpLeaveAnalysisFilterModel filterModel)
         {
-            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd);
+            var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             return new ViewAsPdf(loans)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
