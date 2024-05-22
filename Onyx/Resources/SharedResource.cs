@@ -1,6 +1,6 @@
 ﻿namespace Onyx.Resources
 {
-    public class MenuResource
+    public class SharedResource
     {
     }
 }

@@ -16,15 +16,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources\MenuResource.ar.resx">
+	  <EmbeddedResource Update="Resources\SharedResource.ar.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\MenuResource.fa.resx">
+	  <EmbeddedResource Update="Resources\SharedResource.fa.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\MenuResource.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>MenuResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 
