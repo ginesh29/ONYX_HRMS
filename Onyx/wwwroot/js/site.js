@@ -317,6 +317,8 @@ function bindEmployeeDropdown() {
             dropdownParent: $(`#${id}`).closest(".form-group,.select2-container"),
             data: response
         });
+        if (response.length == 1)
+            el.val(response[0].id).trigger('change')
     })
 }
 $(document).on('select2:open', () => {

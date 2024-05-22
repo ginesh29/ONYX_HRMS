@@ -69,7 +69,8 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchEmployeeItems(string departments, string designations, string branches, string locations)
         {
-            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserCd, branches, departments, locations, designations);
+            var empCd = _loggedInUser.UserLinkedTo == "Emp" ? _loggedInUser.UserCd : string.Empty;
+            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, empCd, _loggedInUser.UserLinkedTo, branches, departments, locations, designations);
             var items = employees.Select(s => new Select2Item
             {
                 Id = s.Cd.Trim(),

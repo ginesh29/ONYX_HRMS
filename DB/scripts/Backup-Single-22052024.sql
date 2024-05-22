@@ -1,3 +1,219 @@
+CREATE OR ALTER procedure [dbo].[EmpTrans_VarCompFixAmt_GetRow]
+	@DivCd			varchar(20)
+,	@CCCd 			varchar(20)
+,	@DeptCd   		varchar(20)
+,	@v_EdCd 		varchar(30)
+,	@v_EdTyp 		varchar(30)
+,	@v_FromDt		datetime
+,	@v_ToDt			datetime
+As		-- Drop Procedure [EmpTrans_VarCompFixAmt_GetRow]'JBMAQ','0','0','026  ','HEDT01','12/01/2015','12/31/2015'
+Begin
+	if @DivCd in ('ALL','0')
+		Set @DivCd=''
+	
+	if @CCCd in ('ALL','0')
+		Set @CCCd=''
+	
+	if @DeptCd in ('ALL','0')
+		Set @DeptCd=''
+/*
+	Declare	@DivCd			varchar(20)
+	Declare	@CCCd			varchar(20)
+	Declare	@DeptCd		varchar(20)
+	Declare	@v_EdCd		varchar(30)
+	Declare	@v_EdTyp		varchar(30)
+	Declare	@v_FromDt		datetime
+	Declare	@v_ToDt			datetime
+
+	set @DivCd=''
+	set @CCCd=''
+	set @DeptCd=''
+	set @v_EdCd='008'
+	set @v_EdTyp='HEDT03'
+	set @v_FromDt='03/01/2012'
+	set @v_ToDt='03/31/2012'
+*/
+/*
+	Declare @DivCd		Char(5)
+	Declare @CCCd		Char(5)
+	Declare @DeptCd		Char(5)
+	Declare @v_EdTyp	Char(10)
+	Declare @v_EdCd		Char(5)
+	if @DivDes='ALL'
+		Set @DivCd=''
+	Else
+		Select @DivCd=Cd from Branch where SDes=@DivDes
+	if @CCDes='ALL'
+		Set @CCCd=''
+	Else
+		Select @CCCd=Cd from CC where SDes=@CCDes
+	if @DeptDes='ALL'
+		Set @DeptCd=''
+	Else
+		Select @DeptCd=Cd from Dept where SDes=@DeptDes
+	Select @v_EdTyp=cd from SysCodes where SDes=@v_EdTypDes and Typ='HEDT'
+	Select @v_EdCd=cd from CompanyEarnDed where SDes=@v_EdCdDes and Typ=@v_EdTyp
+	
+	*/
+	
+	if (Select count(1) from EmpTrans where EdCd = @v_EdCd and EdTyp = @v_EdTyp and FromDt = @v_FromDt and ToDt = @v_ToDt) = 0
+	  Begin
+	    if( @v_EdCd=(select Val from Parameters where Cd='AIRFARE_EdCd'))
+	       begin
+			Select
+				Cd
+			,	Case Len(Rtrim(MName))
+					When 0 then Rtrim(FName)+ ' ' + Rtrim(LName)
+					Else Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName)
+				End[EmpName]
+			,	(Select sDes from Branch where Cd=Div)[Branch]
+			,	(Select sDes from Dept where Cd=Dept)[Dept]	-- Select * from Employee
+			,	case when(EL.WOP_FromDt='1900-01-01')
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WP_FromDt between FromDt and ToDt)
+				when(EL.WP_FromDt='1900-01-01')
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WOP_FromDt between FromDt and ToDt)
+				else case when(EL.WOP_FromDt<EL.WP_FromDt)
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WOP_FromDt between FromDt and ToDt)
+				else (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WP_FromDt between FromDt and ToDt)end end[Amt]
+			,	'False' as [Status]
+			,	Narr
+			From 
+				Employee E
+				inner join EmpLeave EL on EL.EmpCd=E.Cd and EL.LvTyp='AL' and EL.LvStatus in ('F','J') and (EL.WOP_FromDt between @v_FromDt and @v_ToDt or EL.WP_FromDt between @v_FromDt and @v_ToDt)
+			Where
+				Rtrim(Status) not in ('HSTATAB','HSTATES','HSTATNP','HSTATSR','HSTATST')
+			and	(@DivCd='' or @DivCd<>'' and Div=@DivCd)
+			and	(@CCCd='' or @CCCd<>'' and CC=@CCCd)
+			and	(@DeptCd='' or @DeptCd<>'' and Dept=@DeptCd)
+			and E.FareEligible='Y'
+			and E.LT='Y'
+		end
+		else
+		begin
+			Select
+				Cd
+			,	Case Len(Rtrim(MName))
+					When 0 then Rtrim(FName)+ ' ' + Rtrim(LName)
+					Else Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName)
+				End[EmpName]
+			,	(Select sDes from Branch where Cd=Div)[Branch]
+			,	(Select sDes from Dept where Cd=Dept)[Dept]	-- Select * from Employee
+			,	0[Amt]
+			,	'False' as [Status]
+			,	''[Narr]
+			From 
+				Employee E
+			Where
+				Rtrim(Status) not in ('HSTATAB','HSTATES','HSTATNP','HSTATSR','HSTATST')
+			and	(@DivCd='' or @DivCd<>'' and Div=@DivCd)
+			and	(@CCCd='' or @CCCd<>'' and CC=@CCCd)
+			and	(@DeptCd='' or @DeptCd<>'' and Dept=@DeptCd)
+		end
+		
+	  end
+	Else
+	  Begin
+	  
+	    if( @v_EdCd=(select Val from Parameters where Cd='AIRFARE_EdCd'))
+	       begin
+				Select
+					EmpCd[Cd]
+				,	(Select Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName) From Employee Where Cd=EmpCd)[EmpName]
+				,	(Select sDes from Branch where Cd=HRDiv)[Branch]
+				,	(Select sDes from Dept where Cd=HRDept)[Dept]	-- Select * from Employee
+				,	Amt
+				,	'True' as [Status]
+				,	Narr
+				From 
+					EmpTrans
+				Where
+					(@DivCd='' or @DivCd<>'' and HRDiv=@DivCd)
+				and	(@CCCd='' or @CCCd<>'' and HRCC=@CCCd)
+				and	(@DeptCd='' or @DeptCd<>'' and HRDept=@DeptCd)
+				and	EdCd=@v_EdCd and EdTyp = @v_EdTyp and FromDt = @v_FromDt and ToDt = @v_ToDt
+				Union All
+				Select
+					Cd
+				,	Case Len(Rtrim(MName))
+						When 0 then Rtrim(FName)+ ' ' + Rtrim(LName)
+						Else Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName)
+					End[EmpName]
+				,	(Select sDes from Branch where Cd=Div)[Branch]
+				,	(Select sDes from Dept where Cd=Dept)[Dept]	-- Select * from Employee
+			,	case when(EL.WOP_FromDt='1900-01-01')
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WP_FromDt between FromDt and ToDt)
+				when(EL.WP_FromDt='1900-01-01')
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WOP_FromDt between FromDt and ToDt)
+				else case when(EL.WOP_FromDt<EL.WP_FromDt)
+				then (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WOP_FromDt between FromDt and ToDt)
+				else (select Fare from AirFare where SectCd=E.TravSect and Class=E.TravClass and EL.WP_FromDt between FromDt and ToDt)end end[Amt]
+				,	'False' as [Status]
+				,	Narr
+				From
+				Employee E
+					inner join EmpLeave EL on EL.EmpCd=E.Cd and EL.LvTyp='AL' and EL.LvStatus in ('F','J') and (EL.WOP_FromDt between @v_FromDt and @v_ToDt or EL.WP_FromDt between @v_FromDt and @v_ToDt)
+				Where
+					Rtrim(Status) not in ('HSTATAB','HSTATES','HSTATNP','HSTATSR','HSTATST')
+				and	(@DivCd='' or @DivCd<>'' and Div=@DivCd)
+				and	(@CCCd='' or @CCCd<>'' and CC=@CCCd)
+				and	(@DeptCd='' or @DeptCd<>'' and Dept=@DeptCd)
+				and E.FareEligible='Y'
+				and E.LT='Y'
+				and Cd not in (Select EmpCd From EmpTrans Where
+						(@DivCd='' or @DivCd<>'' and HRDiv=@DivCd)
+					and	(@CCCd='' or @CCCd<>'' and HRCC=@CCCd)
+					and	(@DeptCd='' or @DeptCd<>'' and HRDept=@DeptCd)
+					and	EdCd=@v_EdCd and EdTyp = @v_EdTyp and FromDt = @v_FromDt)		
+			order by EmpCd
+	       end
+	       else
+	       begin
+				Select
+					EmpCd[Cd]
+				,	(Select Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName) From Employee Where Cd=EmpCd)[EmpName]
+				,	(Select sDes from Branch where Cd=HRDiv)[Branch]
+				,	(Select sDes from Dept where Cd=HRDept)[Dept]	-- Select * from Employee
+				,	Amt
+				,	'True' as [Status]
+				,	Narr
+				From 
+					EmpTrans
+				Where
+					(@DivCd='' or @DivCd<>'' and HRDiv=@DivCd)
+				and	(@CCCd='' or @CCCd<>'' and HRCC=@CCCd)
+				and	(@DeptCd='' or @DeptCd<>'' and HRDept=@DeptCd)
+				and	EdCd=@v_EdCd and EdTyp = @v_EdTyp and FromDt = @v_FromDt and ToDt = @v_ToDt
+				Union All
+				Select
+					Cd
+				,	Case Len(Rtrim(MName))
+						When 0 then Rtrim(FName)+ ' ' + Rtrim(LName)
+						Else Rtrim(FName)+ ' ' + Rtrim(MName) +' ' + Rtrim(LName)
+					End[EmpName]
+				,	(Select sDes from Branch where Cd=Div)[Branch]
+				,	(Select sDes from Dept where Cd=Dept)[Dept]	-- Select * from Employee
+				,	0[Amt]
+				,	'False' as [Status]
+				,	''[Narr]
+				From
+					Employee
+				Where
+					Rtrim(Status) not in ('HSTATAB','HSTATES','HSTATNP','HSTATSR','HSTATST')
+				and	(@DivCd='' or @DivCd<>'' and Div=@DivCd)
+				and	(@CCCd='' or @CCCd<>'' and CC=@CCCd)
+				and	(@DeptCd='' or @DeptCd<>'' and Dept=@DeptCd)
+				and Cd not in (Select EmpCd From EmpTrans Where
+						(@DivCd='' or @DivCd<>'' and HRDiv=@DivCd)
+					and	(@CCCd='' or @CCCd<>'' and HRCC=@CCCd)
+					and	(@DeptCd='' or @DeptCd<>'' and HRDept=@DeptCd)
+					and	EdCd=@v_EdCd and EdTyp = @v_EdTyp and FromDt = @v_FromDt)		
+			order by EmpCd
+		 End
+	  End
+End
+
+ 
+ Go 
 CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpTransactionDetail_N]    
 @v_CoCd   Char(5)   
 , @v_EmpCd char(10)   
@@ -36,9 +252,9 @@ Select @Year=Val from Parameters where Cd='CUR_YEAR' and CoCd=@v_CoCd
 If @Year *100 +@Prd between @v_RFrmPrd and @v_RToPrd    
 Begin
 Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,@Prd), 0 ) - 1 ))[Month]    
-	, @Year[Yr]    
-	, convert(char(4),@Year)+ +right ('00'+ltrim(str( @Prd)),2 )[Prd]
+	--(Select DateName( month , DateAdd( month ,convert (numeric,@Prd), 0 ) - 1 ))[Month]    
+	--, @Year[Yr]    
+	 convert(char(4),@Year)+ +right ('00'+ltrim(str( @Prd)),2 )[Prd]
 	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
 	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd ),0),'###,###,###.###')[LOP]  
 	, IsNull((select sum(Amt) from EmpTrans where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd ),0)[Advance]    
@@ -65,9 +281,9 @@ union
 	
 
 Select      
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, emt.Prd    [Prd]
+	--(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
+	--, left(Prd,4)[Yr] 
+	 emt.Prd    [Prd]
 	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
 	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
 	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Advance]    
@@ -99,9 +315,9 @@ else
 Begin
 Select      
     
-	(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
-	, left(Prd,4)[Yr] 
-	, emt.Prd    [Prd]
+	--(Select DateName( month , DateAdd( month ,convert (numeric,right(Prd,2)), 0 ) - 1 ))[Month]    
+	--, left(Prd,4)[Yr] 
+	 emt.Prd    [Prd]
 	,format( Isnull(Emp.Basic,0)+ IsNull((Select sum(AmtVal) from EmpEarnDed where  EdTyp='HEDT01' and EmpCd=emp.Cd and isnull(EndDate,'01/01/1900')='01/01/1900'  ),0),'###,###,###.###')[Eligible]    
 	, format(Isnull(emp.Basic,0) - IsNull((select sum(Amt) from EmpTransYtd where EdCd='001' and EdTyp='HEDT01' and EmpCd=emp.Cd and Prd=emt.Prd),0),'###,###,###.###')[LOP]  
 	, IsNull((select sum(Amt) from EmpTransYtd where EdCd in('202','203') and EdTyp='HEDT03    ' and EmpCd=emp.Cd and Prd=EmT.Prd),0)[Advance]    
