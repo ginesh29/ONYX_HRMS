@@ -54,7 +54,7 @@ namespace Onyx.Services
             parameters.Add("v_RToPrd", filterModel.EndPeriod);
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
-            var Header = multiResult.ReadFirstOrDefault<dynamic>();
+            var Header = multiResult.ReadFirstOrDefault<EmpReportHeaderModel>();
             var Data = multiResult.Read<dynamic>();
             var Total = Data.ToList().GetDynamicListTotal();            
             return new EmpTransactionModel { Header = Header, ReportData = Data.ToList(), Totals = Total };

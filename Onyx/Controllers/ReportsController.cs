@@ -5,7 +5,6 @@ using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Controllers
 {
@@ -124,7 +123,6 @@ namespace Onyx.Controllers
             return new ViewAsPdf(transactions)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
-                PageOrientation = Orientation.Landscape
             };
         }
         #endregion

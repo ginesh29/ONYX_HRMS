@@ -6,19 +6,19 @@
     string add2 = !string.IsNullOrEmpty(companyDetail.Add3) ? $"{companyDetail.Add2}," : companyDetail.Add2;
 }
 <div class="col-12">
-    <table>
+    <table style="width:100%">
         <tr>
-            <td>
+            <td width="100">
                 <img src="~/uploads/company/@companyDetail.Logo" height="100" />
             </td>
-            <td width="400">
+            <td class="text-left">
                 <h4>
                     @companyDetail.CoName<br />
                     @add1 @add2 @companyDetail.Add3<br />
                     @companyDetail.Phone
                 </h4>
             </td>
-            <td>
+            <td class="text-right">
                 <h5>
                     <span class="font-weight-bold">Print Date & Time:</span> @DateTime.Now
                 </h5>
