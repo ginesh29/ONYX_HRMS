@@ -79,7 +79,7 @@ namespace Onyx.Controllers
         {
             var spPeriod = filterModel.Period.Split('/');
             filterModel.Period = $"{spPeriod[1]}{spPeriod[0]}";
-            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.CompanyCd).ToList();
+            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).ToList();
             ViewBag.TableResponsiveClass = "table-responsive";
             return PartialView("_EmpShortList", new EmpShortListReportModel { Employees = employees, VisibleColumns = filterModel.VisibleColumns });
         }
@@ -87,7 +87,7 @@ namespace Onyx.Controllers
         {
             var spPeriod = filterModel.Period.Split('/');
             filterModel.Period = $"{spPeriod[1]}{spPeriod[0]}";
-            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.CompanyCd).ToList();
+            var employees = _reportService.GetEmpShortList(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd).ToList();
             return new ViewAsPdf(new EmpShortListReportModel { Employees = employees, VisibleColumns = filterModel.VisibleColumns })
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },

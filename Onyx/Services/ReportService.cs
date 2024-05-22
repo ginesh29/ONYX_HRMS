@@ -11,7 +11,7 @@ namespace Onyx.Services
     public class ReportService(DbGatewayService dbGatewayService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        public IEnumerable<GetRepo_EmpShortList_Result> GetEmpShortList(EmpShortListFilterModel filterModel, string CoCd)
+        public IEnumerable<GetRepo_EmpShortList_Result> GetEmpShortList(EmpShortListFilterModel filterModel, string UserCd, string CoCd)
         {
             var branches = filterModel.Branches != null ? string.Join(",", filterModel.Branches) : null;
             var sponsors = filterModel.Sponsors != null ? string.Join(",", filterModel.Sponsors) : null;
@@ -35,6 +35,7 @@ namespace Onyx.Services
             parameters.Add("v_Nationality", nationalities ?? "All");
             parameters.Add("v_EmployeeType", empTypes ?? "All");
             parameters.Add("v_RowsCnt", filterModel.Active ? "Y" : "N");
+            parameters.Add("v_UserCd", UserCd);
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpShortList_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
@@ -54,7 +55,7 @@ namespace Onyx.Services
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
             var Header = multiResult.ReadFirstOrDefault<EmpReportHeaderModel>();
             var Data = multiResult.Read<dynamic>();
-            var Total = Data.ToList().GetDynamicListTotal();            
+            var Total = Data.ToList().GetDynamicListTotal();
             return new EmpTransactionModel { Header = Header, ReportData = Data.ToList(), Totals = Total };
         }
         public IEnumerable<Employee_LeaveHistory_GetRow_Result> GetBalanceTransactions(BalanceTransactionFilterModel filterModel, string CoCd)
