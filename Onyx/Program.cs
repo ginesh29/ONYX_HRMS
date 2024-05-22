@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Onyx.BackgroundTask;
 using Onyx.Data;
 using Onyx.Middleware;
 using Onyx.Services;
 using Rotativa.AspNetCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
@@ -23,7 +26,29 @@ builder.Services.AddSingleton<TransactionService>();
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+            .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+            .AddDataAnnotationsLocalization();
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new List<CultureInfo>
+        {
+            new CultureInfo("en"),
+            new CultureInfo("ar"),
+            new CultureInfo("fa")
+        };
+
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+        {
+            new QueryStringRequestCultureProvider(),
+            new CookieRequestCultureProvider()
+        };
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
 var app = builder.Build();
@@ -40,6 +65,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+var supportedCultures = new[] { "en", "ar", "fa" };
+var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture("en")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions);
 app.UseMiddleware<CookieExpirationMiddleware>();
 app.MapControllerRoute(
     name: "default",

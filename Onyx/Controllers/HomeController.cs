@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
+using Onyx.Resources;
 using Onyx.Services;
 using System.Globalization;
 
@@ -29,6 +31,16 @@ namespace Onyx.Controllers
         public IActionResult Test()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult SetLanguage(string culture)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+            return RedirectToAction(nameof(Index));
         }
         #region Dashboard
         public IActionResult Index()

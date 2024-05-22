@@ -1,4 +1,11 @@
 ﻿setActiveMenu();
+$("#language-dropdown .dropdown-item").on('click', function (e) {
+    e.preventDefault();
+    var lang = $(this).attr("data-value");
+    postAjax("/home/SetLanguage", { culture: lang }, function (response) {
+        window.location.reload();
+    });
+})
 $("#user-company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateClaim", { claimType: 'CompanyCd', claimValue: e.target.value }, function (response) {
         showSuccessToastr(response.message);
