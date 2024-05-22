@@ -298,7 +298,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", "0");
             parameters.Add("v_Dept", "0");
             parameters.Add("v_EmpCd1", string.Empty);
-            parameters.Add("v_UserCd", _loggedInUser.UserCd);
+            parameters.Add("v_UserCd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_Approval_GetRow_Result>
@@ -312,7 +312,7 @@ namespace Onyx.Services
             parameters.Add("v_EmpCd", string.Empty);
             parameters.Add("v_TransNo", TransNo);
             parameters.Add("v_Typ", Type);
-            parameters.Add("v_UserCd", _loggedInUser.UserCd);
+            parameters.Add("v_UserCd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeave_View_GetRow_Result>
@@ -517,7 +517,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", EmpCd);
             parameters.Add("v_EmpUser", EmpOrUser);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_Approval_GetRow_Result>
@@ -548,7 +548,7 @@ namespace Onyx.Services
             parameters.Add("v_TransNo", string.Empty);
             parameters.Add("v_Typ", string.Empty);
             parameters.Add("v_EmpCd", string.Empty);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<EmpLeaveSalaryTicket_View_Getrow_Result>
@@ -730,7 +730,7 @@ namespace Onyx.Services
             parameters.Add("v_Typ", type);
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_EmpUser", empUser);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<Empprovisionsadj_GetRow_Result>

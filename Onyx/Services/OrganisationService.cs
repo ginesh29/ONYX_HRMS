@@ -424,7 +424,7 @@ namespace Onyx.Services
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_DocTypCd", string.Empty);
             parameters.Add("v_DivCd", string.Empty);
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyDocuments_GetRow_Result>
@@ -865,7 +865,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", "0");
             parameters.Add("v_Dept", "0");
             parameters.Add("v_typ", "0");
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.Query<CompanyProcessApproval_GetRow>
@@ -882,7 +882,7 @@ namespace Onyx.Services
             parameters.Add("v_Div", branchCd);
             parameters.Add("v_Dept", deptCd);
             parameters.Add("v_typ", "1");
-            parameters.Add("v_Usercd", _loggedInUser.UserCd);
+            parameters.Add("v_Usercd", _loggedInUser.UserLinkedTo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<CompanyProcessApproval_GetRow>
