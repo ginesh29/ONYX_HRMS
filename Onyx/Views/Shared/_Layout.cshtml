@@ -3,7 +3,7 @@
     var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserCd")?.Value.Equals("001");
     var processId = Context.Request.Query["processId"];
     var loggedInUser = _authService.GetLoggedInUser();
-    var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, processId);
+    var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, processId);
     ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <!DOCTYPE html>

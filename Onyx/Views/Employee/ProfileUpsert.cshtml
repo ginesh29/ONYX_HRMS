@@ -4,9 +4,9 @@
     ViewData["AdditionLinkWithTitle"] = $"Employees_/Employee/Profiles?processId={processId}";
     string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Components", "Addresses" };
     var loggedInUser = _authService.GetLoggedInUser();
-    var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
-    var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
-    var profilePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE1");
+    var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPE2");
+    var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPE4");
+    var profilePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPE1");
     int totalTab = 5;
     if (documentPermission != null)
         totalTab++;

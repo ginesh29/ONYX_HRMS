@@ -1,6 +1,6 @@
 ﻿@{
     var loggedInUser = _authService.GetLoggedInUser();
-    var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE4");
+    var componentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPE4");
     var totalSalary = $"{ViewBag.Currency} {ViewBag.TotalSalary?.ToString("0")}";
     var empCd = Context.Request.Query["cd"];
 }

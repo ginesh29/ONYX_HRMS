@@ -1,6 +1,6 @@
 ﻿@{
     var loggedInUser = _authService.GetLoggedInUser();
-    var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserCd, "HRPE2");
+    var documentPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPE2");
 }
 @if (documentPermission.UView == "Y")
 {
