@@ -65,9 +65,9 @@
                             <td>@item.Curr1</td>
                             <td class="border-right">
                                 @item.Amt1.ToString(DecimalFormat)
-                                @if (!string.IsNullOrEmpty(item.Narr))
+                                @if (!string.IsNullOrEmpty(item.Narr1))
                                 {
-                                    <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr"></i>
+                                    <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr1"></i>
                                 }
                             </td>
                             <td>@item.PayCode1</td>
@@ -77,9 +77,9 @@
                                 {
                                     <span>
                                         @item.Amt2.ToString(DecimalFormat)
-                                        @if (!string.IsNullOrEmpty(item.Narr))
+                                        @if (!string.IsNullOrEmpty(item.Narr2))
                                         {
-                                            <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr"></i>
+                                            <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr2"></i>
                                         }
                                     </span>
                                 }
