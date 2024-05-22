@@ -1,3 +1,274 @@
+
+CREATE OR ALTER     Procedure [dbo].[GetRepo_EmpLeave_N]
+ 	@v_CoCd			Char(5)	
+,   @v_Employee     Char(10)	
+,   @v_Branch       char(5)
+,   @v_Location     char(10)
+,   @v_Department   Char(10)
+,   @v_Sponsor      Char(10)
+,	@v_LvStat		char(1)
+,	@v_Typ			char(5)
+,	@v_Dt1			Date
+,	@v_Dt2			Date
+,	@orderBy		varchar(100)
+,	@v_Usercd		varchar(10)
+As	-- Drop Procedure [GetRepo_EmpLeave] '100','00185','All','All','All','All'
+/*
+	Declare @v_CoCd		char(5)
+	Set @v_CoCd = '01'sp_help EmpLeave
+*/
+
+CREATE table #Temp
+(
+TransNo Char(10) collate SQL_Latin1_General_CP1_CI_AS,
+Remarks varchar(1000)
+)
+insert into #Temp
+select TransNo,
+(Select LTrim(RTrim(FName)) from Employee where Cd=empleaveappr.LvApprBy)
++' - '+convert(varchar(20),empleaveappr.LvApprDt,101)
+from empleaveappr where TransNo in (select TransNo from EmpLeave where LvStatus in ('N','Y','R','J','F','C'))
+order by TransNo,empleaveappr.LvApprDt desc
+
+if @v_Dt2='' set @v_dt2=getdate()
+
+if @v_Dt1='' set @v_dt1='01/01/1900'
+
+declare @sql varchar(max)
+
+Begin
+	Select 
+	 	TransNo
+	,	TransDt
+	,	LvTyp
+	,   CASE 
+		WHEN LvStatus = 'N' THEN 'Unapproved'
+		WHEN LvStatus = 'R' THEN 'Rejected'
+		WHEN LvStatus = 'Y' THEN 'Approved'
+		WHEN LvStatus = 'F' THEN 'Confrimed' 
+		WHEN LvStatus = 'V' THEN 'Revised'
+		WHEN LvStatus = 'C' THEN 'Cancelled'
+		WHEN LvStatus = 'J' THEN 'Rejoined'
+		END[Caption]
+	,   CASE 
+		WHEN LvStatus = 'N' and LvApprBy='' THEN 
+			'No One Is Approved'
+		WHEN LvStatus = 'N' and LvApprBy<>'' THEN 
+			
+				(select distinct
+				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
+				from #Temp t1
+				where t.[TransNo] = t1.[TransNo]
+				FOR XML PATH(''), TYPE
+				).value('.', 'NVARCHAR(MAX)') 
+				,1,2,'') department
+				from #Temp t where TransNo=EmpLeave.TransNo)
+		WHEN LvStatus = 'R' THEN 
+			'Rejected By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=(select LvApprBy From EmpLeaveAppr where TransNo=EmpLeave.TransNo and Status='R'))
+		WHEN LvStatus = 'Y' THEN 
+			'Approved By ' +--(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=LvApprBy)
+			(select distinct
+				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
+				from #Temp t1
+				where t.[TransNo] = t1.[TransNo]
+				FOR XML PATH(''), TYPE
+				).value('.', 'NVARCHAR(MAX)') 
+				,1,2,'') department
+				from #Temp t where TransNo=EmpLeave.TransNo)
+		WHEN LvStatus = 'F' THEN 
+			'Confirmed By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
+		WHEN LvStatus = 'V' THEN 
+			'Revised By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
+		WHEN LvStatus = 'C' THEN 
+			'Cancelled By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
+		END[Remarks]
+	,	(Select SDes from CompanyLeave where Cd=LvTyp)[LeaveType]
+	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=(LvApprBy))[LastApprName]
+	,	convert(varchar(20),LvApprDt,101)[FormatedLvApprDt]
+	,	convert(varchar(20),JoinDt,101)[FormatedJoinDt]
+	,	EmpCd
+	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=EmpCd)[Employee]
+	,	(Select SDes from Branch where Cd=(select Div from Employee where Cd=EmpCd))[Branch]
+	,	(Select SDes from Codes where Cd=(select LocCd from Employee where Cd=EmpCd) and Typ='HLOC')[Location]
+	,	(Select SDes from CC where Cd=(select CC from Employee where Cd=EmpCd))[CC]
+	,	(Select SDes from Dept where Cd=(select Dept from Employee where Cd=EmpCd))[Dept]
+	,	CancelBy
+	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=CancelBy)[CancelByName]
+	,	CancelDt
+	,	CancelRemarks
+	,	ConfirmBy
+	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)[ConfirmByName]
+	,	ConfirmDt
+	,	ConfirmRemarks
+	,	ReviseBy
+	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ReviseBy)[ReviseByName]
+	,	ReviseDt
+	,	ReviseRemarks
+	,	convert(varchar(20),FromDt,101)[FromDt]
+	,	convert(varchar(20),ToDt,101)[ToDt]
+	,	DocRef
+	,	DocDt
+	,	LvStatus
+	,	LvInter
+	,	case WP_FromDt
+		when '01/01/1900' then null
+		else
+		convert(varchar(20),WP_FromDt,101) end[FormatedWP_FromDt]
+	,	case WP_ToDt
+		when '01/01/1900' then null
+		else
+		convert(varchar(20),WP_ToDt,101) end[FormatedWP_ToDt]
+	,	case WOP_FromDt
+		when '01/01/1900' then null
+		else
+		convert(varchar(20),WOP_FromDt,101) end[FormatedWOP_FromDt]
+	,	case WOP_ToDt
+		when '01/01/1900' then null
+		else
+		convert(varchar(20),WOP_ToDt,101) end[FormatedWOP_ToDt]
+	,	Reason
+	,	Narr
+	,	(Select CoName from Company where Cd=@v_CoCd)[CoName]	
+	,	(Select count(*) from EmpLeaveAppr where EmpLeaveAppr.TransNo=EmpLeave.TransNo and Status='Y')[Count]
+	,	JoinDt
+	,	SysTransNo
+	,	isnull(lvsalary,0)[lvsalary]
+	,	isnull(lvfare,0)[lvfare]
+	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='GT'),101),0)[GT]
+	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LS'),101),0)[LS]
+	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LT'),101),0)[LT]
+	--,	LvTaken[Days]
+	,	DATEDIFF(DD,FromDt,JoinDt) [Days]
+	,	FromDt[LvFromDt]
+	,	ToDt[LvToDt]
+	into #TempLeave
+	From
+		EmpLeave
+		,	Employee	  Emp	
+		inner join 	Branch    Br on Br.Cd=Emp.Div	
+		inner join   Codes    Cod on Cod.Cd=Emp.LocCd  
+		inner join Dept       Dep on Dep.Cd=Emp.Dept
+		inner join   Codes    Cod1 on Cod1.Cd=Emp.Sponsor
+		Where		
+			Emp.cd=EmpLeave.EmpCd
+		and	Isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
+		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or @v_Branch<>'' and br.Cd=@v_Branch)
+		and (@v_location='All' or @v_location<>'' and Cod.Cd=@v_location)
+		and (@v_Department='All' or @v_Department<>'' and Dep.Cd=@v_Department)
+		and (@v_Sponsor='All' or @v_Sponsor<>'' and Cod1.Cd=@v_Sponsor)			
+		and (LvTyp=@v_Typ or @v_Typ='')
+		and (LvStatus=@v_LvStat or @v_LvStat='')
+		and emp.Div in(select div from UserBranch where usercd=@v_Usercd)
+		--complete leave between two dates		
+		--and (@v_LvStat<>'' and (
+		--(@v_LvStat='A'  and LvApprDt>= @v_Dt1 and LvApprDt<=@v_Dt2 or 
+		--@v_LvStat='R' or
+		--@v_LvStat='J' and JoinDt >= @v_Dt1 and JoinDt<=@v_Dt2 or
+		--@v_LvStat='F' and ConfirmDt>= @v_Dt1 and ConfirmDt<=@v_Dt2 
+		--)))
+		--order by ToDt
+if @orderBy<>''
+		set @sql=' select * from #TempLeave order by '+@orderBy
+	else
+		set @sql=' select * from #TempLeave'
+
+	exec (@sql)
+
+Drop table #Temp
+drop table #TempLeave
+
+End 
+ Go 
+CREATE OR ALTER         Procedure [dbo].[GetRepo_EmpShortList_N]
+	@v_CoCd				Varchar(5)	 
+,   @v_Employee			Char(10)=''	
+,   @v_Branch			char(500)=''
+,   @v_Location			char(100)=''	
+,   @v_Department		Char(100)=''	
+,   @v_Sponsor			Char(500)=''	
+,	@v_Desg				Char(5)=''
+,	@v_Age				Char(5)='0'
+,	@v_Qualification	Char(10)=''
+,	@v_Status			Char(500)=''
+,   @v_RowsCnt			Char(1)=''
+,	@v_Nationality		Char(500)=''
+,	@v_EmployeeType		Char(500)=''
+,	@v_UserCd			Char(10)=''
+
+As		-- Drop Procedure [dbo].[GetRepo_EmpShortList_N] '01','All ','All ','All ','All ','All ','All','0',' ','','2','All','All','EMP'
+Begin
+	Select
+		distinct Emp.Cd [Code]
+	,	rtrim(Emp.Fname)+' '+rtrim(Emp.Mname)+' '+rtrim(Emp.Lname) [EmpName]
+	,	Emp.Sex [Sex] 
+	,	(select SDes FROM Codes where Typ='HMS' and Codes.cd=Emp.Marital)[Marital]
+	,	(Select SDes FROM Branch where Cd=Emp.Div)[Branch]
+	,	(Select SDes FROM CC where Cd=Emp.CC)[CC]
+	,	(Select SDes FROM Dept where Dept.Cd=Emp.Dept) [Department]
+	,	(select SDes FROM Codes where Codes.cd=Emp.LocCd) [Location]
+	,	(Select Nat from Country where cd=Emp.Nat) [Nationality]
+	,	(select Des FROM Designation where Designation.Cd=Emp.Desg) [Designation]
+	--,	Emp.Dob	[Dob]
+	,	CONVERT(varchar(20),Emp.Dob,101)[Dob]
+	--,	Emp.DOJ	[DOJ]
+	,	CONVERT(varchar(20),Emp.DOJ,101)[
+	DOJ]
+	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat1 and Employee.cd=Emp.Cd)[Employee Category1]
+	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat2 and Employee.cd=Emp.Cd)[Employee Category2]
+	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat3 and Employee.cd=Emp.Cd)[Employee Category3]
+	,	(select rtrim(FName)+' '+rtrim(MName)+rtrim(LName) from Employee where Cd=(select RepTo from Employee where Employee.cd=Emp.Cd))[ReportingTo]
+	,	(Select Des from Currency where Cd= Emp.BasicCurr) [BasicCurr]
+	,	Emp.Basic [Basic]
+	,	Emp.Basic+(select Sum(isnull(AmtVal,0)) from empearnded where EmpCd=Emp.Cd and (Rtrim(EdCd)+RTrim(EdTyp))<>'001HEDT01' and CONVERT(varchar(10), EndDate,101)='01/01/1900') [Total]
+	,	Emp.FareEligible [FareEligiblity]
+	,	(select Des from codes where Typ='ESPON' and Cd=emp.Sponsor)[Sponsor]
+	,	(select Des from Syscodes where cd=Emp.PayMode) [PayMode]
+	,	(select Des from Syscodes where cd=Emp.PayFreq) [PayFrequency]
+	,	(select Des from Syscodes where cd=Emp.Status) [Status]
+	,	(select Des from CompanyShiftMaster where Cd=Emp.ShiftCd) [Shift]
+	,	(select Des from Syscodes where Typ='HOTC1' and Cd=Emp.Relg) [Religion]
+	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0001' and EmpCd=Emp.cd order by SrNo desc) [PassportNo]
+	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0001' and EmpCd=Emp.cd order by SrNo desc) [PassportExpDt]
+	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0002' and EmpCd=Emp.cd order by SrNo desc) [VisaNo]
+	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0002' and EmpCd=Emp.cd order by SrNo desc) [VisaExpDt]
+	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0003' and EmpCd=Emp.cd order by SrNo desc) [LabourCard]
+	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0003' and EmpCd=Emp.cd order by SrNo desc) [LabourCardExpDt]
+	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0008' and EmpCd=Emp.cd order by SrNo desc) [EmiratedId]
+	,	(select Phone from EmpAddress where AddTyp='HADD0001' and EmpCd=Emp.cd) [PhoneNo]
+	,	(select Email from EmpAddress where AddTyp='HADD0001' and EmpCd=Emp.cd) [EmailId]
+	--,	Emp.Basic+(select Sum(isnull(AmtVal,0)) from empearnded where EmpCd=Emp.Cd and (Rtrim(EdCd)+RTrim(EdTyp))<>'001HEDT01' and CONVERT(varchar(10), EndDate,101)='01/01/1900') [Total]
+	,	(Select CoName from Company where Cd=@v_CoCd) [CoName]
+	,	Emp.EmpTyp
+	from 
+		Employee Emp
+		--,Codes    Cod2,Branch    Br,Codes    Cod1,Dept  Dep,EmpQualification Qua 
+		--inner join   Codes    Cod2 on Cod2.Cd=Emp.Sponsor
+		--inner join 	Branch    Br on Br.Cd=Emp.Div	
+		--inner join   Codes    Cod1 on Cod1.Cd=Emp.LocCd  
+		--inner join Dept       Dep on Dep.Cd=Emp.Dept 
+		--inner join EmpQualification Qua on emp.Cd=qua.EmpCd
+		--inner join Designation desg on desg.cd=Emp.Desg
+	--,	Codes Cod
+	where
+		Emp.CoCd=@v_CoCd		
+		and (@v_Employee='All' or Emp.Cd=@v_Employee)
+		and (@v_Branch='All' or emp.Div in(SELECT [Value] FROM dbo.SplitString(@v_Branch, ',')))
+		and (@v_location='All' or emp.LocCd=@v_location)
+		and (@v_Department='All' or Emp.Dept=@v_Department)
+		and (@v_Sponsor='All' or emp.Sponsor in(SELECT [Value] FROM dbo.SplitString(@v_Sponsor, ',')))
+		and (@v_Desg='All' or  Emp.Desg=@v_Desg)
+		and (@v_Age='0' or CONVERT(int,ROUND(DATEDIFF(hour,Emp.Dob,GETDATE())/8766.0,0))=@v_Age)
+		and (@v_Qualification='All' or emp.cd in (select empcd from EmpQualification where Cd= @v_Qualification))
+		and (@v_Nationality='All' or emp.Nat =(SELECT [Value] FROM dbo.SplitString(@v_Nationality, ',')))
+		and (emp.EmpTyp in(SELECT [Value] FROM dbo.SplitString(@v_EmployeeType, ',')) or @v_EmployeeType='ALL')
+		and (emp.Status in(SELECT [Value] FROM dbo.SplitString(@v_Status, ',')) or @v_Status='ALL')
+		and	( Active=@v_RowsCnt)
+		and (emp.Div in(select Div from UserBranch where usercd=@v_UserCd))
+	order by 
+		Emp.Cd
+End 
+ Go 
 CREATE OR ALTER procedure [dbo].[EmpTrans_VarCompFixAmt_GetRow]
 	@DivCd			varchar(20)
 ,	@CCCd 			varchar(20)
@@ -10415,187 +10686,6 @@ End
  
  Go 
 
-CREATE OR ALTER   Procedure [dbo].[GetRepo_EmpLeave_N]
- 	@v_CoCd			Char(5)	
-,   @v_Employee     Char(10)	
-,   @v_Branch       char(5)
-,   @v_Location     char(10)
-,   @v_Department   Char(10)
-,   @v_Sponsor      Char(10)
-,	@v_LvStat		char(1)
-,	@v_Typ			char(5)
-,	@v_Dt1			Date
-,	@v_Dt2			Date
-,	@orderBy		varchar(100)
-As	-- Drop Procedure [GetRepo_EmpLeave] '100','00185','All','All','All','All'
-/*
-	Declare @v_CoCd		char(5)
-	Set @v_CoCd = '01'sp_help EmpLeave
-*/
-
-CREATE table #Temp
-(
-TransNo Char(10),
-Remarks varchar(1000)
-)
-insert into #Temp
-select TransNo,
-(Select LTrim(RTrim(FName)) from Employee where Cd=empleaveappr.LvApprBy)
-+' - '+convert(varchar(20),empleaveappr.LvApprDt,101)
-from empleaveappr where TransNo in (select TransNo from EmpLeave where LvStatus in ('N','Y','R','J','F','C'))
-order by TransNo,empleaveappr.LvApprDt desc
-
-if @v_Dt2='' set @v_dt2=getdate()
-
-if @v_Dt1='' set @v_dt1='01/01/1900'
-
-declare @sql varchar(max)
-
-Begin
-	Select 
-	 	TransNo
-	,	TransDt
-	,	LvTyp
-	,   CASE 
-		WHEN LvStatus = 'N' THEN 'Unapproved'
-		WHEN LvStatus = 'R' THEN 'Rejected'
-		WHEN LvStatus = 'Y' THEN 'Approved'
-		WHEN LvStatus = 'F' THEN 'Confrimed' 
-		WHEN LvStatus = 'V' THEN 'Revised'
-		WHEN LvStatus = 'C' THEN 'Cancelled'
-		WHEN LvStatus = 'J' THEN 'Rejoined'
-		END[Caption]
-	,   CASE 
-		WHEN LvStatus = 'N' and LvApprBy='' THEN 
-			'No One Is Approved'
-		WHEN LvStatus = 'N' and LvApprBy<>'' THEN 
-			
-				(select distinct
-				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
-				from #Temp t1
-				where t.[TransNo] = t1.[TransNo]
-				FOR XML PATH(''), TYPE
-				).value('.', 'NVARCHAR(MAX)') 
-				,1,2,'') department
-				from #Temp t where TransNo=EmpLeave.TransNo)
-		WHEN LvStatus = 'R' THEN 
-			'Rejected By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=(select LvApprBy From EmpLeaveAppr where TransNo=EmpLeave.TransNo and Status='R'))
-		WHEN LvStatus = 'Y' THEN 
-			'Approved By ' +--(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=LvApprBy)
-			(select distinct
-				STUFF((SELECT distinct CHAR(13) + ',' + t1.Remarks
-				from #Temp t1
-				where t.[TransNo] = t1.[TransNo]
-				FOR XML PATH(''), TYPE
-				).value('.', 'NVARCHAR(MAX)') 
-				,1,2,'') department
-				from #Temp t where TransNo=EmpLeave.TransNo)
-		WHEN LvStatus = 'F' THEN 
-			'Confirmed By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		WHEN LvStatus = 'V' THEN 
-			'Revised By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		WHEN LvStatus = 'C' THEN 
-			'Cancelled By ' +(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)
-		END[Remarks]
-	,	(Select SDes from CompanyLeave where Cd=LvTyp)[LeaveType]
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=(LvApprBy))[LastApprName]
-	,	convert(varchar(20),LvApprDt,101)[FormatedLvApprDt]
-	,	convert(varchar(20),JoinDt,101)[FormatedJoinDt]
-	,	EmpCd
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName))+' '+LTrim(RTrim(LName)) from Employee where Cd=EmpCd)[Employee]
-	,	(Select SDes from Branch where Cd=(select Div from Employee where Cd=EmpCd))[Branch]
-	,	(Select SDes from Codes where Cd=(select LocCd from Employee where Cd=EmpCd) and Typ='HLOC')[Location]
-	,	(Select SDes from CC where Cd=(select CC from Employee where Cd=EmpCd))[CC]
-	,	(Select SDes from Dept where Cd=(select Dept from Employee where Cd=EmpCd))[Dept]
-	,	CancelBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=CancelBy)[CancelByName]
-	,	CancelDt
-	,	CancelRemarks
-	,	ConfirmBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ConfirmBy)[ConfirmByName]
-	,	ConfirmDt
-	,	ConfirmRemarks
-	,	ReviseBy
-	,	(Select LTrim(RTrim(FName))+' '+LTrim(RTrim(MName)) from Employee where Cd=ReviseBy)[ReviseByName]
-	,	ReviseDt
-	,	ReviseRemarks
-	,	convert(varchar(20),FromDt,101)[FromDt]
-	,	convert(varchar(20),ToDt,101)[ToDt]
-	,	DocRef
-	,	DocDt
-	,	LvStatus
-	,	LvInter
-	,	case WP_FromDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WP_FromDt,101) end[FormatedWP_FromDt]
-	,	case WP_ToDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WP_ToDt,101) end[FormatedWP_ToDt]
-	,	case WOP_FromDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WOP_FromDt,101) end[FormatedWOP_FromDt]
-	,	case WOP_ToDt
-		when '01/01/1900' then null
-		else
-		convert(varchar(20),WOP_ToDt,101) end[FormatedWOP_ToDt]
-	,	Reason
-	,	Narr
-	,	(Select CoName from Company where Cd=@v_CoCd)[CoName]	
-	,	(Select count(*) from EmpLeaveAppr where EmpLeaveAppr.TransNo=EmpLeave.TransNo and Status='Y')[Count]
-	,	JoinDt
-	,	SysTransNo
-	,	isnull(lvsalary,0)[lvsalary]
-	,	isnull(lvfare,0)[lvfare]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='GT'),101),0)[GT]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LS'),101),0)[LS]
-	,	isnull(convert(varchar(20),(select Datediff(dd,FromDt,ToDt)+1 from EmpLeaveProvisions where TransNo=EmpLeave.TransNo and ProvTyp='LT'),101),0)[LT]
-	--,	LvTaken[Days]
-	,	DATEDIFF(DD,FromDt,JoinDt) [Days]
-	,	FromDt[LvFromDt]
-	,	ToDt[LvToDt]
-	into #TempLeave
-	From
-		EmpLeave
-		,	Employee	  Emp	
-		inner join 	Branch    Br on Br.Cd=Emp.Div	
-		inner join   Codes    Cod on Cod.Cd=Emp.LocCd  
-		inner join Dept       Dep on Dep.Cd=Emp.Dept
-		inner join   Codes    Cod1 on Cod1.Cd=Emp.Sponsor
-		Where		
-			Emp.cd=EmpLeave.EmpCd
-		and	Isnull(Emp.Leaving,'01-01-1900') ='01-01-1900' 
-		and (@v_Employee='All' or @v_Employee<>'' and Emp.Cd=@v_Employee)
-		and (@v_Branch='All' or @v_Branch<>'' and br.Cd=@v_Branch)
-		and (@v_location='All' or @v_location<>'' and Cod.Cd=@v_location)
-		and (@v_Department='All' or @v_Department<>'' and Dep.Cd=@v_Department)
-		and (@v_Sponsor='All' or @v_Sponsor<>'' and Cod1.Cd=@v_Sponsor)			
-		and (LvTyp=@v_Typ or @v_Typ='')
-		and (LvStatus=@v_LvStat or @v_LvStat='')--complete leave between two dates		
-		--and (@v_LvStat<>'' and (
-		--(@v_LvStat='A'  and LvApprDt>= @v_Dt1 and LvApprDt<=@v_Dt2 or 
-		--@v_LvStat='R' or
-		--@v_LvStat='J' and JoinDt >= @v_Dt1 and JoinDt<=@v_Dt2 or
-		--@v_LvStat='F' and ConfirmDt>= @v_Dt1 and ConfirmDt<=@v_Dt2 
-		--)))
-		--order by ToDt
-if @orderBy<>''
-		set @sql=' select * from #TempLeave order by '+@orderBy
-	else
-		set @sql=' select * from #TempLeave'
-
-	exec (@sql)
-
-Drop table #Temp
-drop table #TempLeave
-
-End
- 
- 
- Go 
-
 
 CREATE OR ALTER   Procedure [dbo].[GetRepo_ExpiredDocument]
  	@v_CoCd			Char(5)	
@@ -11514,110 +11604,6 @@ as
 		and	Emp.Status<>'HSTATNP'
 
  
- 
- Go 
-CREATE OR ALTER       Procedure [dbo].[GetRepo_EmpShortList_N]
-	@v_CoCd				Varchar(5)	 
-,   @v_Employee			Char(10)=''	
-,   @v_Branch			char(500)=''
-,   @v_Location			char(100)=''	
-,   @v_Department		Char(100)=''	
-,   @v_Sponsor			Char(500)=''	
-,	@v_Desg				Char(5)=''
-,	@v_Age				Char(5)='0'
-,	@v_Qualification	Char(10)=''
-,	@v_Status			Char(500)=''
-,   @v_RowsCnt			Char(1)=''
-,	@v_Nationality		Char(500)=''
-,	@v_EmployeeType		Char(500)=''
-
-
-
-As		-- Drop Procedure [dbo].[GetRepo_EmpShortList_N] '01','All ','All ','All ','All ','All ','All','0',' ','','2'
-Begin
-	Select
-		distinct Emp.Cd [Code]
-	,	rtrim(Emp.Fname)+' '+rtrim(Emp.Mname)+' '+rtrim(Emp.Lname) [EmpName]
-	,	Emp.Sex [Sex] 
-	,	(select SDes FROM Codes where Typ='HMS' and Codes.cd=Emp.Marital)[Marital]
-	,	(Select SDes FROM Branch where Cd=Emp.Div)[Branch]
-	,	(Select SDes FROM CC where Cd=Emp.CC)[CC]
-	,	(Select SDes FROM Dept where Dept.Cd=Emp.Dept) [Department]
-	,	(select SDes FROM Codes where Codes.cd=Emp.LocCd) [Location]
-	,	(Select Nat from Country where cd=Emp.Nat) [Nationality]
-	,	(select Des FROM Designation where Designation.Cd=Emp.Desg) [Designation]
-	--,	Emp.Dob	[Dob]
-	,	CONVERT(varchar(20),Emp.Dob,101)[Dob]
-	--,	Emp.DOJ	[DOJ]
-	,	CONVERT(varchar(20),Emp.DOJ,101)[
-	DOJ]
-	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat1 and Employee.cd=Emp.Cd)[Employee Category1]
-	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat2 and Employee.cd=Emp.Cd)[Employee Category2]
-	--,	(select SDes FROM Codes ,Employee where Codes.cd=Employee.EmpCat3 and Employee.cd=Emp.Cd)[Employee Category3]
-	,	(select rtrim(FName)+' '+rtrim(MName)+rtrim(LName) from Employee where Cd=(select RepTo from Employee where Employee.cd=Emp.Cd))[ReportingTo]
-	,	(Select Des from Currency where Cd= Emp.BasicCurr) [BasicCurr]
-	,	Emp.Basic [Basic]
-	,	Emp.Basic+(select Sum(isnull(AmtVal,0)) from empearnded where EmpCd=Emp.Cd and (Rtrim(EdCd)+RTrim(EdTyp))<>'001HEDT01' and CONVERT(varchar(10), EndDate,101)='01/01/1900') [Total]
-	,	Emp.FareEligible [FareEligiblity]
-	,	(select Des from codes where Typ='ESPON' and Cd=emp.Sponsor)[Sponsor]
-	,	(select Des from Syscodes where cd=Emp.PayMode) [PayMode]
-	,	(select Des from Syscodes where cd=Emp.PayFreq) [PayFrequency]
-	,	(select Des from Syscodes where cd=Emp.Status) [Status]
-	,	(select Des from CompanyShiftMaster where Cd=Emp.ShiftCd) [Shift]
-	,	(select Des from Syscodes where Typ='HOTC1' and Cd=Emp.Relg) [Religion]
-	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0001' and EmpCd=Emp.cd order by SrNo desc) [PassportNo]
-	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0001' and EmpCd=Emp.cd order by SrNo desc) [PassportExpDt]
-	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0002' and EmpCd=Emp.cd order by SrNo desc) [VisaNo]
-	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0002' and EmpCd=Emp.cd order by SrNo desc) [VisaExpDt]
-	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0003' and EmpCd=Emp.cd order by SrNo desc) [LabourCard]
-	,	(select top 1 CONVERT(varchar(20),ExpDt,101) from EmpDocuments where DocTyp='HDTYP0003' and EmpCd=Emp.cd order by SrNo desc) [LabourCardExpDt]
-	,	(select top 1 DocNo from EmpDocuments where DocTyp='HDTYP0008' and EmpCd=Emp.cd order by SrNo desc) [EmiratedId]
-	,	(select Phone from EmpAddress where AddTyp='HADD0001' and EmpCd=Emp.cd) [PhoneNo]
-	,	(select Email from EmpAddress where AddTyp='HADD0001' and EmpCd=Emp.cd) [EmailId]
-	--,	Emp.Basic+(select Sum(isnull(AmtVal,0)) from empearnded where EmpCd=Emp.Cd and (Rtrim(EdCd)+RTrim(EdTyp))<>'001HEDT01' and CONVERT(varchar(10), EndDate,101)='01/01/1900') [Total]
-	,	(Select CoName from Company where Cd=@v_CoCd) [CoName]
-	,	Emp.EmpTyp
-	from 
-		Employee Emp
-		--,Codes    Cod2,Branch    Br,Codes    Cod1,Dept  Dep,EmpQualification Qua 
-		--inner join   Codes    Cod2 on Cod2.Cd=Emp.Sponsor
-		--inner join 	Branch    Br on Br.Cd=Emp.Div	
-		--inner join   Codes    Cod1 on Cod1.Cd=Emp.LocCd  
-		--inner join Dept       Dep on Dep.Cd=Emp.Dept 
-		--inner join EmpQualification Qua on emp.Cd=qua.EmpCd
-		--inner join Designation desg on desg.cd=Emp.Desg
-	--,	Codes Cod
-	where
-		Emp.CoCd=@v_CoCd		
-		and (@v_Employee='All' or Emp.Cd=@v_Employee)
-		and (@v_Branch='All' or emp.Div in(SELECT [Value] FROM dbo.SplitString(@v_Branch, ',')))
-		and (@v_location='All' or emp.LocCd=@v_location)
-		and (@v_Department='All' or Emp.Dept=@v_Department)
-		and (@v_Sponsor='All' or emp.Sponsor in(SELECT [Value] FROM dbo.SplitString(@v_Sponsor, ',')))
-		and (@v_Desg='All' or  Emp.Desg=@v_Desg)
-		and (@v_Age='0' or CONVERT(int,ROUND(DATEDIFF(hour,Emp.Dob,GETDATE())/8766.0,0))=@v_Age)
-		and (@v_Qualification='All' or emp.cd in (select empcd from EmpQualification where Cd= @v_Qualification))
-		and (@v_Nationality='All' or emp.Nat =(SELECT [Value] FROM dbo.SplitString(@v_Nationality, ',')))
-		and (emp.EmpTyp in(SELECT [Value] FROM dbo.SplitString(@v_EmployeeType, ',')) or @v_EmployeeType='ALL')
-		and (emp.Status in(SELECT [Value] FROM dbo.SplitString(@v_Status, ',')) or @v_Status='ALL')
-		and	( Active=@v_RowsCnt)
-		--and Cod2.Cd=Emp.Sponsor
-		--and Br.Cd=Emp.Div	and Cod1.Cd=Emp.LocCd and Dep.Cd=Emp.Dept and emp.Cd=qua.EmpCd 
-		--and (@v_Employee='All' or @v_Employee<>'All' and Emp.Cd=@v_Employee)
-		--and (@v_Branch='All' or @v_Branch<>'All' and br.Cd=@v_Branch)
-		--and (@v_location='All' or @v_location<>'All' and Cod1.Cd=@v_location)
-		--and (@v_Department='All' or @v_Department<>'All' and Dep.Cd=@v_Department)
-		--and (@v_Sponsor='All' or @v_Sponsor<>'All' and Cod2.Cd=@v_Sponsor)		
-		--and	(@v_Desg='All' or  Emp.Desg=@v_Desg)
-		--and (@v_Age='0' or CONVERT(int,ROUND(DATEDIFF(hour,Emp.Dob,GETDATE())/8766.0,0))=@v_Age)
-		--and (@v_Qualification='All' or qua.QualCd=@v_Qualification)
-		--and (@v_RowsCnt='0' and (Emp.Status in ('HSTATAB','HSTATDI','HSTATDO','HSTATNP','HSTATPM'))) 
-		--	or (@v_RowsCnt='1' and Emp.Status in ('HSTATSR','HSTATST'))
-		--	or (@v_RowsCnt='2' and  ltrim(rtrim(Emp.Status))=ltrim(rtrim(@v_Status))) or (@v_RowsCnt='')
-
-	order by 
-		Emp.Cd
-End 
  
  Go 
 CREATE OR ALTER    

@@ -33,7 +33,7 @@ namespace Onyx.Controllers
         #region Dashboard
         public IActionResult Index()
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             ViewBag.EmplLoanAndLeaveApproval = EmplLoanAndLeaveApproval;
             string[] quickLinkProcessIds = ["HRPSS1", "HRPSS2", "HRPSS3", "HRPSS4"];
             var quickLinkItems = _commonService.GetMenuWithPermissions(_loggedInUser.UserLinkedTo).Where(m => quickLinkProcessIds.Contains(m.ProcessId));
@@ -104,7 +104,7 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpSalaryChart(string container)
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             foreach (var item in EmplLoanAndLeaveApproval.UserSalaryDetails)
             {
                 item.Year = Convert.ToInt32(item.Prd[..4]);
@@ -117,7 +117,7 @@ namespace Onyx.Controllers
         }
         public IActionResult UserSalaryChart(string container)
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             foreach (var item in EmplLoanAndLeaveApproval.SalaryDetails)
             {
                 item.Year = Convert.ToInt32(item.Prd[..4]);
@@ -130,7 +130,7 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpStatisticsChart(string container)
         {
-            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd);
+            var EmplLoanAndLeaveApproval = _commonService.EmplLoanAndLeaveApproval(_loggedInUser.UserCd, _loggedInUser.UserOrEmployee, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             ViewBag.Container = container.Replace("_", "");
             return PartialView("_EmpStatisticsChart", EmplLoanAndLeaveApproval.HeadCounts);
         }

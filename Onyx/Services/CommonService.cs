@@ -487,13 +487,14 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval(string empCd, string type, string CoCd)
+        public EmplLoanAndLeaveApproval EmplLoanAndLeaveApproval(string empCd, string type, string CoCd, string UserCd)
         {
             var procedureName = "EmplLoanAndLeaveApproval_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_CoCd", CoCd);
             parameters.Add("v_EmpCd", empCd);
             parameters.Add("v_Typ", type);
+            parameters.Add("v_UserCd", UserCd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
