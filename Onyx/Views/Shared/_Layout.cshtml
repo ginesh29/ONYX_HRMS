@@ -1,10 +1,13 @@
-﻿@{
+﻿@using System.Globalization
+@{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var isAdmin = User.Claims.FirstOrDefault(m => m.Type == "UserCd")?.Value.Equals("001");
     var processId = Context.Request.Query["processId"];
     var loggedInUser = _authService.GetLoggedInUser();
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, processId);
     ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var rtl = currentCulture == "ar" || currentCulture == "fa" ? "rtl" : "";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +16,7 @@
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="~/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
+<body class="hold-transition sidebar-mini layout-fixed @rtl">
     <div class="wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
@@ -43,7 +46,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0" id="page-header">@ViewData["Title"]<i class="fas fa-spinner fa-spin d-none" id="page-loader"></i></h1>
+                            <h1 class="m-0" id="page-header">@ViewData["Title"]<i class="fas fa-spinner fa-spin d-none ml-2" id="page-loader"></i></h1>
                         </div><!-- /.col -->
                         @if (ViewData["Title"]?.ToString() != "Home")
                         {

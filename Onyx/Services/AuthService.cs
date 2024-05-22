@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.Memory;
 using Onyx.Models.ViewModels;
 using System.Security.Claims;
@@ -40,6 +41,7 @@ namespace Onyx.Services
         {
             _memoryCache.Remove("CompanyCd");
             _memoryCache.Remove("ActivityId");
+            _httpContextAccessor.HttpContext.Response.Cookies.Delete(CookieRequestCultureProvider.DefaultCookieName);
             await _httpContextAccessor.HttpContext.SignOutAsync();
         }
         public LoggedInUserModel GetLoggedInUser()

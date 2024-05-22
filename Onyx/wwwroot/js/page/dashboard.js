@@ -89,8 +89,8 @@ if (userLinkedTo != "Emp") {
 chartsJsonData.forEach((n, i) =>
     n.content = `<div class="card dashboard-card">
                     <div class="card-header" id="${n.des}-header">
-                        <div class="d-flex align-items-center">
-                            <h5 class="card-label text-primary mr-auto">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-label text-primary">
                                  ${n.title}
                             </h5>
                             <div class="card-toolbar d-flex">

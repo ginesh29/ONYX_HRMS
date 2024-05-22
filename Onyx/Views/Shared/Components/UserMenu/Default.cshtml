@@ -1,4 +1,5 @@
-﻿@model UserMenuModel
+﻿@using System.Globalization
+@model UserMenuModel
 @{
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     var profilePic = !string.IsNullOrEmpty(Model.ProfilePic) ? $"/uploads/{companyCd}/emp-photo/{Model.ProfilePic}" : "/images/avatar.png";
@@ -13,6 +14,8 @@
     var dateFormat = ExtensionMethod.GetDateFormat();
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    bool rtl = currentCulture == "ar" || currentCulture == "fa";
 }
 <link href="~/plugins/flag-icon-css/css/flag-icon.min.css" rel="stylesheet" />
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -22,13 +25,13 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
     </ul>
-    <ul class="navbar-nav ml-auto">
+    <ul class="navbar-nav @(rtl?"mr-auto-navbav":"ml-auto")">
         <!-- Messages Dropdown Menu -->
         @if (leaveApprovalData.Count() > 0)
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 0px;">@leaveApprovalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:-10px":"right: 0px;")">@leaveApprovalData.Count()</span>
                     <img src="~/images/leave.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-approvals-notifications" style="left: inherit; right: 0px;">
@@ -79,7 +82,7 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Leave Salary/Ticket to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 3px;">@leaveSalaryApprovalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:0px":"right: 3px")">@leaveSalaryApprovalData.Count()</span>
                     <img src="~/images/ticket-flight.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-sal-approvals-notifications" style="left: inherit; right: 0px;">
@@ -130,7 +133,7 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Loan to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@loanApprovalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left: -10px;":"right: 2px;")">@loanApprovalData.Count()</span>
                     <img src="~/images/loan.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="loan-approvals-notifications" style="left: inherit; right: 0px;">
@@ -178,7 +181,7 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Fund to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@fundApprovalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:2px;":"right: 2px;")">@fundApprovalData.Count()</span>
                     <img src="~/images/funding.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="fund-approvals-notifications" style="left: inherit; right: 0px;">
@@ -229,7 +232,7 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Emp. Progression to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@progressionData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left: -6px;":"right: 2px;")">@progressionData.Count()</span>
                     <img src="~/images/progress.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="progression-approvals-notifications" style="left: inherit; right: 0px;">
@@ -281,7 +284,7 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Document Renewal to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@docRenewalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left":"right"): 2px;">@docRenewalData.Count()</span>
                     <img src="~/images/documents.png" height="40px" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
@@ -370,12 +373,12 @@
                 </div>
             </li>
         }
-        <li class="nav-item mr-3 ml-5">
-            <div style="width:200px;">
-                <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
-                </select>
-            </div>
-        </li>
+        @* <li class="nav-item ml-3">
+        <div style="width:200px;">
+        <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
+        </select>
+        </div>
+        </li> *@
         <partial name="_LanguageSelector" />
         <!-- Navbar Search -->
         <li class="nav-item dropdown user-menu">
@@ -383,7 +386,7 @@
                 <img src="@profilePic" class="user-image img-circle border" alt="User Image">
                 <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;" id="user-menu">
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="user-menu">
                 <!-- User image -->
                 <li class="user-header" style="height:90px">
                     <p>
