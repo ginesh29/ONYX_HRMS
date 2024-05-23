@@ -4,19 +4,22 @@
     var lang = currentCulture == "ar" ? "ae" : currentCulture == "fa" ? "ir" : "us";
     bool rtl = currentCulture == "ar" || currentCulture == "fa";
 }
-<li class="nav-item dropdown mr-3 ml-5">
-    <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
-        <i class="flag-icon flag-icon-@lang"></i>
-    </a>
-    <div class="dropdown-menu dropdown-menu-@(!rtl?"left":"right") p-0" style="left: inherit; right: 0px;" id="language-dropdown">
-        <a href="#" class="dropdown-item" data-value="en">
-            <i class="flag-icon flag-icon-us mr-2"></i> English
+<form id="selectLanguage" asp-controller="Home" asp-action="SetLanguage" method="post">
+    <input type="hidden" id="culture" name="culture" value="@currentCulture" />
+    <li class="nav-item dropdown mr-3 ml-5">
+        <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
+            <i class="flag-icon flag-icon-@lang"></i>
         </a>
-        <a href="#" class="dropdown-item" data-value="ar">
-            <i class="flag-icon flag-icon-ae mr-2"></i> Arabic
-        </a>
-        <a href="#" class="dropdown-item" data-value="fa">
-            <i class="flag-icon flag-icon-ir mr-2"></i> Parsian
-        </a>
-    </div>
-</li>
+        <div class="dropdown-menu dropdown-menu-@(!rtl?"left":"right") p-0" style="left: inherit; right: 0px;" id="language-dropdown">
+            <a href="#" class="dropdown-item" data-value="en">
+                <i class="flag-icon flag-icon-us mr-2"></i> English
+            </a>
+            <a href="#" class="dropdown-item" data-value="ar">
+                <i class="flag-icon flag-icon-ae mr-2"></i> Arabic
+            </a>
+            <a href="#" class="dropdown-item" data-value="fa">
+                <i class="flag-icon flag-icon-ir mr-2"></i> Persian
+            </a>
+        </div>
+    </li>
+</form>
