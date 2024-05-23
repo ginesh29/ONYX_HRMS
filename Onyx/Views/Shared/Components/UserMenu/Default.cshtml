@@ -34,7 +34,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:-10px":"right: 0px;")">@leaveApprovalData.Count()</span>
                     <img src="~/images/leave.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="leave-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Leave Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -85,7 +85,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:0px":"right: 3px")">@leaveSalaryApprovalData.Count()</span>
                     <img src="~/images/ticket-flight.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="leave-sal-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="leave-sal-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Leave Salary/Ticket Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -136,7 +136,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left: -10px;":"right: 2px;")">@loanApprovalData.Count()</span>
                     <img src="~/images/loan.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="loan-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="loan-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Loan Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -184,7 +184,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left:2px;":"right: 2px;")">@fundApprovalData.Count()</span>
                     <img src="~/images/funding.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="fund-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="fund-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Fund Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -235,7 +235,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left: -6px;":"right: 2px;")">@progressionData.Count()</span>
                     <img src="~/images/progress.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="progression-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="progression-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Employee Progression Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -284,10 +284,10 @@
         {
             <li class="nav-item dropdown ml-3">
                 <a class="nav-link btn btn-sm btn-icon" data-toggle="dropdown" href="#" aria-expanded="false" title="Document Renewal to be Approve">
-                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(rtl?"left":"right"): 2px;">@docRenewalData.Count()</span>
+                    <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; @(!rtl?"left":"right"): 2px;">@docRenewalData.Count()</span>
                     <img src="~/images/documents.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="doc-renewal-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Document Renewal Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
@@ -332,7 +332,7 @@
                     <span class="badge badge-danger navbar-badge font-weight-bold position-absolute" style="font-size: x-small;top: -8px; right: 2px;">@provisionAdjData.Count()</span>
                     <img src="~/images/provision.png" height="40px" />
                 </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="provision-adj-approvals-notifications" style="left: inherit; right: 0px;">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-@(!rtl?"left":"right")" id="provision-adj-approvals-notifications" style="left: inherit; right: 0px;">
                     <h5 class="text-primary text-center mt-2">Employee Provision Adjustment Approval Notifications</h5>
                     <div class="dropdown-divider"></div>
                     <div class="notifications custom-scrollbar">
