@@ -1,7 +1,7 @@
 ﻿@model CompanyVehicleModel
 @{
     var action = !string.IsNullOrEmpty(Model.Cd) ? "Edit" : "Add";
-    ViewData["Title"] = $"{action} Vehicle";
+    ViewData["Title"] = SharedResource[$"{action} Vehicle"];
 }
 <div class="card card-primary card-outline card-outline-tabs">
     <div class="card-header p-0 border-bottom-0">

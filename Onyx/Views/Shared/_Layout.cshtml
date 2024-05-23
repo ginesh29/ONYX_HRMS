@@ -56,7 +56,7 @@
                                     @if (ViewData["AdditionLinkWithTitle"] != null)
                                     {
                                         var additionalLink = ViewData["AdditionLinkWithTitle"].ToString().Split("_");
-                                        <li class="breadcrumb-item"><a href="@additionalLink[1]">@additionalLink[0]</a></li>
+                                        <li class="breadcrumb-item"><a href="@additionalLink[1]">@SharedResource[additionalLink[0]]</a></li>
                                     }
                                     <li class="breadcrumb-item active">@ViewData["Title"]</li>
                                 </ol>

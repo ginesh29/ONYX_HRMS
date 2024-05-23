@@ -386,7 +386,7 @@
                 <img src="@profilePic" class="user-image img-circle border" alt="User Image">
                 <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="user-menu">
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-@(rtl?"left":"right")" id="user-menu">
                 <!-- User image -->
                 <li class="user-header" style="height:90px">
                     <p>

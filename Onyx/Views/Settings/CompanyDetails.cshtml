@@ -1,9 +1,9 @@
 ﻿@model CompanyModel
 @{
-    ViewData["Title"] = "Company Details";
+    ViewData["Title"] = SharedResource["Company"];
 }
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-body">
                 <form asp-controller="Setting" asp-action="UpdateCompany" id="company-frm" enctype="multipart/form-data">

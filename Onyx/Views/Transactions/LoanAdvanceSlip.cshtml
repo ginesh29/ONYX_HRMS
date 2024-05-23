@@ -1,6 +1,6 @@
 ﻿@model EmpLoan_GetRow_Result
 @{
-    ViewData["Title"] = "Loan/Salary Advance Slip";
+    ViewData["Title"] = SharedResource["Loan/Salary Advance Slip"];
     Layout = null;
     var installmentAmt = Model.ApprAmt / Model.NoInstReq;
     var loggedInUser = _authService.GetLoggedInUser();

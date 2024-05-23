@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Employee Profile";
+    ViewData["Title"] = SharedResource["Employee Profile"];
     var processId = Context.Request.Query["processId"];
     ViewData["AdditionLinkWithTitle"] = $"Employees_/Employee/Profiles?processId={processId}";
     string[] sections = { "Personal Detail", "Official Detail", "Education Detail", "Experience Detail", "Documents", "Components", "Addresses" };
