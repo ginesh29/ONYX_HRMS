@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Controllers
 {

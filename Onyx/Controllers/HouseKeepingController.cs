@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class HouseKeepingController : Controller
     {
         private readonly CommonService _commonService;

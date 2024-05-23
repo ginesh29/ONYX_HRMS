@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
@@ -8,6 +9,7 @@ using Rotativa.AspNetCore.Options;
 
 namespace Onyx.Controllers
 {
+    [Authorize]
     public class ReportsController : Controller
     {
         private readonly ReportService _reportService;
