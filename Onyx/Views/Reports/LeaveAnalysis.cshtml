@@ -5,6 +5,7 @@
 <div class="card">
     <div class="card-body">
         <form id="filter-frm">
+            <input type="hidden" asp-for="OrderBy" />
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
@@ -76,6 +77,8 @@
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        $("#OrderBy").val("TransNo asc");
+        var orderConfig = [[0, "asc"]];
         $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
         bindEmployeeDropdown();
         function loadGridData(btn) {
@@ -84,7 +87,21 @@
             var url = `/Reports/FetchLeaveAnalysis?${frm}`;
             $('#EmpLeaveAnalysis').load(url, function () {
                 unloadingButton(btn);
-                window["datatable"] = $('#EmpLeaveAnalysisReportTable').DataTable(dataTableDefaultOptions);
+                window["datatable"] = $('#EmpLeaveAnalysisReportTable').DataTable({
+                    "order": orderConfig,
+                    "columnDefs": [                        
+                        { "orderable": false, "targets": [1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 15] }
+                    ]
+                });
+                window["datatable"].on('order.dt', function () {
+                    var order = window["datatable"].order();
+                    var columnIdx = order[0][0];
+                    var columnName = $('#EmpLeaveAnalysisReportTable th').eq(columnIdx).data('field');
+                    var dir = order[0][1];
+                    orderBy = `${columnName} ${dir}`;
+                    $("#OrderBy").val(orderBy);
+                    orderConfig = [[columnIdx, dir]];
+                });
                 if (window["datatable"].data().any())
                     $("#btn-pdf,#btn-excel").removeClass("d-none");
             });

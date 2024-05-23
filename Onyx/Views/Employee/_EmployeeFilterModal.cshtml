@@ -58,10 +58,16 @@
                                 <select asp-for="LeaveStatus" class="form-control filter-select-picker" asp-items="ViewBag.EmpWorkingStatusItems"></select>
                             </div>
                         </div>
-                    </div>
-                    <div class="custom-control custom-checkbox form-group">
-                        <input checked class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active">
-                        <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Active"></label>
+                                <select asp-for="Active" class="form-control filter-select-picker">
+                                    <option value="" class="no-value-option">All</option>
+                                    <option value="Y" selected>Active</option>
+                                    <option value="N">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

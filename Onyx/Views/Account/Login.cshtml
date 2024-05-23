@@ -27,6 +27,7 @@
                         <div class="login__field">
                             <i class="login__icon fas fa-lock"></i>
                             <input type="password" asp-for="Password" class="login__input" placeholder="Password">
+                            <i class="login__icon fa fa-eye eye-icon" style="right: 70px;" onclick="showHidePasswordAsterisk('Password', this)"></i>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                         <div class="login__field">
@@ -73,6 +74,17 @@
 </html>
 <script>
     setBrowserInfo();
+    function showHidePasswordAsterisk(id, curEl) {
+        var x = document.getElementById(id);
+        if (x.type === "password") {
+            x.type = "text";
+            $(curEl).parent().find(".eye-icon").removeClass("fa-eye").addClass("fa-eye-slash");
+        }
+        else {
+            x.type = "password";
+            $(curEl).parent().find(".eye-icon").removeClass("fa-eye-slash").addClass("fa-eye");
+        }
+    }
     function loginUser(btn) {
         var frm = $("#login-frm");
         if (frm.valid()) {

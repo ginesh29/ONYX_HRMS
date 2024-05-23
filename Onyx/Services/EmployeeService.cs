@@ -45,7 +45,7 @@ namespace Onyx.Services
             var result = connection.Query<Employee_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public EmpProfileGrid GetEmployees(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", string empType = "0", string lvStatus = "", bool Active = true, int pageNumber = 1, int pageSize = 100)
+        public EmpProfileGrid GetEmployees(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string sponsor = "0", string Desg = "0", string status = "0", string empType = "0", string lvStatus = "", string Active = "", int pageNumber = 1, int pageSize = 100)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRow_N";
@@ -58,7 +58,7 @@ namespace Onyx.Services
             parameters.Add("v_Designation", Desg ?? "0");
             parameters.Add("v_Status", status ?? "0");
             parameters.Add("v_EmpTyp", empType ?? "0");
-            parameters.Add("v_Active", Active ? "Y" : "N");
+            parameters.Add("v_Active", Active ?? string.Empty);
             parameters.Add("v_Usercd", UserCd);
             parameters.Add("v_PageNumber", pageNumber);
             parameters.Add("v_PageSize", pageSize);

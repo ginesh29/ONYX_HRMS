@@ -66,6 +66,7 @@ namespace Onyx.Controllers
                         AmtDecs = company.AmtDecs,
                         LoginId = model.LoginId,
                     };
+                    await _authService.SignOutAsync();
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
                     result.Message = "Login Successfully";
@@ -93,6 +94,7 @@ namespace Onyx.Controllers
                         AmtDecs = company.AmtDecs,
                         LoginId = model.LoginId,
                     };
+                    await _authService.SignOutAsync();
                     await _authService.SignInUserAsync(u);
                     result.Success = true;
                     result.Message = "Login Successfully";
