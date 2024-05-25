@@ -34,12 +34,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new List<CultureInfo>
         {
-            new CultureInfo("en"),
+            new CultureInfo("en-GB"),
             new CultureInfo("ar"),
             new CultureInfo("fa")
         };
 
-    options.DefaultRequestCulture = new RequestCulture("en");
+    options.DefaultRequestCulture = new RequestCulture("en-GB");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
@@ -65,8 +65,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-var supportedCultures = new[] { "en", "ar", "fa" };
-var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture("en")
+var supportedCultures = new[] { "en-GB", "ar", "fa" };
+var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture("en-GB")
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 

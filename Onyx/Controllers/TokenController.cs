@@ -65,5 +65,54 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
+        #region Service
+        public IActionResult Services()
+        {
+            return View();
+        }
+        public IActionResult FetchServices()
+        {
+            var services = _tokenService.GetServices();
+            CommonResponse result = new()
+            {
+                Data = services,
+            };
+            return Json(result);
+        }
+        public IActionResult GetService(string cd)
+        {
+            var service = _tokenService.GetServices(cd).FirstOrDefault();
+            var model = new ServiceModel();
+            if (service != null)
+                model = new ServiceModel
+                {
+                    Cd = service.Cd,
+                    Name = service.Name,
+                    Active = service.Active,
+                };
+            else
+                model.Cd = _tokenService.GetService_SrNo();
+            return PartialView("_ServiceModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveService(ServiceModel model)
+        {
+            model.EntryBy = _loggedInUser.UserCd;
+            var result = _tokenService.SaveService(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteService(string cd)
+        {
+            _tokenService.DeleteService(cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        #endregion
     }
 }
