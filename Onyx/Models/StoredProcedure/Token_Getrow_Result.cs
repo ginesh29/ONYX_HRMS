@@ -6,7 +6,7 @@
         public string ServiceCd { get; set; }
         public string ServiceName { get; set; }
         public string MobileNo { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }

@@ -1,0 +1,17 @@
+﻿@model Token_Getrow_Result
+<label>Token Preview</label>
+<div class="ticket" id="print-container">
+    <h4>@Model.ServiceName</h4>
+    <div class="ticket-info text-secondary">Your queue number</div>
+    <div class="ticket-number text-primary">@Model.TokenNo</div>
+    <div class="ticket-info py-3">
+        <span class="badge badge-secondary" style="border-radius: 50%;">@ViewBag.CustomerAhead</span>
+        Customers ahead of you
+    </div>
+    <div class="ticket-info">
+        Your queue number will be called soon, please come to the centre.
+    </div>
+    <div class="ticket-footer">
+        Date of issue: @DateTime.Now.FormatDate()<br>
+    </div>
+</div>

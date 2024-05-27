@@ -90,6 +90,7 @@ namespace Onyx.Controllers
                 {
                     Cd = service.Cd,
                     Name = service.Name,
+                    Prefix = service.Prefix,
                     Active = service.Active,
                 };
             else
@@ -147,8 +148,22 @@ namespace Onyx.Controllers
             model.TokenNo = _queueService.GetToken_SrNo(service.Prefix, model.ServiceCd);
             model.EntryBy = _loggedInUser.UserCd;
             var result = _queueService.SaveToken(model);
-            result.Data = model;
+            result.Data = new { model.TokenNo };
             return Json(result);
+        }
+        public IActionResult GetTokenPreview(string tokenNo)
+        {
+            var tokens = _queueService.GetTokens();
+            var token = tokens.FirstOrDefault(m => m.TokenNo == tokenNo);
+            var customerAhead = tokens.Count(m => m.Status == "W");
+            ViewBag.CustomerAhead = customerAhead - 1;
+            return PartialView("_TokenPreview", token);
+        }
+        public IActionResult TokenCall()
+        {
+            var waitingTokens = _queueService.GetTokens().Where(m => m.Status == "W");
+            ViewBag.WaitingTokens = waitingTokens;
+            return View();
         }
         #endregion
     }

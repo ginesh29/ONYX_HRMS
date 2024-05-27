@@ -1,6 +1,9 @@
-insert into MenuCtrl_N values('H','8','0','Q-MAN',201,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM')
-insert into MenuCtrl_N values('H','81','8','Counters',202,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM1')
-insert into MenuCtrl_N values('H','82','8','Services',203,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM2')
+insert into MenuCtrl_N values('H','8','0','Q-Management',201,'O','/Queue/Q-Management','Y',NULL,'HRPTM')
+insert into MenuCtrl_N values('H','81','8','Counters',202,'O','/Queue/Counters','Y',NULL,'HRPTM1')
+insert into MenuCtrl_N values('H','82','8','Services',203,'O','/Queue/Services','Y',NULL,'HRPTM2')
+insert into MenuCtrl_N values('H','83','8','Tokens',204,'O','/Queue/Tokens','Y',NULL,'HRPTM3')
+insert into MenuCtrl_N values('H','84','8','Token Call',204,'O','/Queue/Tokens','Y',NULL,'HRPTM3')
+
 
 USE [LSHRMS_Telal_Live]
 GO

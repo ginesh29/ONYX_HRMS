@@ -34,6 +34,9 @@ function saveToken(btn) {
             if (response.success) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
+                $("#btn-submit").addClass("d-none");
+                $("#btn-print").removeClass("d-none");
+                $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`);
             }
             else {
                 showErrorToastr(response.message);
@@ -41,4 +44,8 @@ function saveToken(btn) {
             unloadingButton(btn);
         });
     }
+}
+
+function printToken() {
+    $(`#print-container`).print();
 }
