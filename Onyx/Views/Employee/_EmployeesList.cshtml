@@ -20,9 +20,13 @@
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill border border-info">
                 <div class="card-header text-muted border-bottom-0">
-                    <div class="d-flex">
-                        <h6 class="mb-0 font-weight-light"><b>@item.Salutation @item.Name</b></h6>
-                        <span class="badge badge-@statusClass lv-status">@lvStatus</span>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="mb-0 font-weight-light"><b>@item.Salutation @item.Name</b></h6>
+                        </div>
+                        <div>
+                            <span class="badge badge-@statusClass lv-status">@lvStatus</span>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body pt-0 pb-0">

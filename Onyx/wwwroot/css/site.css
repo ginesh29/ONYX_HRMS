@@ -212,7 +212,6 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 }
 
 .lv-status {
-    position: absolute;
     top: 10px;
     right: 10px;
     font-weight: 500;

@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
 namespace Onyx.Controllers
 {
     [Authorize]
-    public class TokenController : Controller
+    public class QueueController : Controller
     {
         private readonly AuthService _authService;
-        private readonly TokenService _tokenService;
+        private readonly QueueService _queueService;
         private readonly LoggedInUserModel _loggedInUser;
-        public TokenController(AuthService authService, TokenService tokenService)
+        public QueueController(AuthService authService, QueueService queueService)
         {
             _authService = authService;
-            _tokenService = tokenService;
+            _queueService = queueService;
             _loggedInUser = _authService.GetLoggedInUser();
         }
         #region Counter
@@ -24,7 +25,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchCounters()
         {
-            var counters = _tokenService.GetCounters();
+            var counters = _queueService.GetCounters();
             CommonResponse result = new()
             {
                 Data = counters,
@@ -33,7 +34,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetCounter(string cd)
         {
-            var counter = _tokenService.GetCounters(cd).FirstOrDefault();
+            var counter = _queueService.GetCounters(cd).FirstOrDefault();
             var model = new CounterModel();
             if (counter != null)
                 model = new CounterModel
@@ -43,20 +44,20 @@ namespace Onyx.Controllers
                     Active = counter.Active,
                 };
             else
-                model.Cd = _tokenService.GetToken_SrNo();
+                model.Cd = _queueService.GetCounter_SrNo();
             return PartialView("_CounterModal", model);
         }
         [HttpPost]
         public IActionResult SaveCounter(CounterModel model)
         {
             model.EntryBy = _loggedInUser.UserCd;
-            var result = _tokenService.SaveCounter(model);
+            var result = _queueService.SaveCounter(model);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult DeleteCounter(string cd)
         {
-            _tokenService.DeleteCounter(cd);
+            _queueService.DeleteCounter(cd);
             var result = new CommonResponse
             {
                 Success = true,
@@ -73,7 +74,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchServices()
         {
-            var services = _tokenService.GetServices();
+            var services = _queueService.GetServices();
             CommonResponse result = new()
             {
                 Data = services,
@@ -82,7 +83,7 @@ namespace Onyx.Controllers
         }
         public IActionResult GetService(string cd)
         {
-            var service = _tokenService.GetServices(cd).FirstOrDefault();
+            var service = _queueService.GetServices(cd).FirstOrDefault();
             var model = new ServiceModel();
             if (service != null)
                 model = new ServiceModel
@@ -92,25 +93,61 @@ namespace Onyx.Controllers
                     Active = service.Active,
                 };
             else
-                model.Cd = _tokenService.GetService_SrNo();
+                model.Cd = _queueService.GetService_SrNo();
             return PartialView("_ServiceModal", model);
         }
         [HttpPost]
         public IActionResult SaveService(ServiceModel model)
         {
             model.EntryBy = _loggedInUser.UserCd;
-            var result = _tokenService.SaveService(model);
+            var result = _queueService.SaveService(model);
             return Json(result);
         }
         [HttpDelete]
         public IActionResult DeleteService(string cd)
         {
-            _tokenService.DeleteService(cd);
+            _queueService.DeleteService(cd);
             var result = new CommonResponse
             {
                 Success = true,
                 Message = CommonMessage.DELETED
             };
+            return Json(result);
+        }
+        #endregion
+
+        #region Token
+        public IActionResult Tokens()
+        {
+            return View();
+        }
+        public IActionResult FetchTokens()
+        {
+            var tokens = _queueService.GetTokens();
+            CommonResponse result = new()
+            {
+                Data = tokens,
+            };
+            return Json(result);
+        }
+        public IActionResult GetToken()
+        {
+            var services = _queueService.GetServices();
+            ViewBag.Services = services.Select(m => new SelectListItem
+            {
+                Text = m.Name,
+                Value = $"{m.Cd.Trim()}"
+            });
+            return PartialView("_TokenModal");
+        }
+        [HttpPost]
+        public IActionResult SaveToken(TokenModel model)
+        {
+            var service = _queueService.GetServices(model.ServiceCd).FirstOrDefault();
+            model.TokenNo = _queueService.GetToken_SrNo(service.Prefix, model.ServiceCd);
+            model.EntryBy = _loggedInUser.UserCd;
+            var result = _queueService.SaveToken(model);
+            result.Data = model;
             return Json(result);
         }
         #endregion

@@ -1,7 +1,7 @@
 ﻿var coCd = $("#CoCd").val();
-window["datatable"] = $('#ServicesDataTable').DataTable(
+window["datatable"] = $('#CountersDataTable').DataTable(
     {
-        ajax: "/Token/FetchServices",
+        ajax: "/Queue/FetchCounters",
         ordering: false,
         columns: [
             {
@@ -18,9 +18,9 @@ window["datatable"] = $('#ServicesDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showServiceModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showCounterModal('${row.cd}')">
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteService('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteCounter('${row.cd}')">
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -28,14 +28,14 @@ window["datatable"] = $('#ServicesDataTable').DataTable(
         ],
     }
 );
-function showServiceModal(cd) {
-    var url = `/Token/GetService?cd=${cd}`;
-    $('#ServiceModal').load(url, function () {
+function showCounterModal(cd) {
+    var url = `/Queue/GetCounter?cd=${cd}`;
+    $('#CounterModal').load(url, function () {
         parseDynamicForm();
-        $("#ServiceModal").modal("show");
+        $("#CounterModal").modal("show");
     });
 }
-function deleteService(cd) {
+function deleteCounter(cd) {
     Swal.fire({
         title: "Are you sure?",
         text: "You want to Delete?",
@@ -46,21 +46,21 @@ function deleteService(cd) {
         confirmButtonText: "Yes!"
     }).then((result) => {
         if (result.isConfirmed) {
-            deleteAjax(`/Token/DeleteService?cd=${cd}`, function (response) {
+            deleteAjax(`/Queue/DeleteCounter?cd=${cd}`, function (response) {
                 showSuccessToastr(response.message);
                 reloadDatatable();
             });
         }
     });
 }
-function saveService(btn) {
-    var frm = $("#service-frm");
+function saveCounter(btn) {
+    var frm = $("#counter-frm");
     if (frm.valid()) {
         loadingButton(btn);
-        filePostAjax("/Token/SaveService", frm[0], function (response) {
+        postAjax("/Queue/SaveCounter", frm.serialize(), function (response) {
             if (response.success) {
                 showSuccessToastr(response.message);
-                $("#ServiceModal").modal("hide");
+                $("#CounterModal").modal("hide");
                 reloadDatatable();
             }
             else {
@@ -70,19 +70,3 @@ function saveService(btn) {
         });
     }
 }
-function previewImage(event) {
-    var reader = new FileReader();
-    var ext = event.target.files[0].name.split('.').pop().toLowerCase();
-    if (imageExtensions.includes(ext)) {
-        reader.onload = function () {
-            var output = document.getElementById('Image-Preview');
-            output.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-        var filename = $("#ImageFile").val().split("\\").pop();
-        $("#Image-Preview").removeClass("d-none");
-        $("#image-file-label").text(filename);
-    }
-    else
-        showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
-};

@@ -1,6 +1,6 @@
-﻿namespace Onyx.Models.ViewModels
+﻿namespace Onyx.Models.StoredProcedure
 {
-    public class ServiceModel
+    public class Service_GetRow_Result
     {
         public string Cd { get; set; }
         public string Name { get; set; }

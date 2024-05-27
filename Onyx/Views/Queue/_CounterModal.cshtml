@@ -1,13 +1,13 @@
-﻿@model ServiceModel
+﻿@model CounterModel
 <div class="modal-dialog modal-sm">
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
-            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Name) ? "Edit" : "Add") Service</h4>
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.Name) ? "Edit" : "Add") Counter</h4>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-            <form id="service-frm">
+            <form id="counter-frm">
                 <div class="form-group disabled-container">
                     <label asp-for="Cd"></label>
                     <input asp-for="Cd" type="text" class="form-control disabled" value="@Model.Cd"/>
@@ -19,13 +19,13 @@
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active" checked>
                     <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-info" onclick="saveService(this)">Submit</button>
+            <button type="button" class="btn btn-info" onclick="saveCounter(this)">Submit</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>

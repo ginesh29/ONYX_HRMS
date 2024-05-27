@@ -62,7 +62,7 @@ namespace Onyx.Services
             parameters.Add("v_Usercd", UserCd);
             parameters.Add("v_PageNumber", pageNumber);
             parameters.Add("v_PageSize", pageSize);
-            parameters.Add("v_LvStatus", lvStatus ?? "");
+            parameters.Add("v_LvStatus", lvStatus ?? string.Empty);
             var connection = new SqlConnection(connectionString);
             var multiResult = connection.QueryMultiple(procedureName, parameters, commandType: CommandType.StoredProcedure);
             var employee = multiResult.Read<Employee_GetRow_Result>();

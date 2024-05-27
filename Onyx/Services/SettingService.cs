@@ -68,9 +68,9 @@ namespace Onyx.Services
             parameters.Add("v_Cd", model.Code.Trim());
             parameters.Add("v_Des", model.Description);
             parameters.Add("v_CoCd", model.CoCd);
-            parameters.Add("v_BU_Cd", "");
+            parameters.Add("v_BU_Cd", string.Empty);
             parameters.Add("v_SDes", model.Name);
-            parameters.Add("v_Image", model.Image ?? "");
+            parameters.Add("v_Image", model.Image ?? string.Empty);
             parameters.Add("v_EntryBy", model.EntryBy);
             parameters.Add("v_Mode", model.Mode);
             var connectionString = _dbGatewayService.GetConnectionString();
@@ -191,7 +191,6 @@ namespace Onyx.Services
         }
         public string GetDepartment_SrNo()
         {
-            //var query = "SELECT 'DEP' + CAST(MAX(CAST(REPLACE(LTRIM(RTRIM(Cd)), 'DEP', '') AS INT)) + 1 AS VARCHAR) AS NextCode FROM Dept;";
             var query = "SELECT 'DEP'+right('000'+ convert(varchar(3),isnull(Max(substring(cd,4,len(trim(cd)))),0)+1),3)  AS NextCode FROM Dept";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

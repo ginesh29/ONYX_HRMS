@@ -23,7 +23,7 @@ builder.Services.AddSingleton<EmployeeService>();
 builder.Services.AddSingleton<SettingService>();
 builder.Services.AddSingleton<OrganisationService>();
 builder.Services.AddSingleton<TransactionService>();
-builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<QueueService>();
 builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<EmailService>();
 builder.Services.AddControllersWithViews()
@@ -42,12 +42,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.DefaultRequestCulture = new RequestCulture("en-GB");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
-
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-        {
-            new QueryStringRequestCultureProvider(),
-            new CookieRequestCultureProvider()
-        };
+    foreach (var culture in supportedCultures)
+        culture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+    options.RequestCultureProviders = [new QueryStringRequestCultureProvider(), new CookieRequestCultureProvider()];
 });
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 

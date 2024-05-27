@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = SharedResource["Tokens"];
+}
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <button class="btn btn-info" onclick="showTokenModal('')">New Token</button>
+        </div>
+        <table class="table table-sm" id="TokensDataTable">
+            <thead>
+                <tr class="thead-dark">
+                    <th>No.</th>
+                    <th>Token No.</th>
+                    <th>Service Name</th>
+                    <th>Mobile No.</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="TokenModal" class="modal fade" role="dialog" tabindex='-1'></div>
+@section scripts {
+    <script src="~/js/page/queue/token.js" asp-append-version="true"></script>
+}
