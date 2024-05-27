@@ -1,3 +1,0 @@
-insert into MenuCtrl_N values('H','8','0','Q-MAN',201,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM')
-insert into MenuCtrl_N values('H','81','8','Counters',202,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM1')
-insert into MenuCtrl_N values('H','82','8','Services',203,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM2')
