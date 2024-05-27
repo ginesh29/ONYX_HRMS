@@ -2,6 +2,68 @@ insert into MenuCtrl_N values('H','8','0','Q-MAN',201,'O','/HouseKeeping/MonthEn
 insert into MenuCtrl_N values('H','81','8','Counters',202,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM1')
 insert into MenuCtrl_N values('H','82','8','Services',203,'O','/HouseKeeping/MonthEndProcess','Y',NULL,'HRPTM2')
 
+USE [LSHRMS_Telal_Live]
+GO
+/****** Object:  Table [dbo].[Counters]    Script Date: 27/05/2024 14:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Counters](
+	[Cd] [varchar](10) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Active] [bit] NOT NULL,
+	[EntryBy] [varchar](10) NULL,
+	[EntryDt] [datetime] NULL,
+	[EditBy] [varchar](10) NULL,
+	[EditDt] [datetime] NULL,
+ CONSTRAINT [PK_Counters] PRIMARY KEY CLUSTERED 
+(
+	[Cd] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Services]    Script Date: 27/05/2024 14:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Services](
+	[Cd] [varchar](10) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Prefix] [varchar](5) NOT NULL,
+	[Active] [bit] NOT NULL,
+	[EntryBy] [varchar](10) NULL,
+	[EntryDt] [datetime] NULL,
+	[EditBy] [varchar](10) NULL,
+	[EditDt] [datetime] NULL,
+ CONSTRAINT [PK_Services] PRIMARY KEY CLUSTERED 
+(
+	[Cd] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Tokens]    Script Date: 27/05/2024 14:33:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Tokens](
+	[TokenNo] [varchar](20) NOT NULL,
+	[ServiceCd] [varchar](20) NOT NULL,
+	[MobileNo] [varchar](20) NULL,
+	[Status] [bit] NOT NULL,
+	[EntryBy] [varchar](10) NULL,
+	[EntryDt] [datetime] NULL,
+	[EditBy] [varchar](10) NULL,
+	[EditDt] [datetime] NULL,
+ CONSTRAINT [PK_Tokens_1] PRIMARY KEY CLUSTERED 
+(
+	[TokenNo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
 
 -- =============================================
 -- Author:		Ginesh
