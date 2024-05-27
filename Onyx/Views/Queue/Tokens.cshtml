@@ -1,26 +1,39 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Tokens"];
+    IEnumerable<Service_GetRow_Result> Services = ViewBag.Services;
 }
 <div class="card">
     <div class="card-body">
-        <div class="mb-3">
-            <button class="btn btn-info" onclick="showTokenModal('')">New Token</button>
+        <span>Click one service to Issue Token</span>
+        <hr />
+        <div>
+            @foreach (var item in Services)
+            {
+                <button class="btn btn-info mr-2" onclick="generateToken(this,'@item.Prefix','@item.Cd')">@item.Name</button>
+            }
         </div>
-        <table class="table table-sm" id="TokensDataTable">
-            <thead>
-                <tr class="thead-dark">
-                    <th>No.</th>
-                    <th>Token No.</th>
-                    <th>Service Name</th>
-                    <th>Mobile No.</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-        </table>
     </div>
 </div>
 <div id="TokenModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.min.js"></script>
-    <script src="~/js/page/queue/token.js" asp-append-version="true"></script>
+    <script>
+        function generateToken(btn, prefix, serviceCd) {
+            loadingButton(btn);
+            postAjax("/Queue/GenerateToken", { Prefix: prefix, ServiceCd: serviceCd }, function (response) {
+                if (response.success) {
+                    showSuccessToastr(response.message);
+                    $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`, function () {
+                        $("#TokenModal").modal("show");
+                    });
+                }
+                else {
+                    showErrorToastr(response.message);
+                }
+                unloadingButton(btn);
+            });
+        }
+        function printToken() {
+            $(`#print-container`).print();
+        }
+    </script>
 }

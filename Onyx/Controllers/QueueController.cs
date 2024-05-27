@@ -120,35 +120,20 @@ namespace Onyx.Controllers
         #region Token
         public IActionResult Tokens()
         {
+            var services = _queueService.GetServices();
+            ViewBag.Services = services;
             return View();
         }
-        public IActionResult FetchTokens()
-        {
-            var tokens = _queueService.GetTokens();
-            CommonResponse result = new()
-            {
-                Data = tokens,
-            };
-            return Json(result);
-        }
-        public IActionResult GetToken()
-        {
-            var services = _queueService.GetServices();
-            ViewBag.Services = services.Select(m => new SelectListItem
-            {
-                Text = m.Name,
-                Value = $"{m.Cd.Trim()}"
-            });
-            return PartialView("_TokenModal");
-        }
         [HttpPost]
-        public IActionResult SaveToken(TokenModel model)
+        public IActionResult GenerateToken(TokenModel model)
         {
             var service = _queueService.GetServices(model.ServiceCd).FirstOrDefault();
+            model.Status = "W";
             model.TokenNo = _queueService.GetToken_SrNo(service.Prefix, model.ServiceCd);
             model.EntryBy = _loggedInUser.UserCd;
             var result = _queueService.SaveToken(model);
             result.Data = new { model.TokenNo };
+            result.Message = $"{service.Name} token generated successfully";
             return Json(result);
         }
         public IActionResult GetTokenPreview(string tokenNo)
@@ -161,9 +146,53 @@ namespace Onyx.Controllers
         }
         public IActionResult TokenCall()
         {
-            var waitingTokens = _queueService.GetTokens().Where(m => m.Status == "W");
+            var tokens = _queueService.GetTokens();
+            var waitingTokens = tokens.Where(m => m.Status == "W");
             ViewBag.WaitingTokens = waitingTokens;
+            var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
+            ViewBag.CalledTokens = calledTokens;
+            var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
+            ViewBag.CurrentToken = currentToken;
             return View();
+        }
+        [HttpPost]
+        public IActionResult CallNextToken(string token)
+        {
+            var waitingTokens = _queueService.GetTokens().Where(m => m.Status == "W");
+            string tokenNo = !string.IsNullOrEmpty(token) ? token : waitingTokens.FirstOrDefault()?.TokenNo;
+            var model = new TokenModel
+            {
+                TokenNo = tokenNo,
+                Status = "C",
+                EntryBy = _loggedInUser.UserCd,
+            };
+            var result = _queueService.SaveToken(model);
+            result.Message = !string.IsNullOrEmpty(tokenNo) ? $"{tokenNo} Called Scuccessfully" : "No Ticket Available";
+            result.Success = !string.IsNullOrEmpty(tokenNo) && result.Success;
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult ServeToken(string status)
+        {
+            var currentToken = _queueService.GetTokens().FirstOrDefault(m => m.Status == "C");
+            var model = new TokenModel
+            {
+                TokenNo = currentToken.TokenNo,
+                Status = status,
+                EntryBy = _loggedInUser.UserCd,
+            };
+            var result = _queueService.SaveToken(model);
+            var action = status == "S" ? "served" : "skipped";
+            result.Message = $"{currentToken.TokenNo} {action} Scuccessfully";
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult SaveTokenCall(TokenModel model)
+        {
+            model.EntryBy = _loggedInUser.UserCd;
+            var result = _queueService.SaveToken(model);
+            result.Data = new { model.TokenNo };
+            return Json(result);
         }
         #endregion
     }

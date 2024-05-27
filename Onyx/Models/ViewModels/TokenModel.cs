@@ -10,7 +10,7 @@ namespace Onyx.Models.ViewModels
         public string ServiceCd { get; set; }
         [Display(Name = "Mobile No.")]
         public string MobileNo { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }

@@ -1,19 +1,22 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Token Call"];
     IEnumerable<Token_Getrow_Result> WaitingTokens = ViewBag.WaitingTokens;
+    IEnumerable<Token_Getrow_Result> CalledTokens = ViewBag.CalledTokens;
+    var CurrentToken = ViewBag.CurrentToken != null ? ViewBag.CurrentToken : "Not Serving";
+    var currentStatus = ViewBag.CurrentToken != null ? "Served" : "Available";
 }
 <div class="card">
     <div class="card-body">
         <div class="row">
             <div class="col-md-9 form-border-right">
                 <div class="d-flex flex-column">
-                    <div class="text-center"><h1 style="font-size: 115px;">R-1005</h1></div>
-                    <div class="text-center  mb-3"><h1>Served</h1></div>
+                    <div class="text-center"><h1 style="font-size: 115px;">@CurrentToken</h1></div>
+                    <div class="text-center  mb-3"><h1>@currentStatus</h1></div>
                     <div class="text-center" style="width:500px;height:300px; margin: 0 auto;">
                         <div class="d-flex justify-content-between mb-2">
-                            <button class="btn btn-info" style="width: 150px;">Call Next</button>
-                            <button class="btn btn-info" style="width: 150px;">Served</button>
-                            <button class="btn btn-info" style="width: 150px;">No Show(Skip)</button>
+                            <button class="btn btn-info" @(ViewBag.CurrentToken == null ? "" : "disabled") style="width: 150px;" onclick="callNextToken(this)">Call Next</button>
+                            <button class="btn btn-info" @(ViewBag.CurrentToken != null ? "" : "disabled") style="width: 150px;" onclick="serveToken(this,'S')">Served</button>
+                            <button class="btn btn-info @(ViewBag.CurrentToken != null ?"":"disabled")" style="width: 150px;" onclick="serveToken(this,'N')">No Show(Skip)</button>
                         </div>
                         <div>Counter: Room 1</div>
                     </div>
@@ -22,33 +25,47 @@
             <div class="col-md-3">
                 <div class="accordion" id="TokenCallList">
                     <h2 class="mb-0">
-                        <button class="btn text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <button class="btn text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#waiting" aria-expanded="false" aria-controls="waiting">
                             Waiting <i class="fas fa-angle-left float-right expand-icon"></i>
                         </button>
                     </h2>
-                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#TokenCallList">
+                    <div id="waiting" class="collapse" aria-labelledby="waiting" data-parent="#TokenCallList">
                         <ul class="list-group list-group-flush">
                             @foreach (var item in WaitingTokens)
                             {
                                 <li class="list-group-item">
                                     @item.TokenNo
-                                    <button class="btn btn-sm btn-info float-right" onclick="showDepartmentModal('DEP01')">
+                                    <button class="btn btn-xs btn-info float-right" onclick="callNextToken(null,'@item.TokenNo')">
                                         <i class="fas fa-phone"></i>
                                     </button>
                                 </li>
                             }
+                            @if (WaitingTokens.Count() == 0)
+                            {
+                                <li class="list-group-item">@CommonMessage.EMPTYGRID</li>
+                            }
                         </ul>
                     </div>
                     <h2 class="mb-0">
-                        <button class="btn text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <button class="btn text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#called" aria-expanded="false" aria-controls="called">
                             Called <i class="fas fa-angle-left float-right expand-icon"></i>
                         </button>
                     </h2>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#TokenCallList">
+                    <div id="called" class="collapse" aria-labelledby="called" data-parent="#TokenCallList">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">R - 1005 <span class="badge badge-info float-right">Served</span></li>
-                            <li class="list-group-item">Second item <span class="badge badge-danger float-right">Not Served</span></li>
-                            <li class="list-group-item">Third item</li>
+                            @foreach (var item in CalledTokens)
+                            {
+                                var statusClass = item.Status == "S" ? "info" : "danger";
+                                var status = item.Status == "S" ? "Served" : "Not Served";
+                                <li class="list-group-item">
+                                    @item.TokenNo
+                                    <span class="badge badge-@statusClass float-right">@status</span>
+                                </li>
+                            }
+                            @if (CalledTokens.Count() == 0)
+                            {
+                                <li class="list-group-item">@CommonMessage.EMPTYGRID</li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -73,3 +90,29 @@
         /* margin: .75rem 1.25rem; */
     }
 </style>
+@section scripts {
+    <script>
+        function callNextToken(btn, tokenNo) {
+            loadingButton(btn);
+            postAjax("/Queue/CallNextToken", { token: tokenNo }, function (response) {
+                if (response.success)
+                    showSuccessToastr(response.message);
+                else
+                    showErrorToastr(response.message);
+                unloadingButton(btn);
+                reloadPageAfterSometime();
+            })
+        }
+        function serveToken(btn, status) {
+            loadingButton(btn);
+            postAjax(`/Queue/ServeToken`, { status }, function (response) {
+                if (response.success)
+                    showSuccessToastr(response.message);
+                else
+                    showErrorToastr(response.message);
+                unloadingButton(btn);
+                reloadPageAfterSometime();
+            })
+        }
+    </script>
+}
