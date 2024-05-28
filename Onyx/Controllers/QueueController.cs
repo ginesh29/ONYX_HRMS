@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 
@@ -11,12 +13,14 @@ namespace Onyx.Controllers
     {
         private readonly AuthService _authService;
         private readonly QueueService _queueService;
+        private readonly SettingService _settingService;
         private readonly LoggedInUserModel _loggedInUser;
-        public QueueController(AuthService authService, QueueService queueService)
+        public QueueController(AuthService authService, QueueService queueService, SettingService settingService)
         {
             _authService = authService;
             _queueService = queueService;
             _loggedInUser = _authService.GetLoggedInUser();
+            _settingService = settingService;
         }
         #region Counter
         public IActionResult Counters()
@@ -124,6 +128,35 @@ namespace Onyx.Controllers
             ViewBag.Services = services;
             return View();
         }
+        public IActionResult TokenSetting()
+        {
+            ViewBag.ServiceItems = _queueService.GetServices().Select(m => new SelectListItem
+            {
+                Value = m.Name.Trim(),
+                Text = m.Name.Trim()
+            });
+            ViewBag.CounterItems = _queueService.GetCounters().Select(m => new SelectListItem
+            {
+                Value = m.Name.Trim(),
+                Text = m.Name.Trim()
+            });
+            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
+            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
+            return PartialView("_TokenSettingModal", tokenSetting);
+        }
+        [HttpPost]
+        public IActionResult SaveTokenSetting(TokenSettingModel model)
+        {
+            var tokenSettingJson = JsonConvert.SerializeObject(model);
+            Response.Cookies.Append("TokenSetting", tokenSettingJson, new CookieOptions { Expires = DateTime.Now.AddYears(1) });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED,
+                Data = model
+            };
+            return Json(result);
+        }
         [HttpPost]
         public IActionResult GenerateToken(TokenModel model)
         {
@@ -142,6 +175,8 @@ namespace Onyx.Controllers
             var token = tokens.FirstOrDefault(m => m.TokenNo == tokenNo);
             var customerAhead = tokens.Count(m => m.Status == "W");
             ViewBag.CustomerAhead = customerAhead - 1;
+            var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
+            ViewBag.CompanyName = company.CoName;
             return PartialView("_TokenPreview", token);
         }
         public IActionResult TokenCall()
@@ -153,13 +188,16 @@ namespace Onyx.Controllers
             ViewBag.CalledTokens = calledTokens;
             var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
             ViewBag.CurrentToken = currentToken;
+            var nextToken = waitingTokens.FirstOrDefault()?.TokenNo;
+            ViewBag.NextToken = nextToken;
+            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
+            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
+            ViewBag.TokenCookie = tokenSetting;
             return View();
         }
         [HttpPost]
-        public IActionResult CallNextToken(string token)
+        public IActionResult CallNextToken(string tokenNo)
         {
-            var waitingTokens = _queueService.GetTokens().Where(m => m.Status == "W");
-            string tokenNo = !string.IsNullOrEmpty(token) ? token : waitingTokens.FirstOrDefault()?.TokenNo;
             var model = new TokenModel
             {
                 TokenNo = tokenNo,
@@ -177,9 +215,9 @@ namespace Onyx.Controllers
             var currentToken = _queueService.GetTokens().FirstOrDefault(m => m.Status == "C");
             var model = new TokenModel
             {
-                TokenNo = currentToken.TokenNo,
+                TokenNo = currentToken?.TokenNo,
                 Status = status,
-                EntryBy = _loggedInUser.UserCd,
+                EntryBy = _loggedInUser?.UserCd,
             };
             var result = _queueService.SaveToken(model);
             var action = status == "S" ? "served" : "skipped";
@@ -193,6 +231,20 @@ namespace Onyx.Controllers
             var result = _queueService.SaveToken(model);
             result.Data = new { model.TokenNo };
             return Json(result);
+        }
+        public IActionResult Display()
+        {
+            var tokens = _queueService.GetTokens();
+            var waitingTokens = tokens.Where(m => m.Status == "W");
+            ViewBag.WaitingTokens = waitingTokens;
+            var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
+            ViewBag.CalledTokens = calledTokens;
+            var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
+            ViewBag.CurrentToken = currentToken;
+            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
+            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
+            ViewBag.TokenCookie = tokenSetting;
+            return View();
         }
         #endregion
     }

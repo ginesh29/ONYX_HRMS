@@ -9,6 +9,17 @@
 .os-theme-light > .os-scrollbar-vertical {
     width: 8px !important;
 }
+.btn .expand-icon {
+    transition: transform 0.2s;
+}
+
+.btn.collapsed .expand-icon {
+    transform: rotate(0deg);
+}
+
+.btn:not(.collapsed) .expand-icon {
+    transform: rotate(-90deg);
+}
 .grid-stack-item-content {
     background-color: #fff;
     cursor: pointer;

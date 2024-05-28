@@ -128,7 +128,7 @@ namespace Onyx.Services
         }
         public string GetToken_SrNo(string prefix, string serviceCd)
         {
-            var query = $"SELECT '{prefix} - '+right('000'+ convert(varchar(3),isnull(Max(substring(TokenNo,5,len(trim(TokenNo)))),0)+1),3)  AS NextCode FROM Tokens where ServiceCd = '{serviceCd}'";
+            var query = $"SELECT '{prefix}-'+right('000'+ convert(varchar(3),isnull(Max(substring(TokenNo,5,len(trim(TokenNo)))),0)+1),3)  AS NextCode FROM Tokens where ServiceCd = '{serviceCd}'";
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             var data = connection.QueryFirstOrDefault<string>(query);

@@ -140,7 +140,8 @@ function setActiveMenu() {
 function reloadPageAfterSometime(callback) {
     setTimeout(function () {
         location.reload();
-        callback();
+        if (callback)
+            callback();
     }, 1000);
 }
 function reloadDatatable() {
@@ -337,6 +338,21 @@ function bindEmployeeMultipleDropdown(departments, designations, branches, locat
 function printDiv(divContainer) {
     divContainer = divContainer ? divContainer : "print-container";
     $(`#${divContainer}`).print();
+}
+var utterance = new SpeechSynthesisUtterance();
+var voices = [];
+function loadVoices() {
+    voices = speechSynthesis.getVoices();
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+function speak(text, voiceName) {
+    loadVoices();
+    let selectedVoice = voices.find(voice => voice.name === voiceName)
+    console.log(selectedVoice)
+    if (selectedVoice)
+        utterance.voice = selectedVoice;
+    utterance.text = text;
+    speechSynthesis.speak(utterance);
 }
 function initControls() {
     $(".select-picker,.filter-select-picker").not("#user-company-dropdown").attr("data-live-search", true)

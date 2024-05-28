@@ -5,6 +5,7 @@ using Onyx.BackgroundTask;
 using Onyx.Data;
 using Onyx.Middleware;
 using Onyx.Services;
+using Onyx.SignalR.Hubs;
 using Rotativa.AspNetCore;
 using System.Globalization;
 
@@ -34,9 +35,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new List<CultureInfo>
         {
-            new CultureInfo("en-GB"),
-            new CultureInfo("ar"),
-            new CultureInfo("fa")
+            new("en-GB"),
+            new("ar"),
+            new("fa")
         };
 
     options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -47,7 +48,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.RequestCultureProviders = [new QueryStringRequestCultureProvider(), new CookieRequestCultureProvider()];
 });
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
@@ -72,4 +73,5 @@ app.UseMiddleware<CookieExpirationMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<ChatHub>("/chathub");
 app.Run();

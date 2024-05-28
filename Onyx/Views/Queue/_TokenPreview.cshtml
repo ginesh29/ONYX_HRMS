@@ -1,7 +1,7 @@
 ﻿@model Token_Getrow_Result
-<label>Token Preview</label>
 <div class="ticket" id="print-container">
-    <h4>@Model.ServiceName</h4>
+    <h4>@ViewBag.CompanyName</h4>
+    <h5>@Model.ServiceName</h5>
     <div class="ticket-info text-secondary">Your queue number</div>
     <div class="ticket-number text-primary">@Model.TokenNo</div>
     <div class="ticket-info py-3">
@@ -12,6 +12,7 @@
         Your queue number will be called soon, please come to the centre.
     </div>
     <div class="ticket-footer">
-        Date of issue: @DateTime.Now.FormatDate()<br>
+        Date of issue: @DateTime.Now<br />
+        Powered by: Onyx
     </div>
 </div>

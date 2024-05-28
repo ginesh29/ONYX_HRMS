@@ -2,10 +2,14 @@
     ViewData["Title"] = SharedResource["Tokens"];
     IEnumerable<Service_GetRow_Result> Services = ViewBag.Services;
 }
-<div class="card">
+<div class="card maximized-card">
+    <div class="card-header">
+        <h3 class="card-title">Click one service to Issue Token</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-compress"></i></button>
+        </div>
+    </div>
     <div class="card-body">
-        <span>Click one service to Issue Token</span>
-        <hr />
         <div>
             @foreach (var item in Services)
             {
@@ -14,24 +18,40 @@
         </div>
     </div>
 </div>
-<div id="TokenModal" class="modal fade" role="dialog" tabindex='-1'></div>
+<div id="TokenModal" class="modal fade" role="dialog" tabindex='-1'>
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="token-container"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" onclick="printToken(this)" id="btn-print">Print</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script>
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.start();
         function generateToken(btn, prefix, serviceCd) {
             loadingButton(btn);
             postAjax("/Queue/GenerateToken", { Prefix: prefix, ServiceCd: serviceCd }, function (response) {
                 if (response.success) {
                     showSuccessToastr(response.message);
-                    $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`, function () {
-                        $("#TokenModal").modal("show");
-                    });
+                    $("#TokenModal").modal("show");
+                    $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`);
+                    connection.invoke("SendTokenAddCall");
                 }
                 else {
                     showErrorToastr(response.message);
                 }
                 unloadingButton(btn);
             });
-        }
+        }        
         function printToken() {
             $(`#print-container`).print();
         }
