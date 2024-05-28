@@ -79,16 +79,14 @@ namespace Onyx.Controllers
             var leaveType = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
             return Json(leaveType);
         }
-        public IActionResult GetLeaveBalance(string empCd)
+        public IActionResult GetBalance(string empCd)
         {
             var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
                 EmpCd = empCd,
                 ToDate = DateTime.Now
             }, _loggedInUser.CompanyCd).FirstOrDefault();
-            var LeaveBalance = leaveTrans.LeaveOp + leaveTrans.Leave - leaveTrans.LeaveTaken;
-            var DecimalFormat = ExtensionMethod.GetDecimalFormat(_loggedInUser.AmtDecs);
-            return Json(LeaveBalance.ToString(DecimalFormat));
+            return Json(leaveTrans);
         }
         public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
         {
@@ -136,17 +134,33 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId)
         {
-            model.EntryBy = _loggedInUser.UserCd;
-            _transactionService.SaveLeaveSalary(model);
-            var ActivityAbbr = "INS";
-            var Message = $"Leave Salary is applied With Trans no = {model.TransNo}";
-            _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
-            var result = new CommonResponse
+            var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
-                Success = true,
-                Message = "Leave Ticket applied successfully"
-            };
-            return Json(result);
+                EmpCd = model.EmployeeCode,
+                ToDate = DateTime.Now
+            }, _loggedInUser.CompanyCd).FirstOrDefault();
+            var LeaveSalaryBalance = leaveTrans.LvSalaryOp + leaveTrans.LvSalary - leaveTrans.LvSalaryTaken;
+            var LeaveTicketBalance = leaveTrans.LvTicketOp + leaveTrans.LvTicket - leaveTrans.LvTicketTaken;
+
+            model.EntryBy = _loggedInUser.UserCd;
+            if (Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket)
+            {
+                _transactionService.SaveLeaveSalary(model);
+                var ActivityAbbr = "INS";
+                var Message = $"Leave Salary is applied With Trans no = {model.TransNo}";
+                _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
+                var result = new CommonResponse
+                {
+                    Success = true,
+                    Message = "Leave Ticket applied successfully"
+                };
+                return Json(result);
+            }
+            return Json(new CommonResponse
+            {
+                Success = false,
+                Message = "You have insufficient Leave Salary/Ticket Balance"
+            });
         }
         #endregion
 

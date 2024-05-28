@@ -110,8 +110,9 @@
             });
         }
         function getLeaveBalance(e) {
-            getAjax(`/SelfService/GetLeaveBalance?empCd=${encodeURI(e.value)}`, function (response) {
-                $("#LeaveBalance").text(`Leave Balance: ${response}`);
+            getAjax(`/SelfService/GetBalance?empCd=${encodeURI(e.value)}`, function (response) {
+                var LeaveBalance = response.leaveOp + response.leave - response.leaveTaken;
+                $("#LeaveBalance").text(`Leave Balance: ${formatDecimal(LeaveBalance)}`);
             });
         }
     </script>

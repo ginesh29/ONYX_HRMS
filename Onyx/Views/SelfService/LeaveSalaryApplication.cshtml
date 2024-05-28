@@ -20,7 +20,7 @@
                         <div class="col-md-6">
                             <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
                                 <label asp-for="EmployeeCode"></label>
-                                <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                                <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")" onchange="getBalance(this)">
                                     <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                                 <span asp-validation-for="EmployeeCode" class="text-danger"></span>
@@ -44,14 +44,14 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="LvSalary"></label>
+                            <label asp-for="LvSalary"></label><span class="ml-2" id="LeaveSalaryBalance"></span>
                             <input asp-for="LvSalary" class="form-control decimal-input" />
                             <span asp-validation-for="LvSalary" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="LvTicket"></label>
+                            <label asp-for="LvTicket"></label><span class="ml-2" id="LeaveTicketBalance"></span>
                             <input asp-for="LvTicket" class="form-control decimal-input" />
                             <span asp-validation-for="LvTicket" class="text-danger"></span>
                         </div>
@@ -83,5 +83,13 @@
             }
         }
         bindEmployeeDropdown();
+        function getBalance(e) {
+            getAjax(`/SelfService/GetBalance?empCd=${encodeURI(e.value)}`, function (response) {
+                var LeaveSalaryBalance = response.lvSalaryOp + response.lvSalary - response.lvSalaryTaken;
+                var LeaveTicketBalance = response.lvTicketOp + response.lvTicket - response.lvTicketTaken;
+                $("#LeaveSalaryBalance").text(`Balance: ${formatDecimal(LeaveSalaryBalance)}`);
+                $("#LeaveTicketBalance").text(`Balance: ${formatDecimal(LeaveTicketBalance)}`);
+            });
+        }
     </script>
 }
