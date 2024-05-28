@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
+using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
 
 namespace Onyx.Controllers
@@ -13,14 +14,16 @@ namespace Onyx.Controllers
         private readonly CommonService _commonService;
         private readonly OrganisationService _organisationService;
         private readonly TransactionService _transactionService;
+        private readonly ReportService _reportService;
         private readonly LoggedInUserModel _loggedInUser;
-        public SelfServiceController(AuthService authService, OrganisationService organisationService, CommonService commonService, TransactionService transactionService)
+        public SelfServiceController(AuthService authService, OrganisationService organisationService, CommonService commonService, TransactionService transactionService, ReportService reportService)
         {
             _authService = authService;
             _commonService = commonService;
             _organisationService = organisationService;
             _loggedInUser = _authService.GetLoggedInUser();
             _transactionService = transactionService;
+            _reportService = reportService;
         }
 
         #region Loan Application
@@ -76,35 +79,49 @@ namespace Onyx.Controllers
             var leaveType = _organisationService.GetLeaveTypes(_loggedInUser.CompanyCd).FirstOrDefault(m => m.Cd.Trim() == cd);
             return Json(leaveType);
         }
-        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId, bool confirmed = false)
+        public IActionResult GetLeaveBalance(string empCd)
+        {
+            var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
+            {
+                EmpCd = empCd,
+                ToDate = DateTime.Now
+            }, _loggedInUser.CompanyCd).FirstOrDefault();
+            var LeaveBalance = leaveTrans.LeaveOp + leaveTrans.Leave - leaveTrans.LeaveTaken;
+            var DecimalFormat = ExtensionMethod.GetDecimalFormat(_loggedInUser.AmtDecs);
+            return Json(LeaveBalance.ToString(DecimalFormat));
+        }
+        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
         {
             model.EntryBy = _loggedInUser.UserCd;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
+            var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
+            {
+                EmpCd = model.EmployeeCode,
+                ToDate = DateTime.Now
+            }, _loggedInUser.CompanyCd).FirstOrDefault();
+            var LeaveBalance = leaveTrans.LeaveOp + leaveTrans.Leave - leaveTrans.LeaveTaken;
             var dateSp = model.DateRange.Split(" - ");
             model.FromDt = Convert.ToDateTime(dateSp[0]);
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            if (!lvExist)
+            if (!lvExist && LeaveBalance >= lvDays && maxLeave >= lvDays)
             {
-                if (maxLeave >= lvDays || confirmed)
+                _transactionService.SaveLeave(model);
+                var ActivityAbbr = "INS";
+                var Message = $"Leave is applied With Trans no = {model.TransNo}";
+                _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
+                var result = new CommonResponse
                 {
-                    _transactionService.SaveLeave(model);
-                    var ActivityAbbr = "INS";
-                    var Message = $"Leave is applied With Trans no = {model.TransNo}";
-                    _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
-                    var result = new CommonResponse
-                    {
-                        Success = true,
-                        Message = "Leave applied successfully"
-                    };
-                    return Json(result);
-                }
+                    Success = true,
+                    Message = "Leave applied successfully"
+                };
+                return Json(result);
             }
             return Json(new CommonResponse
             {
                 Success = false,
-                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : "Leave Application Maximum Limit Exceeded"
+                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty
             });
         }
         #endregion

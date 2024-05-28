@@ -15,8 +15,9 @@
         var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImageFilePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImageFilePath}" : "/images/avatar.png";
         var lvStatus = item.LvStatus == "N" ? "Leave Applied" :
         item.LvStatus == "Y" ? "Leave Approved" :
-        item.LvStatus == "F" ? "On Leave " : "Present";
-        var statusClass = item.LvStatus == "N" ? "warning" : item.LvStatus == "Y" ? "orange" : item.LvStatus == "F" ? "danger" : "success";
+        item.LvStatus == "F" ? "On Leave " :
+        item.LvStatus == "P" ? "Present" : "Resigned";
+        var statusClass = item.LvStatus == "N" ? "warning" : item.LvStatus == "Y" ? "orange" : item.LvStatus == "F" ? "danger" : item.LvStatus == "P" ? "success" : "secondary";
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill border border-info">
                 <div class="card-header text-muted border-bottom-0">

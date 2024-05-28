@@ -21,8 +21,8 @@
                     {
                         <div class="col-md-6">
                             <div class="form-group @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled-container" : "")">
-                                <label asp-for="EmployeeCode"></label>
-                                <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")">
+                                <label asp-for="EmployeeCode"></label> <span class="ml-2" id="LeaveBalance"></span>
+                                <select asp-for="EmployeeCode" class="form-control select2 @(!string.IsNullOrEmpty(Model?.EmployeeCode) ? "disabled" : "")" onchange="getLeaveBalance(this)">
                                     <option value="">@CommonSetting.DEFAULTSELECT</option>
                                 </select>
                                 <span asp-validation-for="EmployeeCode" class="text-danger"></span>
@@ -38,7 +38,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="LeaveType"></label> <span class="ml-2" id="TotalLeave"></span>
-                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems"></select>
+                            <select asp-for="LeaveType" class="form-control select-picker" asp-items="ViewBag.LeaveTypeItems" onchange="getTotalLeave(this)"></select>
                             <span asp-validation-for="LeaveType" class="text-danger"></span>
                         </div>
                     </div>
@@ -97,30 +97,22 @@
                         showSuccessToastr(response.message);
                         reloadPageAfterSometime();
                     }
-                    else {
-                        if (response.message.includes("Exceeded")) {
-                            Swal.fire({
-                                title: "Are you sure?",
-                                text: response.message,
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#3085d6",
-                                cancelButtonColor: "#d33",
-                                confirmButtonText: "Yes!"
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    loadingButton(btn);
-                                    saveLeaveApplication(btn, true);
-                                }
-                            });
-                        }
-                        else
-                            showErrorToastr(response.message);
-                    }
+                    else
+                        showErrorToastr(response.message);
                     unloadingButton(btn);
                 });
             }
         }
         bindEmployeeDropdown();
+        function getTotalLeave(e) {
+            getAjax(`/SelfService/GetLeaveType?cd=${e.value}`, function (response) {
+                $("#TotalLeave").text(`Max. Leave: ${response.lvMax}`);
+            });
+        }
+        function getLeaveBalance(e) {
+            getAjax(`/SelfService/GetLeaveBalance?empCd=${encodeURI(e.value)}`, function (response) {
+                $("#LeaveBalance").text(`Leave Balance: ${response}`);
+            });
+        }
     </script>
 }
