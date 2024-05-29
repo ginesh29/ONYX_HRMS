@@ -181,6 +181,10 @@ namespace Onyx.Controllers
         }
         public IActionResult TokenCall()
         {
+            return View();
+        }
+        public IActionResult TokenCallPartial()
+        {
             var tokens = _queueService.GetTokens();
             var waitingTokens = tokens.Where(m => m.Status == "W");
             ViewBag.WaitingTokens = waitingTokens;
@@ -193,7 +197,7 @@ namespace Onyx.Controllers
             var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
             var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
             ViewBag.TokenCookie = tokenSetting;
-            return View();
+            return PartialView("_TokenCallPartial");
         }
         [HttpPost]
         public IActionResult CallNextToken(string tokenNo)
@@ -234,6 +238,10 @@ namespace Onyx.Controllers
         }
         public IActionResult Display()
         {
+            return View();
+        }
+        public IActionResult DisplayPartial()
+        {
             var tokens = _queueService.GetTokens();
             var waitingTokens = tokens.Where(m => m.Status == "W");
             ViewBag.WaitingTokens = waitingTokens;
@@ -244,7 +252,7 @@ namespace Onyx.Controllers
             var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
             var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
             ViewBag.TokenCookie = tokenSetting;
-            return View();
+            return PartialView("_DisplayPartial");
         }
         #endregion
     }

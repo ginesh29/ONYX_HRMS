@@ -1,101 +1,15 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Token Call"];
-    IEnumerable<Token_Getrow_Result> WaitingTokens = ViewBag.WaitingTokens;
-    IEnumerable<Token_Getrow_Result> CalledTokens = ViewBag.CalledTokens;
-    var CurrentToken = ViewBag.CurrentToken != null ? ViewBag.CurrentToken : "Not Serving";
-    var currentStatus = ViewBag.CurrentToken != null ? "Serving" : "Available";
-    TokenSettingModel TokenCookie = ViewBag.TokenCookie;
-    var filled = !string.IsNullOrEmpty(TokenCookie.ServiceName) && !string.IsNullOrEmpty(TokenCookie.CounterName) && !string.IsNullOrEmpty(TokenCookie.VoiceName);
 }
-<span id="TokenVoice" class="d-none">@TokenCookie.VoiceName</span>
 <div class="card maximized-card">
     <div class="card-header">
         <h3 class="card-title"></h3>
         <div class="card-tools">
+            <button type="button" class="btn btn-tool d-none" data-card-widget="card-refresh" data-source="/Queue/TokenCallPartial"><i class="fas fa-refresh" id="btn-refresh"></i></button>
             <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-compress"></i></button>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-9 form-border-right">
-                <div class="d-flex flex-column">
-                    <div class="text-center"><h1 style="font-size: 115px;">@CurrentToken</h1></div>
-                    <div class="text-center  mb-3"><h1>@currentStatus</h1></div>
-                    <div class="text-center" style="width:400px;height:300px; margin: 0 auto;">
-                        <div class="d-flex justify-content-between mb-5">
-                            <button class="btn btn-info" @(ViewBag.CurrentToken == null && WaitingTokens.Count() > 0 ? "" : "disabled") style="width: 150px;" onclick="callNextToken(this,'@ViewBag.NextToken')">Call Next</button>
-                            <button class="btn btn-info" @(ViewBag.CurrentToken != null ? "" : "disabled") style="width: 150px;" onclick="callNextToken(this,'@CurrentToken',true)">Recall</button>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <button class="btn btn-info" @(ViewBag.CurrentToken != null ? "" : "disabled") style="width: 150px;" onclick="serveToken(this,'S')">Served</button>
-                            <button class="btn btn-info" @(ViewBag.CurrentToken != null ? "" : "disabled") style="width: 150px;" onclick="serveToken(this,'N')">No Show(Skip)</button>
-                        </div>
-                        <div class="d-flex justify-content-between" style="font-size:larger">
-                            <div>
-
-                                <span class="text-primary">Service:</span> <span id="service-text">@TokenCookie.ServiceName</span>
-                            </div>
-                            <div>
-                                <span class="text-primary">Counter:</span> <span id="counter-text">@TokenCookie.CounterName</span>
-
-                                <button class="btn btn-xs btn-warning ml-2" style="border-radius:50%" onclick="showTokenSettingModal()">
-                                    <i class="fas fa-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="accordion" id="TokenCallList">
-                    <h2 class="mb-0">
-                        <button class="btn btn-light text-secondary btn-block text-left mb-1" type="button" data-toggle="collapse" data-target="#waiting" aria-expanded="true" aria-controls="waiting">
-                            Waiting <i class="fas fa-angle-left float-right expand-icon"></i>
-                        </button>
-                    </h2>
-                    <div id="waiting" class="collapse show" aria-labelledby="waiting" data-parent="#TokenCallList">
-                        <ul class="list-group list-group-flush">
-                            @foreach (var item in WaitingTokens)
-                            {
-                                <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
-                                    @item.TokenNo
-                                    <button class="btn btn-xs btn-info float-right" onclick="callNextToken(null,'@item.TokenNo')" @(ViewBag.CurrentToken == null ? "" : "disabled")>
-                                        <i class="fas fa-phone"></i>
-                                    </button>
-                                </li>
-                            }
-                            @if (WaitingTokens.Count() == 0)
-                            {
-                                <li class="list-group-item no-data">@CommonMessage.EMPTYGRID</li>
-                            }
-                        </ul>
-                    </div>
-                    <h2 class="mb-0">
-                        <button class="btn btn-light text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#called" aria-expanded="false" aria-controls="called">
-                            Called <i class="fas fa-angle-left float-right expand-icon"></i>
-                        </button>
-                    </h2>
-                    <div id="called" class="collapse" aria-labelledby="called" data-parent="#TokenCallList">
-                        <ul class="list-group list-group-flush">
-                            @foreach (var item in CalledTokens)
-                            {
-                                var statusClass = item.Status == "S" ? "info" : "danger";
-                                var status = item.Status == "S" ? "Served" : "Not Served";
-                                <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
-                                    @item.TokenNo
-                                    <span class="badge badge-@statusClass float-right">@status</span>
-                                </li>
-                            }
-                            @if (CalledTokens.Count() == 0)
-                            {
-                                <li class="list-group-item">@CommonMessage.EMPTYGRID</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="card-body"></div>
 </div>
 <div id="TokenSettingModal" class="modal fade" role="dialog" tabindex='-1'></div>
 @section scripts {
@@ -103,9 +17,8 @@
     <script>
         const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
         connection.on("ReceiveTokenAddCall", function () {
-            var length = $("#waiting ul li.no-data").length;
             showSuccessToastr("New Token Added");
-            reloadPageAfterSometime();
+            $("#btn-refresh").click();
         });
         connection.start();
         function bindVoices(selectedVoice) {
@@ -134,9 +47,6 @@
                 $("#TokenSettingModal").modal("show");
             });
         }
-        if ('@filled' != "True")
-            showTokenSettingModal();
-
 
         function callNextToken(btn, tokenNo, recall) {
             if (tokenNo) {
@@ -150,7 +60,7 @@
                             showSuccessToastr(response.message);
                         else
                             showErrorToastr(response.message);
-                        reloadPageAfterSometime();
+                        $("#btn-refresh").click();
                         connection.invoke("SendRefreshCall");
                     })
                 unloadingButton(btn);
@@ -167,7 +77,7 @@
                 else
                     showErrorToastr(response.message);
                 unloadingButton(btn);
-                reloadPageAfterSometime();
+                $("#btn-refresh").click();
                 connection.invoke("SendRefreshCall");
             })
         }
@@ -189,7 +99,8 @@
                         else
                             showErrorToastr(response.message);
                         unloadingButton(btn);
-                        reloadPageAfterSometime();
+                        $("#btn-refresh").click();
+                        connection.invoke("SendRefreshCall");
                     });
                 }
             }

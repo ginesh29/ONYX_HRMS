@@ -1,59 +1,15 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Display"];
-    IEnumerable<Token_Getrow_Result> WaitingTokens = ViewBag.WaitingTokens;
-    IEnumerable<Token_Getrow_Result> CalledTokens = ViewBag.CalledTokens;
-    var CurrentToken = ViewBag.CurrentToken != null ? ViewBag.CurrentToken : "Not Serving";
-    var currentStatus = ViewBag.CurrentToken != null ? "Serving" : "Available";
-    TokenSettingModel TokenCookie = ViewBag.TokenCookie;
 }
 <div class="card maximized-card">
     <div class="card-header">
         <h3 class="card-title"></h3>
         <div class="card-tools">
+            <button type="button" class="btn btn-tool d-none" data-card-widget="card-refresh" data-source="/Queue/DisplayPartial"><i class="fas fa-refresh" id="btn-refresh"></i></button>
             <button type="button" class="btn btn-tool" data-card-widget="maximize"><i class="fas fa-compress"></i></button>
         </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-9 form-border-right">
-                <div class="d-flex flex-column">
-                    <div class="text-center"><h1 style="font-size: 115px;">@CurrentToken</h1></div>
-                    <div class="text-center  mb-3"><h1>@currentStatus</h1></div>
-                    <div class="d-flex justify-content-between" style="width:400px;height:300px; margin: 0 auto;font-size:larger">
-                        <div>
-                            <span class="text-primary">Service:</span> <span id="service-text">@TokenCookie.ServiceName</span>
-                        </div>
-                        <div>
-                            <span class="text-primary">Counter:</span> <span id="counter-text">@TokenCookie.CounterName</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div>
-                    <h2 class="mb-0">
-                        <button class="btn btn-light btn-block text-left" type="button">
-                            Waiting
-                        </button>
-                    </h2>
-                    <div>
-                        <ul class="list-group list-group-flush">
-                            @foreach (var item in WaitingTokens)
-                            {
-                                <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
-                                    @item.TokenNo
-                                </li>
-                            }
-                            @if (WaitingTokens.Count() == 0)
-                            {
-                                <li class="list-group-item">@CommonMessage.EMPTYGRID</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="card-body"></div>
 </div>
 @section scripts {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
@@ -63,7 +19,10 @@
             speak(message, voiceName);
         });
         connection.on("ReceiveRefreshCall", function () {
-            reloadPageAfterSometime();
+            $("#btn-refresh").click();
+        });
+        connection.on("ReceiveTokenAddCall", function () {
+            $("#btn-refresh").click();
         });
         connection.start();
     </script>
