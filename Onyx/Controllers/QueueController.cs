@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
@@ -15,11 +14,13 @@ namespace Onyx.Controllers
         private readonly QueueService _queueService;
         private readonly SettingService _settingService;
         private readonly LoggedInUserModel _loggedInUser;
+        private readonly TokenSettingModel _tokenSetting;
         public QueueController(AuthService authService, QueueService queueService, SettingService settingService)
         {
             _authService = authService;
             _queueService = queueService;
             _loggedInUser = _authService.GetLoggedInUser();
+            _tokenSetting = _authService.GetTokenSetting();
             _settingService = settingService;
         }
         #region Counter
@@ -140,9 +141,7 @@ namespace Onyx.Controllers
                 Value = m.Name.Trim(),
                 Text = m.Name.Trim()
             });
-            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
-            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
-            return PartialView("_TokenSettingModal", tokenSetting);
+            return PartialView("_TokenSettingModal", _tokenSetting);
         }
         [HttpPost]
         public IActionResult SaveTokenSetting(TokenSettingModel model)
@@ -185,7 +184,7 @@ namespace Onyx.Controllers
         }
         public IActionResult TokenCallPartial()
         {
-            var tokens = _queueService.GetTokens();
+            var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
             var waitingTokens = tokens.Where(m => m.Status == "W");
             ViewBag.WaitingTokens = waitingTokens;
             var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
@@ -194,9 +193,7 @@ namespace Onyx.Controllers
             ViewBag.CurrentToken = currentToken;
             var nextToken = waitingTokens.FirstOrDefault()?.TokenNo;
             ViewBag.NextToken = nextToken;
-            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
-            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
-            ViewBag.TokenCookie = tokenSetting;
+            ViewBag.TokenCookie = _tokenSetting;
             return PartialView("_TokenCallPartial");
         }
         [HttpPost]
@@ -249,9 +246,7 @@ namespace Onyx.Controllers
             ViewBag.CalledTokens = calledTokens;
             var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
             ViewBag.CurrentToken = currentToken;
-            var tokenCookie = Request.Cookies.TryGetValue("TokenSetting", out var tokenSettingJson);
-            var tokenSetting = tokenSettingJson != null ? JsonConvert.DeserializeObject<TokenSettingModel>(tokenSettingJson) : new TokenSettingModel();
-            ViewBag.TokenCookie = tokenSetting;
+            ViewBag.TokenCookie = _tokenSetting;
             return PartialView("_DisplayPartial");
         }
         #endregion
