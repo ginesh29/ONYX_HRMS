@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Tokens"];
     IEnumerable<Service_GetRow_Result> Services = ViewBag.Services;
+    var tokenSetting = _authService.GetTokenSetting();
 }
 <div class="card maximized-card">
     <div class="card-header">
@@ -44,14 +45,14 @@
                     showSuccessToastr(response.message);
                     $("#TokenModal").modal("show");
                     $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`);
-                    connection.invoke("SendTokenAddCall");
+                    if ('@tokenSetting.ServiceCd' == serviceCd)
+                        connection.invoke("SendTokenAddCall");
                 }
-                else {
+                else
                     showErrorToastr(response.message);
-                }
                 unloadingButton(btn);
             });
-        }        
+        }
         function printToken() {
             $(`#print-container`).print();
         }

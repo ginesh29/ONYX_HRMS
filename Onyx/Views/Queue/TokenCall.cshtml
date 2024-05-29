@@ -38,6 +38,7 @@
                 }, 100)
         }
         window.speechSynthesis.onvoiceschanged = bindVoices();
+
         function showTokenSettingModal() {
             var url = `/Queue/TokenSetting`;
             $('#TokenSettingModal').load(url, function () {
@@ -88,10 +89,11 @@
                 loadingButton(btn);
                 if (frm.valid()) {
                     loadingButton(btn);
-                    var ServiceName = $("#ServiceName").val();
+                    var ServiceCd = $("#ServiceCd").val();
+                    var ServiceName = $("#ServiceCd option:selected").text();
                     var CounterName = $("#CounterName").val();
                     var VoiceName = $("#VoiceName").val();
-                    postAjax("/Queue/SaveTokenSetting", { ServiceName, CounterName, VoiceName }, function (response) {
+                    postAjax("/Queue/SaveTokenSetting", { ServiceCd, ServiceName, CounterName, VoiceName }, function (response) {
                         if (response.success) {
                             showSuccessToastr(response.message);
                             $("#TokenSettingModal").modal("hide");

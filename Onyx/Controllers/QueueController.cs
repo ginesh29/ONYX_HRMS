@@ -133,7 +133,7 @@ namespace Onyx.Controllers
         {
             ViewBag.ServiceItems = _queueService.GetServices().Select(m => new SelectListItem
             {
-                Value = m.Name.Trim(),
+                Value = m.Cd.Trim(),
                 Text = m.Name.Trim()
             });
             ViewBag.CounterItems = _queueService.GetCounters().Select(m => new SelectListItem
@@ -239,7 +239,7 @@ namespace Onyx.Controllers
         }
         public IActionResult DisplayPartial()
         {
-            var tokens = _queueService.GetTokens();
+            var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
             var waitingTokens = tokens.Where(m => m.Status == "W");
             ViewBag.WaitingTokens = waitingTokens;
             var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
