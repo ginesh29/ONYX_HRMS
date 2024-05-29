@@ -15,7 +15,7 @@ GO
 CREATE TABLE [dbo].[Counters](
 	[Cd] [varchar](10) NOT NULL,
 	[Name] [varchar](50) NOT NULL,
-	[Active] [bit] NOT NULL,
+	[Active] [char](1) NOT NULL,
 	[EntryBy] [varchar](10) NULL,
 	[EntryDt] [datetime] NULL,
 	[EditBy] [varchar](10) NULL,
