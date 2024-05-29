@@ -88,7 +88,7 @@ namespace Onyx.Controllers
             }, _loggedInUser.CompanyCd).FirstOrDefault();
             return Json(leaveTrans);
         }
-        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId)
+        public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId, bool confirmed = false)
         {
             model.EntryBy = _loggedInUser.UserCd;
             var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
@@ -103,23 +103,28 @@ namespace Onyx.Controllers
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            if (!lvExist && LeaveBalance >= lvDays && maxLeave >= lvDays)
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
+            if (!lvExist)
             {
-                _transactionService.SaveLeave(model);
-                var ActivityAbbr = "INS";
-                var Message = $"Leave is applied With Trans no = {model.TransNo}";
-                _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
-                var result = new CommonResponse
+                if ((LeaveBalance >= lvDays && maxLeave >= lvDays && !blockLeave) || confirmed)
                 {
-                    Success = true,
-                    Message = "Leave applied successfully"
-                };
-                return Json(result);
+                    _transactionService.SaveLeave(model);
+                    var ActivityAbbr = "INS";
+                    var Message = $"Leave is applied With Trans no = {model.TransNo}";
+                    _commonService.SetActivityLogDetail(_loggedInUser.ActivityId, processId, ActivityAbbr, Message);
+                    var result = new CommonResponse
+                    {
+                        Success = true,
+                        Message = "Leave applied successfully"
+                    };
+                    return Json(result);
+                }
             }
             return Json(new CommonResponse
             {
                 Success = false,
-                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty
+                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
+                Data = new { confirmation = !blockLeave }
             });
         }
         #endregion
@@ -132,7 +137,7 @@ namespace Onyx.Controllers
                 ViewBag.EmpCd = _loggedInUser.UserCd;
             return View();
         }
-        public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId)
+        public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId, bool confirmed = false)
         {
             var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
@@ -141,9 +146,9 @@ namespace Onyx.Controllers
             }, _loggedInUser.CompanyCd).FirstOrDefault();
             var LeaveSalaryBalance = leaveTrans.LvSalaryOp + leaveTrans.LvSalary - leaveTrans.LvSalaryTaken;
             var LeaveTicketBalance = leaveTrans.LvTicketOp + leaveTrans.LvTicket - leaveTrans.LvTicketTaken;
-
             model.EntryBy = _loggedInUser.UserCd;
-            if (Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket)
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
+            if ((Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket && !blockLeave) || confirmed)
             {
                 _transactionService.SaveLeaveSalary(model);
                 var ActivityAbbr = "INS";
@@ -159,7 +164,8 @@ namespace Onyx.Controllers
             return Json(new CommonResponse
             {
                 Success = false,
-                Message = "You have insufficient Leave Salary/Ticket Balance"
+                Message = "You have insufficient Leave Salary/Ticket Balance",
+                Data = new { confirmation = !blockLeave }
             });
         }
         #endregion
