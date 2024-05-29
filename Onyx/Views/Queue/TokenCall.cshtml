@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Token Call"];
+    var tokenSetting = _authService.GetTokenSetting();
 }
 <div class="card maximized-card">
     <div class="card-header">
@@ -51,7 +52,8 @@
 
         function callNextToken(btn, tokenNo, recall) {
             if (tokenNo) {
-                var message = `Token Number ${tokenNo} Counter 1`;
+                var counter = '@tokenSetting.CounterName';
+                var message = `Token Number ${tokenNo} ${counter}`;
                 var voiceName = $("#TokenVoice").text();
                 connection.invoke("SendTokenCall", message, voiceName);
                 loadingButton(btn);
