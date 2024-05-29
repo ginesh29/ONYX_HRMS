@@ -1,0 +1,21 @@
+﻿body.fullscreen {
+    overflow: hidden;
+}
+
+.owl-carousel {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+}
+
+.owl-item {
+    height: 100%;
+}
+
+    .owl-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }

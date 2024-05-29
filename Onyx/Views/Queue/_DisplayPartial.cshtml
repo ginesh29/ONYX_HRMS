@@ -7,28 +7,34 @@
 }
 <div class="row">
     <div class="col-md-9 form-border-right">
-        <div class="d-flex flex-column">
-            <div class="text-center"><h1 style="font-size: 115px;">@CurrentToken</h1></div>
-            <div class="text-center  mb-3"><h1>@currentStatus</h1></div>
-            <div class="d-flex justify-content-between" style="width:400px;height:300px; margin: 0 auto;font-size:larger">
-                <div>
-                    <span class="text-primary">Service:</span> <span id="service-text">@TokenCookie.ServiceName</span>
-                </div>
-                <div>
-                    <span class="text-primary">Counter:</span> <span id="counter-text">@TokenCookie.CounterName</span>
-                </div>
+        <div class="owl-carousel owl-theme" id="carousel">
+            <div class="item">
+                <video autoplay controls id="video" class="w-100">
+                    <source src="~/uploads/carousel/IMG_8178.mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
+            <div class="item"><img src="~/uploads/carousel/Image-1.jpg" /></div>
+            <div class="item"><img src="~/uploads/carousel/Image-1.jpg" /></div>
+            <div class="item"><img src="~/uploads/carousel/Image-1.jpg" /></div>
         </div>
     </div>
     <div class="col-md-3">
         <div>
             <h2 class="mb-0">
                 <button class="btn btn-light btn-block text-left" type="button">
-                    Waiting
+                    Tokens
                 </button>
             </h2>
             <div>
                 <ul class="list-group list-group-flush">
+                    @if (ViewBag.CurrentToken != null)
+                    {
+                        <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
+                            @CurrentToken
+                            <span class="badge badge-info float-right">@currentStatus</span>
+                        </li>
+                    }
                     @foreach (var item in WaitingTokens)
                     {
                         <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
@@ -44,3 +50,25 @@
         </div>
     </div>
 </div>
+<script>
+    $('.owl-carousel').owlCarousel({
+        items: 1,
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 20000,
+        autoplayHoverPause: false,
+        nav: false,
+        dots: false,
+        autoHeight: true,       
+    });
+    $(window).trigger('resize');
+    // $("#btn-fullscreen").click();
+    // var currentToken = '@ViewBag.CurrentToken';
+    // alert(currentToken)
+    // if (!currentToken)
+    // $(function () {
+    //     setTimeout(function () {
+    //
+    //     }, 1000);
+    // })
+</script>
