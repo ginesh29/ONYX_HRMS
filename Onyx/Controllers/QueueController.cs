@@ -138,7 +138,7 @@ namespace Onyx.Controllers
             });
             ViewBag.CounterItems = _queueService.GetCounters().Select(m => new SelectListItem
             {
-                Value = m.Name.Trim(),
+                Value = m.Cd.Trim(),
                 Text = m.Name.Trim()
             });
             return PartialView("_TokenSettingModal", _tokenSetting);
@@ -203,6 +203,8 @@ namespace Onyx.Controllers
             {
                 TokenNo = tokenNo,
                 Status = "C",
+                CalledDt = DateTime.Now,
+                CounterCd = _tokenSetting.CounterCd,
                 EntryBy = _loggedInUser.UserCd,
             };
             var result = _queueService.SaveToken(model);
@@ -218,6 +220,10 @@ namespace Onyx.Controllers
             {
                 TokenNo = currentToken?.TokenNo,
                 Status = status,
+                CounterCd = _tokenSetting.CounterCd,
+                CalledDt = currentToken.CalledDt,
+                ServedDt = status == "S" ? DateTime.Now : null,
+                ServedBy = status == "S" ? _loggedInUser?.UserCd : null,
                 EntryBy = _loggedInUser?.UserCd,
             };
             var result = _queueService.SaveToken(model);

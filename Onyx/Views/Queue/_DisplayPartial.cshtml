@@ -6,10 +6,10 @@
     TokenSettingModel TokenCookie = ViewBag.TokenCookie;
 }
 <div class="row">
-    <div class="col-md-9 form-border-right">
+    <div class="col-md-10 form-border-right">
         <div class="owl-carousel owl-theme" id="carousel">
             <div class="item">
-                <video autoplay controls id="video" class="w-100">
+                <video class="w-100" controls loop autoplay muted id="myVideo">
                     <source src="~/uploads/carousel/IMG_8178.mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -19,17 +19,16 @@
             <div class="item"><img src="~/uploads/carousel/Image-1.jpg" /></div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div>
-            <h2 class="mb-0">
-                <button class="btn btn-light btn-block text-left" type="button">
-                    Tokens
-                </button>
-            </h2>
             <div>
                 <ul class="list-group list-group-flush">
                     @if (ViewBag.CurrentToken != null)
                     {
+                        <li class="list-group-item pl-0 ml-4 py-2">
+                            Tokens
+                            <button type="button" class="btn btn-tool float-right mt-0" id="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
+                        </li>
                         <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
                             @CurrentToken
                             <span class="badge badge-info float-right">@currentStatus</span>
@@ -59,16 +58,5 @@
         autoplayHoverPause: false,
         nav: false,
         dots: false,
-        autoHeight: true,       
     });
-    $(window).trigger('resize');
-    // $("#btn-fullscreen").click();
-    // var currentToken = '@ViewBag.CurrentToken';
-    // alert(currentToken)
-    // if (!currentToken)
-    // $(function () {
-    //     setTimeout(function () {
-    //
-    //     }, 1000);
-    // })
 </script>

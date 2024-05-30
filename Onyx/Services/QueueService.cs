@@ -120,6 +120,10 @@ namespace Onyx.Services
             parameters.Add("v_ServiceCd", model.ServiceCd);
             parameters.Add("v_MobileNo", model.MobileNo);
             parameters.Add("v_Status", model.Status);
+            parameters.Add("v_CalledDt", model.CalledDt);
+            parameters.Add("v_ServedDt", model.ServedDt);
+            parameters.Add("v_ServedBy", model.ServedBy);
+            parameters.Add("v_CounterCd", model.CounterCd);
             parameters.Add("v_EntryBy", model.EntryBy);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

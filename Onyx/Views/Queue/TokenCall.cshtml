@@ -66,6 +66,8 @@
                         $("#btn-refresh").click();
                         connection.invoke("SendRefreshCall");
                     })
+                // else
+                //     connection.invoke("SendRefreshCall");
                 unloadingButton(btn);
             }
             else
@@ -93,9 +95,10 @@
                     loadingButton(btn);
                     var ServiceCd = $("#ServiceCd").val();
                     var ServiceName = $("#ServiceCd option:selected").text();
-                    var CounterName = $("#CounterName").val();
+                    var CounterCd = $("#CounterCd").val();
+                    var CounterName = $("#CounterCd option:selected").text();
                     var VoiceName = $("#VoiceName").val();
-                    postAjax("/Queue/SaveTokenSetting", { ServiceCd, ServiceName, CounterName, VoiceName }, function (response) {
+                    postAjax("/Queue/SaveTokenSetting", { ServiceCd, ServiceName, CounterCd, CounterName, VoiceName }, function (response) {
                         if (response.success) {
                             showSuccessToastr(response.message);
                             $("#TokenSettingModal").modal("hide");
