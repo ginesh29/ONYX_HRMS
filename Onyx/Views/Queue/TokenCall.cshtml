@@ -24,7 +24,6 @@
         connection.start();
         function bindVoices(selectedVoice) {
             $("#VoiceName").empty();
-            const voices = window.speechSynthesis.getVoices();
             var html = '';
             $.each(voices, function (i, item) {
                 html += `<option value='${item.name}'>${item.name} - ${item.lang}</option>`
@@ -38,7 +37,6 @@
                     $("#VoiceName").val(selectedVoice).change();
                 }, 100)
         }
-        window.speechSynthesis.onvoiceschanged = bindVoices();
 
         function showTokenSettingModal() {
             var url = `/Queue/TokenSetting`;

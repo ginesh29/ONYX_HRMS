@@ -342,14 +342,12 @@ function printDiv(divContainer) {
 }
 var utterance = new SpeechSynthesisUtterance();
 var voices = [];
-function loadVoices() {
+
+window.speechSynthesis.onvoiceschanged = function loadVoices() {
     voices = speechSynthesis.getVoices();
-}
-window.speechSynthesis.onvoiceschanged = loadVoices;
+};
 function speak(text, voiceName) {
-    loadVoices();
     let selectedVoice = voices.find(voice => voice.name === voiceName)
-    console.log(selectedVoice)
     if (selectedVoice)
         utterance.voice = selectedVoice;
     utterance.text = text;
