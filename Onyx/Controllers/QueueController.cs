@@ -55,6 +55,7 @@ namespace Onyx.Controllers
             return PartialView("_CounterModal", model);
         }
         [HttpPost]
+        [RequestSizeLimit(100 * 1024 * 1024)]
         public async Task<IActionResult> SaveCounter(CounterModel model)
         {
             model.EntryBy = _loggedInUser.UserCd;

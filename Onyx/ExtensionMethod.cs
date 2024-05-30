@@ -307,7 +307,7 @@ namespace Onyx
         public static bool IsVideo(this string filename)
         {
             var videoExtensions = new[] { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
-            var extension = Path.GetExtension(filename);
+            var extension = Path.GetExtension(filename.ToLower());
             return Array.Exists(videoExtensions, ext => ext == extension);
         }
     }
