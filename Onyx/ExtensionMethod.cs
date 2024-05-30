@@ -300,7 +300,7 @@ namespace Onyx
         }
         public static bool IsImage(this string filename)
         {
-            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
+            string[] imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico"];
             var extension = Path.GetExtension(filename);
             return Array.Exists(imageExtensions, ext => ext == extension);
         }

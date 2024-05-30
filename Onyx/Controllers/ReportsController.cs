@@ -470,17 +470,23 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchDocExpired(ExpiredDocFilterModel filterModel)
         {
-            var dateSp = filterModel.DateRange.Split(" - ");
-            filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
-            filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            if (!string.IsNullOrEmpty(filterModel.DateRange))
+            {
+                var dateSp = filterModel.DateRange.Split(" - ");
+                filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+                filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            }
             var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd);
             return PartialView("_DocExpired", loans);
         }
         public IActionResult DocExpiredReport(ExpiredDocFilterModel filterModel)
         {
-            var dateSp = filterModel.DateRange.Split(" - ");
-            filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
-            filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            if (!string.IsNullOrEmpty(filterModel.DateRange))
+            {
+                var dateSp = filterModel.DateRange.Split(" - ");
+                filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+                filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            }
             var loans = _reportService.GetDocExpired(filterModel, _loggedInUser.UserLinkedTo, _loggedInUser.CompanyCd);
             return new ViewAsPdf(loans)
             {

@@ -54,22 +54,15 @@ namespace Onyx.Services
         }
         public IEnumerable<AdModel> GetAdFiles(string counteCd, int srNo = 0)
         {
-            try
-            {
-                var procedureName = "AdImages_GetRow";
-                var parameters = new DynamicParameters();
-                parameters.Add("v_CounterCd", counteCd);
-                parameters.Add("v_Cd", srNo);
-                var connectionString = _dbGatewayService.GetConnectionString();
-                var connection = new SqlConnection(connectionString);
-                var data = connection.Query<AdModel>
-                    (procedureName, parameters, commandType: CommandType.StoredProcedure);
-                return data;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            var procedureName = "AdImages_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CounterCd", counteCd);
+            parameters.Add("v_Cd", srNo);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<AdModel>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
         }
         public void DeleteAdFile(string counterCd, string cd)
         {
@@ -83,21 +76,15 @@ namespace Onyx.Services
         }
         public void SaveAdFile(AdModel model)
         {
-            try
-            {
-                var procedureName = "CompDocImages_Update_N";
-                var parameters = new DynamicParameters();
-                parameters.Add("v_Cd", model.Cd);
-                parameters.Add("v_CounterCd", model.CounterCd);
-                parameters.Add("v_ImageFile", model.ImageFile);
-                parameters.Add("v_EntryBy", model.EntryBy);
-                var connectionString = _dbGatewayService.GetConnectionString();
-                var connection = new SqlConnection(connectionString);
-                connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
-            }
-            catch (Exception ex)
-            {
-            }
+            var procedureName = "CompDocImages_Update_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", model.Cd);
+            parameters.Add("v_CounterCd", model.CounterCd);
+            parameters.Add("v_ImageFile", model.ImageFile);
+            parameters.Add("v_EntryBy", model.EntryBy);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
 
