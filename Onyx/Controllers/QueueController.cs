@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
+using Rotativa.AspNetCore;
+using Rotativa.AspNetCore.Options;
+using System.Diagnostics;
 
 namespace Onyx.Controllers
 {
@@ -227,16 +230,52 @@ namespace Onyx.Controllers
             result.Message = $"{service.Name} token generated successfully";
             return Json(result);
         }
-        public IActionResult GetTokenPreview(string tokenNo)
+        public async Task<IActionResult> GetTokenPreview(string tokenNo)
         {
-            var tokens = _queueService.GetTokens();
-            var token = tokens.FirstOrDefault(m => m.TokenNo == tokenNo);
-            var customerAhead = tokens.Count(m => m.Status == "W");
-            ViewBag.CustomerAhead = customerAhead - 1;
-            var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
-            ViewBag.CompanyName = company.CoName;
-            return PartialView("_TokenPreview", token);
+            try
+            {
+                var tokens = _queueService.GetTokens();
+                var token = tokens.FirstOrDefault(m => m.TokenNo == tokenNo);
+                var customerAhead = tokens.Count(m => m.Status == "W");
+                var company = _settingService.GetCompany(_loggedInUser.CompanyCd, _loggedInUser.CoAbbr);
+                var model = new TokenPrintModel
+                {
+                    BasicDetail = token,
+                    CompanyName = company.CoName,
+                    CustomerAhead = customerAhead - 1,
+                };
+                var pdfViewAction = new ViewAsPdf("TokenPrint", model)
+                {
+                    PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+                    ContentDisposition = ContentDisposition.Inline,
+                    FileName = $"{tokenNo}.pdf"
+                };
+                byte[] pdfBytes = await pdfViewAction.BuildFile(ControllerContext);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/", pdfViewAction.FileName);
+                System.IO.File.WriteAllBytes(filePath, pdfBytes);
+                var pdfToPrinterPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "tools", "PDFtoPrinter.exe");
+                var printProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = pdfToPrinterPath,
+                        Arguments = filePath,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+                printProcess.Start();
+                printProcess.WaitForExit();
+                System.IO.File.Delete(filePath);
+                return PartialView("_TokenPreview", model);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error occurred while printing: {ex.Message}");
+            }            
         }
+        
         public IActionResult TokenCall()
         {
             return View();

@@ -26,10 +26,6 @@
             <div class="modal-body">
                 <div id="token-container"></div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-warning" onclick="printToken(this)" id="btn-print">Print</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
 </div>
@@ -41,10 +37,14 @@
         function generateToken(btn, prefix, serviceCd) {
             loadingButton(btn);
             postAjax("/Queue/GenerateToken", { Prefix: prefix, ServiceCd: serviceCd }, function (response) {
-                if (response.success) {
-                    showSuccessToastr(response.message);
-                    $("#TokenModal").modal("show");
-                    $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`);
+                if (response.success) {                    
+                    $("#token-container").load(`/Queue/GetTokenPreview?tokenNo=${encodeURI(response.data.tokenNo)}`, function () {
+                        $("#TokenModal").modal("show");
+                        showSuccessToastr(response.message);
+                        setTimeout(function () {
+                            $("#TokenModal").modal("hide");
+                        }, 3000);
+                    });
                     if ('@tokenSetting.ServiceCd' == serviceCd)
                         connection.invoke("SendTokenAddCall");
                 }

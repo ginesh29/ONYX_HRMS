@@ -1,11 +1,11 @@
-﻿@model Token_Getrow_Result
+﻿@model TokenPrintModel
 <div class="ticket" id="print-container">
-    <h4>@ViewBag.CompanyName</h4>
-    <h5>@Model.ServiceName</h5>
+    <h4>@Model.CompanyName</h4>
+    <h5>@Model.BasicDetail.ServiceName</h5>
     <div class="ticket-info text-secondary">Your queue number</div>
-    <div class="ticket-number text-primary">@Model.TokenNo</div>
+    <div class="ticket-number text-primary">@Model.BasicDetail.TokenNo</div>
     <div class="ticket-info py-3">
-        <span class="badge badge-secondary" style="border-radius: 50%;">@ViewBag.CustomerAhead</span>
+        <span class="badge badge-secondary" style="border-radius: 50%;">@Model.CustomerAhead</span>
         Customers ahead of you
     </div>
     <div class="ticket-info">

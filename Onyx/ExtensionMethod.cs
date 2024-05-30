@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using System.Text.Json;
 
 
@@ -309,6 +311,6 @@ namespace Onyx
             var videoExtensions = new[] { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
             var extension = Path.GetExtension(filename.ToLower());
             return Array.Exists(videoExtensions, ext => ext == extension);
-        }
+        }        
     }
 }
