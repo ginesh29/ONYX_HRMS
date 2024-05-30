@@ -297,6 +297,18 @@ namespace Onyx
                 }
             }
             return totals;
-        }        
+        }
+        public static bool IsImage(this string filename)
+        {
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
+            var extension = Path.GetExtension(filename);
+            return Array.Exists(imageExtensions, ext => ext == extension);
+        }
+        public static bool IsVideo(this string filename)
+        {
+            var videoExtensions = new[] { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
+            var extension = Path.GetExtension(filename);
+            return Array.Exists(videoExtensions, ext => ext == extension);
+        }
     }
 }

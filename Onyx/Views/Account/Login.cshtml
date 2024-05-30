@@ -121,8 +121,7 @@
         var CoAbbr = spCompany[1];
         getAjax(`/Settings/GetCompany?CoCd=${CoCd}&CoAbbr=${CoAbbr}`, function (response) {
             var company = response.data;
-            var imagePath = company.loginBg ? `/uploads/company/${company.loginBg}` : "/images/login-bg.jpg";
-            $("#bg-div").css("background-image", `url('${imagePath}?${new Date()}')`);
+            $("#bg-div").css("background-image", `url('${company.loginBg}?${new Date()}')`);
         });
     }
     updateBg();
@@ -131,12 +130,13 @@
     * {
         direction: ltr !important;
     }
+
     #bg-div {
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         /*  background-blend-mode: multiply !important;
-                                                --tw-bg-opacity: 0.6;
-                                                background-color: rgb(55 65 81/var(--tw-bg-opacity)); */
+                                                    --tw-bg-opacity: 0.6;
+                                                    background-color: rgb(55 65 81/var(--tw-bg-opacity)); */
     }
 </style>

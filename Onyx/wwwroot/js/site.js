@@ -34,6 +34,7 @@ const dataTableDefaultOptions = {
     "ordering": false
 }
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+const videoExtensions = ['mp4'];
 const pdfExtensions = ['pdf'];
 const excelExtensions = ['xlsx'];
 const LeaveConfirmTypesEnum = {

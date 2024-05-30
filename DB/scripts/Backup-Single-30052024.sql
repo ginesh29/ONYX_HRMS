@@ -1,3 +1,73 @@
+
+CREATE OR ALTER PROCEDURE Ad_Delete 
+	@v_CounterCd varchar(10)='',
+	@v_Cd int=0
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	delete from AdImages where CounterCd = @v_CounterCd and (Cd=@v_Cd or @v_Cd=0)
+END
+ 
+ Go 
+CREATE OR ALTER    Procedure [dbo].[CompDocImages_Update_N]
+	@v_Cd				int
+,	@v_CounterCd		varchar(10)
+,	@v_ImageFile		varchar(200)
+,	@v_EntryBy			Char(5)
+As		-- Drop Procedure [dbo].[CompDocImages_Update_N]
+Begin
+	set nocount on
+	--declare @v_DocTyp Char(10)
+	--select 	@v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes and Typ='HDTYP'
+	IF (SELECT COUNT(*) FROM AdImages WHERE CounterCd = @v_CounterCd and Cd = @v_Cd) = 0
+	  Begin
+		insert into AdImages
+		values
+		(
+			@v_Cd
+		,	@v_CounterCd
+		,	@v_ImageFile
+		,	@v_EntryBy
+		,	getdate()
+		,	null
+		,	null
+		)
+		print 'I'
+	  end
+	Else
+	  Begin
+		Update AdImages
+		  Set
+			ImageFile=@v_ImageFile
+		,	EditBy=@v_EntryBy
+		,	EditDt=getdate()
+		where
+			Cd =@v_Cd and CounterCd=@v_CounterCd
+	  End
+End
+ 
+ 
+ 
+ Go 
+-- =============================================
+-- Author:		Ginesh
+-- CREATE OR ALTER date: 30/05/2024
+-- =============================================
+CREATE OR ALTER PROCEDURE AdImages_GetRow
+	@v_CounterCd varchar(10)='',
+	@v_Cd int = 0
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select * from AdImages where CounterCd = @v_CounterCd and (Cd = @v_Cd or @v_Cd=0)
+END
+ 
+ Go 
 -- =============================================
 -- Author:		Ginesh
 -- CREATE OR ALTER date: 21/05/2024
@@ -7883,51 +7953,6 @@ Begin
 	--Select @v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes 
 	Delete from VehDocImages where VehCd = @v_VehCd and DocTyp=@v_DocTyp and SlNo= @v_SlNo
 	exec GetMessage 1,'Deleted successfully'
-End
- 
- 
- 
- Go 
-CREATE OR ALTER     Procedure [dbo].[CompDocImages_Update_N]
-	@v_CoCd				Char(10)
-,	@v_Div				Char(5)
-,	@v_DocTyp			Char(10)		-- sp_help EmpDocImages Empdocuments
-,	@v_SlNo				int
-,	@v_ImageFile		VarChar(200)
-,	@v_EntryBy			Char(5)
-As		-- Drop Procedure [dbo].[CompDocImages_Update_N]
-Begin
-	set nocount on
-	--declare @v_DocTyp Char(10)
-	--select 	@v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes and Typ='HDTYP'
-	IF (SELECT COUNT(*) FROM CompDocImages WHERE CompCd =@v_CoCd and Div=@v_Div and DocTyp=@v_DocTyp and SlNo=@v_SlNo) = 0
-	  Begin
-		insert into CompDocImages
-		values
-		(
-			@v_CoCd
-		,	@v_Div
-		,	@v_DocTyp
-		,	@v_SlNo
-		,	@v_ImageFile
-		,	@v_EntryBy
-		,	getdate()
-		,	null
-		,	null
-		)
-		print 'I'
-	  end
-	Else
-	  Begin
-		Update CompDocImages
-		  Set
-			ImageFile=@v_ImageFile
-		,	EditBy=@v_EntryBy
-		,	EditDt=getdate()
-		where
-			CompCd =@v_CoCd and Div=@v_Div and DocTyp=@v_DocTyp and SlNo=@v_SlNo
-			print 'U'
-	  End
 End
  
  

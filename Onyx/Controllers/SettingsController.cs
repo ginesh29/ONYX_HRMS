@@ -32,6 +32,11 @@ namespace Onyx.Controllers
         public IActionResult GetCompany(string CoCd, string CoAbbr)
         {
             var company = _settingService.GetCompany(CoCd, CoAbbr);
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/uploads/company/{company.LoginBg}");
+            var bgFileExist = Path.Exists(path);
+            var avatarImage = bgFileExist == true && !string.IsNullOrEmpty(company.LoginBg) ? $"/uploads/company/{company.LoginBg}" : "/images/login-bg.jpg";
+            company.LoginBg = avatarImage;
             CommonResponse result = new()
             {
                 Data = company,

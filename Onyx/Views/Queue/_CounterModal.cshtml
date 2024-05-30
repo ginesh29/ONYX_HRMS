@@ -1,5 +1,5 @@
 ﻿@model CounterModel
-<div class="modal-dialog modal-sm">
+<div class="modal-dialog modal-md">
     <!-- Modal content-->
     <div class="modal-content">
         <div class="modal-header">
@@ -8,16 +8,33 @@
         </div>
         <div class="modal-body">
             <form id="counter-frm">
-                <div class="form-group disabled-container">
-                    <label asp-for="Cd"></label>
-                    <input asp-for="Cd" type="text" class="form-control disabled" value="@Model.Cd"/>
-                    <span asp-validation-for="Cd" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group disabled-container">
+                            <label asp-for="Cd"></label>
+                            <input asp-for="Cd" type="text" class="form-control disabled" value="@Model.Cd" />
+                            <span asp-validation-for="Cd" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Name"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <label>Files</label>
+                    <div class="file-drop-area">
+                        <span class="choose-file-button" id="doc-file-label">Choose files</span>
+                        <span class="file-message">or drag and drop files here</span>
+                        <input asp-for="DocFiles" class="file-input" onchange="filesPreview(this)">
+                    </div>
+                    <span asp-validation-for="DocFiles" class="text-danger"></span>
                 </div>
+                <div id="Files-Preview"></div>
+                <div id="DocList"></div>
                 <div class="custom-control custom-checkbox">
                     <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Active" checked>
                     <label asp-for="Active" class="custom-control-label font-weight-normal">Active</label>

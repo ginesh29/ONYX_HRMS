@@ -15,6 +15,7 @@ namespace Onyx.Controllers
         private readonly SettingService _settingService;
         private readonly LoggedInUserModel _loggedInUser;
         private readonly TokenSettingModel _tokenSetting;
+        private readonly FileHelper _fileHelper;
         public QueueController(AuthService authService, QueueService queueService, SettingService settingService)
         {
             _authService = authService;
@@ -22,6 +23,7 @@ namespace Onyx.Controllers
             _loggedInUser = _authService.GetLoggedInUser();
             _tokenSetting = _authService.GetTokenSetting();
             _settingService = settingService;
+            _fileHelper = new FileHelper();
         }
         #region Counter
         public IActionResult Counters()
@@ -53,10 +55,33 @@ namespace Onyx.Controllers
             return PartialView("_CounterModal", model);
         }
         [HttpPost]
-        public IActionResult SaveCounter(CounterModel model)
+        public async Task<IActionResult> SaveCounter(CounterModel model)
         {
             model.EntryBy = _loggedInUser.UserCd;
             var result = _queueService.SaveCounter(model);
+            if (result.Success)
+            {
+                if (model.DocFiles?.Count() > 0)
+                {
+                    var totalFiles = _queueService.GetAdFiles(model.Cd).Count();
+                    string uploadedFilePath = string.Empty;
+                    foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
+                    {
+                        if (item != null)
+                        {
+                            var filePath = await _fileHelper.UploadFile(item.value, "carousel", _loggedInUser.CompanyCd);
+                            uploadedFilePath = filePath;
+                            _queueService.SaveAdFile(new AdModel
+                            {
+                                CounterCd = model.Cd,
+                                EntryBy = _loggedInUser.UserCd,
+                                ImageFile = uploadedFilePath,
+                                Cd = item.i + 1 + totalFiles,
+                            });
+                        }
+                    }
+                }
+            }
             return Json(result);
         }
         [HttpDelete]
@@ -67,6 +92,39 @@ namespace Onyx.Controllers
             {
                 Success = true,
                 Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        public IActionResult FetchAdFiles(string counterCd)
+        {
+            var files = _queueService.GetAdFiles(counterCd);
+            return PartialView("_AdFilesList", files);
+        }
+        public IActionResult DeleteAdFile(string counterCd, string cd)
+        {
+            _queueService.DeleteAdFile(counterCd, cd);
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.DELETED
+            };
+            return Json(result);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateAdFile(string CounterCd, int Cd, IFormFile file)
+        {
+            var uploadedFilePath = await _fileHelper.UploadFile(file, "carousel", _loggedInUser.CompanyCd);
+            _queueService.SaveAdFile(new AdModel
+            {
+                EntryBy = _loggedInUser.UserCd,
+                CounterCd = CounterCd,
+                Cd = Cd,
+                ImageFile = uploadedFilePath,
+            });
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
             };
             return Json(result);
         }
@@ -253,6 +311,7 @@ namespace Onyx.Controllers
             var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
             ViewBag.CurrentToken = currentToken;
             ViewBag.TokenCookie = _tokenSetting;
+            ViewBag.AdFiles = _queueService.GetAdFiles(_tokenSetting.CounterCd);
             return PartialView("_DisplayPartial");
         }
         #endregion
