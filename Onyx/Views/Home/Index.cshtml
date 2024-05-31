@@ -9,6 +9,7 @@
     EmpAddress_GetRow_Result EmpContactDetail = ViewBag.EmpContactDetail;
     var currentCulture = CultureInfo.CurrentCulture.Name;
     bool rtl = currentCulture == "ar" || currentCulture == "fa";
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 @if (!rtl)
 {
@@ -76,6 +77,57 @@ else
                     </div>
                 </div>
             }
+        </div>
+        Employee_LeaveHistory_GetRow_Result balanceDetail = ViewBag.BalanceDetail;
+        var leaveBalance = balanceDetail.LeaveOp + balanceDetail.Leave - balanceDetail.LeaveTaken;
+        var leaveSalaryBalance = balanceDetail.LvSalaryOp + balanceDetail.LvSalary - balanceDetail.LvSalaryTaken;
+        var leaveTicketBalance = balanceDetail.LvTicketOp + balanceDetail.LvTicket - balanceDetail.LvTicketTaken;
+        var fundBalance = balanceDetail.GratAmtOp + balanceDetail.GratAmt - balanceDetail.GratAmtTaken;
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-white">
+                    <div class="inner">
+                        <h3>@leaveBalance.ToString(DecimalFormat)</h3>
+                        <p>Leave Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-white">
+                    <div class="inner">
+                        <h3>@leaveSalaryBalance.ToString(DecimalFormat)</h3>
+                        <p>Leave Salary Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-white">
+                    <div class="inner">
+                        <h3>@leaveTicketBalance.ToString(DecimalFormat)</h3>
+                        <p>Leave Ticket Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-white">
+                    <div class="inner">
+                        <h3>@fundBalance.ToString(DecimalFormat)</h3>
+                        <p>Fund Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     }
 }

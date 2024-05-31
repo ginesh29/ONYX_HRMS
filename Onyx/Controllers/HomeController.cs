@@ -27,17 +27,13 @@ namespace Onyx.Controllers
             _employeeService = employeeService;
             _transactionService = transactionService;
         }
-        public IActionResult Test()
-        {
-            return View();
-        }
         [HttpPost]
         public IActionResult SetLanguage(string culture)
         {
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions { Expires = DateTime.Now.AddDays(1) }
+                new CookieOptions { Expires = DateTime.Now.AddYears(1) }
             );
             return RedirectToAction(nameof(Index));
         }
@@ -57,6 +53,12 @@ namespace Onyx.Controllers
                 var currentMonth = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_MONTH").Val;
                 var currentYear = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "CUR_YEAR").Val;
                 ViewBag.currentMonthYear = $"{currentMonth}/{currentYear}";
+                var balanceInfo = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
+                {
+                    EmpCd = _loggedInUser.UserCd,
+                    ToDate = DateTime.Now
+                }, _loggedInUser.CompanyCd).FirstOrDefault();
+                ViewBag.BalanceDetail = balanceInfo;
             }
             return View();
         }
