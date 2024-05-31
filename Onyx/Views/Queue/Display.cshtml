@@ -22,9 +22,9 @@
             {
                 <div class="item">
                     <div id="btn-bar">
-                        <button type="button" class="btn btn-tool" id="btn-mute" onclick="toggleMute('@item.Cd')"><i class="fas fa-volume-mute"></i></button>
+                        <button type="button" class="btn btn-tool" id="btn-mute" onclick="toggleMute('@item.Cd')"><i class="fas fa-volume-up"></i></button>
                     </div>
-                    <video id="video-@item.Cd" class="w-100" controls loop autoplay muted>
+                    <video id="video-@item.Cd" class="w-100" loop autoplay muted>
                         <source src="/uploads/@companyCd/carousel/@item.ImageFile">
                         Your browser does not support the video tag.
                     </video>
@@ -88,5 +88,10 @@
             $("#token-container").removeClass("d-none");
         });
         connection.start();
+        function toggleMute(id) {
+            var video = $(`#video-${id}`)[0];
+            !video.muted ? $("#btn-mute i").addClass("fa-volume-mute").removeClass("fa-volume-up") : $("#btn-mute i").removeClass("fa-volume-mute").addClass("fa-volume-up");
+            video.muted = !video.muted;
+        }
     </script>
 }
