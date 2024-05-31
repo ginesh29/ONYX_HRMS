@@ -22,7 +22,7 @@
             {
                 <div class="item">
                     <div id="btn-bar">
-                        <button type="button" class="btn btn-tool" id="btn-mute" onclick="toggleMute('@item.Cd')"><i class="fas fa-volume-up"></i></button>
+                        <button type="button" class="btn btn-tool btn-mute" id="btn-mute-video-@item.Cd" onclick="toggleMute('@item.Cd')"><i class="fas fa-volume-mute"></i></button>
                     </div>
                     <video id="video-@item.Cd" class="w-100" loop autoplay muted>
                         <source src="/uploads/@companyCd/carousel/@item.ImageFile">
@@ -58,18 +58,21 @@
             autoplayHoverPause: false,
             nav: false,
             dots: false,
-        }).on('changed.owl.carousel', function (event) {
-            var currentItem = event.item.index;
-            $('.owl-carousel .item video').each(function () {
-                this.pause();
-                this.muted = true;
+        })
+            .on('changed.owl.carousel', function (event) {
+                var currentItem = event.item.index;
+                $('.owl-carousel .item video').each(function () {
+                    this.pause();
+                    this.muted = true;
+                });
+                var currentVideo = owl.find('.owl-item').eq(currentItem).find('video');
+                if (currentVideo.length) {
+                    currentVideo.get(0).play();
+                    currentVideo.get(0).muted = false;
+                    var id = currentVideo.get(0).id;
+                    $(`#btn-mute-${id} i`).removeClass("fa-volume-mute").addClass("fa-volume-up");
+                }
             });
-            var currentVideo = owl.find('.owl-item').eq(currentItem).find('video');
-            if (currentVideo.length) {
-                currentVideo.get(0).play();
-                currentVideo.get(0).muted = false;
-            }
-        });
         var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
         connection.on("ReceiveTokenCall", function (message, voiceName) {
             speak(message, voiceName);
@@ -90,8 +93,15 @@
         connection.start();
         function toggleMute(id) {
             var video = $(`#video-${id}`)[0];
-            !video.muted ? $("#btn-mute i").addClass("fa-volume-mute").removeClass("fa-volume-up") : $("#btn-mute i").removeClass("fa-volume-mute").addClass("fa-volume-up");
             video.muted = !video.muted;
+            video.muted ? $(`#btn-mute-video-${id} i`).addClass("fa-volume-mute").removeClass("fa-volume-up") : $(`#btn-mute-video-${id} i`).removeClass("fa-volume-mute").addClass("fa-volume-up");
         }
+        $("video").click(function () {
+            var video = this;
+            if (video.paused)
+                video.play();
+            else
+                video.pause();
+        })
     </script>
 }
