@@ -3,71 +3,20 @@
     IEnumerable<Token_Getrow_Result> CalledTokens = ViewBag.CalledTokens;
     var CurrentToken = ViewBag.CurrentToken != null ? ViewBag.CurrentToken : "Not Serving";
     var currentStatus = ViewBag.CurrentToken != null ? "Serving" : "Available";
-    TokenSettingModel TokenCookie = ViewBag.TokenCookie;
-    IEnumerable<AdModel> AdFiles = ViewBag.AdFiles;
-    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
-    string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
+    TokenSettingModel TokenCookie = ViewBag.TokenCookie;    
 }
-<div class="row">
-    <div class="col-md-10 form-border-right">
-        <div class="owl-carousel owl-theme" id="carousel">
-            @foreach (var item in AdFiles)
-            {
-                var isImage = item.ImageFile.IsImage();
-                if (isImage)
-                {
-                    <div class="item"><img src="/uploads/@companyCd/carousel/@item.ImageFile" /></div>
-                }
-                else
-                {
-                    <div class="item">
-                        <video class="w-100" controls loop autoplay muted id="myVideo">
-                            <source src="/uploads/@companyCd/carousel/@item.ImageFile">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div>
-            <div>
-                <ul class="list-group list-group-flush">
-                    @if (ViewBag.CurrentToken != null)
-                    {
-                        <li class="list-group-item pl-0 ml-4 py-2">
-                            Tokens
-                            <button type="button" class="btn btn-tool float-right mt-0" id="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
-                        </li>
-                        <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
-                            @CurrentToken
-                            <span class="badge badge-info float-right">@currentStatus</span>
-                        </li>
-                    }
-                    @foreach (var item in WaitingTokens)
-                    {
-                        <li class="list-group-item pl-0 ml-4 py-2" style="margin-left: 20px;">
-                            @item.TokenNo
-                        </li>
-                    }
-                    @if (WaitingTokens.Count() == 0)
-                    {
-                        <li class="list-group-item">@CommonMessage.EMPTYGRID</li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    $('.owl-carousel').owlCarousel({
-        items: 1,
-        loop: true,
-        autoplay: true,
-        autoplayTimeout: 20000,
-        autoplayHoverPause: false,
-        nav: false,
-        dots: false,
-    });
-</script>
+<ul class="list-group list-group-flush">
+    @if (ViewBag.CurrentToken != null)
+    {
+        <li class="list-group-item pl-0 py-2 current">
+            @CurrentToken
+            <span class="badge badge-info float-right">@currentStatus</span>
+        </li>
+    }
+    @foreach (var item in WaitingTokens)
+    {
+        <li class="list-group-item pl-0 py-2 waiting">
+            @item.TokenNo
+        </li>
+    }
+</ul>

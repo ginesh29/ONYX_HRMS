@@ -362,6 +362,7 @@ function toggleFullscreen() {
             elem.webkitRequestFullscreen();
         else if (elem.msRequestFullscreen) /* IE11 */
             elem.msRequestFullscreen();
+        $("#btn-fullscreen i").removeClass("fa-expand").addClass("fa-compress");
     }
     else {
         if (document.exitFullscreen)
@@ -370,6 +371,7 @@ function toggleFullscreen() {
             document.webkitExitFullscreen();
         else if (document.msExitFullscreen) /* IE11 */
             document.msExitFullscreen();
+        $("#btn-fullscreen i").removeClass("fa-compress").addClass("fa-expand");
     }
 }
 function initControls() {
