@@ -35,7 +35,41 @@ function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
         parseDynamicForm();
-        $("#UserModal").modal("show");      
+        $('#tree-view').jstree({
+            "checkbox": {
+                "keep_selected_style": false,
+                "whole_node": false,
+                "tie_selection": false
+            },
+            "plugins": ["checkbox"]
+        }).on("check_node.jstree uncheck_node.jstree", function (e, data) {
+            var id = data.node.id;
+            var treeInstance = $('#tree-view').jstree(true);
+            var childNodes = getAllChildren(id);
+            var allCheckedNodes = [id].concat(childNodes);
+            $.each(allCheckedNodes, function (i, item) {
+                if (e.type == "check_node") {
+                    $(`#permission_checkbox_Add_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_View_${item}`).prop("checked", true);
+                    $(`#permission_checkbox_Print_${item}`).prop("checked", true);
+                }
+                else {
+                    $(`#permission_checkbox_Add_${item}`).prop("checked", false);
+                    $(`#permission_checkbox_Edit_${item}`).prop("checked", false);
+                    $(`#permission_checkbox_Delete_${item}`).prop("checked", false);
+                    $(`#permission_checkbox_View_${item}`).prop("checked", false);
+                    $(`#permission_checkbox_Print_${item}`).prop("checked", false);
+                }
+                expandAllParents($('#tree-view'), item);
+            });
+            var checkedNodes = treeInstance.get_checked();
+            $("#MenuIds").val(checkedNodes.toString());
+        }).on('ready.jstree', function () {
+            initJsTree = false;
+        });
+        $("#UserModal").modal("show");
     });
 }
 function expandAllParents(treeInstance, nodeId) {
@@ -44,6 +78,22 @@ function expandAllParents(treeInstance, nodeId) {
         treeInstance.jstree('open_node', currentNode.parent);
         expandAllParents(treeInstance, currentNode.parent);
     }
+}
+function getAllChildren(parentId) {
+    var instance = $('#tree-view').jstree(true);
+    var childrenIds = [];
+    var parentNode = instance.get_node(parentId);
+    if (parentNode.children.length > 0) {
+        parentNode.children.forEach(function (childId) {
+            var childNode = instance.get_node(childId);
+            childrenIds.push(childId);
+            if (childNode.children.length > 0) {
+                var nestedChildrenIds = getAllChildren(childId);
+                childrenIds = childrenIds.concat(nestedChildrenIds);
+            }
+        });
+    }
+    return childrenIds;
 }
 function deleteUser(cd) {
     Swal.fire({
