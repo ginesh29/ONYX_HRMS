@@ -30,9 +30,9 @@
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.docTypCd.trim()}','${row.divCd.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

@@ -18,9 +18,9 @@
             { data: "dept" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showApprovalProcessModal('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showApprovalProcessModal('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteApprovalProcess('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteApprovalProcess('${row.processIdCd.trim()}','${row.applTypCd.trim()}','${row.branchCd.trim()}','${row.deptCd.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

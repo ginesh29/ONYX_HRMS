@@ -21,9 +21,9 @@
             { data: "url" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBankModal('${row.bankCd.trim()}','${row.branchCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showBankModal('${row.bankCd.trim()}','${row.branchCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBank('${row.bankCd.trim()}','${row.branchCd.trim()}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBank('${row.bankCd.trim()}','${row.branchCd.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

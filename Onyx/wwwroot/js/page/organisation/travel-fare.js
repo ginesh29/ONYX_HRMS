@@ -18,9 +18,9 @@
             { data: "fare" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showTravelFareModal('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showTravelFareModal('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteTravelFare('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteTravelFare('${row.srNo}','${row.sectCd.trim()}','${row.classCd.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

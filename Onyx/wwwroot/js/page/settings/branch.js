@@ -21,7 +21,7 @@ window["datatable"] = $('#BranchesDataTable').DataTable(
             { data: "des" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info btn-edit" onclick="showBranchModal('${row.cd}')" ${editEnable}>
+                    return `<button class="btn btn-sm btn-info" onclick="showBranchModal('${row.cd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2 btn-delete" onclick="deleteBranch('${row.cd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>

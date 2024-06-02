@@ -13,9 +13,9 @@
             { data: "paycode" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLeavePayComponentModal('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLeavePayComponentModal('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteLeavePayComponent('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteLeavePayComponent('${row.lvCd.trim()}','${row.payTypCd.trim()}','${row.payCd.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

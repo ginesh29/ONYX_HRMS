@@ -14,9 +14,9 @@
             { data: "messageBody" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showNotificationModal('${row.srNo}','${row.docTyp.trim()}','${row.processId}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showNotificationModal('${row.srNo}','${row.docTyp.trim()}','${row.processId}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteNotification('${row.srNo}','${row.processId}')">
+                            </button>                                                              <button class="btn btn-sm btn-danger ml-2" onclick="deleteNotification('${row.srNo}','${row.processId}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
