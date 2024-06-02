@@ -35,43 +35,7 @@ function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
         parseDynamicForm();
-        $("#UserModal").modal("show");
-        var initJsTree = true;
-        $('#tree-view').jstree({
-            "checkbox": {
-                "keep_selected_style": false,
-                "whole_node": false,
-                "tie_selection": false
-            },
-            "plugins": ["checkbox"]
-        }).on("open_node.jstree close_node.jstree check_node.jstree uncheck_node.jstree", function (e, data) {
-            var treeInstance = $('#tree-view').jstree(true);
-            var allNodes = treeInstance.get_json('#', { flat: true });
-            var checkedNodes = treeInstance.get_checked();
-            var uncheckedNodes = allNodes.filter(node => !checkedNodes.includes(node.id)).map(node => node.id);
-            $.each(checkedNodes, function (i, item) {
-                console.log(initJsTree)
-                if (!initJsTree) {
-                    $(`#permission_checkbox_Add_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_View_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Print_${item}`).prop("checked", true);
-                }
-                expandAllParents($('#tree-view'), item);
-            });
-            $.each(uncheckedNodes, function (i, item) {
-                $(`#permission_checkbox_Add_${item}`).prop("checked", false);
-                $(`#permission_checkbox_Edit_${item}`).prop("checked", false);
-                $(`#permission_checkbox_Delete_${item}`).prop("checked", false);
-                $(`#permission_checkbox_View_${item}`).prop("checked", false);
-                $(`#permission_checkbox_Print_${item}`).prop("checked", false);
-            });
-
-            $("#MenuIds").val(checkedNodes.toString());
-        }).on('ready.jstree', function () {
-            initJsTree = false;
-        });
+        $("#UserModal").modal("show");      
     });
 }
 function expandAllParents(treeInstance, nodeId) {

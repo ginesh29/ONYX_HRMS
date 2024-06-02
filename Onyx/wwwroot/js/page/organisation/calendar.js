@@ -13,9 +13,12 @@ var calendar = new Calendar(calendarEl, {
         var event = info.event;
         var color = event.allDay ? "white" : "dark";
         var editBtn = hasEditPermission ? `<button class='btn btn-icon btn-sm p-0 mr-1 edit-event'><i class='fas fa-pencil-alt text-${color}'></i></button>` : ``;
-        var deleteBtn = hasEditPermission ? `<button class='btn btn-icon btn-sm p-0 delete-event mr-2'><i class='fa fa-trash text-${color}'></i></button>` : ``;
-
-        $(eventElement).find(".fc-event-title").append(`<span class='fc-event-icons float-right'>${editBtn}${deleteBtn}</span>`);
+        var deleteBtn = hasDeletePermission ? `<button class='btn btn-icon btn-sm p-0 delete-event mr-2'><i class='fa fa-trash text-${color}'></i></button>` : ``;
+        var eventHtml = `<div class="d-flex">
+                            <div class="flex-grow-1 bd-highlight">${event.title}</div>
+                            ${editBtn}${deleteBtn}
+                         </div>`;
+        $(eventElement).find(".fc-event-title").html(eventHtml);
         $(eventElement).find(".edit-event").click(function () {
             showCalendarEventModal(event.id);
         });

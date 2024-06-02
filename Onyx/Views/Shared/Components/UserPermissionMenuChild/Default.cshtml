@@ -5,7 +5,7 @@
 <ul>
     @foreach (var item in Model)
     {
-        <li id="@item.MenuId">
+        <li id="@item.MenuId" data-jstree='{"opened":true}'>
             <span class="jstree-checkbox">
                 @item.Caption
             </span>

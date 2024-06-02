@@ -38,8 +38,8 @@
                     <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Holiday">
                     <label asp-for="Holiday" class="custom-control-label font-weight-normal">Holiday</label>
                 </div>
-                <div class="custom-control custom-checkbox @(!string.IsNullOrEmpty(Model.Code) ? "disabled-container" : "")">
-                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline @(!string.IsNullOrEmpty(Model.Code) ? "disabled" : "")" type="checkbox" asp-for="Invite">
+                <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input custom-control-input-primary custom-control-input-outline" type="checkbox" asp-for="Invite">
                     <label asp-for="Invite" class="custom-control-label font-weight-normal">Invite</label>
                 </div>
                 <hr />
