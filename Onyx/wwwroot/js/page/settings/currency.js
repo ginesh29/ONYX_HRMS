@@ -18,10 +18,10 @@
             { data: "abbr" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showCurrencyModal('${row.code}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showCurrencyModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteCurrency('${row.code}')">
+                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteCurrency('${row.code}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

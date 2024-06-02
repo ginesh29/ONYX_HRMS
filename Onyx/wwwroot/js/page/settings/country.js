@@ -16,10 +16,10 @@
             { data: "provisions" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showCountryModal('${row.code}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showCountryModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteCountry('${row.code}')">
+                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteCountry('${row.code}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

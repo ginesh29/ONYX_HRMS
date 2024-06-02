@@ -97,7 +97,14 @@ function showErrorToastr(msg) {
     toastr.clear()
     toastr.error(msg);
 }
-
+function showCardMessage(type,msg) {
+    var html = `<div class="alert alert-${type} alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+            ${msg}
+        </div>`;
+    $(".card .card-body").first().html(html)
+}
 function logOut(btn) {
     loadingButton(btn);
     setTimeout(function () {

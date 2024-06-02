@@ -1,12 +1,29 @@
 ﻿setActiveMenu();
+var hasEditPermission = $("#HasEditPermission").val();
+var hasDeletePermission = $("#HasDeletePermission").val();
+var editEnable = !hasEditPermission ? "disabled" : "";
+var deleteEnable = !hasDeletePermission ? "disabled" : "";
+function managePermissionView() {
+    var hasViewPermission = $("#HasViewPermission").val();
+    var hasAddPermission = $("#HasAddPermission").val();
+    if (!hasAddPermission)
+        $(`#btn-add`).remove();
+    if (!hasViewPermission) {
+        $(".card-header").remove();
+        showCardMessage("warning", "You don't have permission to view this module. Please contact Administrator.");
+        $(".card-footer").remove();
+    }
+    if (!hasEditPermission) {
+        $(".card form").addClass("disabled-container");
+        $("#btn-submit").prop("disabled", true);
+    }
+}
+managePermissionView();
 $("#language-dropdown .dropdown-item").on('click', function (e) {
     e.preventDefault();
     var lang = $(this).attr("data-value");
     $("#culture").val(lang);
     $("#selectLanguage").submit();
-    //postAjax("/home/SetLanguage", { culture: lang }, function (response) {
-    //    window.location.reload();
-    //});
 })
 $("#user-company-dropdown").on('change', function (e) {
     postAjax("/home/UpdateClaim", { claimType: 'CompanyCd', claimValue: e.target.value }, function (response) {
