@@ -673,7 +673,7 @@ function bindAddresses(empCd) {
 function saveBasicSalary(cur) {
     var queryParams = getQueryStringParams(window.location.search);
     var empCd = queryParams.cd;
-    postAjax(`/Employee/SaveBasicSalary`, { empCd: encodeURI(empCd), basic: cur.value }, function (response) {
+    postAjax(`/Employee/SaveBasicSalary`, { empCd: empCd, basic: cur.value }, function (response) {
         if (response.message) {
             showSuccessToastr(response.message);
             $("#TotalSalary").val(`${response.data.currency} ${response.data.totalSalary}`)
