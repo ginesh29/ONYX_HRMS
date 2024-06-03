@@ -25,7 +25,7 @@
             { data: "purpose" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLoanAdjustModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLoanAdjustModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-warning ml-2" onclick="printLoanAdjust('${row.transNo.trim()}','${row.empCd.trim()}')">

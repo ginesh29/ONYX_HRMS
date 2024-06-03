@@ -1,21 +1,25 @@
 ﻿setActiveMenu();
+var queryParams = getQueryStringParams(window.location.search);
+var processId = queryParams.processId;
 var hasEditPermission = $("#HasEditPermission").val();
 var hasDeletePermission = $("#HasDeletePermission").val();
 var editEnable = !hasEditPermission ? "disabled" : "";
 var deleteEnable = !hasDeletePermission ? "disabled" : "";
 function managePermissionView() {
-    var hasViewPermission = $("#HasViewPermission").val();
-    var hasAddPermission = $("#HasAddPermission").val();
-    if (!hasAddPermission)
-        $(`#btn-add`).remove();
-    if (!hasViewPermission) {
-        $(".card-header").remove();
-        showCardMessage("warning", "You don't have permission to view this module. Please contact Administrator.");
-        $(".card-footer").remove();
-    }
-    if (!hasEditPermission) {
-        $(".card form").addClass("disabled-container");
-        $("#btn-submit").prop("disabled", true);
+    if (processId) {
+        var hasViewPermission = $("#HasViewPermission").val();
+        var hasAddPermission = $("#HasAddPermission").val();
+        if (!hasAddPermission)
+            $(`#btn-add`).remove();
+        if (!hasViewPermission) {
+            $(".card-header").remove();
+            showCardMessage("warning", "You don't have permission to view this module. Please contact Administrator.");
+            $(".card-footer").remove();
+        }
+        if (!hasAddPermission && !hasEditPermission) {
+            $(".card form").not(".exclude-permission").addClass("disabled-container");
+            $("#btn-submit").prop("disabled", true);
+        }
     }
 }
 managePermissionView();

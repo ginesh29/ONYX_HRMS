@@ -86,7 +86,7 @@ namespace Onyx.Controllers
             }
             return PartialView("_EmpLeaveApprovalModal", model);
         }
-        public IActionResult GetEmpLeaveDetail(string empCd, DateTime? FromDt, DateTime? ToDt)
+        public IActionResult GetEmpLeaveDetail(string empCd, DateTime FromDt, DateTime ToDt)
         {
             var leaveDetails = _transactionService.GetEmployee_LeaveHistory(empCd, FromDt, ToDt);
             return PartialView("_EmpLeaveDetailPreviewModal", leaveDetails);

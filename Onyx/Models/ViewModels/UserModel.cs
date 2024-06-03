@@ -27,7 +27,7 @@ namespace Onyx.Models.ViewModels
         public string Username { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Expiry Date")]
-        public DateTime? ExpiryDt { get; set; }
+        public DateTime ExpiryDt { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }

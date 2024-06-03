@@ -6,7 +6,7 @@
 <div class="card">
     <div class="card-body">
         <div class="col-md-6 form-border-right">
-            <form id="loan-application-frm">
+            <form id="loan-application-frm" class="exclude-permission">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group disabled-container">
@@ -69,7 +69,7 @@
                         <div class="form-group">
                             <label asp-for="GuarantorName"></label>
                             <input asp-for="GuarantorName" class="form-control" />
-                            <span asp-validation-for="GuarantorName" class=" text-danger"></span>
+                            <span asp-validation-for="GuarantorName" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">

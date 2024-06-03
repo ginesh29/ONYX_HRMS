@@ -38,10 +38,10 @@
                     return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.lvFrom}','${row.lvTo}')">
                                 <i class="fas fa-search"></i>
                             </button>
-                            <button class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}')">
+                            <button class="btn btn-sm btn-info ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)">
+                            <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveApprovalModal('${row.transNo.trim()}',true)" ${editEnable}>
                                 <i class="fa fa-times"></i>
                             </button>`;
                 }, "width": "120px"

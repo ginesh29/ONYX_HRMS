@@ -24,10 +24,10 @@
             { data: "desigTo" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showEmpProgressionModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showEmpProgressionModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pencil"></i>
                             </button>
-                            <button  class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProgression('${row.transNo.trim()}')">
+                            <button  class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProgression('${row.transNo.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`;
                 }, "width": "100px"

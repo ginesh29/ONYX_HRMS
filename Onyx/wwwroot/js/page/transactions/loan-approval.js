@@ -34,10 +34,10 @@
             { data: "purpose" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLoanApprovalModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLoanApprovalModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-check"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="showLoanApprovalModal('${row.transNo.trim()}',true)">
+                            <button class="btn btn-sm btn-danger ml-2" onclick="showLoanApprovalModal('${row.transNo.trim()}',true)" ${editEnable}>
                                 <i class="fa fa-times"></i>
                             </button>`;
                 }, "width": "80px"

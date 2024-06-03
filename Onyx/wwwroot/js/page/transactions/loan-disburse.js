@@ -37,7 +37,7 @@
             { data: "apprAmt" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLoanDisburseModal('${row.transNo.trim()}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showLoanDisburseModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pencil"></i>
                             </button>`;
                 }, "width": "80px"

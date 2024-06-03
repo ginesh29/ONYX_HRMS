@@ -27,11 +27,11 @@
                 },
                 {
                     data: function (row) {
-                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                        return type == "EMP" ? `<button type="button" class="btn btn-sm btn-info" onclick="showEmpDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showComDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')">
+                                </button>` : type == "COM" ? `<button class="btn btn-sm btn-info" onclick="showComDocumentModal('${row.docTypCd.trim()}','${row.divCd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')">
+                            </button>` : `<button type="button" class="btn btn-sm btn-info" onclick="showVehDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                                 </button>`
                     }, "width": "80px"

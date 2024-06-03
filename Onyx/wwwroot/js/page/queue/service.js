@@ -19,9 +19,9 @@ window["datatable"] = $('#ServicesDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showServiceModal('${row.cd}')">
+                    return `<button class="btn btn-sm btn-info" onclick="showServiceModal('${row.cd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteService('${row.cd}')">
+                            </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteService('${row.cd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"

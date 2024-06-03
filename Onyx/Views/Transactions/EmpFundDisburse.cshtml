@@ -3,7 +3,7 @@
 }
 <div class="card">
     <div class="card-body">
-        <table class="table table-sm" id="EmpFundDisburseDataTable">
+        <table class="table-sm table" id="EmpFundDisburseDataTable">
             <thead class="thead-dark">
                 <tr>
                     <th>No.</th>
@@ -42,17 +42,18 @@
                             return !row.amount ? row.amount : formatDecimal(row.amount)
                         },
                     },
-                    data: function (row) {
-                        return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
-                                                                <i class="fas fa-search"></i>
-                                                            </button>
-                                                                    <button class="btn btn-sm btn-info ml-2" onclick="showFundDisburseModal('${row.transNo.trim()}')">
-                                                                <i class="fas fa-check"></i>
-                                                            </button>`;
-                    }, "width": "80px"
-                            }
-                        ],
+                    {
+                        data: function (row) {
+                            return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
+                                                                                <i class="fas fa-search"></i>
+                                                                            </button>
+                                                                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundDisburseModal('${row.transNo.trim()}')" ${editEnable}>
+                                                                                <i class="fas fa-check"></i>
+                                                                            </button>`;
+                        }, "width": "80px"
                     }
+                ],
+            }
         );
 
         function showFundDisburseModal(transNo, reject) {
