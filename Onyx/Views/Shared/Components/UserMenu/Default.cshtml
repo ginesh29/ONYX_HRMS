@@ -35,13 +35,13 @@
             var empProgressionPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT6");
             var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT8");
             var provisionAdjPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT14");
-            var editLeaveEnable = leavePermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editLoanEnable = loanPermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editLeaveSalaryEnable = leaveSalaryPermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editFundEnable = fundPermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editEmpProgressionEnable = empProgressionPermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editDocRenewalEnable = docRenewalPermission.UEdit != "Y" ? "disabled" : string.Empty;
-            var editProvisionAdjEnable = provisionAdjPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editLeaveEnable = leavePermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editLoanEnable = loanPermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editLeaveSalaryEnable = leaveSalaryPermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editFundEnable = fundPermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editEmpProgressionEnable = empProgressionPermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editDocRenewalEnable = docRenewalPermission?.UEdit != "Y" ? "disabled" : string.Empty;
+            var editProvisionAdjEnable = provisionAdjPermission?.UEdit != "Y" ? "disabled" : string.Empty;
 
             <!-- Messages Dropdown Menu -->
             @if (leaveApprovalData.Count() > 0)
