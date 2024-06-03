@@ -324,7 +324,7 @@ namespace Onyx.Services
             var procedureName = "Employee_LeaveHistory_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_FromDt", FromDt.ToString(CommonSetting.InputDateFormat));
+            parameters.Add("v_FromDt", Convert.ToDateTime(FromDt).IsNotEmptyDate() ? FromDt.ToString(CommonSetting.InputDateFormat) : string.Empty); ;
             parameters.Add("v_ToDt", Convert.ToDateTime(ToDt).IsNotEmptyDate() ? ToDt.ToString(CommonSetting.InputDateFormat) : string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

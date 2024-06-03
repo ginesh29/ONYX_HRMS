@@ -104,7 +104,7 @@ window["datatable"] = $('#RenewalDocumentsApprovalDataTable').DataTable(
             { data: "narr" },
             {
                 data: function (row) {
-                    return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentApprovalModal('${row.employeeCode.trim()}','${row.docType.trim()}',${row.srNo})">
+                    return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentApprovalModal('${row.employeeCode.trim()}','${row.docType.trim()}',${row.srNo})" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                                 </button>`
                 }, "width": "80px"
