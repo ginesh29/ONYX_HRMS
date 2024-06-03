@@ -301,3 +301,30 @@ BEGIN
     -- Insert statements for procedure here
 	select * from AdImages where CounterCd = @v_CounterCd and (Cd = @v_Cd or @v_Cd=0)
 END
+
+
+CREATE OR ALTER   PROCEDURE [dbo].[Counter_Getrow]
+	@v_CounterCd varchar(10)=''
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	Select * from Counters where Cd= @v_CounterCd or @v_CounterCd = ''
+END
+ 
+ Go 
+-- =============================================
+-- Author:		Ginesh
+-- CREATE OR ALTER date: 21/05/2024
+-- =============================================
+CREATE OR ALTER PROCEDURE Counter_Delete
+	@v_CounterCd varchar(10)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    Delete from Counters where Cd= @v_CounterCd
+END
