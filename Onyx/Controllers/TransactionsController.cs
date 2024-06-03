@@ -351,9 +351,9 @@ namespace Onyx.Controllers
             model.WopFrom = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[0]) : null;
             model.WopTo = !string.IsNullOrEmpty(model.WopDateRange) ? Convert.ToDateTime(wopDateSp[1]) : null;
             _transactionService.SaveDutyResumption(model, _loggedInUser.CompanyCd);
-            if (!string.IsNullOrEmpty(model.GraduityDateRange))
+            if (!string.IsNullOrEmpty(model.GratuityDateRange))
             {
-                var dateSp = model.GraduityDateRange.Split(" - ");
+                var dateSp = model.GratuityDateRange.Split(" - ");
                 model.FromDt = Convert.ToDateTime(dateSp[0]);
                 model.ToDt = Convert.ToDateTime(dateSp[1]);
                 _transactionService.SaveLeaveProvision(model, "GT");

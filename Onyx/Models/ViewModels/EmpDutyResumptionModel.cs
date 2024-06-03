@@ -22,7 +22,7 @@ namespace Onyx.Models.ViewModels
         public string WpDateRange { get; set; }
         [Display(Name = "Date Range(WOP)")]
         public string WopDateRange { get; set; }
-        public string GraduityDateRange { get; set; }
+        public string GratuityDateRange { get; set; }
         public string LvSalaryDateRange { get; set; }
         public string LvTicketDateRange { get; set; }
         public string FormatedToDt { get; set; }

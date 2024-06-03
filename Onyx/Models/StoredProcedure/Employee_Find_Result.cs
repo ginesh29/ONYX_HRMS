@@ -131,7 +131,7 @@ namespace Onyx.Models.StoredProcedure
         [Display(Name = "Calculation Basis")]
         public string CalcBasis { get; set; }
         public string GT { get; set; }
-        [Display(Name = "Graduity")]
+        [Display(Name = "Gratuity")]
         public bool GTValue { get; set; }
         public string LS { get; set; }
         public bool LSValue { get; set; }
