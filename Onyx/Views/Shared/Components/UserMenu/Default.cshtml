@@ -25,23 +25,24 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
     </ul>
-    @if (loggedInUser.UserLinkedTo != "Emp" && loggedInUser.UserOrEmployee == "E")
-    {
-        var loanPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS1");
-        var leavePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS2");
-        var leaveSalaryPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS3");
-        var fundPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS4");
-        var empProgressionPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT6");
-        var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT8");
-        var provisionAdjPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT14");
-        var editLeaveEnable = leavePermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editLoanEnable = loanPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editLeaveSalaryEnable = leaveSalaryPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editFundEnable = fundPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editEmpProgressionEnable = empProgressionPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editDocRenewalEnable = docRenewalPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        var editProvisionAdjEnable = provisionAdjPermission.UEdit != "Y" ? "disabled" : string.Empty;
-        <ul class="navbar-nav @(rtl?"mr-auto-navbav":"ml-auto")">
+    <ul class="navbar-nav @(rtl?"mr-auto-navbav":"ml-auto")">
+        @if (loggedInUser.UserLinkedTo != "Emp")
+        {
+            var loanPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS1");
+            var leavePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS2");
+            var leaveSalaryPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS3");
+            var fundPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS4");
+            var empProgressionPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT6");
+            var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT8");
+            var provisionAdjPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT14");
+            var editLeaveEnable = leavePermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editLoanEnable = loanPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editLeaveSalaryEnable = leaveSalaryPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editFundEnable = fundPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editEmpProgressionEnable = empProgressionPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editDocRenewalEnable = docRenewalPermission.UEdit != "Y" ? "disabled" : string.Empty;
+            var editProvisionAdjEnable = provisionAdjPermission.UEdit != "Y" ? "disabled" : string.Empty;
+
             <!-- Messages Dropdown Menu -->
             @if (leaveApprovalData.Count() > 0)
             {
@@ -389,42 +390,41 @@
                     </div>
                 </li>
             }
-            <li class="nav-item ml-5">
-                <div style="width:200px;">
-                    <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
-                    </select>
-                </div>
-            </li>
-            <partial name="_LanguageSelector" />
-            <!-- Navbar Search -->
-            <li class="nav-item dropdown user-menu">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="@profilePic" class="user-image img-circle border" alt="User Image">
-                    <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-@(rtl?"left":"right")" id="user-menu">
-                    <!-- User image -->
-                    <li class="user-header" style="height:90px">
-                        <p>
-                            @if (!string.IsNullOrEmpty(Model.EmployeeName))
-                            {
-                                <span>@Model.EmployeeName</span>
-                            }
-                            else
-                            {
-                                <span>@Model.Username</span>
-                            }
-                            <small>Current period : @Model.CurrentPeriod</small>
-                            <small>Current logged : @Model.CurrentLogged</small>
-                        </p>
-                    </li>
-                    <li class="user-footer">
-                        <a href="javascript:void(0)" class="btn btn-flat btn-outline-secondary" onclick="showChangePasswordModal()">Change Password</a>
-                        <a href="javascript:void(0)" class="btn btn-primary btn-flat float-right" onclick="logOut(this)">Sign out</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    }
-
+        }
+        <li class="nav-item ml-5">
+            <div style="width:200px;">
+                <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
+                </select>
+            </div>
+        </li>
+        <partial name="_LanguageSelector" />
+        <!-- Navbar Search -->
+        <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <img src="@profilePic" class="user-image img-circle border" alt="User Image">
+                <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-@(rtl?"left":"right")" id="user-menu">
+                <!-- User image -->
+                <li class="user-header" style="height:90px">
+                    <p>
+                        @if (!string.IsNullOrEmpty(Model.EmployeeName))
+                        {
+                            <span>@Model.EmployeeName</span>
+                        }
+                        else
+                        {
+                            <span>@Model.Username</span>
+                        }
+                        <small>Current period : @Model.CurrentPeriod</small>
+                        <small>Current logged : @Model.CurrentLogged</small>
+                    </p>
+                </li>
+                <li class="user-footer">
+                    <a href="javascript:void(0)" class="btn btn-flat btn-outline-secondary" onclick="showChangePasswordModal()">Change Password</a>
+                    <a href="javascript:void(0)" class="btn btn-primary btn-flat float-right" onclick="logOut(this)">Sign out</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </nav>
