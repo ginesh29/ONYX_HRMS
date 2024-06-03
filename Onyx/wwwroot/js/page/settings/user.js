@@ -34,41 +34,7 @@
 function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
-        parseDynamicForm();
-        $('#tree-view').jstree({
-            "checkbox": {
-                "keep_selected_style": false,
-                "whole_node": false,
-                "tie_selection": false
-            },
-            "plugins": ["checkbox"]
-        }).on("check_node.jstree uncheck_node.jstree", function (e, data) {
-            var id = data.node.id;
-            var treeInstance = $('#tree-view').jstree(true);
-            var childNodes = getAllChildren(id);
-            var allCheckedNodes = [id].concat(childNodes);
-            $.each(allCheckedNodes, function (i, item) {
-                if (e.type == "check_node") {
-                    $(`#permission_checkbox_Add_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_View_${item}`).prop("checked", true);
-                    $(`#permission_checkbox_Print_${item}`).prop("checked", true);
-                }
-                else {
-                    $(`#permission_checkbox_Add_${item}`).prop("checked", false);
-                    $(`#permission_checkbox_Edit_${item}`).prop("checked", false);
-                    $(`#permission_checkbox_Delete_${item}`).prop("checked", false);
-                    $(`#permission_checkbox_View_${item}`).prop("checked", false);
-                    $(`#permission_checkbox_Print_${item}`).prop("checked", false);
-                }
-                expandAllParents($('#tree-view'), item);
-            });
-            var checkedNodes = treeInstance.get_checked();
-            $("#MenuIds").val(checkedNodes.toString());
-        }).on('ready.jstree', function () {
-            initJsTree = false;
-        });
+        parseDynamicForm();        
         $("#UserModal").modal("show");
     });
 }

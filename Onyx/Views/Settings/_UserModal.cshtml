@@ -73,7 +73,7 @@
                             <select asp-for="UserBranchCd" class="select-picker" multiple data-selected-text-format="count > 1" data-actions-box="true" data-width="100%">
                                 @foreach (var item in UserBranchItems)
                                 {
-                                    var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/{companyCd}/branch/{item.Image}' width='20' height='20' class='ml-2 rounded border rounded-circle'>" : null;
+                                    var img = !string.IsNullOrEmpty(item.Image) ? $"<img src='/uploads/{companyCd}/branch/{item.Image}' width='20' height='20' class='ml-2 rounded-circle rounded border'>" : null;
                                     <option data-content="@($"{item.Branch}({item.Div.Trim()}) {@img}")" value="@item.Div" selected="@(!string.IsNullOrEmpty(item.UserDes))"></option>
                                 }
                             </select>
@@ -97,7 +97,7 @@
                         <ul>
                             @foreach (var item in Model.Menus)
                             {
-                                <li id="@item.MenuId">
+                                <li id="@item.MenuId" data-jstree='{"selected":true}'>
                                     <span class="jstree-checkbox">
                                         @item.Caption
                                     </span>
@@ -119,11 +119,48 @@
     </div>
 </div>
 <script>
-    setTimeout(function () {        
-        var selectedNodes = JSON.parse('@menuArray');
-        $.each(selectedNodes, function (i, item) {
-            $('#tree-view').jstree('check_node', '#' + item);
-            expandAllParents($('#tree-view'), item);
+    setTimeout(function () {
+        var jstree = $('#tree-view').jstree({
+            "checkbox": {
+                "keep_selected_style": false,
+                "whole_node": false,
+                "tie_selection": false
+            },
+            "plugins": ["checkbox"]
+        }).on('ready.jstree', function () {
+            var selectedNodes = JSON.parse('@menuArray');
+            $.each(selectedNodes, function (i, item) {
+                $('#tree-view').jstree('check_node', '#' + item);
+                expandAllParents($('#tree-view'), item);
+            });
+            $("#MenuIds").val(selectedNodes.toString());
         });
+        setTimeout(function () {
+            jstree.on("check_node.jstree uncheck_node.jstree", function (e, data) {
+                var id = data.node.id;
+                var treeInstance = $('#tree-view').jstree(true);
+                var childNodes = getAllChildren(id);
+                var allCheckedNodes = [id].concat(childNodes);
+                $.each(allCheckedNodes, function (i, item) {
+                    if (e.type == "check_node") {
+                        $(`#permission_checkbox_Add_${item}`).prop("checked", true);
+                        $(`#permission_checkbox_Edit_${item}`).prop("checked", true);
+                        $(`#permission_checkbox_Delete_${item}`).prop("checked", true);
+                        $(`#permission_checkbox_View_${item}`).prop("checked", true);
+                        $(`#permission_checkbox_Print_${item}`).prop("checked", true);
+                    }
+                    else {
+                        $(`#permission_checkbox_Add_${item}`).prop("checked", false);
+                        $(`#permission_checkbox_Edit_${item}`).prop("checked", false);
+                        $(`#permission_checkbox_Delete_${item}`).prop("checked", false);
+                        $(`#permission_checkbox_View_${item}`).prop("checked", false);
+                        $(`#permission_checkbox_Print_${item}`).prop("checked", false);
+                    }
+                    expandAllParents($('#tree-view'), item);
+                });
+                var checkedNodes = treeInstance.get_checked();
+                $("#MenuIds").val(checkedNodes.toString());
+            })
+        }, 1000)
     }, 0)
 </script>
