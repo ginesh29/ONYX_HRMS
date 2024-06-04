@@ -50,7 +50,7 @@
                 </div>
             </div>
         }
-    </div>    
+    </div>
 </div>
 <style>
     #btn-fullscreen {
@@ -102,15 +102,12 @@
         connection.on("ReceiveRefreshCall", function () {
             $("#btn-refresh").click();
             setTimeout(function () {
-                var currentCnt = $("#token-container ul li.current").length;
-                var waitingCnt = $("#token-container ul li.waiting").length;
-                if (!currentCnt && !waitingCnt)
-                    $("#token-container").addClass("d-none");
+                showHideTokenContainer();
             }, 500);
         });
         connection.on("ReceiveTokenAddCall", function () {
             $("#btn-refresh").click();
-            $("#token-container").removeClass("d-none");
+            showHideTokenContainer();
         });
         connection.start();
         function toggleMute(id) {
@@ -126,5 +123,20 @@
             else
                 video.pause();
         })
+        function showHideTokenContainer() {
+            var currentCnt = $("#token-container .current").length;
+            if (!currentCnt) {
+                $("#carousel-container").css("width", "100%");
+                $("#token-container").addClass("d-none");
+            }
+            else {
+                $("#carousel-container").css("width", "80%");
+                $("#token-container").removeClass("d-none");
+            }
+            window.dispatchEvent(new Event('resize'));
+        }
+        setTimeout(function () {
+            showHideTokenContainer();
+        }, 500);
     </script>
 }
