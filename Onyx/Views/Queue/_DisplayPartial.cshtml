@@ -1,22 +1,17 @@
 ﻿@{
-    IEnumerable<Token_Getrow_Result> WaitingTokens = ViewBag.WaitingTokens;
+    IEnumerable<Token_Getrow_Result> ServingTokens = ViewBag.ServingTokens;
     IEnumerable<Token_Getrow_Result> CalledTokens = ViewBag.CalledTokens;
-    var CurrentToken = ViewBag.CurrentToken != null ? ViewBag.CurrentToken : "Not Serving";
-    var currentStatus = ViewBag.CurrentToken != null ? "Serving" : "Available";
-    TokenSettingModel TokenCookie = ViewBag.TokenCookie;    
+    var currentStatus = ViewBag.ServingTokens != null ? "Serving" : "Available";
+    TokenSettingModel TokenCookie = ViewBag.TokenCookie;
 }
-<ul class="list-group list-group-flush">
-    @if (ViewBag.CurrentToken != null)
+@if (ViewBag.ServingTokens != null)
+{@foreach (var item in ServingTokens)
     {
-        <li class="list-group-item pl-0 py-2 current">
-            @CurrentToken
-            <span class="badge badge-info float-right">@currentStatus</span>
-        </li>
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3 class="mb-0">@item.TokenNo</h3>
+                <p class="mb-0">@item.CounterCd</p>
+            </div>
+        </div>
     }
-    @foreach (var item in WaitingTokens)
-    {
-        <li class="list-group-item pl-0 py-2 waiting">
-            @item.TokenNo
-        </li>
-    }
-</ul>
+}

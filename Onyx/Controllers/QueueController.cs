@@ -341,7 +341,7 @@ namespace Onyx.Controllers
         public IActionResult Display()
         {
             var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
-            var waitingTokens = tokens.Where(m => m.Status == "W").Take(10);
+            var waitingTokens = tokens.Where(m => m.Status == "W").Take(5);
             ViewBag.WaitingTokens = waitingTokens;
             var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
             ViewBag.CurrentToken = currentToken;
@@ -351,12 +351,10 @@ namespace Onyx.Controllers
         public IActionResult DisplayPartial()
         {
             var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
-            var waitingTokens = tokens.Where(m => m.Status == "W").Take(10);
-            ViewBag.WaitingTokens = waitingTokens;
+            var servingTokens = tokens.Where(m => m.Status == "C");
+            ViewBag.ServingTokens = servingTokens;
             var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
             ViewBag.CalledTokens = calledTokens;
-            var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
-            ViewBag.CurrentToken = currentToken;
             ViewBag.TokenCookie = _tokenSetting;            
             return PartialView("_DisplayPartial");
         }

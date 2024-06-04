@@ -1,4 +1,4 @@
-﻿#token-container {
+﻿/*#token-container {
     position: absolute;
     z-index: 1;
     right: 50px;
@@ -11,7 +11,7 @@
 }
     #token-container .list-group-item {
         background-color: transparent;
-    }
+    }*/
 
 #btn-fullscreen {
     position: absolute;
@@ -22,6 +22,6 @@
 .btn-mute {
     position: absolute;
     top: 20px;
-    right: 40px;
+    right: 20px;
     z-index: 2;
 }
