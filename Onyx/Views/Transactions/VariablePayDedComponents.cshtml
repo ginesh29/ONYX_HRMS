@@ -128,19 +128,21 @@
                     MonthYear: $("#FilterModel_MonthYear").val(),
                     FromDt: $("#FilterModel_FromDt").val(),
                     ToDt: $("#FilterModel_ToDt").val(),
-                };
-                unloadingButton(btn);
+                };                
                 var frmData = getFrmData();
-                postAjax(url, { filterModel: filterModel, variableComponentsData: frmData }, function (response) {
-                    if (response.success) {
-                        showSuccessToastr(response.message);
-                        searchComponents();
-                    }
-                    else {
-                        showErrorToastr(response.message);
-                    }
-                    unloadingButton(btn);
-                });
+                if (frmData.length)
+                    postAjax(url, { filterModel: filterModel, variableComponentsData: frmData }, function (response) {
+                        if (response.success) {
+                            showSuccessToastr(response.message);
+                            searchComponents();
+                        }
+                        else {
+                            showErrorToastr(response.message);
+                        }
+                        unloadingButton(btn);
+                    });
+                else
+                    showErrorToastr("Please select atleast one");
             }
         }
         function getFrmData() {

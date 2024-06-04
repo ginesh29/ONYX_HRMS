@@ -8,7 +8,7 @@
     <input type="hidden" asp-for="FilterModel.MonthYear" />
     <input type="hidden" asp-for="FilterModel.FromDt" />
     <input type="hidden" asp-for="FilterModel.ToDt" />
-    <table class="table table-sm mt-3" id="EmpVariablePayDedComponentsTable">
+    <table class="table-sm mt-3 table" id="EmpVariablePayDedComponentsTable">
         <thead class="thead-dark">
             <tr>
                 <th>
@@ -31,7 +31,7 @@
                 <td>
                     <div class="custom-control custom-checkbox">
                         <input asp-for="@Model.VariableComponentsData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
-                        <label for="@($"VariableComponentsData_{item.i}__Active")" class=" custom-control-label font-weight-normal"></label>
+                        <label for="@($"VariableComponentsData_{item.i}__Active")" class="custom-control-label font-weight-normal"></label>
                     </div>
                 </td>
                 <td>
@@ -51,10 +51,10 @@
                     <input asp-for="@Model.VariableComponentsData[item.i].Dept" type="hidden" />
                 </td>
                 <td>
-                    <input asp-for="@Model.VariableComponentsData[item.i].Amt" class="form-control form-control-sm decimal-input amt" data-amt="@Model.VariableComponentsData[item.i].Amt" />
+                    <input asp-for="@Model.VariableComponentsData[item.i].Amt" class="form-control form-control-sm decimal-input amt disabled" data-amt="@Model.VariableComponentsData[item.i].Amt" />
                 </td>
                 <td>
-                    <input asp-for="@Model.VariableComponentsData[item.i].Narr" class="form-control form-control-sm " />
+                    <input asp-for="@Model.VariableComponentsData[item.i].Narr" class="form-control form-control-sm disabled" />
                 </td>
             </tr>
         }

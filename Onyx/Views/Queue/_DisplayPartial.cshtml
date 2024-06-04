@@ -5,7 +5,8 @@
     TokenSettingModel TokenCookie = ViewBag.TokenCookie;
 }
 @if (ViewBag.ServingTokens != null)
-{@foreach (var item in ServingTokens)
+{
+    @foreach (var item in ServingTokens)
     {
         <div class="small-box bg-info current">
             <div class="inner">
