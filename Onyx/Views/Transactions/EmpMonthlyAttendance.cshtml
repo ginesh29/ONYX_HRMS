@@ -45,7 +45,7 @@
             <div class="d-flex align-items-center">
                 <div class="form-group">
                     <button type="button" class="btn btn-warning mt-2" onclick="searchAttendance(this)" id="btn-search"><i class="fa fa-search"></i></button>
-                    <button type="button" class="btn btn-outline-info mt-2 ml-1 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
+                    <button type="button" class="btn btn-outline-info mt-2 ml-1 d-none" id="btn-excel" data-table-id="EmpMonthlyAttendanceTable"><i class="fa fa-file-excel"></i></button>
                     <button class="btn btn-secondary mt-2 ml-1 d-none" type="button" id="btn-clear" onclick="clearSearch(this)">Clear</button>
                 </div>
             </div>
@@ -151,7 +151,6 @@
         }
         $('#btn-excel').on('click', function (e) {
             e.preventDefault();
-            exportTableToExcel("EmpMonthlyAttendanceTable", '@ViewData["Title"]');
             searchAttendance();
         });
         function uploadFile(event) {
