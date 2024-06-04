@@ -3,7 +3,7 @@
     public class AdModel
     {
         public int Cd { get; set; }
-        public string CounterCd { get; set; }
+        public string UserCd { get; set; }
         public string ImageFile { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }

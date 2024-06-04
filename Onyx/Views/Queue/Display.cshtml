@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Display"];
     IEnumerable<Token_Getrow_Result> WaitingTokens = ViewBag.WaitingTokens;
+    IEnumerable<Token_Getrow_Result> ServingTokens = ViewBag.ServingTokens;
     IEnumerable<AdModel> AdFiles = ViewBag.AdFiles;
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
     string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
@@ -10,14 +11,15 @@
 <link href="~/css/queue-display.css" rel="stylesheet" />
 <div class="card maximized-card">
     <div class="d-flex">
-        <div style="width:80%">
+        <div style="width:80%" id="carousel-container" class="position-relative">
+            <button type="button" class="btn btn-tool" id="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
             <div class="owl-carousel owl-theme" id="carousel">
                 @foreach (var item in AdFiles)
                 {
                     var isImage = item.ImageFile.IsImage();
                     if (isImage)
                     {
-                        <div class="item"><img src="/uploads/@companyCd/carousel/@item.ImageFile" /></div>
+                        <div class="item"><img id="image-@item.Cd" src="/uploads/@companyCd/carousel/@item.ImageFile" /></div>
                     }
                     else
                     {
@@ -34,10 +36,10 @@
                 }
             </div>
         </div>
-        <div style="width:20%">
-            @if (ViewBag.CurrentToken != null || WaitingTokens.Count() > 0)
-            {
-                <div class="card" id="token-container">
+        @if (ServingTokens.Count() > 0)
+        {
+            <div style="width:20%" id="token-container">
+                <div class="card">
                     <div class="card-header d-none">
                         <div class="card-title"></div>
                         <div class="card-tools">
@@ -46,11 +48,25 @@
                     </div>
                     <div class="card-body pb-0"></div>
                 </div>
-            }
-        </div>
-    </div>
-    @* <button type="button" class="btn btn-tool" id="btn-fullscreen" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button> *@
+            </div>
+        }
+    </div>    
 </div>
+<style>
+    #btn-fullscreen {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+        z-index: 2;
+    }
+
+    .btn-mute {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        z-index: 2;
+    }
+</style>
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
@@ -98,6 +114,7 @@
         });
         connection.start();
         function toggleMute(id) {
+            debugger
             var video = $(`#video-${id}`)[0];
             video.muted = !video.muted;
             video.muted ? $(`#btn-mute-video-${id} i`).addClass("fa-volume-mute").removeClass("fa-volume-up") : $(`#btn-mute-video-${id} i`).removeClass("fa-volume-mute").addClass("fa-volume-up");

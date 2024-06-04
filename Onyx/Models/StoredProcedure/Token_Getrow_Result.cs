@@ -11,6 +11,7 @@
         public DateTime? ServedDt { get; set; }
         public string ServedBy { get; set; }
         public string CounterCd { get; set; }
+        public string CounterName { get; set; }
         public string EntryBy { get; set; }
         public DateTime? EntryDt { get; set; }
         public string EditBy { get; set; }

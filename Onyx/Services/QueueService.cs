@@ -52,11 +52,14 @@ namespace Onyx.Services
                 (query);
             return data;
         }
-        public IEnumerable<AdModel> GetAdFiles(string counteCd, int srNo = 0)
+        #endregion
+
+        #region Ad
+        public IEnumerable<AdModel> GetAdFiles(string userCd, int srNo = 0)
         {
             var procedureName = "AdImages_GetRow";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CounterCd", counteCd);
+            parameters.Add("v_UserCd", userCd);
             parameters.Add("v_Cd", srNo);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
@@ -64,11 +67,11 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
-        public void DeleteAdFile(string counterCd, string cd)
+        public void DeleteAdFile(string UserCd, string cd)
         {
             var procedureName = "Ad_Delete";
             var parameters = new DynamicParameters();
-            parameters.Add("v_CounterCd", counterCd);
+            parameters.Add("v_UserCd", UserCd);
             parameters.Add("v_Cd", cd);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
@@ -79,12 +82,21 @@ namespace Onyx.Services
             var procedureName = "AdImages_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
-            parameters.Add("v_CounterCd", model.CounterCd);
+            parameters.Add("v_UserCd", model.UserCd);
             parameters.Add("v_ImageFile", model.ImageFile);
             parameters.Add("v_EntryBy", model.EntryBy);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public int GetAdImage_SrNo()
+        {
+            var query = "SELECT (max(Cd) +1) AS NextCode FROM AdImages";
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.QueryFirstOrDefault<int>
+                (query);
+            return data;
         }
         #endregion
 

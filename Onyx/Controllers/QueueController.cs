@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Onyx.Models.ViewModels;
 using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Onyx.Controllers
 {
@@ -59,34 +59,10 @@ namespace Onyx.Controllers
             return PartialView("_CounterModal", model);
         }
         [HttpPost]
-        [RequestSizeLimit(100 * 1024 * 1024)]
-        public async Task<IActionResult> SaveCounter(CounterModel model)
+        public IActionResult SaveCounter(CounterModel model)
         {
             model.EntryBy = _loggedInUser.UserCd;
             var result = _queueService.SaveCounter(model);
-            if (result.Success)
-            {
-                if (model.DocFiles?.Count() > 0)
-                {
-                    var totalFiles = _queueService.GetAdFiles(model.Cd).Count();
-                    string uploadedFilePath = string.Empty;
-                    foreach (var item in model.DocFiles.Select((value, i) => new { i, value }))
-                    {
-                        if (item != null)
-                        {
-                            var filePath = await _fileHelper.UploadFile(item.value, "carousel", _loggedInUser.CompanyCd);
-                            uploadedFilePath = filePath;
-                            _queueService.SaveAdFile(new AdModel
-                            {
-                                CounterCd = model.Cd,
-                                EntryBy = _loggedInUser.UserCd,
-                                ImageFile = uploadedFilePath,
-                                Cd = item.i + 1 + totalFiles,
-                            });
-                        }
-                    }
-                }
-            }
             return Json(result);
         }
         [HttpDelete]
@@ -100,14 +76,48 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
-        public IActionResult FetchAdFiles(string counterCd)
+        #endregion
+
+        #region Ad
+        public IActionResult Ad()
         {
-            var files = _queueService.GetAdFiles(counterCd);
-            return PartialView("_AdFilesList", files);
+            var files = _queueService.GetAdFiles(_loggedInUser.UserCd);
+            return View(files);
         }
-        public IActionResult DeleteAdFile(string counterCd, string cd)
+        [RequestSizeLimit(100 * 1024 * 1024)]
+        public async Task<IActionResult> SaveAdFiles(List<IFormFile> DocFiles)
         {
-            _queueService.DeleteAdFile(counterCd, cd);
+            if (DocFiles?.Count > 0)
+            {
+                var totalFiles = _queueService.GetAdFiles(_loggedInUser.UserCd).Count();
+                string uploadedFilePath = string.Empty;
+                foreach (var item in DocFiles.Select((value, i) => new { i, value }))
+                {
+                    if (item != null)
+                    {
+                        var cd = _queueService.GetAdImage_SrNo();
+                        var filePath = await _fileHelper.UploadFile(item.value, "carousel", _loggedInUser.CompanyCd);
+                        uploadedFilePath = filePath;
+                        _queueService.SaveAdFile(new AdModel
+                        {
+                            UserCd = _loggedInUser.UserLinkedTo,
+                            EntryBy = _loggedInUser.UserCd,
+                            ImageFile = uploadedFilePath,
+                            Cd = cd,
+                        });
+                    }
+                }
+            }
+            var result = new CommonResponse
+            {
+                Success = true,
+                Message = CommonMessage.UPDATED
+            };
+            return Json(result);
+        }
+        public IActionResult DeleteAdFile(string cd)
+        {
+            _queueService.DeleteAdFile(_loggedInUser.UserLinkedTo, cd);
             var result = new CommonResponse
             {
                 Success = true,
@@ -116,13 +126,13 @@ namespace Onyx.Controllers
             return Json(result);
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateAdFile(string CounterCd, int Cd, IFormFile file)
+        public async Task<IActionResult> UpdateAdFile(int Cd, IFormFile file)
         {
             var uploadedFilePath = await _fileHelper.UploadFile(file, "carousel", _loggedInUser.CompanyCd);
             _queueService.SaveAdFile(new AdModel
             {
                 EntryBy = _loggedInUser.UserCd,
-                CounterCd = CounterCd,
+                UserCd = _loggedInUser.UserLinkedTo,
                 Cd = Cd,
                 ImageFile = uploadedFilePath,
             });
@@ -274,9 +284,9 @@ namespace Onyx.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error occurred while printing: {ex.Message}");
-            }            
+            }
         }
-        
+
         public IActionResult TokenCall()
         {
             return View();
@@ -340,22 +350,22 @@ namespace Onyx.Controllers
         }
         public IActionResult Display()
         {
-            var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
+            var tokens = _queueService.GetTokens();
             var waitingTokens = tokens.Where(m => m.Status == "W").Take(5);
             ViewBag.WaitingTokens = waitingTokens;
-            var currentToken = tokens.FirstOrDefault(m => m.Status == "C")?.TokenNo;
-            ViewBag.CurrentToken = currentToken;
-            ViewBag.AdFiles = _queueService.GetAdFiles(_tokenSetting.CounterCd);
+            var servingTokens = tokens.Where(m => m.Status == "C");
+            ViewBag.ServingTokens = servingTokens;
+            ViewBag.AdFiles = _queueService.GetAdFiles(_loggedInUser.UserLinkedTo);
             return View();
         }
         public IActionResult DisplayPartial()
         {
-            var tokens = _queueService.GetTokens().Where(m => m.ServiceName == _tokenSetting.ServiceName);
+            var tokens = _queueService.GetTokens();
             var servingTokens = tokens.Where(m => m.Status == "C");
             ViewBag.ServingTokens = servingTokens;
             var calledTokens = tokens.Where(m => m.Status == "S" || m.Status == "N").OrderByDescending(m => m.EditDt);
             ViewBag.CalledTokens = calledTokens;
-            ViewBag.TokenCookie = _tokenSetting;            
+            ViewBag.TokenCookie = _tokenSetting;
             return PartialView("_DisplayPartial");
         }
         #endregion
