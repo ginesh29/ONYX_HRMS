@@ -255,3 +255,76 @@ BEGIN
 
     Delete from Services where Cd= @v_ServiceCd
 END
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[AdImages](
+	[Cd] [int] NOT NULL,
+	[CounterCd] [char](10) NOT NULL,
+	[ImageFile] [varchar](200) NULL,
+	[EntryBy] [char](5) NULL,
+	[EntryDt] [datetime] NULL,
+	[EditBy] [char](5) NULL,
+	[EditDt] [datetime] NULL,
+ CONSTRAINT [PK_AdImages_1] PRIMARY KEY CLUSTERED 
+(
+	[Cd] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+CREATE OR ALTER PROCEDURE Ad_Delete 
+	@v_CounterCd varchar(10)='',
+	@v_Cd int=0
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	delete from AdImages where CounterCd = @v_CounterCd and (Cd=@v_Cd or @v_Cd=0)
+END
+
+
+CREATE OR ALTER PROCEDURE AdImages_GetRow
+	@v_CounterCd varchar(10)='',
+	@v_Cd int = 0
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select * from AdImages where CounterCd = @v_CounterCd and (Cd = @v_Cd or @v_Cd=0)
+END
+
+
+CREATE OR ALTER   PROCEDURE [dbo].[Counter_Getrow]
+	@v_CounterCd varchar(10)=''
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	Select * from Counters where Cd= @v_CounterCd or @v_CounterCd = ''
+END
+ 
+ Go 
+-- =============================================
+-- Author:		Ginesh
+-- CREATE OR ALTER date: 21/05/2024
+-- =============================================
+CREATE OR ALTER PROCEDURE Counter_Delete
+	@v_CounterCd varchar(10)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    Delete from Counters where Cd= @v_CounterCd
+END
