@@ -1033,20 +1033,19 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpVariablePayDedComponents(VariablePayDedComponentModel model)
         {
-            _transactionService.DeleteEmpTrans(string.Empty, model.FilterModel.PayCode, model.FilterModel.PayType, model.FilterModel.Branch);
             model.FilterModel.EntryBy = _loggedInUser.UserCd;
-            foreach (var item in model.VariableComponentsData)
-            {
-                var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
-                item.Curr = employeeDetail.BasicCurr.Trim();
-                //item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
-                item.TransId = "M";
-                _transactionService.EmpTrans_Update(item, model.FilterModel);
-            }
+            if (model.VariableComponentsData?.Count > 0)
+                foreach (var item in model.VariableComponentsData)
+                {
+                    var employeeDetail = _employeeService.FindEmployee(item.Cd, _loggedInUser.CompanyCd);
+                    item.Curr = employeeDetail.BasicCurr.Trim();
+                    item.TransId = "M";
+                    _transactionService.EmpTrans_Update(item, model.FilterModel);
+                }
             var result = new CommonResponse
             {
-                Success = true,
-                Message = CommonMessage.UPDATED
+                Success = model.VariableComponentsData?.Count > 0,
+                Message = model.VariableComponentsData?.Count > 0 ? CommonMessage.UPDATED : "No record found"
             };
             return Json(result);
         }

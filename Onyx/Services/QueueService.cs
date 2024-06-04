@@ -76,7 +76,7 @@ namespace Onyx.Services
         }
         public void SaveAdFile(AdModel model)
         {
-            var procedureName = "CompDocImages_Update_N";
+            var procedureName = "AdImages_Update";
             var parameters = new DynamicParameters();
             parameters.Add("v_Cd", model.Cd);
             parameters.Add("v_CounterCd", model.CounterCd);
