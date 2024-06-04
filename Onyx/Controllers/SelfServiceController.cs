@@ -103,10 +103,10 @@ namespace Onyx.Controllers
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            //bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
             if (!lvExist)
             {
-                if ((LeaveBalance >= lvDays && maxLeave >= lvDays) || confirmed)
+                if ((LeaveBalance >= lvDays && maxLeave >= lvDays) || (confirmed && !blockLeave))
                 {
                     _transactionService.SaveLeave(model);
                     var ActivityAbbr = "INS";
@@ -124,7 +124,7 @@ namespace Onyx.Controllers
             {
                 Success = false,
                 Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
-                //Data = new { confirmation = !blockLeave }
+                Data = new { confirmation = !confirmed && !blockLeave }
             });
         }
         #endregion
@@ -147,8 +147,8 @@ namespace Onyx.Controllers
             var LeaveSalaryBalance = leaveTrans.LvSalaryOp + leaveTrans.LvSalary - leaveTrans.LvSalaryTaken;
             var LeaveTicketBalance = leaveTrans.LvTicketOp + leaveTrans.LvTicket - leaveTrans.LvTicketTaken;
             model.EntryBy = _loggedInUser.UserCd;
-            //bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
-            if ((Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket) || confirmed)
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
+            if ((Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket) || (confirmed && !blockLeave))
             {
                 _transactionService.SaveLeaveSalary(model);
                 var ActivityAbbr = "INS";
@@ -165,7 +165,7 @@ namespace Onyx.Controllers
             {
                 Success = false,
                 Message = "You have insufficient Leave Salary/Ticket Balance",
-                //Data = new { confirmation = !blockLeave }
+                Data = new { confirmation = !confirmed && !blockLeave }
             });
         }
         #endregion
