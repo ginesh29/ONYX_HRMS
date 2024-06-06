@@ -139,6 +139,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId, bool confirmed = false)
         {
+            model.LvSalary = model.LvSalary ?? 0;
+            model.LvTicket = model.LvTicket ?? 0;
             var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
                 EmpCd = model.EmployeeCode,
@@ -148,7 +150,7 @@ namespace Onyx.Controllers
             var LeaveTicketBalance = leaveTrans.LvTicketOp + leaveTrans.LvTicket - leaveTrans.LvTicketTaken;
             model.EntryBy = _loggedInUser.UserCd;
             bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
-            if ((Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary && Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket) || (confirmed && !blockLeave))
+            if (Convert.ToDecimal(LeaveSalaryBalance) >= model.LvSalary || Convert.ToDecimal(LeaveTicketBalance) >= model.LvTicket || (confirmed && !blockLeave))
             {
                 _transactionService.SaveLeaveSalary(model);
                 var ActivityAbbr = "INS";

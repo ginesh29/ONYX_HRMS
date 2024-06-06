@@ -1045,7 +1045,7 @@ namespace Onyx.Controllers
             var result = new CommonResponse
             {
                 Success = model.VariableComponentsData?.Count > 0,
-                Message = model.VariableComponentsData?.Count > 0 ? CommonMessage.UPDATED : "No record found"
+                Message = $"{model.VariableComponentsData.Count} record(s) {CommonMessage.UPDATED}"
             };
             return Json(result);
         }

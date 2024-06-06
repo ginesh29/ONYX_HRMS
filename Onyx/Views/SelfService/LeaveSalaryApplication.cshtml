@@ -45,7 +45,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="LvSalary"></label><span class="ml-2" id="LeaveSalaryBalance"></span>
-                            <input asp-for="LvSalary" class="form-control decimal-input" />
+                            <input asp-for="LvSalary" class="form-control decimal-input either-or" />
                             <span asp-validation-for="LvSalary" class="text-danger"></span>
                         </div>
                     </div>
@@ -108,5 +108,19 @@
                 $("#LeaveTicketBalance").text(`Balance: ${formatDecimal(LeaveTicketBalance)}`);
             });
         }
+        setTimeout(function () {
+            $('#LvSalary').rules("add", {
+                eitherOrRequired: ['#LvTicket', '#LvSalary'],
+                messages: {
+                    eitherOrRequired: "Please enter Leave Salary"
+                }
+            });
+            $('#LvTicket').rules("add", {
+                eitherOrRequired: ['#LvSalary', '#LvTicket'],
+                messages: {
+                    eitherOrRequired: "Please enter Leave Ticket"
+                }
+            });
+        }, 500)
     </script>
 }

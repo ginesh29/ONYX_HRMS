@@ -108,6 +108,11 @@
             var frm = $("#incentive-frm");
             if (frm.valid()) {
                 loadingButton(btn);
+                var filterModel = {
+                    Branch: $("#FilterModel_Branch").val(),
+                    MonthYear: $("#FilterModel_MonthYear").val(),
+                };
+                var frmData = getFrmData();
                 var url = `/Incentives/SaveEmpIncentive`;
                 postAjax(url, decodeURI(frm.serialize()), function (response) {
                     if (response.success) {
@@ -153,7 +158,25 @@
             else
                 showErrorToastr(`${ext.toUpperCase()} file type not allowed`);
         }
+        function getFrmData() {
+            var frmData = [];
+            var totalRows = $("[id$=__Cd]").length;
+            for (var i = 0; i < totalRows; i++) {
+                frmData.push({
+                    SrNo: $(`#IncentiveData_${i}__SrNo`).val(),
+                    Cd: $(`#IncentiveData_${i}__Cd`).val(),
+                    SalesAmt: $(`#IncentiveData_${i}__SalesAmt`).val(),
+                    Amt: $(`#IncentiveData_${i}__Amt`).val(),
+                    Amt1: $(`#IncentiveData_${i}__Amt1`).val(),
+                    Narr: $(`#IncentiveData_${i}__Narr`).val(),
+                    Active: $(`#IncentiveData_${i}__Active`).is(":checked")
+                });
+            }
+            var filtered = frmData.filter(m => m.Active);
+            return filtered;
+        }
         bindEmployeeDropdown();
+
         function changeCheckbox(cur) {
             $(cur).closest("tr").find("input").addClass("disabled");
             $(cur).closest("tr").removeClass("table-primary");

@@ -1,30 +1,86 @@
 ﻿@model IEnumerable<GetRepo_ExpiredDocument_Result>
 <div class="table-responsive">
-    <table class="table table-sm" id="DocExpiredReportTable" style="font-size:small">
-        <thead class="thead-dark">
-            <tr>
-                <th>Type</th>
-                <th>Cd</th>
-                <th>Name</th>
-                <th>Doc. No</th>
-                <th>OthRefNo</th>
-                <th>IssuePlace</th>
-                <th>Issue Date</th>
-                <th>Expiry Date</th>
-            </tr>
-        </thead>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Type</td>
-                <td>@item.Cd</td>
-                <td>@item.Name</td>
-                <td>@item.DocNo</td>
-                <td>@item.OthRefNo</td>
-                <td>@item.IssuePlace</td>
-                <td>@item.IssueDt.FormatDate()</td>
-                <td>@item.ExpDt.FormatDate()</td>
-            </tr>
-        }
-    </table>
+    <div class="div-table" id="DocExpiredReportTable" style="font-size:small">
+        <div class="thead">
+            <div class="tr">
+                <div class="th">Type</div>
+                <div class="th">Cd</div>
+                <div class="th">Name</div>
+                <div class="th">Doc. No</div>
+                <div class="th">OthRefNo</div>
+                <div class="th">IssuePlace</div>
+                <div class="th">Issue Date</div>
+                <div class="th">Expiry Date</div>
+            </div>
+        </div>
+        <div class="tbody">
+            @foreach (var item in Model)
+            {
+                <div class="tr">
+                    <div class="td">@item.Type</div>
+                    <div class="td">@item.Cd</div>
+                    <div class="td">@item.Name</div>
+                    <div class="td">@item.DocNo</div>
+                    <div class="td">@item.OthRefNo</div>
+                    <div class="td">@item.IssuePlace</div>
+                    <div class="td">@item.IssueDt.FormatDate()</div>
+                    <div class="td">@item.ExpDt.FormatDate()</div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+<style>
+    .div-table {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .thead, .tbody {
+        display: table-header-group;
+        display: table-row-group;
+    }
+
+    .tr {
+        display: table-row;
+    }
+
+    .th, .td {
+        display: table-cell;
+        border: 1px solid #dee2e6;
+        padding: 1.5rem;
+        vertical-align: top;
+    }
+
+    .thead .th {
+        background-color: #343a40;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .tbody .td {
+        padding: 10px;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .thead .th.group {
+        background-color: #343a40;
+        color: white;
+        font-weight: bold;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .thead .th.sub {
+        background-color: #f8f9fa;
+        color: black;
+        font-weight: normal;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
