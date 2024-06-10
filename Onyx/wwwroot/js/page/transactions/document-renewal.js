@@ -42,7 +42,7 @@
     $("#RenewalDocumentsSearchDataTable").removeClass("d-none")
 }
 function showDocumentRenewalModal() {
-    var url = `/Transactions/DocumentRenew`;
+    var url = `/Transactions/DocumentRenew?processId=HRPT8`;
     window.location.href = url;
 }
 function showEmpDocumentModal(empCd, docTypeCd, srNo) {
