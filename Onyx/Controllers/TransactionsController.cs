@@ -1381,6 +1381,22 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+        #region WPS
+        public IActionResult WPSProcess()
+        {
+            ViewBag.SponsorItems = _commonService.GetCodesGroups(CodeGroup.Sponsor).Select(m => new SelectListItem
+            {
+                Value = m.Code.Trim(),
+                Text = $"{m.ShortDes}({m.Code.Trim()})"
+            });
+            ViewBag.BUItems = _commonService.GetBusinessUnits(_loggedInUser.CompanyCd).Select(m => new SelectListItem
+            {
+                Value = m.Cd.Trim(),
+                Text = $"{m.SDes}"
+            });
+            return View();
+        }
+        #endregion
 
         #region Pre Payroll Process
         public IActionResult PrePayRollProcess()

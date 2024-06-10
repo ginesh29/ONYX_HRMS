@@ -213,6 +213,18 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return data;
         }
+        public IEnumerable<GetSysCodes_Result> GetBusinessUnits(string CoCd)
+        {
+            var procedureName = "BusinessUnits_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_Cd", string.Empty);
+            parameters.Add("v_CoCd", CoCd);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var data = connection.Query<GetSysCodes_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return data;
+        }
         public IEnumerable<WidgetMaster_GetRow_Result> GetWidgetMaster()
         {
             var procedureName = "WidgetMaster_GetRow";

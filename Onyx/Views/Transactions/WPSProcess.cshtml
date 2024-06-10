@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = SharedResource["WPS"];
+}
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Sponsor</label>
+                    <select id="Sponsor" name="Sponsor" class="form-control select-picker" asp-items="ViewBag.SponsorItems">
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>BU</label>
+                    <select id="BU" name="BU" class="form-control select-picker" asp-items="ViewBag.BUItems">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        
+    </div>
+</div>

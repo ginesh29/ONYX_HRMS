@@ -123,9 +123,11 @@
         }
         bindEmployeeDropdown();
         function getTotalLeave(e) {
-            getAjax(`/SelfService/GetLeaveType?cd=${e.value}`, function (response) {
-                $("#TotalLeave").text(`Max. Leave: ${response.lvMax}`);
-            });
+            $("#TotalLeave").text('');
+            if (e.value != 'UL')
+                getAjax(`/SelfService/GetLeaveType?cd=${e.value}`, function (response) {
+                    $("#TotalLeave").text(`Max. Leave: ${response.lvMax}`);
+                });
         }
         function getLeaveBalance(e) {
             getAjax(`/SelfService/GetBalance?empCd=${encodeURI(e.value)}`, function (response) {

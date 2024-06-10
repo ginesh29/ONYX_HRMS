@@ -106,7 +106,7 @@ namespace Onyx.Controllers
             bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
             if (!lvExist)
             {
-                if ((LeaveBalance >= lvDays && maxLeave >= lvDays) || (confirmed && !blockLeave))
+                if ((LeaveBalance >= lvDays && maxLeave >= lvDays) || (confirmed && !blockLeave) || model.LeaveType == "UL")
                 {
                     _transactionService.SaveLeave(model);
                     var ActivityAbbr = "INS";
@@ -124,7 +124,7 @@ namespace Onyx.Controllers
             {
                 Success = false,
                 Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
-                Data = new { confirmation = !confirmed && !blockLeave }
+                Data = new { confirmation = !confirmed && !blockLeave && model.LeaveType != "UL" }
             });
         }
         #endregion
@@ -139,8 +139,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveSalaryApplication(EmpLeaveSalaryModel model, string processId, bool confirmed = false)
         {
-            model.LvSalary = model.LvSalary ?? 0;
-            model.LvTicket = model.LvTicket ?? 0;
+            model.LvSalary ??= 0;
+            model.LvTicket ??= 0;
             var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
                 EmpCd = model.EmployeeCode,
