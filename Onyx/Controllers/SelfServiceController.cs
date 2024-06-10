@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Controllers
 {
@@ -91,7 +92,6 @@ namespace Onyx.Controllers
         public IActionResult SaveLeaveApplication(EmpLeaveModel model, string processId, bool confirmed = false)
         {
             model.EntryBy = _loggedInUser.UserCd;
-            var maxLeave = _transactionService.GetEmpMaxLeave(_loggedInUser.CompanyCd, model.LeaveType);
             var leaveTrans = _reportService.GetBalanceTransactions(new BalanceTransactionFilterModel
             {
                 EmpCd = model.EmployeeCode,
@@ -103,11 +103,24 @@ namespace Onyx.Controllers
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val != "Y";
             if (!lvExist)
             {
-                if ((LeaveBalance >= lvDays && maxLeave >= lvDays) || (confirmed && !blockLeave) || model.LeaveType == "UL")
+                if ((LeaveBalance >= lvDays) || (confirmed && !blockLeave) || model.LeaveType == "UL")
                 {
+                    if (LeaveBalance < lvDays)
+                    {
+                        var toDate = model.FromDt.Value.AddDays(LeaveBalance - 1);
+                        model.WpFromDt = model.FromDt.Value;
+                        model.WpToDt = toDate;
+                        model.WopFromDt = toDate.AddDays(1);
+                        model.WopToDt = model.ToDt.Value;
+                    }
+                    else
+                    {
+                        model.WpFromDt = model.FromDt.Value;
+                        model.WpToDt = model.ToDt.Value;
+                    }
                     _transactionService.SaveLeave(model);
                     var ActivityAbbr = "INS";
                     var Message = $"Leave is applied With Trans no = {model.TransNo}";
@@ -123,8 +136,8 @@ namespace Onyx.Controllers
             return Json(new CommonResponse
             {
                 Success = false,
-                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : maxLeave < lvDays ? "Leave Application Maximum Limit Exceeded" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
-                Data = new { confirmation = !confirmed && !blockLeave && model.LeaveType != "UL" }
+                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
+                Data = new { confirmation = !lvExist && !confirmed && !blockLeave && model.LeaveType != "UL" }
             });
         }
         #endregion

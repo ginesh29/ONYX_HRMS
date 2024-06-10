@@ -1,3 +1,22 @@
+CREATE OR ALTER       PROCEDURE [dbo].[VerifyExistingLvApplication_N]
+    @EmpCd Char(10),
+	@StartDt varchar(20),
+	@EndDt varchar(20)
+AS
+-- VerifyExistingLvApplication_N '362','05/29/2024','06/05/2024'
+BEGIN
+    SET NOCOUNT ON;
+    -- Select entries from EmpLeave table satisfying the conditions
+	if (SELECT count(0)
+    FROM EmpLeave
+    WHERE EmpCd = @EmpCd
+	AND (LvStatus not in ( 'R' ,'C'))
+    AND (JoinDt is null OR (FromDt <= @EndDt AND ToDt >= @StartDt)))=0
+		SELECT 'FALSE' AS Result;
+	else
+		SELECT 'TRUE' AS Result;
+END 
+ Go 
 
 CREATE OR ALTER PROCEDURE [dbo].[Ad_Delete] 
 	@v_UserCd varchar(10)='',
@@ -437,24 +456,6 @@ End
 --SELECT   Sum(AmtVal)[LoanRecoveryAmount] from EmpLoanDetail where EffDate>= DATEADD(MONTH, DATEDIFF(MONTH, 0, @startdate) , 0) and EndDate<=cast(EOMONTH(@startdate) as datetime) and Typ='D'
 
 --Admin Dashboard salary details graph 
- Go 
-CREATE OR ALTER       PROCEDURE [dbo].[VerifyExistingLvApplication_N]
-    @EmpCd Char(10),
-	@StartDt varchar(20),
-	@EndDt varchar(20)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    -- Select entries from EmpLeave table satisfying the conditions
-	if (SELECT count(0)
-    FROM EmpLeave
-    WHERE EmpCd = @EmpCd
-	AND (LvStatus != 'R' or  LvStatus != 'C')
-    AND (JoinDt is null OR (FromDt <= @EndDt AND ToDt >= @StartDt)))=0
-		SELECT 'FALSE' AS Result;
-	else
-		SELECT 'TRUE' AS Result;
-END 
  Go 
 -- =============================================
 -- Author:		<Author,,Name>

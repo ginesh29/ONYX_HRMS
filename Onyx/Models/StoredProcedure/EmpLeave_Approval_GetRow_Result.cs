@@ -17,13 +17,13 @@
         public DateTime? LvTo { get; set; }
         public string FormatedToDt { get; set; }
         public string LvInter { get; set; }
-        public DateTime? WpFrom { get; set; }
+        public DateTime? WP_FromDt { get; set; }
         public string FormatedWP_FromDt { get; set; }
-        public DateTime? WpTo { get; set; }
+        public DateTime? WP_ToDt { get; set; }
         public string FormatedWp_ToDt { get; set; }
-        public DateTime? WopFrom { get; set; }
+        public DateTime? WOP_FromDt { get; set; }
         public string FormatedWOP_FromDt { get; set; }
-        public DateTime? WopTo { get; set; }
+        public DateTime? WOP_ToDt { get; set; }
         public string FormatedWOP_ToDt { get; set; }
         public string ApprBy { get; set; }
         public DateTime? ApprDt { get; set; }

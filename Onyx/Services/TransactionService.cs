@@ -243,6 +243,8 @@ namespace Onyx.Services
             parameters.Add("v_LvTyp", model.LeaveType);
             parameters.Add("v_FromDt", model.FromDt);
             parameters.Add("v_ToDt", model.ToDt);
+            parameters.Add("v_WOP_FromDt", model.WopFromDt);
+            parameters.Add("v_WOP_ToDt", model.WopToDt);
             parameters.Add("v_LvTaken", model.LvTaken);
             parameters.Add("v_DocRef", string.Empty);
             parameters.Add("v_DocDt", DateTime.Now);
@@ -324,7 +326,7 @@ namespace Onyx.Services
             var procedureName = "Employee_LeaveHistory_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_EmpCd", empCd);
-            parameters.Add("v_FromDt", Convert.ToDateTime(FromDt).IsNotEmptyDate() ? FromDt.ToString(CommonSetting.InputDateFormat) : string.Empty); ;
+            parameters.Add("v_FromDt", Convert.ToDateTime(FromDt).IsNotEmptyDate() ? FromDt.ToString(CommonSetting.InputDateFormat) : string.Empty);
             parameters.Add("v_ToDt", Convert.ToDateTime(ToDt).IsNotEmptyDate() ? ToDt.ToString(CommonSetting.InputDateFormat) : string.Empty);
             var connectionString = _dbGatewayService.GetConnectionString();
             var connection = new SqlConnection(connectionString);

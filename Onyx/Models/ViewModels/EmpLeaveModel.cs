@@ -32,6 +32,10 @@ namespace Onyx.Models.ViewModels
         public string SubstituteName { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         public string Reason { get; set; }
+        public DateTime WpFromDt { get; set; }
+        public DateTime WpToDt { get; set; }
+        public DateTime WopFromDt { get; set; }
+        public DateTime WopToDt { get; set; }
         public string Narr { get; set; }
         public string LvApprBy { get; set; }
         public string LvStatus { get; set; }
