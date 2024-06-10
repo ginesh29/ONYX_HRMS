@@ -14,7 +14,7 @@
     var LeaveTotal = LeaveOpening + LeaveCum;
     var Leave = LeaveOpening + LeaveCum;
     var LeaveTaken = leaveDetail.LeaveTaken;
-    var LeaveBalance = Leave - LeaveTaken;
+    var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
     var LeaveEligibility = LeaveBalance >= leaveDetail.ReqLv ? "Yes" : "No";
     var LeaveEligibilityColor = LeaveEligibility == "Yes" ? "success" : "danger";
 
@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-md-6">
                         <h5 class="text-primary">Approval Details</h5>
-                        <table class="table table-sm">
+                        <table class="table-sm table">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>Approved By</th>
@@ -98,7 +98,7 @@
                             }
                         </table>
                         <h5 class="text-primary">Salary Details</h5>
-                        <table class="table table-sm">
+                        <table class="table-sm table">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>Description</th>
@@ -123,7 +123,7 @@
                 </div>
                 <h5 class="text-primary mt-2">Balance Details</h5>
                 <div class="table-responsive">
-                    <table class="table table-sm">
+                    <table class="table-sm table">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Type</th>
@@ -174,7 +174,7 @@
                     </table>
                 </div>
                 <h5 class="text-primary mt-2">Previous Exit & Entry Details</h5>
-                <table class="table table-sm">
+                <table class="table-sm table">
                     <thead class="thead-dark">
                         <tr>
                             <th>Date Range</th>
