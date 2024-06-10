@@ -12,36 +12,33 @@
     var LeaveOpening = leaveDetail.LeaveOp;
     var LeaveCum = leaveDetail.Leave;
     var LeaveTotal = LeaveOpening + LeaveCum;
-    var Leave = LeaveOpening + LeaveCum;
     var LeaveTaken = leaveDetail.LeaveTaken;
-    var LeaveBalance = LeaveOpening + Leave - LeaveTaken;
+    var LeaveBalance = LeaveTotal - LeaveTaken;
     var LeaveEligibility = LeaveBalance >= leaveDetail.ReqLv ? "Yes" : "No";
     var LeaveEligibilityColor = LeaveEligibility == "Yes" ? "success" : "danger";
 
     var LeaveSalDaysOpening = leaveDetail.LvSalDaysOp;
     var LeaveSalDaysCum = leaveDetail.LvSalDays;
     var LeaveSalDaysTotal = LeaveSalDaysOpening + LeaveSalDaysCum;
-    var LeaveSalDays = LeaveSalDaysOpening + LeaveSalDaysCum;
     var LeaveSalDaysTaken = leaveDetail.LvSalDaysTaken;
-    var LeaveSalDaysBalance = LeaveSalDaysOpening + LeaveSalDays - LeaveSalDaysTaken;
+    var LeaveSalDaysBalance = LeaveSalDaysTotal - LeaveSalDaysTaken;
 
     var LeaveSalOpening = leaveDetail.LvSalaryOp;
     var LeaveSalCum = leaveDetail.LvSalary;
     var LeaveSalTotal = LeaveSalOpening + LeaveSalCum;
-    var LeaveSal = LeaveSalOpening + LeaveSalCum;
     var LeaveSalTaken = leaveDetail.LvSalaryTaken;
-    var LeaveSalBalance = LeaveSalOpening + LeaveSal - LeaveSalTaken;
+    var LeaveSalBalance = LeaveSalTotal - LeaveSalTaken;
     var LeaveSalEligibility = LeaveSalBalance >= leaveDetail.LvSalYr ? "Yes" : "No";
     var LeaveSalEligibilityColor = LeaveSalEligibility == "Yes" ? "success" : "danger";
 
     var LeaveTicketOpening = leaveDetail.LvTicketOp;
     var LeaveTicketCum = leaveDetail.LvTicket;
     var LeaveTicketTotal = LeaveTicketOpening + LeaveTicketCum;
-    var LeaveTicket = LeaveTicketOpening + LeaveTicketCum;
     var LeaveTicketTaken = leaveDetail.LvTicketTaken;
-    var LeaveTicketBalance = LeaveTicketOpening + LeaveTicket - LeaveTicketTaken;
+    var LeaveTicketBalance = LeaveTicketTotal - LeaveTicketTaken;
     var LeaveTicketEligibility = LeaveTicketBalance >= leaveDetail.LvTicYr ? "Yes" : "No";
     var LeaveTicketEligibilityColor = LeaveTicketEligibility == "Yes" ? "success" : "danger";
+
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
