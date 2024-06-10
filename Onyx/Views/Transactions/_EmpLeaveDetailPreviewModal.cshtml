@@ -138,7 +138,7 @@
                             <td>@LeaveCum.ToString(DecimalFormat)</td>
                             <td>@LeaveTotal.ToString(DecimalFormat)</td>
                             <td>@LeaveTaken</td>
-                            <td>@(LeaveBalance > 0 ? LeaveTotal.ToString(DecimalFormat) : 0)</td>
+                            <td>@(LeaveBalance > 0 ? LeaveBalance.ToString(DecimalFormat) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveEligibilityColor">@LeaveEligibility</span></td>
                         </tr>
                         <tr>
@@ -147,7 +147,7 @@
                             <td>@(LeaveSalDaysCum > 0 ? LeaveSalDaysCum.ToString(DecimalFormat) : 0)</td>
                             <td>@LeaveSalDaysTotal.ToString(DecimalFormat)</td>
                             <td>@LeaveSalDaysTaken</td>
-                            <td>@(LeaveSalDaysBalance > 0 ? LeaveSalDaysTotal.ToString(DecimalFormat) : 0)</td>
+                            <td>@(LeaveSalDaysBalance > 0 ? LeaveSalDaysBalance.ToString(DecimalFormat) : 0)</td>
                             <td>-</td>
                         </tr>
                         <tr>
@@ -156,7 +156,7 @@
                             <td>@(LeaveSalCum > 0 ? LeaveSalCum.ToString(DecimalFormat) : 0)</td>
                             <td>@LeaveSalTotal.ToString(DecimalFormat)</td>
                             <td>@LeaveSalTaken</td>
-                            <td>@(LeaveSalBalance > 0 ? LeaveSalTotal.ToString(DecimalFormat) : 0)</td>
+                            <td>@(LeaveSalBalance > 0 ? LeaveSalBalance.ToString(DecimalFormat) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveSalEligibilityColor">@LeaveSalEligibility</span></td>
                         </tr>
                         <tr>
@@ -165,7 +165,7 @@
                             <td>@(LeaveTicketCum > 0 ? LeaveTicketCum.ToString(DecimalFormat) : 0)</td>
                             <td>@LeaveTicketTotal.ToString(DecimalFormat)</td>
                             <td>@LeaveTicketTaken</td>
-                            <td>@(LeaveTicketBalance > 0 ? LeaveTicketTotal.ToString(DecimalFormat) : 0)</td>
+                            <td>@(LeaveTicketBalance > 0 ? LeaveTicketBalance.ToString(DecimalFormat) : 0)</td>
                             <td><span class="font-weight-bold text-@LeaveTicketEligibilityColor">@LeaveTicketEligibility</span></td>
                         </tr>
                     </table>
