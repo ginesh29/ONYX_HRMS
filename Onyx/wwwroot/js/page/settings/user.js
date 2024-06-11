@@ -20,10 +20,11 @@
             },
             {
                 data: function (row) {
+                    var deleteEnableBtn = row.code == "001" || row.code == "Emp" || row.code == "HR" ? "disabled" : "";
                     return `<button class="btn btn-sm btn-info" onclick="showUserModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteUser('${row.code}')" ${deleteEnable}>
+                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteUser('${row.code}')" ${deleteEnableBtn}>
                                 <i class="fa fa-trash"></i>
                             </button>`
                 }, "width": "80px"
@@ -34,7 +35,7 @@
 function showUserModal(cd) {
     var url = `/Settings/GetUser?cd=${cd}`;
     $('#UserModal').load(url, function () {
-        parseDynamicForm();        
+        parseDynamicForm();
         $("#UserModal").modal("show");
     });
 }

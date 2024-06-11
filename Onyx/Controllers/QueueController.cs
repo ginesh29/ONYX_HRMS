@@ -220,7 +220,7 @@ namespace Onyx.Controllers
         public IActionResult SaveTokenSetting(TokenSettingModel model)
         {
             var tokenSettingJson = JsonConvert.SerializeObject(model);
-            Response.Cookies.Append("TokenSetting", tokenSettingJson, new CookieOptions { Expires = DateTime.Now.AddYears(1) });
+            Response.Cookies.Append("TokenSetting", tokenSettingJson, new CookieOptions { Expires = DateTime.Now.AddYears(100) });
             var result = new CommonResponse
             {
                 Success = true,

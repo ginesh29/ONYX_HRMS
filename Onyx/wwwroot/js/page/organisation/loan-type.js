@@ -22,11 +22,8 @@
                 data: function (row) {
                     return `<button class="btn btn-sm btn-info" onclick="showLoanTypeModal('${row.cd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger ml-2" onclick="deleteLoanType('${row.cd}')" ${deleteEnable}>
-                                <i class="fa fa-trash"></i>
                             </button>`
-                }, "width": "80px"
+                }
             }
         ],
     }

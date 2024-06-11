@@ -33,7 +33,7 @@ namespace Onyx.Controllers
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions { Expires = DateTime.Now.AddYears(1) }
+                new CookieOptions { Expires = DateTime.Now.AddYears(100) }
             );
             return RedirectToAction(nameof(Index));
         }

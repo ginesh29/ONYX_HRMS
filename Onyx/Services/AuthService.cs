@@ -33,10 +33,10 @@ namespace Onyx.Services
             var prop = new AuthenticationProperties
             {
                 IsPersistent = true,
-                ExpiresUtc = DateTime.Now.AddDays(1)
+                ExpiresUtc = DateTime.Now.AddYears(100),
             };
-            _memoryCache.Set("CompanyCd", model.CompanyCd, DateTime.Now.AddDays(2));
-            _memoryCache.Set("CoAbbr", model.CoAbbr, DateTime.Now.AddDays(2));
+            _memoryCache.Set("CompanyCd", model.CompanyCd, DateTime.Now.AddYears(100));
+            _memoryCache.Set("CoAbbr", model.CoAbbr, DateTime.Now.AddYears(100));
             await _httpContextAccessor.HttpContext.SignInAsync(claimsPrincipal, prop);
         }
         public async Task SignOutAsync()
@@ -79,7 +79,7 @@ namespace Onyx.Services
         }
         public async Task UpdateClaim(string key, string value)
         {
-            _memoryCache.Set(key, value, DateTime.Now.AddDays(2));
+            _memoryCache.Set(key, value, DateTime.Now.AddYears(100));
             ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
             ClaimsIdentity identity = (ClaimsIdentity)user.Identity;
             Claim oldClaim = identity.FindFirst(key);
@@ -92,7 +92,7 @@ namespace Onyx.Services
                 var prop = new AuthenticationProperties
                 {
                     IsPersistent = true,
-                    ExpiresUtc = DateTime.Now.AddDays(1)
+                    ExpiresUtc = DateTime.Now.AddYears(100)
                 };
                 await _httpContextAccessor.HttpContext.SignInAsync(user, prop);
             }
