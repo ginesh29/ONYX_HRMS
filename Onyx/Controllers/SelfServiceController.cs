@@ -103,10 +103,9 @@ namespace Onyx.Controllers
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
             if (!lvExist)
             {
-                if ((LeaveBalance >= lvDays) || (confirmed && !blockLeave) || model.LeaveType == "UL")
+                if ((LeaveBalance >= lvDays) || confirmed || model.LeaveType == "UL")
                 {
                     if (LeaveBalance < lvDays)
                     {
@@ -137,7 +136,7 @@ namespace Onyx.Controllers
             {
                 Success = false,
                 Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
-                Data = new { confirmation = !lvExist && !confirmed && !blockLeave && model.LeaveType != "UL" }
+                Data = new { confirmation = !lvExist && !confirmed && model.LeaveType != "UL" }
             });
         }
         #endregion

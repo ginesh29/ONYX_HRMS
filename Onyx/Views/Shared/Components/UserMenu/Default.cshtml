@@ -28,10 +28,10 @@
     <ul class="navbar-nav @(rtl?"mr-auto-navbav":"ml-auto")">
         @if (loggedInUser.UserLinkedTo != "Emp")
         {
-            var loanPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS1");
-            var leavePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS2");
-            var leaveSalaryPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS3");
-            var fundPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPSS4");
+            var loanPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT21");
+            var leavePermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT11");
+            var leaveSalaryPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT6");
+            var fundPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HREFA");
             var empProgressionPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT6");
             var docRenewalPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT8");
             var provisionAdjPermission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, "HRPT14");
