@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Onyx.Models.ViewModels;
 using Onyx.Models.ViewModels.Report;
 using Onyx.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Onyx.Controllers
 {
@@ -132,10 +131,11 @@ namespace Onyx.Controllers
                     return Json(result);
                 }
             }
+            int unpaidDays = lvDays - Convert.ToInt32(LeaveBalance);
             return Json(new CommonResponse
             {
                 Success = false,
-                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : LeaveBalance < lvDays ? "You have insufficient Leave Balance" : string.Empty,
+                Message = lvExist ? "Leave already applied on same day or not yet Resume Duty" : LeaveBalance < lvDays ? $"You have insufficient Leave Balance. {unpaidDays} day(s) are unpaid" : string.Empty,
                 Data = new { confirmation = !lvExist && !confirmed && model.LeaveType != "UL" }
             });
         }

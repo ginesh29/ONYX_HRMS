@@ -33,7 +33,7 @@
     }
 );
 function showUserModal(cd) {
-    var url = `/Settings/GetUser?cd=${cd}`;
+    var url = `/Settings/GetUser?cd=${encodeURI(cd)}`;
     $('#UserModal').load(url, function () {
         parseDynamicForm();
         $("#UserModal").modal("show");

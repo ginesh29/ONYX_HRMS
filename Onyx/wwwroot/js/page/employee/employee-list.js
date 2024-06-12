@@ -9,7 +9,7 @@ function BindEmployeeGrid(page) {
     name = name ? name : searchText;
     var pageSize = $("#PageSize").val();
     page = page ? page : $(".active.page-item .page-link").text();
-    var url = `/Employee/FetchEmployees?Name=${encodeURI(name)}&${frm}&page=${page}&pageSize=${pageSize}`;
+    var url = `/Employee/FetchPagedEmployees?Name=${encodeURI(name)}&${frm}&page=${page}&pageSize=${pageSize}`;
     $('#EmployeeTableContainer').load(url, function () {
         unloadingPage();
     });

@@ -8,10 +8,9 @@ using System.Security.Claims;
 
 namespace Onyx.Services
 {
-    public class AuthService(IHttpContextAccessor httpContextAccessor, IMemoryCache memoryCache)
+    public class AuthService(IHttpContextAccessor httpContextAccessor)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        private readonly IMemoryCache _memoryCache = memoryCache;
         public async Task SignInUserAsync(LoggedInUserModel model)
         {
             var claims = new List<Claim>()
@@ -34,15 +33,10 @@ namespace Onyx.Services
                 IsPersistent = true,
                 ExpiresUtc = DateTime.Now.AddYears(100),
             };
-            _memoryCache.Set("CompanyCd", model.CompanyCd, DateTime.Now.AddYears(100));
-            _memoryCache.Set("CoAbbr", model.CoAbbr, DateTime.Now.AddYears(100));
             await _httpContextAccessor.HttpContext.SignInAsync(claimsPrincipal, prop);
         }
         public async Task SignOutAsync()
         {
-            _memoryCache.Remove("CompanyCd");
-            _memoryCache.Remove("ActivityId");
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(CookieRequestCultureProvider.DefaultCookieName);
             await _httpContextAccessor.HttpContext.SignOutAsync();
         }
         public LoggedInUserModel GetLoggedInUser()
@@ -78,7 +72,6 @@ namespace Onyx.Services
         }
         public async Task UpdateClaim(string key, string value)
         {
-            _memoryCache.Set(key, value, DateTime.Now.AddYears(100));
             ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
             ClaimsIdentity identity = (ClaimsIdentity)user.Identity;
             Claim oldClaim = identity.FindFirst(key);

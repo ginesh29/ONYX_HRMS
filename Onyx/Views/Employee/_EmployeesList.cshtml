@@ -19,7 +19,7 @@
         item.LvStatus == "P" ? "Present" : "Resigned";
         var statusClass = item.LvStatus == "N" ? "warning" : item.LvStatus == "Y" ? "orange" : item.LvStatus == "F" ? "danger" : item.LvStatus == "P" ? "success" : "secondary";
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
-            <div class="card bg-light d-flex flex-fill border border-info">
+            <div class="card bg-light d-flex flex-fill border-info border">
                 <div class="card-header text-muted border-bottom-0">
                     <div class="d-flex justify-content-between">
                         <div>
@@ -33,17 +33,17 @@
                 <div class="card-body pt-0 pb-0">
                     <div class="row">
                         <div class="col-7">
-                            <p class="text-muted text-sm mb-0"><b>Code: </b> @item.Cd</p>
-                            <p class="text-muted text-sm mb-0"><b>Branch: </b> @item.Branch</p>
-                            <p class="text-muted text-sm mb-0"><b>Sponsor: </b> @item.Sponsor</p>
-                            <p class="text-muted text-sm mb-0"><b>Designation: </b> @item.Designation</p>
-                            <p class="text-muted text-sm mb-0"><b>Department: </b> @item.Department</p>
-                            <p class="text-muted text-sm mb-0"><b>Type: </b> @item.EmpType</p>
-                            <p class="text-muted text-sm mb-0"><b>Nationality: </b> @item.Nationality</p>
-                            <p class="text-muted text-sm mb-0"><b>Date of Join: </b> @item.DOJ.ToString(dateFormat)</p>
+                            <p class="text-muted mb-0 text-sm"><b>Code: </b> @item.Cd</p>
+                            <p class="text-muted mb-0 text-sm"><b>Branch: </b> @item.Branch</p>
+                            <p class="text-muted mb-0 text-sm"><b>Sponsor: </b> @item.Sponsor</p>
+                            <p class="text-muted mb-0 text-sm"><b>Designation: </b> @item.Designation</p>
+                            <p class="text-muted mb-0 text-sm"><b>Department: </b> @item.Department</p>
+                            <p class="text-muted mb-0 text-sm"><b>Type: </b> @item.EmpType</p>
+                            <p class="text-muted mb-0 text-sm"><b>Nationality: </b> @item.Nationality</p>
+                            <p class="text-muted mb-0 text-sm"><b>Date of Join: </b> @item.DOJ.ToString(dateFormat)</p>
                         </div>
                         <div class="col-5 text-center">
-                            <img src="@avatarImage" alt="user-avatar" class="rounded img-fluid border" style="height: 150px;">
+                            <img src="@avatarImage" alt="user-avatar" class="img-fluid rounded border" style="height: 150px;">
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
         <div class="ml-2 mr-5">entries per page</div>
     </div>
     <div>
-        @Html.PagedListPager(data, page => Url.Action("FetchEmployees", new
+        @Html.PagedListPager(data, page => Url.Action("FetchPagedEmployees", new
             {
                 page,
                 pageSize = data.PageSize,

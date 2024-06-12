@@ -1,3 +1,136 @@
+
+CREATE OR ALTER     PROCEDURE [dbo].[Employee_GetRowItems_N] 
+	@v_Empcd			char(10)
+,	@v_Cocd				Char(5)  
+,	@v_Div				varchar(40)		='0'
+,	@v_Dept				varchar(40)		='0'
+,	@v_Section			varchar(40)		='0'
+,	@v_Designation		varchar(40)		='0'
+,	@v_Usercd			varchar(10)	
+,	@v_LvStatus			varchar(5)		=''
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select Emp.Cd,Salute,Dept,LocCd,POB,Nat,Relg,Marital,Desg,Dob,Doj,Basic,BasicCurr,FareEligible,LvDays,Status,Imagefile Image,ImageSign,UserCd
+	 , Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name],
+	 Emp2.LvStatus
+	 ,	(select Imagefile from Employee where cd= Emp.Cd) [ImageFilePath]
+	  , (select SDes FROM Branch where Cd=Emp.Div)[Branch]  
+	   , (select SDes FROM Designation where Designation.cd=Emp.Desg)[Designation]
+	 from Employee Emp
+	   Join
+		 (SELECT cd, dbo.GetFunc_EmpWorkingStatus(cd, GETDATE()) AS LvStatus FROM Employee) [Emp2] ON Emp.Cd = Emp2.cd
+	where 
+	Active='Y' and CoCd =@v_Cocd
+	and 	(Emp.cd=@v_Empcd or @v_Empcd='')
+	and		Emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
+	and		(Emp.Div in (SELECT [Value] FROM dbo.SplitString(@v_Div, ',')) or @v_Div='0')
+	and		(Emp.Dept in (SELECT [Value] FROM dbo.SplitString(@v_Dept, ',')) or @v_Dept='0')
+	and		(Emp.LocCd in (SELECT [Value] FROM dbo.SplitString(@v_Section, ',')) or @v_Section='0')
+	and		(Emp.Desg in (SELECT [Value] FROM dbo.SplitString(@v_Designation, ',')) or @v_Designation='0')
+	and		(Emp2.LvStatus = @v_LvStatus OR @v_LvStatus = '')
+	Order By    
+  EntryDt desc  
+ , EditDt desc  
+ , Emp.Cd  
+END
+ 
+ 
+ 
+ Go 
+
+CREATE OR ALTER     procedure [dbo].[EmpLeave_Update_N]	-- Drop Procedure [dbo].[EmpLeave_Update_N]
+	@v_TransNo		char(30)
+,	@v_TransDt		datetime
+,	@v_EmpCd		char(10)
+,	@v_LvTyp		varchar(30)         
+,	@v_FromDt		datetime
+,	@v_ToDt			datetime
+,	@v_LvTaken		char(5)
+,	@v_DocRef		char(10)
+,	@v_DocDt		datetime --varchar(10)
+,	@v_Substitute	char(10)
+,	@v_Reason		varchar(50)
+,	@v_Narr			varchar(200)
+,	@v_EntryBy		Char(5)
+,	@v_LvInter		Char(1)
+
+,	@V_LvStatus		Char(1)=null
+,	@v_LvApprDays	numeric(5)=null
+,	@v_LvApprBy		char(10)=null
+,	@v_LvApprDt		datetime=null
+,	@v_WP_FromDt	datetime=null
+,	@v_WP_ToDt		datetime=null
+,	@v_WOP_FromDt	datetime=null
+,	@v_WOP_ToDt		datetime=null
+As
+Begin
+	--Declare @v_LvTyp Char(10)
+	DEclare @v_Lv_Max numeric(18,4)
+	select LvMax from CompanyLeaveDetail where LvCd=@v_LvTyp
+	--Select 	@v_LvTyp=cd From CompanyLeave Where SDes=@v_LvTypDes 
+	IF (Select COUNT(*) From EmpLeave Where TransNo=@v_TransNo) = 0
+	  Begin	
+		insert into EmpLeave(TransNo,TransDt,EmpCd,LvTyp,FromDt,ToDt,WP_FromDt,WP_ToDt,WOP_FromDt,WOP_ToDt,LvTaken,
+					DocRef,DocDt,Substitute,Reason,Narr,EntryBy,EntryDt,LvInter,LvStatus)
+		Values(
+			  @v_TransNo
+		,     @v_TransDt
+		,     @v_EmpCd
+		,     @v_LvTyp
+		,     @v_FromDt
+		,     @v_ToDt
+		,	  @v_WP_FromDt
+		,	  @v_WP_ToDt
+		,	  @v_WOP_FromDt
+		,	  @v_WOP_ToDt
+		,     @v_LvTaken
+		,     @v_DocRef
+		,     @v_DocDt
+		,     @v_SubStitute
+		,     @v_Reason
+		,     @v_Narr
+		,     @v_EntryBy
+		,     getdate()
+		,     @v_LvInter
+		,     'N')
+		 exec GetMessage 1,'Inserted successfully'
+	  End
+	 
+	Else
+	  Begin
+		Update EmpLeave Set
+			TransDt=@v_TransDt
+		,	EmpCd=@v_EmpCd
+		,	LvTyp=@v_LvTyp
+		,	FromDt=@v_FromDt
+		,	ToDt=@v_ToDt
+		,	WP_FromDt=@v_WP_FromDt
+		,	WP_ToDt=@v_WP_ToDt
+		,	WOP_FromDt=@v_WOP_FromDt
+		,	WOP_ToDt=@v_WOP_ToDt
+		,	LvTaken=@v_LvTaken
+		,	DocRef=@v_DocRef
+		,	DocDt=@v_DocDt
+		,	Substitute=@v_Substitute
+		,	Reason=@v_Reason
+		,	Narr=@v_Narr
+		,	EditBy=@v_EntryBy
+		,	EditDt=getdate()
+		,	LvInter=@v_LvInter
+		Where
+			TransNo=@v_TransNo
+		exec GetMessage 1,'Updated successfully'
+	  End
+End
+ 
+ 
+ 
+ Go 
 CREATE OR ALTER       PROCEDURE [dbo].[VerifyExistingLvApplication_N]
     @EmpCd Char(10),
 	@StartDt varchar(20),
@@ -6676,87 +6809,6 @@ End
  
  Go 
 
-CREATE OR ALTER     procedure [dbo].[EmpLeave_Update_N]	-- Drop Procedure [dbo].[EmpLeave_Update_N]
-	@v_TransNo		char(30)
-,	@v_TransDt		datetime
-,	@v_EmpCd		char(10)
-,	@v_LvTyp		varchar(30)         
-,	@v_FromDt		datetime
-,	@v_ToDt			datetime
-,	@v_LvTaken		char(5)
-,	@v_DocRef		char(10)
-,	@v_DocDt		datetime --varchar(10)
-,	@v_Substitute	char(10)
-,	@v_Reason		varchar(50)
-,	@v_Narr			varchar(200)
-,	@v_EntryBy		Char(5)
-,	@v_LvInter		Char(1)
-
-,	@V_LvStatus		Char(1)=null
-,	@v_LvApprDays	numeric(5)=null
-,	@v_LvApprBy		char(10)=null
-,	@v_LvApprDt		datetime=null
-,	@v_WP_FromDt	datetime=null
-,	@v_WP_ToDt		datetime=null
-,	@v_WOP_FromDt	datetime=null
-,	@v_WOP_ToDt		datetime=null
-As
-Begin
-	--Declare @v_LvTyp Char(10)
-	DEclare @v_Lv_Max numeric(18,4)
-	select LvMax from CompanyLeaveDetail where LvCd=@v_LvTyp
-	--Select 	@v_LvTyp=cd From CompanyLeave Where SDes=@v_LvTypDes 
-	IF (Select COUNT(*) From EmpLeave Where TransNo=@v_TransNo) = 0
-	  Begin	
-		insert into EmpLeave(TransNo,TransDt,EmpCd,LvTyp,FromDt,ToDt,LvTaken,
-					DocRef,DocDt,Substitute,Reason,Narr,EntryBy,EntryDt,LvInter,LvStatus)
-		Values(
-			  @v_TransNo
-		,     @v_TransDt
-		,     @v_EmpCd
-		,     @v_LvTyp
-		,     @v_FromDt
-		,     @v_ToDt
-		,     @v_LvTaken
-		,     @v_DocRef
-		,     @v_DocDt
-		,     @v_SubStitute
-		,     @v_Reason
-		,     @v_Narr
-		,     @v_EntryBy
-		,     getdate()
-		,     @v_LvInter
-		,     'N')
-		 exec GetMessage 1,'Inserted successfully'
-	  End
-	 
-	Else
-	  Begin
-		Update EmpLeave Set
-			TransDt=@v_TransDt
-		,	EmpCd=@v_EmpCd
-		,	LvTyp=@v_LvTyp
-		,	FromDt=@v_FromDt
-		,	ToDt=@v_ToDt
-		,	LvTaken=@v_LvTaken
-		,	DocRef=@v_DocRef
-		,	DocDt=@v_DocDt
-		,	Substitute=@v_Substitute
-		,	Reason=@v_Reason
-		,	Narr=@v_Narr
-		,	EditBy=@v_EntryBy
-		,	EditDt=getdate()
-		,	LvInter=@v_LvInter
-		Where
-			TransNo=@v_TransNo
-		exec GetMessage 1,'Updated successfully'
-	  End
-End
- 
- 
- 
- Go 
-
 CREATE OR ALTER     Procedure [dbo].[EmpLeave_GetRow_N]  
 @v_Param varchar(30),  
 @v_Typ  char(1),  
@@ -11551,42 +11603,6 @@ Begin
 	Order by
 		cast(REPLACE(trim(Cd), 'DESG', '') as int)  asc
 End
- 
- 
- Go 
-
-CREATE OR ALTER     PROCEDURE [dbo].[Employee_GetRowItems_N] 
-	@v_Empcd			char(10)
-,	@v_Cocd				Char(5)  
-,	@v_Div				varchar(40)		='0'
-,	@v_Dept				varchar(40)		='0'
-,	@v_Section			varchar(40)		='0'
-,	@v_Designation		varchar(40)		='0'
-,	@v_Usercd			varchar(10)			
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	select Cd,Salute,Dept,LocCd,POB,Nat,Relg,Marital,Desg,Dob,Doj,Basic,BasicCurr,FareEligible,LvDays,Status,Imagefile Image,ImageSign,UserCd
-	 , Emp.Fname+' '+isnull(Emp.Mname,'')+' '+isnull(Emp.Lname,'') [Name]
-	 from Employee Emp
-	where 
-	Active='Y' and CoCd =@v_Cocd
-	and 	(Emp.cd=@v_Empcd or @v_Empcd='')
-	and		Emp.Div in(select div from UserBranch where (UserCd=@v_Usercd or @v_Usercd=''))
-	and		(Emp.Div in (SELECT [Value] FROM dbo.SplitString(@v_Div, ',')) or @v_Div='0')
-	and		(Emp.Dept in (SELECT [Value] FROM dbo.SplitString(@v_Dept, ',')) or @v_Dept='0')
-	and		(Emp.LocCd in (SELECT [Value] FROM dbo.SplitString(@v_Section, ',')) or @v_Section='0')
-	and		(Emp.Desg in (SELECT [Value] FROM dbo.SplitString(@v_Designation, ',')) or @v_Designation='0')
-	Order By    
-  EntryDt desc  
- , EditDt desc  
- , Emp.Cd  
-END
- 
  
  
  Go 

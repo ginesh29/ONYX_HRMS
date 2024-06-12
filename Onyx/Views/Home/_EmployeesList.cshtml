@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Employee_GetRow_Result>
+@{
+    var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
+}
+<table class="table-sm table" id="EmployeesDataTable">
+    <thead class="thead-dark">
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>Designation</th>
+            <th>Date Range</th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        var avatarFileExist = item.ImageFilePath.FileExist("emp-photo", companyCd);
+        var avatarImage = avatarFileExist == true && !string.IsNullOrEmpty(item.ImageFilePath) ? $"/uploads/{companyCd}/emp-photo/{item.ImageFilePath}" : "/images/avatar.png";
+        <tr>
+            <td>
+                <img src="@avatarImage" class="img-size-50 mr-3 img-circle border">
+            </td>
+            <td>@item.Name (@item.Cd.Trim())</td>
+            <td>@item.Branch</td>
+            <td>@item.Designation</td>
+            <td></td>
+        </tr>
+    }
+</table>

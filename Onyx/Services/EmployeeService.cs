@@ -4,6 +4,7 @@ using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 
 namespace Onyx.Services
 {
@@ -73,7 +74,7 @@ namespace Onyx.Services
                 TotalCount = empTotalCount
             };
         }
-        public IEnumerable<Employee_GetRow_Result> GetEmployeeItems(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string section = "0", string Desg = "0")
+        public IEnumerable<Employee_GetRow_Result> GetEmployeeItems(string CoCd, string empCd, string UserCd, string div = "0", string dept = "0", string section = "0", string Desg = "0", string lvStatus = "")
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "Employee_GetRowItems_N";
@@ -85,6 +86,7 @@ namespace Onyx.Services
             parameters.Add("v_Section", section ?? "0");
             parameters.Add("v_Designation", Desg ?? "0");
             parameters.Add("v_Usercd", UserCd);
+            parameters.Add("v_LvStatus", lvStatus ?? string.Empty);
             var connection = new SqlConnection(connectionString);
             var employees = connection.Query<Employee_GetRow_Result>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return employees;

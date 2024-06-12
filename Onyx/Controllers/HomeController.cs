@@ -62,6 +62,11 @@ namespace Onyx.Controllers
             }
             return View();
         }
+        public IActionResult FetchEmployees(string Type)
+        {
+            var employees = _employeeService.GetEmployeeItems(_loggedInUser.CompanyCd, string.Empty, _loggedInUser.UserLinkedTo, lvStatus: Type);
+            return PartialView("_EmployeesListModal", employees);
+        }
         public IActionResult FetchWidgetMaster()
         {
             var widgets = _commonService.GetWidgetMaster();

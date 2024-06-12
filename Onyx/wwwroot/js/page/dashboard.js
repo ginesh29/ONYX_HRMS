@@ -83,6 +83,16 @@ if (userLinkedTo != "Emp") {
                         </div>` : ""
     })
     chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
+    function showEmployees(curr, type) {
+        var typeText = $(curr).text();
+        loadingPage();
+        $('#EmployeesModal').load(`/Home/FetchEmployees?Type=${type}`, function () {
+            $('#EmployeesModal #EmployeesDataTable').DataTable(dataTableDefaultOptions);
+            $("#type-header").text(typeText);
+            unloadingPage();
+            $("#EmployeesModal").modal("show");
+        });
+    }
 }
 
 
