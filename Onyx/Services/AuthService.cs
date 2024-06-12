@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Onyx.Models.ViewModels;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Security.Claims;
 
 namespace Onyx.Services
