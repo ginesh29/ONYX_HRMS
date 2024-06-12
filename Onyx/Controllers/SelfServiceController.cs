@@ -103,7 +103,7 @@ namespace Onyx.Controllers
             model.ToDt = Convert.ToDateTime(dateSp[1]);
             var lvDays = ExtensionMethod.GetDaysBetweenDateRange(model.FromDt, model.ToDt);
             bool lvExist = _transactionService.ExistingLvApplication(model.EmployeeCode, model.FromDt, model.ToDt);
-            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val != "Y";
+            bool blockLeave = _commonService.GetParameterByType(_loggedInUser.CompanyCd, "LVSALTIC_VAL").Val == "Y";
             if (!lvExist)
             {
                 if ((LeaveBalance >= lvDays) || (confirmed && !blockLeave) || model.LeaveType == "UL")
