@@ -243,10 +243,10 @@ namespace Onyx.Services
             parameters.Add("v_LvTyp", model.LeaveType);
             parameters.Add("v_FromDt", model.FromDt);
             parameters.Add("v_ToDt", model.ToDt);
-            parameters.Add("v_WP_FromDt", model.WpFromDt);
-            parameters.Add("v_WP_ToDt", model.WpToDt);
-            parameters.Add("v_WOP_FromDt", model.WopFromDt);
-            parameters.Add("v_WOP_ToDt", model.WopToDt);
+            parameters.Add("v_WP_FromDt", model.WpFromDt.IsNotEmptyDate() ? model.WpFromDt : string.Empty);
+            parameters.Add("v_WP_ToDt", model.WpToDt.IsNotEmptyDate() ? model.WpToDt : string.Empty);
+            parameters.Add("v_WOP_FromDt", model.WopFromDt.IsNotEmptyDate() ? model.WopFromDt : string.Empty);
+            parameters.Add("v_WOP_ToDt", model.WopToDt.IsNotEmptyDate() ? model.WopToDt : string.Empty);
             parameters.Add("v_LvTaken", model.LvTaken);
             parameters.Add("v_DocRef", string.Empty);
             parameters.Add("v_DocDt", DateTime.Now);

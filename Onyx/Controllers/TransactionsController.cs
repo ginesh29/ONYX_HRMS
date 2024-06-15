@@ -96,7 +96,7 @@ namespace Onyx.Controllers
         {
             model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
             model.EntryBy = _loggedInUser.UserCd;
-            model.ApprDays = model.LvDays + model.WopLvDays;
+            model.ApprDays = model.WpDays + model.WopLvDays;
             if (model.Status == "Y")
             {
                 if (!string.IsNullOrEmpty(model.WpDateRange))
