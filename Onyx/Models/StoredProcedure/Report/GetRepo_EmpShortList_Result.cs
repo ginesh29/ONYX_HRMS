@@ -38,5 +38,6 @@
         public string EmpTyp { get; set; }
         public string EmiratesId { get; set; }
         public string EmiratesIdExpDt { get; set; }
+        public string PersonalNumber { get; set; }
     }
 }

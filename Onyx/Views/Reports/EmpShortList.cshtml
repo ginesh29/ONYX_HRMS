@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Employee Short List Report"];
-    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirate Id", "Phone No.", "Email Id", "Nationality" };
+    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirates Id", "Emirates IdExp", "Phone No.", "Email Id", "Nationality", "Personal No" };
 }
 @model EmpShortListFilterModel
 <div class="card">
@@ -134,13 +134,15 @@
             }
         }
         $('#VisibleColumns').on('change', function (e) {
-            var selectedColumns = $(this).val();
-            for (var i = 0; i < window["datatable"].columns().count(); i++) {
-                var column = window["datatable"].column(i);
-                if (selectedColumns.includes(i.toString()))
-                    column.visible(true);
-                else
-                    column.visible(false);
+            if (window["datatable"]) {
+                var selectedColumns = $(this).val();
+                for (var i = 0; i < window["datatable"].columns().count(); i++) {
+                    var column = window["datatable"].column(i);
+                    if (selectedColumns.includes(i.toString()))
+                        column.visible(true);
+                    else
+                        column.visible(false);
+                }
             }
         });
     </script>

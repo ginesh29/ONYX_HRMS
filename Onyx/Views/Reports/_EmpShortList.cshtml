@@ -1,10 +1,10 @@
 ﻿@model EmpShortListReportModel
 @{
     var dateFormat = ExtensionMethod.GetDateFormat();
-    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirates Id", "Emirates IdExp", "Phone No.", "Email Id", "Nationality" };
+    string[] columns = { "Emp Name (Code)", "Sex", "Marital Status", "Branch", "Department", "Location", "Designation", "Sponsor", "Date Of Birth", "Date Of Join", "Reporting To", "Basic", "Total", "Fare Eligibility", "Pay Mode", "Pay Frequency", "Status", "Passport No", "Passport Exp. Date", "Visa No", "Visa Exp. Date", "Emirates Id", "Emirates IdExp", "Phone No.", "Email Id", "Nationality", "Personal No" };
 }
 <div class="@ViewBag.TableResponsiveClass">
-    <table class="table table-sm" id="EmpShortListReportTable" style="font-size:x-small">
+    <table class="table-sm table" id="EmpShortListReportTable" style="font-size:x-small">
         <thead class="thead-dark">
             <tr>
                 @for (int i = 0; i < columns.Length; i++)
@@ -122,6 +122,10 @@
                 @if (Model.VisibleColumns.Contains("25"))
                 {
                     <td>@item.Nationality</td>
+                }
+                @if (Model.VisibleColumns.Contains("26"))
+                {
+                    <td>@item.PersonalNumber</td>
                 }
             </tr>
         }
