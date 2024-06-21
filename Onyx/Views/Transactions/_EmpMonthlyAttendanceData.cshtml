@@ -5,7 +5,7 @@
     <input type="hidden" asp-for="FilterModel.EmpCd" />
     <input type="hidden" asp-for="FilterModel.MonthYear" />
     <input type="hidden" asp-for="FilterModel.WorkingHrDay" />
-    <table class="table table-sm mt-3" id="EmpMonthlyAttendanceTable">
+    <table class="table-sm mt-3 table" id="EmpMonthlyAttendanceTable">
         <thead class="thead-dark">
             <tr>
                 <th>No.</th>
@@ -32,7 +32,7 @@
                     <input asp-for="@Model.AttendanceData[item.i].EmpName" type="hidden" value="@item.value.EmpName">
                     <input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden">
                 </td>
-                <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /><input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden" /></td>
+                <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /></td>
                 <td>@item.value.P_HDays</td>
                 <td><input asp-for="@Model.AttendanceData[item.i].Up_HDays" type="text" class="form-control form-control-sm int-input" onkeyup="updateNHrs(this,'@Model.AttendanceData[item.i].W_days','@Model.AttendanceData[item.i].P_HDays','@item.i')" /></td>
                 <td><input asp-for="@Model.AttendanceData[item.i].Payable" type="text" class="form-control form-control-sm int-input disabled" /></td>

@@ -109,19 +109,57 @@
             var frm = $("#attendance-frm");
             if (frm.valid()) {
                 loadingButton(btn);
+                var filterModel = {
+                    Branch: $("#FilterModel_Branch").val(),
+                    Department: $("#FilterModel_Department").val(),
+                    MonthYear: $("#FilterModel_MonthYear").val(),
+                    WorkingHrDay: $("#FilterModel_WorkingHrDay").val()
+                };
                 var url = `/Transactions/SaveEmpMonthlyAttendance`;
-                postAjax(url, decodeURI(frm.serialize()), function (response) {
-                    if (response.success) {
-                        showSuccessToastr(response.message);
-                        searchAttendance();
-                    }
-                    else {
-                        showErrorToastr(response.message);
-                    }
-                    unloadingButton(btn);
-                });
+                var frmData = getFrmData();
+                let chunkSize = 100;
+                let chunks = chunkJson(frmData, chunkSize);
+                for (let i = 0; i < chunks.length; i++) {
+                    postAjax(url, { FilterModel: filterModel, AttendanceData: chunks[i] }, function (response) {
+                        if (i == 0) {
+                            if (response.success) {
+                                showSuccessToastr(response.message);
+                                searchAttendance();
+                            }
+                            else {
+                                showErrorToastr(response.message);
+                            }
+                            unloadingButton(btn);
+                        }
+                    });
+                }
             }
         }
+        function getFrmData() {
+            var frmData = [];
+            var totalRows = $("[id$=__Cd]").length;
+            for (var i = 0; i < totalRows; i++) {
+                frmData.push({
+                    EmpName: $(`#AttendanceData_${i}__EmpName`).val(),
+                    Cd: $(`#AttendanceData_${i}__Cd`).val(),
+                    W_days: $(`#AttendanceData_${i}__W_days`).val(),
+                    Up_HDays: $(`#AttendanceData_${i}__Up_HDays`).val(),
+                    Payable: $(`#AttendanceData_${i}__Payable`).val(),
+                    NHrs: $(`#AttendanceData_${i}__NHrs`).val(),
+                    W_OT: $(`#AttendanceData_${i}__W_OT`).val(),
+                    H_OT: $(`#AttendanceData_${i}__H_OT`).val()
+                });
+            }
+            return frmData;
+        }
+        function chunkJson(data, chunkSize) {
+            let chunks = [];
+            for (let i = 0; i < data.length; i += chunkSize) {
+                chunks.push(data.slice(i, i + chunkSize));
+            }
+            return chunks;
+        }
+
         function deleteAttendance(btn) {
             Swal.fire({
                 title: "Are you sure?",

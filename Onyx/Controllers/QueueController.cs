@@ -7,7 +7,6 @@ using Onyx.Services;
 using Rotativa.AspNetCore;
 using Rotativa.AspNetCore.Options;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
 
 namespace Onyx.Controllers
 {
