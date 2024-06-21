@@ -120,47 +120,24 @@
             if (frm.valid()) {
                 loadingButton(btn);
                 var url = `/Transactions/SaveEmpVariablePayDedComponents`;
-                var filterModel = {
-                    Branch: $("#FilterModel_Branch").val(),
-                    Department: $("#FilterModel_Department").val(),
-                    PayType: $("#FilterModel_PayType").val(),
-                    PayCode: $("#FilterModel_PayCode").val(),
-                    MonthYear: $("#FilterModel_MonthYear").val(),
-                    FromDt: $("#FilterModel_FromDt").val(),
-                    ToDt: $("#FilterModel_ToDt").val(),
-                };                
-                var frmData = getFrmData();
+                var filterModel = $('#variable-component-filter-frm').find('input, select, textarea').serialize();
+                var frmData = frm.find('input[type="checkbox"]:checked')
+                    .closest('tr')
+                    .find('input, select, textarea').serialize();
                 if (frmData.length)
-                    postAjax(url, { filterModel: filterModel, variableComponentsData: frmData }, function (response) {
+                    postAjax(url, `${filterModel}&${frmData}`, function (response) {
                         if (response.success) {
                             showSuccessToastr(response.message);
                             searchComponents();
                         }
                         else {
                             showErrorToastr(response.message);
-                        }
-                        unloadingButton(btn);
+                        }                        
                     });
                 else
                     showErrorToastr("Please select atleast one");
+                unloadingButton(btn);
             }
-        }
-        function getFrmData() {
-            var frmData = [];
-            var totalRows = $("[id$=__Cd]").length;
-            for (var i = 0; i < totalRows; i++) {
-                frmData.push({
-                    SrNo: $(`#VariableComponentsData_${i}__SrNo`).val(),
-                    Cd: $(`#VariableComponentsData_${i}__Cd`).val(),
-                    Branch: $(`#VariableComponentsData_${i}__Branch`).val(),
-                    Dept: $(`#VariableComponentsData_${i}__Dept`).val(),
-                    Amt: $(`#VariableComponentsData_${i}__Amt`).val(),
-                    Narr: $(`#VariableComponentsData_${i}__Narr`).val(),
-                    Active: $(`#VariableComponentsData_${i}__Active`).is(":checked")
-                });
-            }
-            var filtered = frmData.filter(m => m.Active);
-            return filtered;
         }
         function uploadFile(event) {
             var ext = event.target.files[0].name.split('.').pop().toLowerCase();

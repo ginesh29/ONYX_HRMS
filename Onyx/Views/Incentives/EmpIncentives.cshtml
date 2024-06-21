@@ -108,22 +108,24 @@
             var frm = $("#incentive-frm");
             if (frm.valid()) {
                 loadingButton(btn);
-                var filterModel = {
-                    Branch: $("#FilterModel_Branch").val(),
-                    MonthYear: $("#FilterModel_MonthYear").val(),
-                };
-                var frmData = getFrmData();
+                var filterModel = $('#incentive-filter-frm').find('input, select, textarea').serialize();
+                var frmData = $('#incentive-frm').find('input[type="checkbox"]:checked')
+                    .closest('tr')
+                    .find('input, select, textarea').serialize();
                 var url = `/Incentives/SaveEmpIncentive`;
-                postAjax(url, decodeURI(frm.serialize()), function (response) {
-                    if (response.success) {
-                        showSuccessToastr(response.message);
-                        searchIncentive();
-                    }
-                    else {
-                        showErrorToastr(response.message);
-                    }
-                    unloadingButton(btn);
-                });
+                if (frmData.length)
+                    postAjax(url, `${filterModel}&${frmData}`, function (response) {
+                        if (response.success) {
+                            showSuccessToastr(response.message);
+                            searchIncentive();
+                        }
+                        else {
+                            showErrorToastr(response.message);
+                        }
+                    });
+                else
+                    showErrorToastr("Please select atleast one");
+                unloadingButton(btn);
             }
         }
         $('#btn-excel').on('click', function (e) {

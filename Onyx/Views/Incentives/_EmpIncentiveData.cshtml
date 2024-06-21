@@ -4,6 +4,7 @@
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
 <form id="incentive-frm">
+    <div id="incentive-filter-frm">
     <input type="hidden" asp-for="FilterModel.Branch" />
     <input type="hidden" asp-for="FilterModel.Designation" />
     <input type="hidden" asp-for="FilterModel.EmpType" />
@@ -11,7 +12,8 @@
     <input type="hidden" asp-for="FilterModel.MonthYear" />
     <input type="hidden" asp-for="FilterModel.Prd" />
     <input type="hidden" asp-for="FilterModel.Year" />
-    <table class="table table-sm mt-3" id="EmpIncentiveTable">
+    </div>
+    <table class="table-sm mt-3 table" id="EmpIncentiveTable">
         <thead class="thead-dark">
             <tr>
                 <th>
@@ -39,7 +41,7 @@
                 <td>
                     <div class="custom-control custom-checkbox">
                         <input asp-for="@Model.IncentiveData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
-                        <label for="@($"IncentiveData_{item.i}__Active")" class=" custom-control-label font-weight-normal"></label>
+                        <label for="@($"IncentiveData_{item.i}__Active")" class="custom-control-label font-weight-normal"></label>
                     </div>
                 </td>
                 <td>@(item.i + 1) <input asp-for="@Model.IncentiveData[item.i].SrNo" type="hidden" value="@(item.i + 1)"></td>

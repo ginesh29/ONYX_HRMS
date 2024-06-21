@@ -1,13 +1,15 @@
 ﻿@model VariablePayDedComponentModel
 <form id="variable-component-frm" method="post" action="SaveEmpVariablePayDedComponents">
-    <input type="hidden" asp-for="FilterModel.Branch" />
-    <input type="hidden" asp-for="FilterModel.Department" />
-    <input type="hidden" asp-for="FilterModel.PayCode" />
-    <input type="hidden" asp-for="FilterModel.PayType" />
-    <input type="hidden" asp-for="FilterModel.EmpCd" />
-    <input type="hidden" asp-for="FilterModel.MonthYear" />
-    <input type="hidden" asp-for="FilterModel.FromDt" />
-    <input type="hidden" asp-for="FilterModel.ToDt" />
+    <div id="variable-component-filter-frm">
+        <input type="hidden" asp-for="FilterModel.Branch" />
+        <input type="hidden" asp-for="FilterModel.Department" />
+        <input type="hidden" asp-for="FilterModel.PayCode" />
+        <input type="hidden" asp-for="FilterModel.PayType" />
+        <input type="hidden" asp-for="FilterModel.EmpCd" />
+        <input type="hidden" asp-for="FilterModel.MonthYear" />
+        <input type="hidden" asp-for="FilterModel.FromDt" />
+        <input type="hidden" asp-for="FilterModel.ToDt" />
+    </div>
     <table class="table-sm mt-3 table" id="EmpVariablePayDedComponentsTable">
         <thead class="thead-dark">
             <tr>

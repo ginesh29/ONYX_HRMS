@@ -68,7 +68,6 @@ namespace Onyx.Controllers
         [HttpPost]
         public IActionResult SaveEmpIncentive(IncentiveModel model)
         {
-            model.IncentiveData = model.IncentiveData.Where(m => m.Active).ToList();
             int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(model.FilterModel.Year), Convert.ToInt32(model.FilterModel.Prd));
             model.FilterModel.FromDt = new DateTime(Convert.ToInt32(model.FilterModel.Year), Convert.ToInt32(model.FilterModel.Prd), 1);
             model.FilterModel.ToDt = new DateTime(Convert.ToInt32(model.FilterModel.Year), Convert.ToInt32(model.FilterModel.Prd), lastDayOfMonth);
