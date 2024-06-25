@@ -13,7 +13,7 @@
                 data: function (row) {
                     return `${row.emp}(${row.empCd.trim()})`
                 }
-            },     
+            },
             { data: "div" },
             {
                 data: function (row) {
@@ -27,7 +27,7 @@
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.appDt}')">
+                    return `<div class="d-flex"><button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.appDt}')">
                                 <i class="fas fa-search"></i>
                             </button>
                             <button class="btn btn-sm btn-info ml-2" onclick="showLeaveSalaryDisburseModal('${row.transNo.trim()}')" ${editEnable}>
@@ -35,7 +35,7 @@
                             </button>
                             <button class="btn btn-sm btn-danger ml-2" onclick="showLeaveSalaryDisburseModal('${row.transNo.trim()}',true)" ${deleteEnable}>
                                 <i class="fa fa-times"></i>
-                            </button>`;
+                            </button></div>`;
                 }, "width": "120px"
             }
         ],

@@ -2,19 +2,21 @@
     ViewData["Title"] = SharedResource["Employee Fund Aprroval"];
 }
 <div class="card">
-    <div class="card-body">
-        <table class="table-sm table" id="EmpFundApprovalDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th>No.</th>
-                    <th>Trans. No.</th>
-                    <th>Employee</th>
-                    <th>Tran Dt</th>
-                    <th>Amount</th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
+    <div class="table-responsive">
+        <div class="card-body">
+            <table class="table-sm table" id="EmpFundApprovalDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>No.</th>
+                        <th>Trans. No.</th>
+                        <th>Employee</th>
+                        <th>Tran Dt</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 @section scripts {
@@ -47,15 +49,15 @@
                     },
                     {
                         data: function (row) {
-                            return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.transDt}')">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}')" ${editEnable}>
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                                    <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}',true)" ${editEnable}>
-                                        <i class="fa fa-times"></i>
-                                    </button>`;
+                            return `<div class="d-flex"><button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.transDt}')">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                                    <button class="btn btn-sm btn-info ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}')" ${editEnable}>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                                            <button class="btn btn-sm btn-danger ml-2" onclick="showFundApprovalModal('${row.transNo.trim()}',true)" ${editEnable}>
+                                                <i class="fa fa-times"></i>
+                                            </button></div>`;
                         }, "width": "120px"
                     }
                 ],

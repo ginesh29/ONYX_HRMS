@@ -3,18 +3,20 @@
 }
 <div class="card">
     <div class="card-body">
-        <table class="table-sm table" id="EmpFundDisburseDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th>No.</th>
-                    <th>Trans. No.</th>
-                    <th>Employee</th>
-                    <th>Branch</th>
-                    <th>Amount</th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table-sm table" id="EmpFundDisburseDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>No.</th>
+                        <th>Trans. No.</th>
+                        <th>Employee</th>
+                        <th>Branch</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 <div id="EmpFundDisburseModal" class="modal fade" role="dialog" tabindex='-1'></div>
@@ -44,12 +46,12 @@
                     },
                     {
                         data: function (row) {
-                            return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
-                                                                                <i class="fas fa-search"></i>
-                                                                            </button>
-                                                                                            <button class="btn btn-sm btn-info ml-2" onclick="showFundDisburseModal('${row.transNo.trim()}')" ${editEnable}>
-                                                                                <i class="fas fa-check"></i>
-                                                                            </button>`;
+                            return `<div class="d-flex"><button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}')">
+                                                                                        <i class="fas fa-search"></i>
+                                                                                    </button>
+                                                                                                    <button class="btn btn-sm btn-info ml-2" onclick="showFundDisburseModal('${row.transNo.trim()}')" ${editEnable}>
+                                                                                        <i class="fas fa-check"></i>
+                                                                                    </button></div>`;
                         }, "width": "80px"
                     }
                 ],

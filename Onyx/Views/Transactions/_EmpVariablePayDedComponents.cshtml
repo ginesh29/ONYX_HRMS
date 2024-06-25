@@ -10,65 +10,67 @@
         <input type="hidden" asp-for="FilterModel.FromDt" />
         <input type="hidden" asp-for="FilterModel.ToDt" />
     </div>
-    <table class="table-sm mt-3 table" id="EmpVariablePayDedComponentsTable">
-        <thead class="thead-dark">
-            <tr>
-                <th>
-                    <div class="custom-control custom-checkbox">
-                        <input id="check-all" class="custom-control-input custom-control-input-white custom-control-input-outline" type="checkbox" onchange="checkAll(this)">
-                        <label for="check-all" class="custom-control-label font-weight-normal"></label>
-                    </div>
-                </th>
-                <th>No.</th>
-                <th width="500">Employee</th>
-                <th>Branch</th>
-                <th>Department</th>
-                <th width="100">Amount</th>
-                <th>Narration</th>
-            </tr>
-        </thead>
-        @foreach (var item in Model.VariableComponentsData.Select((value, i) => new { i, value }))
-        {
-            <tr>
-                <td>
-                    <div class="custom-control custom-checkbox">
-                        <input asp-for="@Model.VariableComponentsData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
-                        <label for="@($"VariableComponentsData_{item.i}__Active")" class="custom-control-label font-weight-normal"></label>
-                    </div>
-                </td>
-                <td>
-                    @(item.i + 1)
-                    <input asp-for="@Model.VariableComponentsData[item.i].SrNo" type="hidden" value="@(item.i + 1)" />
-                </td>
-                <td>
-                    @item.value.EmpName (@item.value.Cd.Trim())
-                    <input asp-for="@Model.VariableComponentsData[item.i].Cd" value="@Model.VariableComponentsData[item.i].Cd.Trim()" type="hidden" />
-                </td>
-                <td>
-                    @item.value.Branch
-                    <input asp-for="@Model.VariableComponentsData[item.i].Branch" type="hidden" />
-                </td>
-                <td>
-                    @item.value.Dept
-                    <input asp-for="@Model.VariableComponentsData[item.i].Dept" type="hidden" />
-                </td>
-                <td>
-                    <input asp-for="@Model.VariableComponentsData[item.i].Amt" class="form-control form-control-sm decimal-input amt disabled" data-amt="@Model.VariableComponentsData[item.i].Amt" />
-                </td>
-                <td>
-                    <input asp-for="@Model.VariableComponentsData[item.i].Narr" class="form-control form-control-sm disabled" />
-                </td>
-            </tr>
-        }
-        @if (!Model.VariableComponentsData.Any())
-        {
-            <tfoot>
+    <div class="table-responsive">
+        <table class="table-sm mt-3 table" id="EmpVariablePayDedComponentsTable">
+            <thead class="thead-dark">
                 <tr>
-                    <td>@CommonMessage.EMPTYGRID</td>
+                    <th>
+                        <div class="custom-control custom-checkbox">
+                            <input id="check-all" class="custom-control-input custom-control-input-white custom-control-input-outline" type="checkbox" onchange="checkAll(this)">
+                            <label for="check-all" class="custom-control-label font-weight-normal"></label>
+                        </div>
+                    </th>
+                    <th>No.</th>
+                    <th width="500">Employee</th>
+                    <th>Branch</th>
+                    <th>Department</th>
+                    <th width="100">Amount</th>
+                    <th>Narration</th>
                 </tr>
-            </tfoot>
-        }
-    </table>
+            </thead>
+            @foreach (var item in Model.VariableComponentsData.Select((value, i) => new { i, value }))
+            {
+                <tr>
+                    <td>
+                        <div class="custom-control custom-checkbox">
+                            <input asp-for="@Model.VariableComponentsData[item.i].Active" class="custom-control-input custom-control-input-primary custom-control-input-outline chk" type="checkbox" onchange="changeCheckbox(this)">
+                            <label for="@($"VariableComponentsData_{item.i}__Active")" class="custom-control-label font-weight-normal"></label>
+                        </div>
+                    </td>
+                    <td>
+                        @(item.i + 1)
+                        <input asp-for="@Model.VariableComponentsData[item.i].SrNo" type="hidden" value="@(item.i + 1)" />
+                    </td>
+                    <td>
+                        @item.value.EmpName (@item.value.Cd.Trim())
+                        <input asp-for="@Model.VariableComponentsData[item.i].Cd" value="@Model.VariableComponentsData[item.i].Cd.Trim()" type="hidden" />
+                    </td>
+                    <td>
+                        @item.value.Branch
+                        <input asp-for="@Model.VariableComponentsData[item.i].Branch" type="hidden" />
+                    </td>
+                    <td>
+                        @item.value.Dept
+                        <input asp-for="@Model.VariableComponentsData[item.i].Dept" type="hidden" />
+                    </td>
+                    <td>
+                        <input asp-for="@Model.VariableComponentsData[item.i].Amt" class="form-control form-control-sm decimal-input amt disabled" data-amt="@Model.VariableComponentsData[item.i].Amt" />
+                    </td>
+                    <td>
+                        <input asp-for="@Model.VariableComponentsData[item.i].Narr" class="form-control form-control-sm disabled" />
+                    </td>
+                </tr>
+            }
+            @if (!Model.VariableComponentsData.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <td>@CommonMessage.EMPTYGRID</td>
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
     @if (Model.VariableComponentsData.Any())
     {
         <hr />

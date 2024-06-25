@@ -5,57 +5,59 @@
     <input type="hidden" asp-for="FilterModel.EmpCd" />
     <input type="hidden" asp-for="FilterModel.MonthYear" />
     <input type="hidden" asp-for="FilterModel.WorkingHrDay" />
-    <table class="table-sm mt-3 table" id="EmpMonthlyAttendanceTable">
-        <thead class="thead-dark">
-            <tr>
-                <th>No.</th>
-                <th class="d-none">EmpCd</th>
-                <th width="500">Employee Name</th>
-                <th>No Of Days</th>
-                <th>Paid</th>
-                <th>Unpaid</th>
-                <th>Payable</th>
-                <th>NHrs</th>
-                <th>W.OT</th>
-                <th>H.OT</th>
-                <th>Loan Recovery</th>
-                <th></th>
-            </tr>
-        </thead>
-        @foreach (var item in Model.AttendanceData.Select((value, i) => new { i, value }))
-        {
-            <tr>
-                <td>@(item.i + 1)</td>
-                <td class="d-none">@item.value.Cd</td>
-                <td>
-                    @item.value.EmpName (@item.value.Cd.Trim())
-                    <input asp-for="@Model.AttendanceData[item.i].EmpName" type="hidden" value="@item.value.EmpName">
-                    <input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden">
-                </td>
-                <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /></td>
-                <td>@item.value.P_HDays</td>
-                <td><input asp-for="@Model.AttendanceData[item.i].Up_HDays" type="text" class="form-control form-control-sm int-input" onkeyup="updateNHrs(this,'@Model.AttendanceData[item.i].W_days','@Model.AttendanceData[item.i].P_HDays','@item.i')" /></td>
-                <td><input asp-for="@Model.AttendanceData[item.i].Payable" type="text" class="form-control form-control-sm int-input disabled" /></td>
-                <td><input asp-for="@Model.AttendanceData[item.i].NHrs" type="text" class="form-control form-control-sm int-input disabled" /></td>
-                <td><input asp-for="@Model.AttendanceData[item.i].W_OT" type="text" class="form-control form-control-sm int-input" /></td>
-                <td><input asp-for="@Model.AttendanceData[item.i].H_OT" type="text" class="form-control form-control-sm int-input" /></td>
-                <td>@item.value.LoanDed</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="deleteBranch('${row.cd}')">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        }
-        @if (!Model.AttendanceData.Any())
-        {
-            <tfoot>
+    <div class="table-responsive">
+        <table class="table-sm mt-3 table" id="EmpMonthlyAttendanceTable">
+            <thead class="thead-dark">
                 <tr>
-                    <td>@CommonMessage.EMPTYGRID</td>
+                    <th>No.</th>
+                    <th class="d-none">EmpCd</th>
+                    <th width="500">Employee Name</th>
+                    <th>No Of Days</th>
+                    <th>Paid</th>
+                    <th>Unpaid</th>
+                    <th>Payable</th>
+                    <th>NHrs</th>
+                    <th>W.OT</th>
+                    <th>H.OT</th>
+                    <th>Loan Recovery</th>
+                    <th></th>
                 </tr>
-            </tfoot>
-        }
-    </table>
+            </thead>
+            @foreach (var item in Model.AttendanceData.Select((value, i) => new { i, value }))
+            {
+                <tr>
+                    <td>@(item.i + 1)</td>
+                    <td class="d-none">@item.value.Cd</td>
+                    <td>
+                        @item.value.EmpName (@item.value.Cd.Trim())
+                        <input asp-for="@Model.AttendanceData[item.i].EmpName" type="hidden" value="@item.value.EmpName">
+                        <input asp-for="@Model.AttendanceData[item.i].Cd" type="hidden">
+                    </td>
+                    <td>@item.value.W_days <input asp-for="@Model.AttendanceData[item.i].W_days" type="hidden" /></td>
+                    <td>@item.value.P_HDays</td>
+                    <td><input asp-for="@Model.AttendanceData[item.i].Up_HDays" type="text" class="form-control form-control-sm int-input" onkeyup="updateNHrs(this,'@Model.AttendanceData[item.i].W_days','@Model.AttendanceData[item.i].P_HDays','@item.i')" /></td>
+                    <td><input asp-for="@Model.AttendanceData[item.i].Payable" type="text" class="form-control form-control-sm int-input disabled" /></td>
+                    <td><input asp-for="@Model.AttendanceData[item.i].NHrs" type="text" class="form-control form-control-sm int-input disabled" /></td>
+                    <td><input asp-for="@Model.AttendanceData[item.i].W_OT" type="text" class="form-control form-control-sm int-input" /></td>
+                    <td><input asp-for="@Model.AttendanceData[item.i].H_OT" type="text" class="form-control form-control-sm int-input" /></td>
+                    <td>@item.value.LoanDed</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteBranch('${row.cd}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+            @if (!Model.AttendanceData.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <td>@CommonMessage.EMPTYGRID</td>
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
     @if (Model.AttendanceData.Any())
     {
         <hr />

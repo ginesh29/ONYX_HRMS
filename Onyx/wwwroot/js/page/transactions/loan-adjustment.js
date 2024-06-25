@@ -25,12 +25,12 @@
             { data: "purpose" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showLoanAdjustModal('${row.transNo.trim()}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showLoanAdjustModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-warning ml-2" onclick="printLoanAdjust('${row.transNo.trim()}','${row.empCd.trim()}')">
                                 <i class="fa fa-print"></i>
-                            </button>`;
+                            </button></div>`;
                 }, "width": "80px"
             }
         ],

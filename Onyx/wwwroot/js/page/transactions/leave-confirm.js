@@ -42,12 +42,12 @@ window["datatable"] = $('#EmployeeLeavesDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.fromDt}','${row.toDt}')">
+                    return `<div class="d-flex"><button class="btn btn-sm btn-warning" onclick="showLeaveDetailModal('${row.empCd.trim()}','${row.fromDt}','${row.toDt}')">
                                 <i class="fas fa-search"></i>
                             </button>
                             <button class="btn btn-sm btn-info ml-2" onclick="showLeaveConfirmModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],

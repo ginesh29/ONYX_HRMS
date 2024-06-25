@@ -169,11 +169,11 @@ function bindEducationDataTable() {
                     { data: "marksGrade" },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showEducationModal('${row.srNo}')">
+                            return `<div class="d-flex"><button type="button" class="btn btn-sm btn-info" onclick="showEducationModal('${row.srNo}')">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteEducation('${row.srNo}')">
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                         }, "width": "80px"
                     }
                 ],
@@ -248,11 +248,11 @@ function bindExperienceDataTable() {
                     { data: "country" },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showExperienceModal('${row.srno}')">
+                            return `<div class="d-flex"><button type="button" class="btn btn-sm btn-info" onclick="showExperienceModal('${row.srno}')">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteExperience('${row.srno}')">
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                         }, "width": "80px"
                     }
                 ],

@@ -30,12 +30,12 @@
             { data: "narr" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showEmpProvisionAdjModal('${row.transNo.trim()}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showEmpProvisionAdjModal('${row.transNo.trim()}')" ${editEnable}>
                                 <i class="fas fa-pencil"></i>
                             </button>
                             <button  class="btn btn-sm btn-danger ml-2" onclick="deleteEmpProvisionAdj('${row.transNo.trim()}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`;
+                            </button></div>`;
                 }, "width": "80px"
             }
         ],
