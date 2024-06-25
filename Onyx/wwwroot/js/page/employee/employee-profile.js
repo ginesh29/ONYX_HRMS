@@ -340,11 +340,11 @@ function bindDocumentDataTable() {
                     },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
+                            return `<div class="d-flex"><button type="button" class="btn btn-sm btn-info" onclick="showDocumentModal('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteDocument('${row.empCd.trim()}','${row.docTypCd.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                         }, "width": "80px"
                     }
                 ],
@@ -537,11 +537,11 @@ function bindComponentDataTable() {
                     },
                     {
                         data: function (row) {
-                            return `<button type="button" class="btn btn-sm btn-info" onclick="showComponentModal('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
+                            return `<div class="d-flex"><button type="button" class="btn btn-sm btn-info" onclick="showComponentModal('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('${row.empCd.trim()}','${row.edCd.trim()}','${row.edTyp.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                         }, "width": "80px"
                     }
                 ],

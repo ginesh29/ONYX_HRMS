@@ -20,11 +20,11 @@
             { data: "routeCd" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showBankAccountModal('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}',${row.srNo})">
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showBankAccountModal('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}',${row.srNo})">
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteBankAccount('${row.empCd.trim()}','${row.bankCd.trim()}','${row.bankBrCd.trim()}',${row.srNo})">
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],
