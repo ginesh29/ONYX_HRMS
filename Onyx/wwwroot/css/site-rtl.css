@@ -91,13 +91,25 @@
     width: 265px;
 }
 
-.table-responsive {
+.h-600px {
     height: 600px;
 }
 
 .os-theme-dark > .os-scrollbar-vertical,
 .os-theme-light > .os-scrollbar-vertical {
     width: 8px !important;
+}
+
+.btn .expand-icon {
+    transition: transform 0.2s;
+}
+
+.btn.collapsed .expand-icon {
+    transform: rotate(0deg);
+}
+
+.btn:not(.collapsed) .expand-icon {
+    transform: rotate(90deg);
 }
 
 .grid-stack-item-content {
@@ -111,15 +123,40 @@
     padding: 0;
 }
 
+.ticket {
+    border: 1px dashed #ddd;
+    padding: 20px 0;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ticket-number {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.ticket-info {
+    font-size: 18px;
+}
+
+.ticket-footer {
+    font-size: 12px;
+    color: #777;
+}
+
 @media (min-width: 768px) {
     .dashboard-quicklinks:nth-of-type(n+2) {
-        padding-left: .5rem !important;
-    }
-    .dashboard-quicklinks:not(:last-child) {
         padding-right: .5rem !important;
-        border-right: solid 1px #ced4da;
+    }
+
+    .dashboard-quicklinks:not(:last-child) {
+        padding-left: .5rem !important;
+        border-left: solid 1px #ced4da;
     }
 }
+
 
 .modal {
     overflow: auto !important;
@@ -160,9 +197,11 @@
         padding: 0 10px;
     }
 
-.form-border-right {
-    border-right: 1px solid #ced4da;
-    padding-right: 15px
+@media (min-width: 768px) {
+    .form-border-right {
+        border-left: 1px solid #ced4da;
+        padding-left: 15px
+    }
 }
 
 #leave-approvals-notifications,
@@ -192,11 +231,11 @@
 }
 
 .sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before {
-    margin-left: -265px;
+    margin-right: -265px;
 }
 
 body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
-    margin-left: 265px;
+    margin-right: 265px;
 }
 
 .sidebar-mini .main-sidebar .nav-child-indent .nav-treeview .nav-treeview .nav-link, .sidebar-mini-md .main-sidebar .nav-child-indent .nav-treeview .nav-treeview .nav-link, .sidebar-mini-xs .main-sidebar .nav-child-indent .nav-treeview .nav-treeview .nav-link {
@@ -221,13 +260,13 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
     }
 
     .brand-link .brand-image {
-        margin-left: 10px !important;
+        margin-right: 10px !important;
         max-height: 59px;
         float: none;
     }
 
 .sidebar-collapse .brand-link .collapse-brand-image {
-    margin-left: 10px !important;
+    margin-right: 10px !important;
     max-height: 56px;
     display: block;
     padding: 10px;
@@ -275,11 +314,11 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 }
 
 .card-body.p-0 .table tbody > tr > td:first-of-type, .card-body.p-0 .table tbody > tr > th:first-of-type, .card-body.p-0 .table tfoot > tr > td:first-of-type, .card-body.p-0 .table tfoot > tr > th:first-of-type, .card-body.p-0 .table thead > tr > td:first-of-type, .card-body.p-0 .table thead > tr > th:first-of-type {
-    padding-left: 0
+    padding-right: 0
 }
 
 .card-body.p-0 .table tbody > tr > td:last-of-type, .card-body.p-0 .table tbody > tr > th:last-of-type, .card-body.p-0 .table tfoot > tr > td:last-of-type, .card-body.p-0 .table tfoot > tr > th:last-of-type, .card-body.p-0 .table thead > tr > td:last-of-type, .card-body.p-0 .table thead > tr > th:last-of-type {
-    padding-right: 0
+    padding-left: 0
 }
 
 .image-input {
@@ -306,9 +345,9 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 
 .lv-status {
     top: 10px;
-    right: 10px;
+    left: 10px;
     font-weight: 500;
-    float: right;
+    float: left;
 }
 
 textarea {
@@ -320,7 +359,7 @@ textarea {
 
 .status-container i {
     position: absolute;
-    right: -10px;
+    left: -10px;
     top: -10px;
     font-size: 20px;
 }
@@ -391,7 +430,7 @@ textarea {
     width: 1rem;
     height: 1rem;
     top: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    transform: translate(50%, -50%) !important;
     top: 50% 50% !important;
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='%23007bff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z' /%3E%3C/svg%3E") !important;
 }
@@ -457,7 +496,7 @@ textarea {
 }
 
 .border-right {
-    border-right: solid 1px #ced4da;
+    border-left: solid 1px #ced4da;
 }
 
 .table .thead-info th {
@@ -515,7 +554,7 @@ textarea {
     border: 1px solid #ced4da;
     border-radius: 3px;
     padding: 8px 15px;
-    margin-right: 10px;
+    margin-left: 10px;
     font-size: 12px;
 }
 
@@ -530,7 +569,7 @@ textarea {
 
 .file-input {
     position: absolute;
-    left: 0;
+    right: 0;
     top: 0;
     height: 100%;
     width: 100%;
@@ -552,19 +591,19 @@ textarea {
 .btn-avatar-edit,
 .btn-file-upload,
 .btn-file-edit {
-    margin-left: -10px;
+    margin-right: -10px;
     margin-top: -10px;
 }
 
 .btn-avatar-delete,
 .btn-file-delete {
     margin-top: 90px;
-    margin-left: -10px;
+    margin-right: -10px;
 }
 
 .btn-file-edit-container {
     display: inline-block;
-    margin-right: 20px;
+    margin-left: 20px;
     cursor: pointer;
     position: relative;
     margin-bottom: 50px;
@@ -609,7 +648,7 @@ textarea {
 
 @media (max-width: 991.98px) {
     body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
-        margin-left: 0;
+        margin-right: 0;
     }
 }
 
