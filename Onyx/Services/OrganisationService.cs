@@ -599,7 +599,7 @@ namespace Onyx.Services
         }
         public int GetVehicleDocument_SrNo(string vehCd, string docType)
         {
-            var procedureName = "VehDocuments_GetSrNo";
+            var procedureName = "VehDocuments_GetSrNo_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_VehCd", vehCd);
             parameters.Add("v_DocTyp", docType);

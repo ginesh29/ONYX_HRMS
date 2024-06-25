@@ -1,7 +1,11 @@
-﻿var options = {
+﻿let grid = GridStack.init({
     cellHeight: 'auto',
+    verticalMargin: 0
+});
+var width = $(window).width();
+if (width <= 768) {
+    grid.disable();
 }
-let grid = GridStack.init(options);
 grid.on('added removed change', function (e, items) {
     if (e.type == "removed")
         deleteAjax(`/home/deletedashboardconfig?widegetId=${items[0].id}`);
@@ -266,7 +270,3 @@ function filterShowReport(report) {
         window.open(url);
     }
 }
-$('.grid-stack-item').each(function () {
-    var colSpan = $(this).attr('data-gs-width');
-    $(this).css('--grid-column-span', colSpan);
-});

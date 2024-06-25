@@ -62,7 +62,7 @@
 {
     <span>@CommonMessage.EMPTYGRID</span>
 }
-<div class="d-flex align-items-center">
+<div class="d-flex flex-md-row align-items-center flex-column">
     @{
         var startRange = (data.PageNumber - 1) * data.PageSize + 1;
         var endRange = startRange + (data.Count - 1);
@@ -82,10 +82,10 @@
             endRange = startRange + (data.Count - 1);
         }
     }
-    <div class="mr-auto">
+    <div class="mb-2 mr-auto">
         Showing @startRange to @endRange of @totalItemCount entries
     </div>
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center mb-2 mr-auto">
         <div>
             <select id="PageSize" name="pageSize" class="form-control form-control-sm" onchange="changeShowEntries(this)">
                 @foreach (var item in entries)

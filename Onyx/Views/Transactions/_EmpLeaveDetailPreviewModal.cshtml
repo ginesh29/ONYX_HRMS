@@ -171,33 +171,35 @@
                     </table>
                 </div>
                 <h5 class="text-primary mt-2">Previous Exit & Entry Details</h5>
-                <table class="table-sm table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Date Range</th>
-                            <th>With Pay(Days)</th>
-                            <th>Without Pay(Days)</th>
-                            <th>Total(Days)</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in Model.PreviousLeaveHistory)
-                    {
-                        <tr>
-                            <td>@item.FromDate.ToString(dateFormat) - @item.ToDate.ToString(dateFormat)</td>
-                            <td>@item.WithPay</td>
-                            <td>@item.WithoutPay</td>
-                            <td>@item.Total</td>
-                        </tr>
-                    }
-                    @if (Model.PreviousLeaveHistory.Count() == 0)
-                    {
-                        <tfoot>
+                <div class="table-responsive">
+                    <table class="table-sm table">
+                        <thead class="thead-dark">
                             <tr>
-                                <td colspan="4">@CommonMessage.EMPTYGRID</td>
+                                <th>Date Range</th>
+                                <th>With Pay(Days)</th>
+                                <th>Without Pay(Days)</th>
+                                <th>Total(Days)</th>
                             </tr>
-                        </tfoot>
-                    }
-                </table>
+                        </thead>
+                        @foreach (var item in Model.PreviousLeaveHistory)
+                        {
+                            <tr>
+                                <td>@item.FromDate.ToString(dateFormat) - @item.ToDate.ToString(dateFormat)</td>
+                                <td>@item.WithPay</td>
+                                <td>@item.WithoutPay</td>
+                                <td>@item.Total</td>
+                            </tr>
+                        }
+                        @if (Model.PreviousLeaveHistory.Count() == 0)
+                        {
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">@CommonMessage.EMPTYGRID</td>
+                                </tr>
+                            </tfoot>
+                        }
+                    </table>
+                </div>
             </div>
         </div>
         <div class="modal-footer">

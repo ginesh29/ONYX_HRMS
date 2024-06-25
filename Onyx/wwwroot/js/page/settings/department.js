@@ -13,11 +13,11 @@
             { data: "description" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showDepartmentModal('${row.code}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showDepartmentModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteDepartment('${row.code}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],
