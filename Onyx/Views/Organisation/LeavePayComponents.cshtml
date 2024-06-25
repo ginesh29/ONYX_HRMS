@@ -6,17 +6,19 @@
         <div class="mb-3">
             <button id="btn-add" class="btn btn-info" onclick="showLeavePayComponentModal('')">New Leave Pay Component</button>
         </div>
-        <table class="table table-sm" id="LeavePayComponentsDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th>No.</th>
-                    <th>Leave Type</th>
-                    <th>Pay Type</th>
-                    <th>Pay Code</th>
-                    <th></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table-sm table" id="LeavePayComponentsDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>No.</th>
+                        <th>Leave Type</th>
+                        <th>Pay Type</th>
+                        <th>Pay Code</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 <div id="LeavePayComponentModal" class="modal fade" role="dialog" tabindex='-1'></div>

@@ -6,20 +6,22 @@
         <div class="mb-3">
             <button id="btn-add" class="btn btn-info" onclick="showWorkingHourModal('')">New Working Hrs/Shift</button>
         </div>
-        <table class="table table-sm" id="WorkingHoursDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th width="5px">No.</th>
-                    <th width="50">Code</th>
-                    <th>Description</th>
-                    <th>Duration</th>
-                    <th>Duty Hours</th>
-                    <th>Religion</th>
-                    <th>Day Type</th>
-                    <th width="90px"></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table-sm table" id="WorkingHoursDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="5px">No.</th>
+                        <th width="50">Code</th>
+                        <th>Description</th>
+                        <th>Duration</th>
+                        <th>Duty Hours</th>
+                        <th>Religion</th>
+                        <th>Day Type</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 <div id="WorkingHourModal" class="modal fade" role="dialog" tabindex='-1'></div>

@@ -13,11 +13,11 @@
             { data: "payCd" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('${row.srNo}','${row.typCd}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showOvertimeRateModal('${row.srNo}','${row.typCd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteOvertimeRate('${row.srNo}','${row.typCd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],

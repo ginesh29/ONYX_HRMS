@@ -22,11 +22,11 @@
             { data: "des" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showComponentModal('${row.cd}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showComponentModal('${row.cd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteComponent('${row.cd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],

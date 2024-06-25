@@ -15,11 +15,11 @@
             { data: "brand" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showVehicleModal('${row.cd}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showVehicleModal('${row.cd}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteVehicle('${row.cd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],
@@ -51,11 +51,11 @@ window["datatable-2"] = $('#VehicleDocumentsDataTable').DataTable(
             },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showVehicleDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showVehicleDocumentModal('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>                                                                          <button class="btn btn-sm btn-danger ml-2" onclick="deleteVehicleDocument('${row.vehCd.trim()}','${row.docTypCd.trim()}','${row.srNo}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],

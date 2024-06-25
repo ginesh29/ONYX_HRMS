@@ -6,21 +6,23 @@
         <div class="mb-3">
             <button id="btn-add" class="btn btn-info" onclick="showOvertimeRateModal('','')">New Overtime Rate</button>
         </div>
-        <table class="table table-sm" id="OvertimeRatesDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th width="5px">No.</th>
-                    <th>Type</th>
-                    <th>Duty Hrs Upto</th>
-                    <th>Rate</th>
-                    <th>Short Desc.</th>
-                    <th>Description</th>
-                    <th>Day Type</th>
-                    <th>Pay Code</th>
-                    <th width="90px"></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table-sm table" id="OvertimeRatesDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="5px">No.</th>
+                        <th>Type</th>
+                        <th>Duty Hrs Upto</th>
+                        <th>Rate</th>
+                        <th>Short Desc.</th>
+                        <th>Description</th>
+                        <th>Day Type</th>
+                        <th>Pay Code</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 <div id="OvertimeRateModal" class="modal fade" role="dialog" tabindex='-1'></div>

@@ -12,7 +12,7 @@
             @if (action == "Edit")
             {
                 <li class="nav-item">
-                    <a class="nav-link " id="documents-tab" data-toggle="pill" href="#documents" role="tab" aria-controls="documents" aria-selected="true">Documents</a>
+                    <a class="nav-link" id="documents-tab" data-toggle="pill" href="#documents" role="tab" aria-controls="documents" aria-selected="true">Documents</a>
                 </li>
             }
         </ul>
@@ -69,7 +69,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label asp-for="PurDt"></label>
-                                        <input asp-for="PurDt" class="form-control  date-input" type="text" />
+                                        <input asp-for="PurDt" class="form-control date-input" type="text" />
                                         <span asp-validation-for="PurDt" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -264,19 +264,21 @@
                     <div class="mb-3">
                         <button class="btn btn-info" onclick="showVehicleDocumentModal('@Model.Cd','')">New Vehicle Document</button>
                     </div>
-                    <table class="table table-sm" id="VehicleDocumentsDataTable">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>No.</th>
-                                <th>Document Type</th>
-                                <th>Document No.</th>
-                                <th>Issue Date</th>
-                                <th>Place Of Issue</th>
-                                <th>Expiry Date</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table-sm table" id="VehicleDocumentsDataTable">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Document Type</th>
+                                    <th>Document No.</th>
+                                    <th>Issue Date</th>
+                                    <th>Place Of Issue</th>
+                                    <th>Expiry Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             }
         </div>
