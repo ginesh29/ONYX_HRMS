@@ -1382,6 +1382,7 @@ namespace Onyx.Controllers
             return Json(result);
         }
         #endregion
+
         #region WPS
         public IActionResult WPSProcess()
         {
@@ -1395,6 +1396,11 @@ namespace Onyx.Controllers
                 Value = m.Cd.Trim(),
                 Text = $"{m.SDes}"
             });
+            return View();
+        }
+        public IActionResult FetchWPS()
+        {
+            
             return View();
         }
         #endregion

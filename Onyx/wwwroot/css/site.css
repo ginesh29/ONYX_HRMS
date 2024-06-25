@@ -5,6 +5,7 @@
 .h-600px {
     height: 600px;
 }
+
 .os-theme-dark > .os-scrollbar-vertical,
 .os-theme-light > .os-scrollbar-vertical {
     width: 8px !important;
@@ -51,14 +52,16 @@
     font-size: 12px;
     color: #777;
 }
-.dashboard-quicklinks:nth-of-type(n+2) {
-    padding-left: .5rem !important;
+@media (min-width: 768px) {
+    .dashboard-quicklinks:nth-of-type(n+2) {
+        padding-left: .5rem !important;
+    }
+    .dashboard-quicklinks:not(:last-child) {
+        padding-right: .5rem !important;
+        border-right: solid 1px #ced4da;
+    }
 }
 
-.dashboard-quicklinks:not(:last-child) {
-    padding-right: .5rem !important;
-    border-right: solid 1px #ced4da;
-}
 
 .modal {
     overflow: auto !important;

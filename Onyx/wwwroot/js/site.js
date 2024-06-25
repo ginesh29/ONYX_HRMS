@@ -31,7 +31,7 @@ const intMaskOptions = {
     placeholder: '0',
 }
 const dataTableDefaultOptions = {
-    "ordering": false
+    ordering: false,
 }
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 const videoExtensions = ['mp4'];
@@ -56,6 +56,15 @@ const dateRangePickerDefaultOptions = {
     showDropdowns: true,
     autoApply: true,
 }
+$(document).on('change', '.form-control,.form-group input', function (e) {
+    var $form = $(this).closest('form');
+    if (e.target.id.length > 0) {
+        $form.find(`.form-control#${e.target.id}`).removeClass("input-validation-error");
+        $form.find(`.form-control#${e.target.id}`).parent().removeClass("input-validation-error");
+        $form.find(`[data-valmsg-for='${e.target.id}']`).removeClass("field-validation-error").addClass("field-validation-valid").empty();
+        $form.find(`[data-valmsg-for='${e.target.id.replace("_", ".")}']`).removeClass("field-validation-error").addClass("field-validation-valid").empty();
+    }
+});
 function formatDecimal(num) {
     return num.toFixed(CommonSetting.AmtDecs);
 }
@@ -97,7 +106,7 @@ function showErrorToastr(msg) {
     toastr.clear()
     toastr.error(msg);
 }
-function showCardMessage(type,msg) {
+function showCardMessage(type, msg) {
     var html = `<div class="alert alert-${type} alert-dismissible">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
             <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>

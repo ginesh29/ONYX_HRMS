@@ -1208,6 +1208,19 @@ namespace Onyx.Services
             return result != null;
         }
         #endregion
+        #region WPS
+        //public bool GetWPSByBank(string bank)
+        //{
+        //    var procedureName = "Validate_Prepayroll";
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("v_CoCd", CoCd);
+        //    parameters.Add("v_Typ", type);
+        //    var connectionString = _dbGatewayService.GetConnectionString();
+        //    var connection = new SqlConnection(connectionString);
+        //    var result = connection.Query(procedureName, parameters, commandType: CommandType.StoredProcedure);
+        //    return result != null;
+        //}
+        #endregion
 
         #region Emp Monthly Incentive
         public void UpdateEmpSalesData(EmpTrans_VarCompFixAmt_GetRow_Result model, VariablePayDedComponentFilterModel filterModel)

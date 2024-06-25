@@ -93,7 +93,7 @@
                 @if (Model.Cd != "001")
                 {
                     <label>Menu & Permission</label>
-                    <div id="tree-view">
+                    <div id="tree-view" class="overflow-auto">
                         <ul>
                             @foreach (var item in Model.Menus)
                             {

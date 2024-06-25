@@ -21,12 +21,12 @@
             {
                 data: function (row) {
                     var deleteEnableBtn = row.code == "001" || row.code == "Emp" || row.code == "HR" ? "disabled" : "";
-                    return `<button class="btn btn-sm btn-info" onclick="showUserModal('${row.code}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showUserModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
                             <button class="btn btn-sm btn-danger ml-2" onclick="deleteUser('${row.code}')" ${deleteEnableBtn}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],

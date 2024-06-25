@@ -13,20 +13,22 @@
         <div class="mb-3">
             <button id="btn-add" class="btn btn-info" onclick="showCodeModal('')">New <span id="code-type-text"></span></button>
         </div>
-        <table class="table table-sm" id="CodesDataTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th width="5px">No.</th>
-                    <th width="50px">Code</th>
-                    <th width="50px">Type</th>
-                    <th width="50px">Abbriviation</th>
-                    <th width="200px">Short Des.</th>
-                    <th>Description</th>
-                    <th>Active</th>
-                    <th width="90px"></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table-sm table" id="CodesDataTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="5px">No.</th>
+                        <th width="50px">Code</th>
+                        <th width="50px">Type</th>
+                        <th width="50px">Abbriviation</th>
+                        <th width="200px">Short Des.</th>
+                        <th>Description</th>
+                        <th>Active</th>
+                        <th width="90px"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 <div id="CodeModal" class="modal fade" role="dialog" tabindex='-1'></div>

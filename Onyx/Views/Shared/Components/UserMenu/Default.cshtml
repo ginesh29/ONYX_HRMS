@@ -391,7 +391,7 @@
                 </li>
             }
         }
-        <li class="nav-item ml-5">
+        <li class="nav-item ml-0 ml-md-5">
             <div style="width:200px;">
                 <select class="select-picker" asp-items="@companies" id="user-company-dropdown">
                 </select>
@@ -400,8 +400,8 @@
         <partial name="_LanguageSelector" />
         <!-- Navbar Search -->
         <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <img src="@profilePic" class="user-image img-circle border" alt="User Image">
+            <a href="#" class="nav-link dropdown-toggle p-1" data-toggle="dropdown" aria-expanded="false">
+                <img src="@profilePic" class="user-image img-circle mr-0 border" alt="User Image">
                 <span class="d-none d-md-inline">@(!string.IsNullOrEmpty(Model.EmployeeName) ? Model.EmployeeName : Model.Username)</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-@(rtl?"left":"right")" id="user-menu">

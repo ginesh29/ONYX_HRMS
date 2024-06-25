@@ -1,4 +1,7 @@
-﻿let grid = GridStack.init();
+﻿var options = {
+    cellHeight: 'auto',
+}
+let grid = GridStack.init(options);
 grid.on('added removed change', function (e, items) {
     if (e.type == "removed")
         deleteAjax(`/home/deletedashboardconfig?widegetId=${items[0].id}`);
@@ -7,6 +10,7 @@ grid.on('added removed change', function (e, items) {
         postAjax('/home/updatedashboardconfig', { widgets: data });
     }
 });
+
 var defaultChartsJsonData = [];
 var chartsJsonData = [];
 $.ajax({
@@ -23,8 +27,8 @@ if (empOrUser == "E")
     chartsJsonData = defaultChartsJsonData.filter(m => m.type == "E");
 
 if (userLinkedTo != "Emp") {
-    var analysisHeader = `<label class="mb-0">Type</label>
-                            <div class="col-md-3">
+    var analysisHeader = `<div class="d-flex justify-content-between"><label class="mb-0">Type</label>
+                            <div class="">
                                 <select id="Chart-Type" class="form-control dashboard-select-picker" onchange="bindWidget   ('emp_analysis_chart','EmpAnalysisChart')">
                                     <option value="Dept">Department</option>
                                     <option value="Branch">Branch</option>
@@ -32,7 +36,7 @@ if (userLinkedTo != "Emp") {
                                     <option value="Location">Location</option>
                                     <option value="Status">Status</option>
                                 </select>
-                        </div>`;
+                        </div></div>`;
     var days = ["30", "60", "90", "120", "150"];
     var drpDaysHtml = "";
     $.each(days, function (index, item) {
@@ -63,24 +67,25 @@ if (userLinkedTo != "Emp") {
     var userChartsJsonData = defaultChartsJsonData.filter(m => m.type == "U");
     userChartsJsonData.forEach((n, i) => {
         n.header = n.header = n.des.includes("analysis") ? analysisHeader :
-            n.des.includes("_list") ? `<label class="mb-0">No. Of Days</label>
-                                       <div class="col-md-3">
+            n.des.includes("_list") ? `<div class="d-flex justify-content-between align-items-center"><label class="mb-0">No. Of Days</label>
+                                       <div>
                                           <select id="EmpLeaveNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget                         ('${n.des}','${n.url}')">
                                               ${drpDaysHtml}
                                           </select>
-                                       </div>`:
-                n.des.includes("birthday") ? `<label class="mb-0">Date Range</label>
-                                           <div class="col-md-5">
+                                       </div></div>`:
+                n.des.includes("birthday") ? `<div class="d-flex justify-content-between align-items-center"><label class="mb-0">Date Range</label>
+                                           <div class="">
                                                <input id="DateRange" type="text" class="form-control">
-                                           </div>`:
+                                           </div></div>`:
                     n.des.includes("waiting") ? `
                         ${radioTypeHtml}
+                        <div class="d-flex justify-content-between align-items-center">
                         <label class="mb-0">No of Days Before</label>
-                        <div class="col-md-3">
+                        <div class="">
                             <select id="ExpiredDocNoOfDays" class="form-control dashboard-select-picker" onchange="bindWidget('${n.des}','${n.url}')">
                             ${drpDaysHtml}
                             </select>
-                        </div>` : ""
+                        </div></div>` : ""
     })
     chartsJsonData = $.merge(chartsJsonData, userChartsJsonData);
     function showEmployees(curr, type) {
@@ -94,7 +99,6 @@ if (userLinkedTo != "Emp") {
         });
     }
 }
-
 
 chartsJsonData.forEach((n, i) =>
     n.content = `<div class="card dashboard-card">
@@ -115,9 +119,7 @@ chartsJsonData.forEach((n, i) =>
                                </button>
                             </div>                            
                         </div>
-                        <div class="d-flex align-items-center">
                             ${n.header ? n.header : ""}
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="overlay-wrapper">
@@ -178,7 +180,7 @@ function addWidget(des) {
     var widgetLength = $(".grid-stack-item").length;
     var x = widgetLength % 2 == 0 ? 0 : 6;
     var maxY = _.maxBy(chartsJsonData, 'y') && _.maxBy(chartsJsonData, 'y').y;
-    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${x}" gs-y="${maxY}" gs-w="6" gs-h="4">
+    var wigetHtml = `<div class="grid-stack-item" gs-id="${widgetData.id}" gs-x="${x}" gs-y="${maxY}" gs-w="6" gs-h="4" gs-no-move="true">
                         <div class="grid-stack-item-content">${widgetData.content}</div>
                      </div>`;
     grid.addWidget(wigetHtml, 0, 0, widgetData.w, widgetData.h);
@@ -264,3 +266,7 @@ function filterShowReport(report) {
         window.open(url);
     }
 }
+$('.grid-stack-item').each(function () {
+    var colSpan = $(this).attr('data-gs-width');
+    $(this).css('--grid-column-span', colSpan);
+});

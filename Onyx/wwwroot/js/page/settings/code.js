@@ -77,12 +77,12 @@ function setType() {
                 },
                 {
                     data: function (row) {
-                        return `<button class="btn btn-sm btn-info" onclick="showCodeModal('${row.cd.trim()}')" ${editEnable}>
+                        return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showCodeModal('${row.cd.trim()}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
                             <button class="btn btn-sm btn-danger ml-2" onclick="deleteCode('${row.cd}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                     }, "width": "80px"
                 }
             ],

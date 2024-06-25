@@ -26,14 +26,16 @@ else
             <div class="d-flex justify-content-between">
                 <div>
                     <h5>Quick Links</h5>
-                    @foreach (var item in quickLinkItems)
-                    {
-                        <a href="@item.Frm?processId=@item.ProcessId" class="dashboard-quicklinks">@item.Caption</a>
-                    }
-                    @if (loggedInUser.UserOrEmployee == "E")
-                    {
-                        <a href="javascript:void(0)" class="dashboard-quicklinks" data-toggle="modal" data-target="#PayslipDownloadModal">Download Payslip</a>
-                    }
+                    <div class="d-flex flex-column flex-md-row">
+                        @foreach (var item in quickLinkItems)
+                        {
+                            <a href="@item.Frm?processId=@item.ProcessId" class="dashboard-quicklinks">@item.Caption</a>
+                        }
+                        @if (loggedInUser.UserOrEmployee == "E")
+                        {
+                            <a href="javascript:void(0)" class="dashboard-quicklinks" data-toggle="modal" data-target="#PayslipDownloadModal">Download Payslip</a>
+                        }
+                    </div>
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-info font-weight-bold dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -133,7 +135,6 @@ else
 }
 @if (loggedInUser.UserLinkedTo != "Emp")
 {
-
     <div class="row">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-white">

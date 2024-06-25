@@ -16,12 +16,12 @@
             { data: "provisions" },
             {
                 data: function (row) {
-                    return `<button class="btn btn-sm btn-info" onclick="showCountryModal('${row.code}')" ${editEnable}>
+                    return `<div class="d-flex"><button class="btn btn-sm btn-info" onclick="showCountryModal('${row.code}')" ${editEnable}>
                                 <i class="fas fa-pen"></i>
                             </button>
                             <button class="btn btn-sm btn-danger ml-2" onclick="deleteCountry('${row.code}')" ${deleteEnable}>
                                 <i class="fa fa-trash"></i>
-                            </button>`
+                            </button></div>`
                 }, "width": "80px"
             }
         ],
