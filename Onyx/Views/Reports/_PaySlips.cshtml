@@ -5,126 +5,128 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
-@foreach (var grp in grpData)
-{
-    string monthName = new DateTime(1, grp.Key.Prd.Value, 1).ToString("MMM");
-    cnt++;
-    var totalEarnings = grp.Sum(m => m.Amt1);
-    var totalDeductions = grp.Sum(m => m.Amt2);
-    var netSalary = totalEarnings - totalDeductions;
-    string Curr1 = grp.FirstOrDefault().Curr1;
-    string Curr2 = grp.FirstOrDefault().Curr2;
-    <div class="mb-5">
-        <div class="invoice p-3 mb-3">
-            <!-- title row -->
-            <div class="col-12">
-                <h6>
-                    <span class="text-primary">@grp.Key.CoName</span>
-                    <small class="float-right"><span class="font-weight-bold">Print Date:</span> @DateTime.Now</small>
-                </h6>
-            </div>
-            <h6 class="text-center mt-3">
-                Payslip for the month @monthName @grp.Key.Yr
-            </h6>
-            <div style="font-size: small;">
-                <table>
-                    <tr>
-                        <th width="120px">Employee Code:</th>
-                        <td width="300px">@grp.Key.EmpCd</td>
-                        <th width="120px">Designation:</th>
-                        <td width="250px">@grp.Key.Designation</td>
-                    </tr>
-                    <tr>
-                        <th>Employee Name:</th>
-                        <td>@grp.Key.Name</td>
-                        <th>Sponsor:</th>
-                        <td>@grp.Key.Sponsor</td>
-                    </tr>
-                    <tr>
-                        <th>Days Worked:</th>
-                        <td>@grp.Key.W_days</td>
-                        <th>Department:</th>
-                        <td>@grp.Key.Department</td>
-                    </tr>
-                </table>
-                <table class="table table-sm mt-2 mb-0">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th width="300px">Earnings/Payments</th>
-                            <th>Currency</th>
-                            <th class="border-right">Amount</th>
-                            <th width="200px">Deductions</th>
-                            <th>Currency</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    @foreach (var item in grp)
-                    {
-                        <tr>
-                            <td>@item.PayCode</td>
-                            <td>@item.Curr1</td>
-                            <td class="border-right">
-                                @item.Amt1.ToString(DecimalFormat)
-                                @if (!string.IsNullOrEmpty(item.Narr1))
-                                {
-                                    <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr1"></i>
-                                }
-                            </td>
-                            <td>@item.PayCode1</td>
-                            <td>@item.Curr2</td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(item.PayCode1))
-                                {
-                                    <span>
-                                        @item.Amt2.ToString(DecimalFormat)
-                                        @if (!string.IsNullOrEmpty(item.Narr2))
-                                        {
-                                            <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr2"></i>
-                                        }
-                                    </span>
-                                }
-                            </td>
-                        </tr>
-                    }
-                    <tfoot>
-                        <tr class="table-secondary">
-                            <td>Total Earnings/Payments</td>
-                            <td>@Curr1</td>
-                            <td class="border-right">@totalEarnings.ToString(DecimalFormat)</td>
-                            <td>Total Deductions</td>
-                            <td>@Curr2</td>
-                            <td>
-                                @if (totalDeductions > 0)
-                                {
-                                    <span>@totalDeductions.ToString(DecimalFormat)</span>
-                                }
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <div style="width: 100%; display: table;">
-                    <div style="display: table-row">
-                        <div style="width: 75%; display: table-cell;"><span class="font-weight-bold">Amount (In words): </span>@ExtensionMethod.NumberToWords(netSalary)</div>
-                        <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString(DecimalFormat)</div>
-                    </div>
+<div class="col-md-9" style="min-width:800px">
+    @foreach (var grp in grpData)
+    {
+        string monthName = new DateTime(1, grp.Key.Prd.Value, 1).ToString("MMM");
+        cnt++;
+        var totalEarnings = grp.Sum(m => m.Amt1);
+        var totalDeductions = grp.Sum(m => m.Amt2);
+        var netSalary = totalEarnings - totalDeductions;
+        string Curr1 = grp.FirstOrDefault().Curr1;
+        string Curr2 = grp.FirstOrDefault().Curr2;
+        <div class="mb-5">
+            <div class="invoice p-3 mb-3">
+                <!-- title row -->
+                <div class="col-12">
+                    <h6>
+                        <span class="text-primary">@grp.Key.CoName</span>
+                        <small class="float-right"><span class="font-weight-bold">Print Date:</span> @DateTime.Now</small>
+                    </h6>
                 </div>
-                <hr />
-                <div class="mt-3 mb-3" style="width: 100%; display: table;">
-                    <div style="display: table-row">
-                        <div class="font-weight-bold" style="width: 35%; display: table-cell;">Prepared By: <span class="border-bottom">____________________</span></div>
-                        <div class="font-weight-bold" style="width: 35%; display: table-cell;">Approved By: <span class="border-bottom">____________________</span></div>
-                        <div class="font-weight-bold" style="display: table-cell;">Received By: <span class="border-bottom">____________________</span></div>
+                <h6 class="mt-3 text-center">
+                    Payslip for the month @monthName @grp.Key.Yr
+                </h6>
+                <div style="font-size: small;">
+                    <table>
+                        <tr>
+                            <th width="120px">Employee Code:</th>
+                            <td width="300px">@grp.Key.EmpCd</td>
+                            <th width="120px">Designation:</th>
+                            <td width="250px">@grp.Key.Designation</td>
+                        </tr>
+                        <tr>
+                            <th>Employee Name:</th>
+                            <td>@grp.Key.Name</td>
+                            <th>Sponsor:</th>
+                            <td>@grp.Key.Sponsor</td>
+                        </tr>
+                        <tr>
+                            <th>Days Worked:</th>
+                            <td>@grp.Key.W_days</td>
+                            <th>Department:</th>
+                            <td>@grp.Key.Department</td>
+                        </tr>
+                    </table>
+                    <table class="table-sm mt-2 mb-0 table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th width="300px">Earnings/Payments</th>
+                                <th>Currency</th>
+                                <th class="border-right">Amount</th>
+                                <th width="200px">Deductions</th>
+                                <th>Currency</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in grp)
+                        {
+                            <tr>
+                                <td>@item.PayCode</td>
+                                <td>@item.Curr1</td>
+                                <td class="border-right">
+                                    @item.Amt1.ToString(DecimalFormat)
+                                    @if (!string.IsNullOrEmpty(item.Narr1))
+                                    {
+                                        <i class="fa fa-info-circle text-info ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr1"></i>
+                                    }
+                                </td>
+                                <td>@item.PayCode1</td>
+                                <td>@item.Curr2</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.PayCode1))
+                                    {
+                                        <span>
+                                            @item.Amt2.ToString(DecimalFormat)
+                                            @if (!string.IsNullOrEmpty(item.Narr2))
+                                            {
+                                                <i class="fa fa-info-circle text-danger ml-2" aria-hidden="true" data-toggle="tooltip" data-original-title="@item.Narr2"></i>
+                                            }
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        <tfoot>
+                            <tr class="table-secondary">
+                                <td>Total Earnings/Payments</td>
+                                <td>@Curr1</td>
+                                <td class="border-right">@totalEarnings.ToString(DecimalFormat)</td>
+                                <td>Total Deductions</td>
+                                <td>@Curr2</td>
+                                <td>
+                                    @if (totalDeductions > 0)
+                                    {
+                                        <span>@totalDeductions.ToString(DecimalFormat)</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div style="width: 100%; display: table;">
+                        <div style="display: table-row">
+                            <div style="width: 75%; display: table-cell;"><span class="font-weight-bold">Amount (In words): </span>@ExtensionMethod.NumberToWords(netSalary)</div>
+                            <div style="display: table-cell;"><span class="font-weight-bold">Net Salary: </span>@Curr1  @netSalary.ToString(DecimalFormat)</div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="mt-3 mb-3" style="width: 100%; display: table;">
+                        <div style="display: table-row">
+                            <div class="font-weight-bold" style="width: 35%; display: table-cell;">Prepared By: <span class="border-bottom">____________________</span></div>
+                            <div class="font-weight-bold" style="width: 35%; display: table-cell;">Approved By: <span class="border-bottom">____________________</span></div>
+                            <div class="font-weight-bold" style="display: table-cell;">Received By: <span class="border-bottom">____________________</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    @if (cnt % 3 == 0)
-    {
-        <div class="new-page"></div>
+        @if (cnt % 3 == 0)
+        {
+            <div class="new-page"></div>
+        }
     }
-}
-@if (Model.Count() == 0)
-{
-    <div>@CommonMessage.EMPTYGRID</div>
-}
+    @if (Model.Count() == 0)
+    {
+        <div>@CommonMessage.EMPTYGRID</div>
+    }
+</div>

@@ -12,11 +12,11 @@
         new() { Text="Pro-rata", Value="P"}
     };
 }
-<div>
+<div class="table-responsive">
     @foreach (var grp in groupedData)
     {
         var totalAmt = grp.Where(m => m.ExRate > 0).Sum(m => m.Amt);
-        <table class="table table-sm">
+        <table class="table-sm table">
             <thead class="thead-dark">
                 <tr>
                     <th colspan="6">@grp.Key.Name (@grp.Key.Code.Trim())</th>

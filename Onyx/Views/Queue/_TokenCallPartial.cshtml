@@ -8,10 +8,10 @@
 }
 <span id="TokenVoice" class="d-none">@TokenCookie.VoiceName</span>
 <div class="row">
-    <div class="col-md-9 form-border-right">
-        <div class="d-flex flex-column">
+    <div class="col-md-9 form-border-right overflow-auto">
+        <div class="d-flex flex-column" style="min-width:800px">
             <div class="text-center"><h1 style="font-size: 115px;">@CurrentToken</h1></div>
-            <div class="text-center  mb-3"><h1>@currentStatus</h1></div>
+            <div class="mb-3 text-center"><h1>@currentStatus</h1></div>
             <div class="text-center" style="width:400px;height:300px; margin: 0 auto;">
                 <div class="d-flex justify-content-between mb-5">
                     <button class="btn btn-info" @(ViewBag.CurrentToken == null && WaitingTokens.Count() > 0 ? "" : "disabled") style="width: 150px;" onclick="callNextToken(this,'@ViewBag.NextToken')">Call Next</button>
@@ -39,11 +39,11 @@
     <div class="col-md-3">
         <div class="accordion" id="TokenCallList">
             <h2 class="mb-0">
-                <button class="btn btn-light text-secondary btn-block text-left mb-1" type="button" data-toggle="collapse" data-target="#waiting" aria-expanded="true" aria-controls="waiting">
-                    Waiting <i class="fas fa-angle-left float-right expand-icon"></i>
+                <button class="btn btn-light text-secondary btn-block mb-1 text-left" type="button" data-toggle="collapse" data-target="#waiting" aria-expanded="true" aria-controls="waiting">
+                    Waiting <i class="fas fa-angle-left expand-icon float-right"></i>
                 </button>
             </h2>
-            <div id="waiting" class="collapse show" aria-labelledby="waiting" data-parent="#TokenCallList">
+            <div id="waiting" class="show collapse" aria-labelledby="waiting" data-parent="#TokenCallList">
                 <ul class="list-group list-group-flush">
                     @foreach (var item in WaitingTokens)
                     {
@@ -61,8 +61,8 @@
                 </ul>
             </div>
             <h2 class="mb-0">
-                <button class="btn btn-light text-secondary btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#called" aria-expanded="false" aria-controls="called">
-                    Called <i class="fas fa-angle-left float-right expand-icon"></i>
+                <button class="btn btn-light text-secondary btn-block collapsed text-left" type="button" data-toggle="collapse" data-target="#called" aria-expanded="false" aria-controls="called">
+                    Called <i class="fas fa-angle-left expand-icon float-right"></i>
                 </button>
             </h2>
             <div id="called" class="collapse" aria-labelledby="called" data-parent="#TokenCallList">
