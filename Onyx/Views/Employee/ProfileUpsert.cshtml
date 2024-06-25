@@ -19,9 +19,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card card-default">
-            <div class="card-body p-0">
-                <div id="stepper" class="bs-stepper">
-                    <div class="bs-stepper-header" role="tablist">
+            <div class="card-body p-md-2">
+                <div id="stepper" class="bs-stepper overflow-auto">
+                    <div class="bs-stepper-header" role="tablist" style="width:800px">
                         @foreach (var item in sections)
                         {
                             @if (!item.Contains("Documents") && !item.Contains("Components") ||
@@ -70,7 +70,7 @@
                         <form id="emp-profile-frm">
                             <input asp-for="Code" type="hidden" />
                             @{
-                                i = 0;                                
+                                i = 0;
                             }
                             @foreach (var item in sections)
                             {
@@ -80,9 +80,9 @@
                                         {
                                             var servicePeriodDays = (DateTime.Now - Model.Doj.Value).Days;
                                             var servicePeriod = ExtensionMethod.ConvertDaysToYearsMonthsDays(servicePeriodDays);
-                                            <div class="d-flex">
+                                            <div class="d-flex flex-column flex-md-row">
                                                 <h5 class="text-primary pr-3 border-right">@Model.Name (@Model.Code)</h5>
-                                                <h5><span class="text-info pl-3">Service Period: </span>@servicePeriod</h5>
+                                                <h5><span class="text-info pl-md-3">Service Period: </span>@servicePeriod</h5>
                                             </div>
                                         }
                                         @if (item.Contains("Personal"))
