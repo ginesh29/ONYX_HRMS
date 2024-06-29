@@ -997,6 +997,7 @@ namespace Onyx.Services
                 if (isEmptyRow)
                     continue;
                 var empCd = Convert.ToString(reader.GetValue(0));
+                var narr = Convert.ToString(reader.GetValue(2));
                 bool validEmployee = _employeeService.FindEmployee(empCd, CoCd) != null;
                 string errorMessage = "<ul class='text-left ml-0'>";
                 if (!validEmployee)
@@ -1010,7 +1011,8 @@ namespace Onyx.Services
                     ErrorMessage = errorMessage,
                     Cd = empCd,
                     Amt = amt,
-                    SrNo = cnt
+                    SrNo = cnt,
+                    Narr = narr,
                 };
                 result.Add(excelData);
                 cnt++;
@@ -1027,7 +1029,7 @@ namespace Onyx.Services
             for (int i = 0; i < reader.FieldCount; i++)
                 headers.Add(Convert.ToString(reader.GetValue(i)));
             headers = headers.Where(m => !string.IsNullOrEmpty(m)).ToList();
-            var expectedHeaders = new List<string> { "Employee Code", "Amount" };
+            var expectedHeaders = new List<string> { "Employee Code", "Amount", "Narration" };
             if (!headers.SequenceEqual(expectedHeaders))
                 result = false;
             return result;
@@ -1046,7 +1048,6 @@ namespace Onyx.Services
             foreach (var item in excelData)
             {
                 var employeeDetail = _employeeService.FindEmployee(item.Cd, CoCd); item.Curr = employeeDetail.BasicCurr.Trim();
-                item.Narr = $"Variable Pay Component {item.Curr}: {item.Amt}";
                 item.TransId = "M";
                 EmpTrans_Update(item, filterModel);
             }

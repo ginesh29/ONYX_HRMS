@@ -109,19 +109,18 @@
             if (frm.valid()) {
                 loadingButton(btn);
                 var filterModel = $('#incentive-filter-frm').find('input, select, textarea').serialize();
-                var frmData = $('#incentive-frm').find('input[type="checkbox"]:checked')
-                    .closest('tr')
+                var frmData = $('#incentive-frm').find('input[type="checkbox"]:checked').closest('tr')
                     .find('input, select, textarea').serialize();
+                var frmDataQueryString = modifyIndexFormData(decodeURI(frmData), "IncentiveData");
                 var url = `/Incentives/SaveEmpIncentive`;
-                if (frmData.length)
-                    postAjax(url, `${filterModel}&${frmData}`, function (response) {
+                if (frmDataQueryString.length)
+                    postAjax(url, `${filterModel}&${frmDataQueryString}`, function (response) {
                         if (response.success) {
                             showSuccessToastr(response.message);
                             searchIncentive();
                         }
-                        else {
+                        else
                             showErrorToastr(response.message);
-                        }
                     });
                 else
                     showErrorToastr("Please select atleast one");

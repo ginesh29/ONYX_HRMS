@@ -4,11 +4,12 @@
 }
 @if (excelData != null)
 {
-    <table class="table table-sm mt-3" id="ExecelData">
+    <table class="table-sm mt-3 table" id="ExecelData">
         <thead class="thead-dark">
             <tr>
                 <th>Employee Code</th>
                 <th>Amount</th>
+                <th>Narration</th>
             </tr>
         </thead>
         @foreach (var item in excelData)
@@ -28,6 +29,7 @@
                     </span>
                 </td>
                 <td>@item.Amt</td>
+                <td>@item.Narr</td>
             </tr>
         }
     </table>

@@ -369,6 +369,40 @@ function speak(text, voiceName) {
     utterance.text = text;
     speechSynthesis.speak(utterance);
 }
+function modifyIndexFormData(queryString, paramName) {
+    // Parse the query string into an array of objects
+    var result = [];
+    var pairs = queryString.split('&');
+
+    pairs.forEach(function (pair) {
+        var [key, value] = pair.split('=');
+        var regex = new RegExp(`${paramName}\\[(\\d+)\\]\\.(\\w+)`);
+        var match = key.match(regex);
+
+        if (match) {
+            var index = parseInt(match[1], 10);
+            var property = match[2];
+
+            if (!result[index]) {
+                result[index] = {};
+            }
+
+            result[index][property] = decodeURIComponent(value);
+        }
+    });
+
+    // Filter out undefined elements in the array
+    result = result.filter(item => item !== undefined);
+
+    // Convert the array of objects back into a query string
+    var queryStringResult = result.map((item, index) => {
+        return Object.keys(item).map(key => {
+            return `${paramName}[${index}].${key}=${encodeURIComponent(item[key])}`;
+        }).join('&');
+    }).join('&');
+
+    return queryStringResult;
+}
 function toggleFullscreen() {
     var elem = document.documentElement;
     if (!document.fullscreenElement) {

@@ -124,15 +124,15 @@
                 var frmData = frm.find('input[type="checkbox"]:checked')
                     .closest('tr')
                     .find('input, select, textarea').serialize();
-                if (frmData.length)
-                    postAjax(url, `${filterModel}&${frmData}`, function (response) {
+                var frmDataQueryString = modifyIndexFormData(decodeURI(frmData), "VariableComponentsData");
+                if (frmDataQueryString.length)
+                    postAjax(url, `${filterModel}&${frmDataQueryString}`, function (response) {
                         if (response.success) {
                             showSuccessToastr(response.message);
                             searchComponents();
                         }
-                        else {
+                        else
                             showErrorToastr(response.message);
-                        }                        
                     });
                 else
                     showErrorToastr("Please select atleast one");
