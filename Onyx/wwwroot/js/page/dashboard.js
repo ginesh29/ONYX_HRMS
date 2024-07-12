@@ -161,7 +161,7 @@ function bindDashboard() {
                 bindWidget(`${item.des}`, `${item.url}`)
                 if (item.des.includes("birthday_events")) {
                     var dateFormat = $("#LocalDateFormat").val();
-                    var startDate = moment().subtract(1, "day").format(dateFormat);
+                    var startDate = moment().format(dateFormat);
                     var endDate = moment().add(1, "day").format(dateFormat);
                     var dateRangeOptions = dateRangePickerDefaultOptions;
                     dateRangeOptions.startDate = startDate;

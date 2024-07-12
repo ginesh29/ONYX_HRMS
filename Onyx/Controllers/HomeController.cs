@@ -183,7 +183,7 @@ namespace Onyx.Controllers
         }
         public IActionResult EmpBirthdayEvents(string DateRange)
         {
-            var start = DateTime.Now.AddDays(-1).Date;
+            var start = DateTime.Now.Date;
             var end = DateTime.Now.AddDays(1).Date;
             if (!string.IsNullOrEmpty(DateRange))
             {
@@ -202,7 +202,7 @@ namespace Onyx.Controllers
                     BorderColor = m.Type == "Birthday" ? "#f56954" : "#28a745",
                     Start = !isLeapYear && m.Date.Day == 29 && m.Date.Month == 2 ? DateTime.MinValue.FormatDate() : new DateTime(year, m.Date.Month, m.Date.Day).ToString("dddd d MMM, yyyy"),
                     Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}",
-                }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end));
+                }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end)).OrderBy(m => Convert.ToDateTime(m.Start));
             return PartialView("_EmpBirthdayEvents", events);
         }
         #endregion        

@@ -1,4 +1,3 @@
-using ElectronNET.API;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Localization;
@@ -55,8 +54,6 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 builder.Services.AddSignalR();
-builder.WebHost.UseElectron(args);
-builder.Services.AddElectron();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
@@ -81,13 +78,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapHub<ChatHub>("/chathub");
-if (HybridSupport.IsElectronActive)
-{
-    ElectronBootstrap();
-}
 app.Run();
-static async void ElectronBootstrap()
-{
-    var window = await Electron.WindowManager.CreateWindowAsync();
-    window.OnClosed += Electron.App.Quit;
-}
