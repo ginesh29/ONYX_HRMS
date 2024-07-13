@@ -11,7 +11,6 @@ using Rotativa.AspNetCore;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddMemoryCache();
 builder.Services.AddHostedService<QueuedHostedService>();
 builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 builder.Services.AddHttpContextAccessor();
@@ -52,7 +51,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         culture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
     options.RequestCultureProviders = [new QueryStringRequestCultureProvider(), new CookieRequestCultureProvider()];
 });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.SlidingExpiration = false;
+            options.Cookie.MaxAge = TimeSpan.FromDays(365 * 100);
+        });
 builder.Services.AddSignalR();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
