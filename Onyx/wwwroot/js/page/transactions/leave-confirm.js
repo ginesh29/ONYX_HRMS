@@ -128,10 +128,8 @@ function changeType(e) {
     $(".revise-div").addClass("d-none");
     $("#single-payroll-container").addClass("d-none");
     $(".single-payroll-div").addClass("d-none");
-    if (e.value == LeaveConfirmTypesEnum.Confirm) {
+    if (e.value == LeaveConfirmTypesEnum.Confirm)
         $(".confirm-div").removeClass("d-none");
-        $(".revise-div:not(.confirm-div) input").val("");
-    }
     else if (e.value == LeaveConfirmTypesEnum.Revise) {
         $(".revise-div").removeClass("d-none");
     }
