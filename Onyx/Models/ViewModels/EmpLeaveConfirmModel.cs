@@ -20,6 +20,7 @@ namespace Onyx.Models.ViewModels
         public string FormatedFromDt { get; set; }
         public DateTime? ToDt { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
+        [Display(Name = "Date Range")]
         public string DateRange { get; set; }
         [Display(Name = "Date Range(WP)")]
         public string WpDateRange { get; set; }

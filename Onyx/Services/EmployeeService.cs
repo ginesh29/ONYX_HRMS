@@ -589,7 +589,7 @@ namespace Onyx.Services
         }
         public void DeleteCalendarEvent(int srNo)
         {
-            var procedureName = "EmpCalendar_Delete";
+            var procedureName = "EmpCalendar_Delete_N";
             var parameters = new DynamicParameters();
             parameters.Add("v_SrNo", srNo);
             var connectionString = _dbGatewayService.GetConnectionString();
