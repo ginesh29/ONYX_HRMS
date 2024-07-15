@@ -58,7 +58,8 @@ function showLeaveConfirmModal(transNo) {
     var url = `/Transactions/${action}?transNo=${transNo}`;
     $('#EmployeeLeaveConfirmModal').load(url, function () {
         parseDynamicForm();
-        $('#DateRange,#WpDateRange,#WopDateRange,#GratuityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerDefaultOptions)
+        var dateRangePickerOptions = dateRangePickerDefaultOptions;
+        dateRangePickerOptions.minDate = CommonSetting.MinDate; $('#DateRange,#WpDateRange,#WopDateRange,#GratuityDateRange,#LvSalaryDateRange,#LvTicketDateRange').daterangepicker(dateRangePickerOptions)
             .on('apply.daterangepicker', function (ev, picker) {
                 var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
                 var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);

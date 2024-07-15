@@ -474,6 +474,14 @@ namespace Onyx.Services
                 File.WriteAllText(filePath, result);
             }
         }
+        public DateTime GetMinDateByCurrentPeriod(string CoCd)
+        {
+            var currentMonth = GetParameterByType(CoCd, "CUR_MONTH").Val;
+            var currentYear = GetParameterByType(CoCd, "CUR_YEAR").Val;
+            int lastDayOfMonth = DateTime.DaysInMonth(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth));
+            var date = new DateTime(Convert.ToInt32(currentYear), Convert.ToInt32(currentMonth), lastDayOfMonth);
+            return date;
+        }
         #region Dashboard
         public IEnumerable<EmpLeave_GetRow_Result> GetRowEmpLeave(string param, string type, string CoCd)
         {

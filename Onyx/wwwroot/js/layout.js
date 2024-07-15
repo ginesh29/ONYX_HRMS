@@ -59,11 +59,8 @@ function showLeaveApprovalModal(transNo, reject) {
                     eitherOrRequired: "Please enter Date Range(WOP)"
                 }
             });
-            var start = $("#LvFrom").val();
-            var end = $("#LvTo").val();
             var dateRangePickerOptions = dateRangePickerDefaultOptions;
-            //dateRangePickerOptions.minDate = start;
-            //dateRangePickerOptions.maxDate = end;
+            dateRangePickerOptions.minDate = CommonSetting.MinDate;
             $('#WpDateRange,#WopDateRange').daterangepicker(dateRangePickerOptions)
                 .on('apply.daterangepicker', function (ev, picker) {
                     var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);

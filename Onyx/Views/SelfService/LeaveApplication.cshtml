@@ -45,7 +45,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="TransDt"></label>
-                            <input asp-for="TransDt" value="@DateTime.Now.ToString(dateFormat)" class="form-control date-input" type="text" />
+                            <input asp-for="TransDt" value="@DateTime.Now.ToString(dateFormat)" class="form-control min-date-input" type="text" />
                             <span asp-validation-for="TransDt" class="text-danger"></span>
                         </div>
                     </div>
@@ -87,7 +87,9 @@
 </div>
 @section scripts {
     <script>
-        $('#DateRange').daterangepicker(dateRangePickerDefaultOptions);
+        var dateRangePickerOptions = dateRangePickerDefaultOptions;
+        dateRangePickerOptions.minDate = CommonSetting.MinDate;
+        $('#DateRange').daterangepicker(dateRangePickerOptions);
         function saveLeaveApplication(btn, confirmed) {
             var frm = $("#Leave-application-frm");
             if (frm.valid()) {

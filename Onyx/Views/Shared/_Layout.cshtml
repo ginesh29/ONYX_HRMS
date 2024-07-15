@@ -6,6 +6,7 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, processId);
     ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+    var minDate = _commonService.GetMinDateByCurrentPeriod(companyCd).ToString(CommonSetting.DisplayDateFormat);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -68,6 +69,7 @@
             <section class="content">
                 <div class="container-fluid">
                     <input type="hidden" id="LocalDateFormat" value="@ViewData["LocalDateFormat"]" />
+                    <input type="hidden" id="MinDate" value="@minDate" />
                     <input type="hidden" id="AmtDecs" value="@loggedInUser.AmtDecs" />
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />

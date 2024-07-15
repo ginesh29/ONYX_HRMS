@@ -46,10 +46,10 @@ const LeaveConfirmTypesEnum = {
 const CommonSetting = {
     DisplayDateFormat: $("#LocalDateFormat").val(),
     InputDateFormat: "YYYY-MM-DD",
-    AmtDecs: $("#AmtDecs").val()
+    AmtDecs: $("#AmtDecs").val(),
+    MinDate: $("#MinDate").val()
 }
 const dateRangePickerDefaultOptions = {
-    minDate: moment().format(CommonSetting.DisplayDateFormat),
     locale: {
         format: CommonSetting.DisplayDateFormat
     },
@@ -446,27 +446,33 @@ function initControls() {
         })
     })
     $('.date-input').attr("placeholder", CommonSetting.DisplayDateFormat && CommonSetting.DisplayDateFormat.toLowerCase());
-    $('.date-input').each(function () {
-        var allowPast = $(this).attr("allow-past");
-        var minDate = !allowPast ? moment().format(CommonSetting.DisplayDateFormat) : null;
-        var allowFuture = $(this).attr("allow-future");
-        var maxDate = !allowFuture ? moment().format(CommonSetting.DisplayDateFormat) : null;
-        $(this).daterangepicker({
-            //minDate: minDate,
-            //maxDate: maxDate,
-            locale: {
-                format: CommonSetting.DisplayDateFormat
-            },
-            autoUpdateInput: false,
-            autoApply: true,
-            singleDatePicker: true,
-            showDropdowns: true,
-        }).on('apply.daterangepicker', function (ev, picker) {
-            var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(startDate);
-        });
-    })
-    $('.date-input').each(function () {
+    $('.date-input').daterangepicker({
+        locale: {
+            format: CommonSetting.DisplayDateFormat
+        },
+        autoUpdateInput: false,
+        autoApply: true,
+        singleDatePicker: true,
+        showDropdowns: true,
+    }).on('apply.daterangepicker', function (ev, picker) {
+        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+        $(this).val(startDate);
+    });
+
+    $('.min-date-input').daterangepicker({
+        minDate: CommonSetting.MinDate,
+        locale: {
+            format: CommonSetting.DisplayDateFormat
+        },
+        autoUpdateInput: false,
+        autoApply: true,
+        singleDatePicker: true,
+        showDropdowns: true,
+    }).on('apply.daterangepicker', function (ev, picker) {
+        var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
+        $(this).val(startDate);
+    });
+    $('.date-input,.min-date-input').each(function () {
         var dt = $(this).val();
         if (dt) {
             var date = moment(dt, 'DD/MM/YYYY HH:mm:ss');
