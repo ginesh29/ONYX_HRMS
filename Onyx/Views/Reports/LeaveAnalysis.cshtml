@@ -1,5 +1,9 @@
 ﻿@{
     ViewData["Title"] = SharedResource["Employee Leave Analysis"];
+    var typeItems = new List<SelectListItem>{
+        new SelectListItem{Value="RPTYP001",Text="Summary",Selected=true},
+        new SelectListItem{Value="RPTYP002",Text="Detail"}
+    };
 }
 @model EmpLeaveAnalysisFilterModel
 <div class="card">
@@ -63,13 +67,30 @@
                     <label asp-for="DateRange"></label>
                     <input asp-for="DateRange" class="form-control" type="text">
                 </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="ReportType">Type</label>
+                        <div>
+                            @foreach (var item in typeItems)
+                            {
+                                <label class="radio-inline mb-0">
+                                    <label class="custom-control custom-radio">
+                                        <input type="radio" asp-for="ReportType" class="custom-control-input custom-control-input-primary custom-control-input-outline" id="type_@item.Value" value="@item.Value" checked="@item.Selected">
+                                        <label for="type_@item.Value" class="custom-control-label font-weight-normal">@item.Text</label>
+                                    </label>
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
                 <div class="report-btn-div">
                     <button class="btn btn-secondary ml-2" onclick="filterShowReport(this)">Search</button>
                     <button class="btn btn-outline-danger ml-2 d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
                     <button class="btn btn-outline-info ml-2 d-none" id="btn-excel"><i class="fa fa-file-excel"></i></button>
                 </div>
             </div>
-
         </form>
         <div id="EmpLeaveAnalysis"></div>
     </div>
@@ -87,11 +108,12 @@
             var url = `/Reports/FetchLeaveAnalysis?${frm}`;
             $('#EmpLeaveAnalysis').load(url, function () {
                 unloadingButton(btn);
+
                 window["datatable"] = $('#EmpLeaveAnalysisReportTable').DataTable({
                     "order": orderConfig,
-                    "columnDefs": [                        
-                        { "orderable": false, "targets": [1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 15] }
-                    ]
+                    // "columnDefs": [
+                    //     { "orderable": false, "targets": [1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 15] }
+                    // ]
                 });
                 window["datatable"].on('order.dt', function () {
                     var order = window["datatable"].order();

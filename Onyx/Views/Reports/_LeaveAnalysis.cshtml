@@ -1,10 +1,34 @@
-﻿@model IEnumerable<	GetRepo_EmpLeave_Result>
+﻿@model List<dynamic>
 @{
     var loggedInUser = _authService.GetLoggedInUser();
     var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
 }
-<div class="table-responsive">
-    <table class="table table-sm" id="EmpLeaveAnalysisReportTable" style="font-size:small">
+<div class="@ViewBag.TableResponsiveClass h-600px">
+    <table class="table-sm table" id="EmpLeaveAnalysisReportTable" style="font-size:x-small;">
+        <thead class="thead-dark">
+            <tr>
+                @foreach (var columnName in ((IDictionary<string, object>)Model[0]).Keys)
+                {
+                    <th>@columnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model)
+            {
+                <tr>
+                    @foreach (var column in (IDictionary<string, object>)row)
+                    {
+                        <td>@column.Value</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* <div class="table-responsive">
+    <table class="table-sm table" id="EmpLeaveAnalysisReportTable" style="font-size:small">
         <thead class="thead-dark">
             <tr>
                 <th data-field="TransNo">Trans. No</th>
@@ -47,4 +71,4 @@
             </tr>
         }
     </table>
-</div>
+</div> *@

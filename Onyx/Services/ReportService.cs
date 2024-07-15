@@ -179,7 +179,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public IEnumerable<GetRepo_EmpLeave_Result> GetEmpLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel, string CoCd,string UserCd)
+        public IEnumerable<dynamic> GetEmpLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel, string CoCd,string UserCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpLeave_N";
@@ -196,8 +196,9 @@ namespace Onyx.Services
             parameters.Add("v_Dt2", filterModel.EndDate.ToString() ?? string.Empty);
             parameters.Add("orderBy", filterModel.OrderBy ?? string.Empty);
             parameters.Add("v_UserCd", UserCd);
+            parameters.Add("v_ReportType", filterModel.ReportType);
             var connection = new SqlConnection(connectionString);
-            var result = connection.Query<GetRepo_EmpLeave_Result>
+            var result = connection.Query<dynamic>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

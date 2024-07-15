@@ -435,6 +435,7 @@ namespace Onyx.Controllers
         public IActionResult FetchLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel)
         {
             var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
+            ViewBag.TableResponsiveClass = "table-responsive";
             return PartialView("_LeaveAnalysis", loans);
         }
         public IActionResult LeaveAnalysisReport(EmpLeaveAnalysisFilterModel filterModel)
