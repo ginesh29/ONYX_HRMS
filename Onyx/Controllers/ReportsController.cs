@@ -725,6 +725,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Countries
         public IActionResult CountryList()
         {
@@ -744,6 +745,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Currency
         public IActionResult CurrencyList()
         {
@@ -763,6 +765,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Department
         public IActionResult DepartmentList()
         {
@@ -777,6 +780,26 @@ namespace Onyx.Controllers
         {
             var departments = _reportService.GetRepo_Department(_loggedInUser.CompanyCd);
             return new ViewAsPdf(departments)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+
+        #region LoanType
+        public IActionResult LoanTypeList()
+        {
+            return View();
+        }
+        public IActionResult FetchLoanTypes()
+        {
+            var loantypes = _reportService.GetRepo_LoanType(_loggedInUser.CompanyCd);
+            return PartialView("_LoanTypes", loantypes);
+        }
+        public IActionResult LoanTypeListReport()
+        {
+            var loantypes = _reportService.GetRepo_LoanType(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(loantypes)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
             };

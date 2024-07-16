@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GetRepo_CompanyLoans_Result>
+@{
+    ViewData["Title"] = SharedResource["Loan Type List Report"];
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <partial name="_ReportHeader" />
+    <partial name="_LoanTypes" model="Model" />
+</body>
+</html>

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<GetRepo_CompanyLoans_Result>
+<div class="table-responsive">
+    <table class="table-sm table" id="LoanTypesReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th width="50">Code</th>
+                <th>Pay Type</th>
+                <th>Pay Comp.</th>
+                <th>Ded. Type</th>
+                <th>Ded. Comp.</th>
+                <th>Abbr.</th>
+                <th>Charges Type</th>
+                <th>Interest %</th>
+                <th>Short Desc.</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cd</td>
+                    <td>@item.Typ</td>
+                    <td>@item.DedType</td>
+                    <td>@item.DedType</td>
+                    <td>@item.Ded</td>
+                    <td>@item.Abbr</td>
+                    <td>@item.ChgsTyp</td>
+                    <td>@item.IntPerc</td>
+                    <td>@item.SDes</td>
+                    <td>@item.Des</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

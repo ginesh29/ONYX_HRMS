@@ -384,5 +384,16 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public IEnumerable<GetRepo_CompanyLoans_Result> GetRepo_LoanType(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_CompanyLoans";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_CompanyLoans_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }
