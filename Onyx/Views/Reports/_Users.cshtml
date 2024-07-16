@@ -1,0 +1,26 @@
+﻿@model IEnumerable<GetRepo_Users_Result>
+<div class="table-responsive">
+    <table class="table-sm table" id="UsersReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Login Id</th>
+                <th>Abbreviation</th>
+                <th>Username</th>
+                <th>Expiry Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Code</td>
+                    <td>@item.Group</td>
+                    <td>@item.Abbr</td>
+                    <td>@item.UserName</td>
+                    <td>@item.ExpirtDt.FormatDate()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

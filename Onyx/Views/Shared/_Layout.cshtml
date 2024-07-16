@@ -6,7 +6,7 @@
     var loggedInUser = _authService.GetLoggedInUser();
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, processId);
     ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
-    var minDate = _commonService.GetMinDateByCurrentPeriod(companyCd).ToString(CommonSetting.DisplayDateFormat);
+    var minDate = _commonService.GetMinDateByCurrentPeriod(companyCd).FormatDate();
 }
 <!DOCTYPE html>
 <html lang="en">

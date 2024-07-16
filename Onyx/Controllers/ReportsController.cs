@@ -644,5 +644,44 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
+        #region Branches
+        public IActionResult BranchList()
+        {
+            return View();
+        }
+        public IActionResult FetchBranches()
+        {
+            var branches = _reportService.GetRepo_Branches(_loggedInUser.CompanyCd);
+            return PartialView("_Branches", branches);
+        }
+        public IActionResult BranchListReport()
+        {
+            var branches = _reportService.GetRepo_Branches(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(branches)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Users
+        public IActionResult UserList()
+        {
+            return View();
+        }
+        public IActionResult FetchUsers()
+        {
+            var users = _reportService.GetRepo_Users();
+            return PartialView("_Users", users);
+        }
+        public IActionResult UserListReport()
+        {
+            var users = _reportService.GetRepo_Users();
+            return new ViewAsPdf(users)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
     }
 }

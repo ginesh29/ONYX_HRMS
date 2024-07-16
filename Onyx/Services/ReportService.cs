@@ -179,7 +179,7 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
-        public IEnumerable<dynamic> GetEmpLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel, string CoCd,string UserCd)
+        public IEnumerable<dynamic> GetEmpLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel, string CoCd, string UserCd)
         {
             var connectionString = _dbGatewayService.GetConnectionString();
             var procedureName = "GetRepo_EmpLeave_N";
@@ -304,6 +304,28 @@ namespace Onyx.Services
             parameters.Add("v_Nat", filterModel.Nationality ?? "All");
             var connection = new SqlConnection(connectionString);
             var result = connection.Query<GetRepo_EmpPayDetail_Summary_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Branch_Result> GetRepo_Branches(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Branch";
+            var parameters = new DynamicParameters();
+            parameters.Add("Co_Cd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Branch_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Users_Result> GetRepo_Users()
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Users_N";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_GrpDes", string.Empty);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Users_Result>
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }

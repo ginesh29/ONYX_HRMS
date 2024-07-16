@@ -8,9 +8,12 @@
 <div class="col-12">
     <table style="width:100%">
         <tr>
-            <td width="100">
-                <img src="~/uploads/company/@companyDetail.Logo" height="100" />
-            </td>
+            @if (!string.IsNullOrEmpty(companyDetail.Logo))
+            {
+                <td width="100">
+                    <img src="~/uploads/company/@companyDetail.Logo" height="100" />
+                </td>
+            }
             <td class="text-left">
                 <h4>
                     @companyDetail.CoName<br />
@@ -26,4 +29,4 @@
         </tr>
     </table>
 </div>
-<h3 class="text-center mb-3">@ViewData["Title"]</h3>
+<h3 class="mb-3 text-center">@ViewData["Title"]</h3>
