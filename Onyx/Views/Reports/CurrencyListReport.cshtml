@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GetRepo_Currency_Result>
+@{
+    ViewData["Title"] = SharedResource["Currency List Report"];
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <partial name="_ReportHeader" />
+    <partial name="_Currencies" model="Model" />
+</body>
+</html>

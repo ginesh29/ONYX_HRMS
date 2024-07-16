@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GetRepo_Country_Result>
+@{
+    ViewData["Title"] = SharedResource["Country List Report"];
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <partial name="_HeadImports" />
+</head>
+<body>
+    <partial name="_ReportHeader" />
+    <partial name="_Countries" model="Model" />
+</body>
+</html>

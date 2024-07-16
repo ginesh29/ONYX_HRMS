@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = SharedResource["Code List Report"];
+}
+<div class="card">
+    <div class="card-body">
+        <div class="report-btn-div mb-2">
+            <button class="btn btn-outline-danger d-none" onclick="filterShowReport(this,true)" id="btn-pdf"><i class="fa fa-file-pdf"></i></button>
+        </div>
+        <div id="Codes"></div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        filterShowReport();
+        function loadGridData(btn) {
+            var url = `/Reports/FetchCodes`;
+            $('#Codes').load(url, function () {
+                unloadingButton(btn);
+                if ($(".table-title").length)
+                    $("#btn-pdf").removeClass("d-none");
+            });
+        }
+        function filterShowReport(btn, report) {
+            loadGridData(btn);
+            if (report) {
+                var url = `/Reports/CodeListReport`;
+                window.open(url);
+            }
+        }
+    </script>
+}

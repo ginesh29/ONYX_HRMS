@@ -1,0 +1,32 @@
+﻿@model IEnumerable<GetRepo_Currency_Result>
+@{
+    var loggedInUser = _authService.GetLoggedInUser();
+    var DecimalFormat = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
+}
+<div class="table-responsive">
+    <table class="table-sm table" id="CurrenciesReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Main Currency</th>
+                <th>Sub Currency</th>
+                <th>Decimals</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cd</td>
+                    <td>@item.Des</td>
+                    <td>@item.MainCurr</td>
+                    <td>@item.SubCurr</td>
+                    <td>@item.NoDecs</td>
+                    <td>@item.Rate.ToString(DecimalFormat)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

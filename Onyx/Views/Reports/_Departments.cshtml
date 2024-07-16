@@ -1,0 +1,22 @@
+﻿@model IEnumerable<GetRepo_Dept_Result>
+<div class="table-responsive">
+    <table class="table-sm table" id="DepartmentsReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cd</td>
+                    <td>@item.SDes</td>
+                    <td>@item.Des</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

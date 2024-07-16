@@ -329,5 +329,60 @@ namespace Onyx.Services
                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public IEnumerable<GetRepo_CompanyVehicle_Result> GetRepo_Vehicles(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_CompanyVehicle";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_CompanyVehicle_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Codes_Result> GetRepo_Codes(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Codes";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Codes_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Country_Result> GetRepo_Country(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Country";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Country_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Currency_Result> GetRepo_Currency(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Currency";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Currency_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public IEnumerable<GetRepo_Dept_Result> GetRepo_Department(string CoCd)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var procedureName = "GetRepo_Dept";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_CoCd", CoCd);
+            var connection = new SqlConnection(connectionString);
+            var result = connection.Query<GetRepo_Dept_Result>
+                (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
     }
 }

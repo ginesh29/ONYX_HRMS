@@ -1,0 +1,38 @@
+﻿@model IEnumerable<GetRepo_CompanyVehicle_Result>
+<div class="table-responsive">
+    <table class="table-sm table" id="VehiclesReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Reg. Number</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Driver</th>
+                <th>Engine No</th>
+                <th>Chasis No</th>
+                <th>PetrolCard</th>
+                <th>Amt</th>
+                <th>Ins. Policy No</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cd</td>
+                    <td>@item.Des</td>
+                    <td>@item.RegnNo</td>
+                    <td>@item.Brand</td>
+                    <td>@item.Model</td>
+                    <td>@item.Driver</td>
+                    <td>@item.EngineNo</td>
+                    <td>@item.ChassisNo</td>
+                    <td>@item.PetrolCard</td>
+                    <td>@item.PetrolCardAmt</td>
+                    <td>@item.InsPolicyNo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

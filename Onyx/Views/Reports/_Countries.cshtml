@@ -1,0 +1,26 @@
+﻿@model IEnumerable<GetRepo_Country_Result>
+<div class="table-responsive">
+    <table class="table-sm table" id="CountriesReportTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Nationality</th>
+                <th>Region</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Cd</td>
+                    <td>@item.Sdes</td>
+                    <td>@item.Des</td>
+                    <td>@item.Nat</td>
+                    <td>@item.Region</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

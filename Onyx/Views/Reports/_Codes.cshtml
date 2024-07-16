@@ -1,0 +1,31 @@
+﻿@model IEnumerable<GetRepo_Codes_Result>
+@{
+    var groupedData = Model.GroupBy(m => new { m.CdTyp, m.SDes });
+}
+<div class="table-responsive">
+    @foreach (var item in groupedData)
+    {
+        <h3 class="text-primary table-title">@item.Key.SDes</h3>
+        <table class="table-sm table" id="CodesReportTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Code</th>
+                    <th>Abbr.</th>
+                    <th>Short Des.</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item2 in item)
+                {
+                    <tr>
+                        <td>@item2.Cd</td>
+                        <td>@item2.Abbr</td>
+                        <td>@item2.CdSdes</td>
+                        <td>@item2.Des</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

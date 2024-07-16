@@ -664,6 +664,7 @@ namespace Onyx.Controllers
             };
         }
         #endregion
+
         #region Users
         public IActionResult UserList()
         {
@@ -678,6 +679,104 @@ namespace Onyx.Controllers
         {
             var users = _reportService.GetRepo_Users();
             return new ViewAsPdf(users)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+
+        #region Vehicles
+        public IActionResult VehicleList()
+        {
+            return View();
+        }
+        public IActionResult FetchVehicles()
+        {
+            var vehicles = _reportService.GetRepo_Vehicles(_loggedInUser.CompanyCd);
+            return PartialView("_Vehicles", vehicles);
+        }
+        public IActionResult VehicleListReport()
+        {
+            var vehicles = _reportService.GetRepo_Vehicles(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(vehicles)
+            {
+                PageOrientation = Orientation.Landscape,
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+
+        #region Codes
+        public IActionResult CodeList()
+        {
+            return View();
+        }
+        public IActionResult FetchCodes()
+        {
+            var codes = _reportService.GetRepo_Codes(_loggedInUser.CompanyCd);
+            return PartialView("_Codes", codes);
+        }
+        public IActionResult CodeListReport()
+        {
+            var codes = _reportService.GetRepo_Codes(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(codes)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Countries
+        public IActionResult CountryList()
+        {
+            return View();
+        }
+        public IActionResult FetchCountries()
+        {
+            var countries = _reportService.GetRepo_Country(_loggedInUser.CompanyCd);
+            return PartialView("_Countries", countries);
+        }
+        public IActionResult CountryListReport()
+        {
+            var countries = _reportService.GetRepo_Country(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(countries)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Currency
+        public IActionResult CurrencyList()
+        {
+            return View();
+        }
+        public IActionResult FetchCurrencies()
+        {
+            var currencies = _reportService.GetRepo_Currency(_loggedInUser.CompanyCd);
+            return PartialView("_Currencies", currencies);
+        }
+        public IActionResult CurrencyListReport()
+        {
+            var currencies = _reportService.GetRepo_Currency(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(currencies)
+            {
+                PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
+            };
+        }
+        #endregion
+        #region Department
+        public IActionResult DepartmentList()
+        {
+            return View();
+        }
+        public IActionResult FetchDepartments()
+        {
+            var departments = _reportService.GetRepo_Department(_loggedInUser.CompanyCd);
+            return PartialView("_Departments", departments);
+        }
+        public IActionResult DepartmentListReport()
+        {
+            var departments = _reportService.GetRepo_Department(_loggedInUser.CompanyCd);
+            return new ViewAsPdf(departments)
             {
                 PageMargins = { Left = 10, Bottom = 10, Right = 10, Top = 10 },
             };
