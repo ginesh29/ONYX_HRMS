@@ -1,7 +1,7 @@
 ﻿@model dynamic
 @{
     IEnumerable<EmpLeaveMaster_GetRow_Result> data = Model.Data;
-    ViewData["Title"] = Model.ReportType == "LeaveMaster" ? SharedResource["Employee Leave Master Report"] : SharedResource["Employee Annual Leave Due Report"];
+    ViewData["Title"] = Model.ReportType == "LeaveMaster" ? "Employee Leave Master Report" : "Employee Annual Leave Due Report";
     Layout = null;
 }
 <!DOCTYPE html>

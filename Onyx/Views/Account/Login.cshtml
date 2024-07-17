@@ -1,7 +1,7 @@
 ﻿@model LoginModel
 @{
     Layout = null;
-    ViewData["Title"] = SharedResource["Login"];
+    ViewData["Title"] = "Login";
     var userTypeList = Html.GetEnumSelectList<UserTypeEnum>().Select(m => { m.Selected = m.Value == ((int)UserTypeEnum.User).ToString(); return m; });
 }
 <!DOCTYPE html>

@@ -2,7 +2,7 @@
 @{
     var start = Context.Request.Query["StartPeriod"];
     var end = Context.Request.Query["EndPeriod"];
-    ViewData["Title"] = SharedResource[$"Employee Transactions Report {start} to {end}"];
+    ViewData["Title"] = $"Employee Transactions Report {start} to {end}";
     var detail = Model.Header;
     Layout = null;
 }

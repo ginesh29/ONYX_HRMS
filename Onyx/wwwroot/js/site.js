@@ -529,6 +529,7 @@ function initControls() {
             $(`#Days`).text("");
         }
     });
+    changePageLanguage();
 }
 function downloadFile(foldername, filename) {
     $.ajax({
@@ -552,6 +553,52 @@ function downloadFile(foldername, filename) {
         }
     });
 };
+function changePageLanguage() {
+    var currentCulture = $("#CurrentCulture").val();
+    if (currentCulture == "ar" || currentCulture == "fa") {
+        var enResources = [];
+        $('body').find('*').contents().each(function () {
+            if (this.nodeType === 1 && (this.tagName.toLowerCase() === 'style' || this.tagName.toLowerCase() === 'script')) {
+                return;
+            }
+            else if (this.nodeType === 3) {
+                var trimmedText = this.nodeValue.trim();
+                if (trimmedText.length > 0) {
+                    enResources.push(this.nodeValue.trim());
+                }
+            }
+        });
+        var frmData = { containsArray: enResources, targetLang: currentCulture }
+        postAjax(`/Home/GetLanguageResources`, frmData, function (response) {
+            $('body').find('*').contents().each(function () {
+                if (this.nodeType === 3) {
+                    var trimmedText = this.nodeValue.trim();
+                    if (trimmedText.length > 0) {
+                        var val = response.data.filter(m => m.en == this.nodeValue.trim())[0]
+                        if (val)
+                            this.nodeValue = val[`${currentCulture}`];
+                    }
+                }
+            });
+            setTimeout(function () {
+                if (window["datatable"])
+                    window["datatable"].cells().every(function () {
+                        var cell = $(this.node());
+                        var val = response.data.filter(m => m.en == cell.text().trim())[0]
+                        if (val)
+                        cell.text(val[`${currentCulture}`]);
+                    });
+                if (window["datatable-2"])
+                    window["datatable-2"].cells().every(function () {
+                        var cell = $(this.node());
+                        var val = response.data.filter(m => m.en == cell.text().trim())[0]
+                        if (val)
+                            cell.text(val[`${currentCulture}`]);
+                    })
+            }, 500)
+        });
+    }
+}
 $(function () {
     initControls();
 });

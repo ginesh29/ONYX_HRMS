@@ -28,6 +28,18 @@ namespace Onyx.Controllers
             _transactionService = transactionService;
         }
         [HttpPost]
+        public IActionResult GetLanguageResources(List<string> containsArray, string targetLang)
+        {
+            containsArray = containsArray.Where(m => !m.Contains('\'')).Distinct().ToList();
+            var langResources = _commonService.GetLanguageResources(containsArray, targetLang);
+            CommonResponse result = new()
+            {
+                Success = true,
+                Data = langResources
+            };
+            return Json(result);
+        }
+        [HttpPost]
         public IActionResult SetLanguage(string culture)
         {
             Response.Cookies.Append(

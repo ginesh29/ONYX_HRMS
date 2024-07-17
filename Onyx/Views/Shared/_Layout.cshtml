@@ -7,6 +7,7 @@
     var permission = _commonService.GetPermissionsByProcessId(loggedInUser.UserLinkedTo, processId);
     ViewData["DecimalFormat"] = ExtensionMethod.GetDecimalFormat(loggedInUser.AmtDecs);
     var minDate = _commonService.GetMinDateByCurrentPeriod(companyCd).FormatDate();
+    var currentCulture = CultureInfo.CurrentCulture.Name;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +56,7 @@
                                     @if (ViewData["AdditionLinkWithTitle"] != null)
                                     {
                                         var additionalLink = ViewData["AdditionLinkWithTitle"].ToString().Split("_");
-                                        <li class="breadcrumb-item"><a href="@additionalLink[1]">@SharedResource[additionalLink[0]]</a></li>
+                                        <li class="breadcrumb-item"><a href="@additionalLink[1]">@additionalLink[0]]</a></li>
                                     }
                                     <li class="breadcrumb-item active">@ViewData["Title"]</li>
                                 </ol>
@@ -73,6 +74,7 @@
                     <input type="hidden" id="AmtDecs" value="@loggedInUser.AmtDecs" />
                     <input type="hidden" id="CoCd" value="@companyCd" />
                     <input type="hidden" id="IsAdmin" value="@(isAdmin==true ? 1 :0)" />
+                    <input type="hidden" id="CurrentCulture" value="@currentCulture" />
                     <input type="hidden" id="ProcessId" value="@processId" />
                     <input type="hidden" id="EmpOrUser" value="@loggedInUser.UserOrEmployee" />
                     <input type="hidden" id="UserLinkedTo" value="@loggedInUser.UserLinkedTo" />

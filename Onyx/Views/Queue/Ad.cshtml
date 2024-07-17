@@ -1,6 +1,6 @@
 ﻿@model List<AdModel>
 @{
-    ViewData["Title"] = SharedResource["Ad"];
+    ViewData["Title"] = "Ad";
     var companyCd = User.Claims.FirstOrDefault(m => m.Type == "CompanyCd")?.Value;
 }
 <div class="col-md-6">
