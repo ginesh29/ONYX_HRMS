@@ -469,5 +469,59 @@ namespace Onyx.Controllers
             return PartialView("_AuditDetailModal", data);
         }
         #endregion
+        #region Language Resource
+        public IActionResult LanguageResources()
+        {
+            return View();
+        }
+        public IActionResult FetchLanguageResources()
+        {
+            var langResources = _settingService.GetLanguageResources();
+            var result = new CommonResponse
+            {
+                Success = true,
+                Data = langResources
+            };
+            return Json(result);
+        }
+        public IActionResult GetLangResource(string en)
+        {
+            var langResource = _settingService.GetLanguageResources().FirstOrDefault(m => m.en.Trim() == en);
+            var model = new LanguageResourceModel();
+            if (langResource != null)
+                model = new LanguageResourceModel
+                {
+                    English = langResource.en,
+                    Arabic = langResource.ar,
+                    Persian = langResource.fa
+                };
+            return PartialView("_LangResourceModal", model);
+        }
+        [HttpPost]
+        public IActionResult SaveLangResource(LanguageResourceModel model)
+        {
+            var result = _settingService.SaveLangResource(model);
+            return Json(result);
+        }
+        [HttpDelete]
+        public IActionResult DeleteLangResource(string en)
+        {
+            var result = _settingService.DeleteLangResource(en);
+            return Json(result);
+        }
+        [HttpPost]
+        public IActionResult GetLanguageResources(List<string> containsArray)
+        {
+            var containsStr = string.Join(",", containsArray);
+            var langResources = _settingService.GetLanguageResources(containsStr);
+            CommonResponse result = new()
+            {
+                Success = true,
+                Data = langResources
+            };
+            return Json(result);
+        }
+        #endregion
+
     }
 }

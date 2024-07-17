@@ -1,0 +1,33 @@
+﻿@model LanguageResourceModel
+<div class="modal-dialog modal-md">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">@(!string.IsNullOrEmpty(Model.English) ? "Edit" : "Add") Language Resource</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="lang-resource-frm">
+                <div class="form-group @(!string.IsNullOrEmpty(Model.English) ? "disabled-container" : "")">
+                    <label asp-for="English"></label>
+                    <input asp-for="English" class="form-control @(!string.IsNullOrEmpty(Model.English) ? "disabled" : "")" />
+                    <span asp-validation-for="English" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Arabic"></label>
+                    <input asp-for="Arabic" class="form-control" />
+                    <span asp-validation-for="Arabic" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Persian"></label>
+                    <textarea asp-for="Persian" class="form-control"></textarea>
+                    <span asp-validation-for="Persian" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" onclick="saveLangResource(this)">Submit</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

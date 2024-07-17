@@ -569,33 +569,17 @@ function changePageLanguage() {
             }
         });
         var frmData = { containsArray: enResources, targetLang: currentCulture }
-        postAjax(`/Home/GetLanguageResources`, frmData, function (response) {
+        postAjax(`/Settings/GetLanguageResources`, frmData, function (response) {
             $('body').find('*').contents().each(function () {
                 if (this.nodeType === 3) {
                     var trimmedText = this.nodeValue.trim();
                     if (trimmedText.length > 0) {
                         var val = response.data.filter(m => m.en == this.nodeValue.trim())[0]
-                        if (val)
+                        if (val && val[`${currentCulture}`])
                             this.nodeValue = val[`${currentCulture}`];
                     }
                 }
             });
-            setTimeout(function () {
-                if (window["datatable"])
-                    window["datatable"].cells().every(function () {
-                        var cell = $(this.node());
-                        var val = response.data.filter(m => m.en == cell.text().trim())[0]
-                        if (val)
-                        cell.text(val[`${currentCulture}`]);
-                    });
-                if (window["datatable-2"])
-                    window["datatable-2"].cells().every(function () {
-                        var cell = $(this.node());
-                        var val = response.data.filter(m => m.en == cell.text().trim())[0]
-                        if (val)
-                            cell.text(val[`${currentCulture}`]);
-                    })
-            }, 500)
         });
     }
 }

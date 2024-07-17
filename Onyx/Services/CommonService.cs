@@ -10,16 +10,6 @@ namespace Onyx.Services
     public class CommonService(DbGatewayService dbGatewayService)
     {
         private readonly DbGatewayService _dbGatewayService = dbGatewayService;
-        public IEnumerable<LanguageResourceModel> GetLanguageResources(List<string> containsArrry, string targetLang)
-        {
-            var containsStr = string.Join(",", containsArrry.Select(item => $"\'{item}\'"));
-            var query = $"select en,{targetLang} from LanguageResources where en in ({containsStr})";
-            var connectionString = _dbGatewayService.GetConnectionString();
-            var connection = new SqlConnection(connectionString);
-            var resources = connection.Query<LanguageResourceModel>
-                (query);
-            return resources;
-        }
         public IEnumerable<Branch_UserCo_GetRow_Result> GetUserCompanies(string UserCd)
         {
             var procedureName = "Branch_UserCo_GetRow";

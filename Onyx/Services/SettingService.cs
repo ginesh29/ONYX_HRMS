@@ -358,5 +358,42 @@ namespace Onyx.Services
             connection.Execute(procedureName, parameters, commandType: CommandType.StoredProcedure);
         }
         #endregion
+
+        #region Language Resource
+        public IEnumerable<LangResource_GetRow_Result> GetLanguageResources(string en = null)
+        {
+            var procedureName = "LangResource_GetRow";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_en", en ?? string.Empty);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var resources = connection.Query<LangResource_GetRow_Result>
+                 (procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return resources;
+        }
+        public CommonResponse SaveLangResource(LanguageResourceModel model)
+        {
+            var procedureName = "LangResource_Update";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_en", model.English);
+            parameters.Add("v_ar", model.Arabic);
+            parameters.Add("v_fa", model.Persian);
+            parameters.Add("v_Mode", model.Mode);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        public CommonResponse DeleteLangResource(string en)
+        {
+            var procedureName = "LangResource_Delete";
+            var parameters = new DynamicParameters();
+            parameters.Add("v_en", en);
+            var connectionString = _dbGatewayService.GetConnectionString();
+            var connection = new SqlConnection(connectionString);
+            var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        #endregion
     }
 }

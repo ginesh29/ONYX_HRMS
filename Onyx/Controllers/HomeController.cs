@@ -26,19 +26,7 @@ namespace Onyx.Controllers
             _commonService = commonService;
             _employeeService = employeeService;
             _transactionService = transactionService;
-        }
-        [HttpPost]
-        public IActionResult GetLanguageResources(List<string> containsArray, string targetLang)
-        {
-            containsArray = containsArray.Where(m => !m.Contains('\'')).Distinct().ToList();
-            var langResources = _commonService.GetLanguageResources(containsArray, targetLang);
-            CommonResponse result = new()
-            {
-                Success = true,
-                Data = langResources
-            };
-            return Json(result);
-        }
+        }        
         [HttpPost]
         public IActionResult SetLanguage(string culture)
         {
@@ -47,8 +35,7 @@ namespace Onyx.Controllers
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions { Expires = DateTime.Now.AddYears(100) }
             );
-            var refererUrl = Request.Headers["Referer"].ToString();
-
+            var refererUrl = Request.Headers.Referer.ToString();
             if (!string.IsNullOrEmpty(refererUrl))
                 return Redirect(refererUrl);
             else
@@ -239,6 +226,6 @@ namespace Onyx.Controllers
                 return PhysicalFile(filePath, "application/octet-stream", filename);
             else
                 return NotFound();
-        }
+        }        
     }
 }
