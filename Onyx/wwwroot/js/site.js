@@ -515,20 +515,20 @@ function initControls() {
         $("#Days").text(`(${days} days)`);
     }).on('change.daterangepicker', function (ev, picker) {
         if ($(this).val()) {
+            var picker = $(this).data('daterangepicker');
             var startDate = picker.startDate.format(CommonSetting.DisplayDateFormat);
             var endDate = picker.endDate.format(CommonSetting.DisplayDateFormat);
-            $(this).val(`${startDate} - ${endDate}`);
             var days = getDaysBetweenDateRange(picker.startDate, picker.endDate);
             $("#Days").text(`(${days} days)`);
+            $(this).val(`${startDate} - ${endDate}`);
         }
         else {
             $(this).val("");
             $(`#${ev.target.id}`).data("daterangepicker").setStartDate(moment());
             $(`#${ev.target.id}`).data("daterangepicker").setEndDate(moment());
-            $(`#${ev.target.id}Days-txt`).text("");
             $(`#Days`).text("");
         }
-    });
+    })
     changePageLanguage();
 }
 function downloadFile(foldername, filename) {
