@@ -372,6 +372,7 @@ namespace Onyx.Services
             parameters.Add("v_ApprLvl", model.Current_Approval_Level);
             parameters.Add("v_LvApprDays", model.ApprDays);
             parameters.Add("v_LvApprBy", model.ApprBy);
+            parameters.Add("v_LvApprFor", model.ApprFor);
             parameters.Add("v_LvApprDt", model.ApprDt);
             parameters.Add("v_Status", model.Status);
             parameters.Add("v_WP_FromDt", Convert.ToDateTime(model.WpFrom).IsNotEmptyDate() ? Convert.ToDateTime(model.WpFrom).ToString(CommonSetting.InputDateFormat) : CommonSetting.DeafultDate);

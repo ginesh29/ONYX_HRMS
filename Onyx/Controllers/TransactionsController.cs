@@ -95,7 +95,8 @@ namespace Onyx.Controllers
         }
         public IActionResult SaveLeaveApproval(EmpLeaveApprovalModel model, string processId)
         {
-            model.ApprBy = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
+            model.ApprFor = _loggedInUser.UserOrEmployee == "E" ? _loggedInUser.UserCd : model.ApprBy;
+            model.ApprBy = _loggedInUser.UserCd;
             model.EntryBy = _loggedInUser.UserCd;
             model.ApprDays = model.WpDays + model.WopLvDays;
             if (model.Status == "Y")
@@ -1401,7 +1402,7 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchWPS()
         {
-            
+
             return View();
         }
         #endregion

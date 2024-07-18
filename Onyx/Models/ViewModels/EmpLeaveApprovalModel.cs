@@ -33,6 +33,7 @@ namespace Onyx.Models.ViewModels
         public DateTime? WopTo { get; set; }
         public string FormatedWOP_ToDt { get; set; }
         public string ApprBy { get; set; }
+        public string ApprFor { get; set; }
         [Required(ErrorMessage = ValidationMessage.REQUIREDVALIDATION)]
         [Display(Name = "Approval Date")]
         public DateTime? ApprDt { get; set; }

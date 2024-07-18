@@ -442,7 +442,7 @@ namespace Onyx.Services
             var modifiedSpQuery = @$"SELECT Name, Modify_Date, trim(type)Type FROM sys.objects
 	                                WHERE (Type = 'P' or Type = 'TR') and Modify_Date > '2024-01-01'
 	                                ORDER BY Modify_Date DESC";
-            var connectionString = "Server=GINESH-PC\\SQLEXPRESS;Initial catalog=LSHRMS_Telal_Live;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
+            var connectionString = "Server=108.181.157.253,10005;Initial catalog=LSHRMS_Telal;uid=absluser; pwd=0c4gn2zn;TrustServerCertificate=True;Connection Timeout=120;";
             var connection = new SqlConnection(connectionString);
             var sps = connection.Query<SpModel>(modifiedSpQuery);
             var result = string.Empty;

@@ -469,6 +469,7 @@ namespace Onyx.Controllers
             return PartialView("_AuditDetailModal", data);
         }
         #endregion
+
         #region Language Resource
         public IActionResult LanguageResources()
         {
@@ -521,7 +522,31 @@ namespace Onyx.Controllers
             };
             return Json(result);
         }
+        public IActionResult ImportLangResources(IFormFile file)
+        {
+            try
+            {
+                var excelData = _settingService.GetLangResourcesFromExcel(file);
+                var validData = excelData.Where(m => m.IsValid);
+                var invalidData = excelData.Where(m => !m.IsValid);
+                string Message = !invalidData.Any() && !validData.Any() ? "No record found to import"
+                    : invalidData.Any() ? $"{invalidData.Count()} record failed to import" : $"{validData.Count()} records imported succussfully";
+                bool validHeader = _settingService.ValidHeaderLangResourceExcel(file);
+                if (!validHeader)
+                {
+                    excelData = null;
+                    Message = "Headers are not matched. Download again & refill data";
+                }
+                if (validHeader && validData.Any())
+                    _settingService.ImportExcelData(validData);
+                return PartialView("_LangResourceExcelData", new { Data = excelData, Message });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return Json("File not supported. Download again & refill data");
+            }
+        }
         #endregion
-
     }
 }

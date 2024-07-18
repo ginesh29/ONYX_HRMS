@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using ExcelDataReader;
 using Onyx.Models.StoredProcedure;
 using Onyx.Models.ViewModels;
 using System.Data;
@@ -393,6 +394,75 @@ namespace Onyx.Services
             var connection = new SqlConnection(connectionString);
             var result = connection.QueryFirstOrDefault<CommonResponse>(procedureName, parameters, commandType: CommandType.StoredProcedure);
             return result;
+        }
+        public bool ValidHeaderLangResourceExcel(IFormFile file)
+        {
+            var result = true;
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            reader.Read();
+            var headers = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+                headers.Add(Convert.ToString(reader.GetValue(i)));
+            var expectedHeaders = new List<string> { "English", "Arabic", "Persian" };
+            if (!headers.SequenceEqual(expectedHeaders))
+                result = false;
+            return result;
+        }
+        public IEnumerable<LangResourceExcelModel> GetLangResourcesFromExcel(IFormFile file)
+        {
+            using var stream = file.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            var result = new List<LangResourceExcelModel>();
+            reader.Read();
+            while (reader.Read())
+            {
+                bool isEmptyRow = true;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    if (!reader.IsDBNull(i) && !string.IsNullOrWhiteSpace(reader.GetString(i)))
+                    {
+                        isEmptyRow = false;
+                        break;
+                    }
+                }
+                if (isEmptyRow)
+                    continue;
+                var en = Convert.ToString(reader.GetValue(0));
+                var ar = Convert.ToString(reader.GetValue(1));
+                var fa = Convert.ToString(reader.GetValue(2));
+                bool validEn = !string.IsNullOrEmpty(en);
+                string errorMessage = "<ul class='text-left ml-0'>";
+                if (!validEn)
+                    errorMessage += "<li>English is empty or not valid</li>";
+                errorMessage += "</ul>";
+                var excelData = new LangResourceExcelModel
+                {
+                    IsValid = validEn,
+                    ErrorMessage = errorMessage,
+                    English = en,
+                    Arabic = ar,
+                    Persian = fa,
+                };
+                result.Add(excelData);
+            }
+            return result;
+        }
+        public void ImportExcelData(IEnumerable<LangResourceExcelModel> excelData)
+        {
+            var connectionString = _dbGatewayService.GetConnectionString();
+            string query = excelData.Any() ? $@"INSERT INTO [dbo].[LanguageResources] 
+                ([en],[ar],[fa]) VALUES" : null;
+            if (excelData.Any())
+            {
+                foreach (var item in excelData.Select((value, i) => new { i, value }))
+                {
+                    query += $"('{item.value.English}','{item.value.Arabic}','{item.value.Persian}'),";
+                }
+                query = query.Trim([',']);
+            }
+            var connection = new SqlConnection(connectionString);
+            connection.Execute(query);
         }
         #endregion
     }

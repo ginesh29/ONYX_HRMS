@@ -70,14 +70,9 @@ function uploadFile(event) {
     if (excelExtensions.includes(ext)) {
         var frm = $("#import-frm");
         loadingPage();
-        filePostAjax('/Employee/ImportCalendarEvents', frm[0], function (response) {
-            if (!response.includes("not supported")) {
-                $("#excel-import-data").html(response);
-                var tableRowCnt = $("#ExecelData tbody tr").length;
-                if (tableRowCnt == 0)
-                    $("#excel-import-data").empty();
-                calendar.refetchEvents();
-            }
+        filePostAjax('/Settings/ImportLangResources', frm[0], function (response) {
+            if (!response.includes("not supported"))
+                reloadDatatable();
             else
                 showErrorToastr(response);
             $("#import-file").val("");
