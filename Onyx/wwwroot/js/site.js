@@ -179,8 +179,8 @@ function parseDynamicForm() {
 }
 function exportExcel(table, filePrefix) {
     var header = [table.columns().header().map(d => d.textContent).toArray()];
-    var data = table.data().toArray();
-    var dataWithHeader = header.concat(data);
+    var filteredData = table.rows({ filter: 'applied' }).data().toArray();
+    var dataWithHeader = header.concat(filteredData);
     var wb = XLSX.utils.book_new();
     var ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');

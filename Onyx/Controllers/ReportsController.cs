@@ -434,12 +434,24 @@ namespace Onyx.Controllers
         }
         public IActionResult FetchLeaveAnalysis(EmpLeaveAnalysisFilterModel filterModel)
         {
+            if (!string.IsNullOrEmpty(filterModel.DateRange))
+            {
+                var dateSp = filterModel.DateRange.Split(" - ");
+                filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+                filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            }
             var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             ViewBag.TableResponsiveClass = "table-responsive";
             return PartialView("_LeaveAnalysis", loans);
         }
         public IActionResult LeaveAnalysisReport(EmpLeaveAnalysisFilterModel filterModel)
         {
+            if (!string.IsNullOrEmpty(filterModel.DateRange))
+            {
+                var dateSp = filterModel.DateRange.Split(" - ");
+                filterModel.StartDate = Convert.ToDateTime(dateSp[0]);
+                filterModel.EndDate = Convert.ToDateTime(dateSp[1]);
+            }
             var loans = _reportService.GetEmpLeaveAnalysis(filterModel, _loggedInUser.CompanyCd, _loggedInUser.UserLinkedTo);
             return new ViewAsPdf(loans)
             {

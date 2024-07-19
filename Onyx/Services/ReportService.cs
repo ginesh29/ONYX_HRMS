@@ -192,8 +192,8 @@ namespace Onyx.Services
             parameters.Add("v_Sponsor", filterModel.Sponsor ?? "All");
             parameters.Add("v_Typ", filterModel.LeaveType ?? string.Empty);
             parameters.Add("v_LvStat", filterModel.LeaveStatus ?? string.Empty);
-            parameters.Add("v_Dt1", filterModel.StartDate.ToString() ?? string.Empty);
-            parameters.Add("v_Dt2", filterModel.EndDate.ToString() ?? string.Empty);
+            parameters.Add("v_Dt1", filterModel.StartDate ?? null);
+            parameters.Add("v_Dt2", filterModel.EndDate ?? null);
             parameters.Add("orderBy", filterModel.OrderBy ?? string.Empty);
             parameters.Add("v_UserCd", UserCd);
             parameters.Add("v_ReportType", filterModel.ReportType);
