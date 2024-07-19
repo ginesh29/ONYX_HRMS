@@ -463,6 +463,7 @@ namespace Onyx.Services
             }
             var connection = new SqlConnection(connectionString);
             connection.Execute(query);
+
         }
         #endregion
     }
