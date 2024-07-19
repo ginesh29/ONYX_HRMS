@@ -203,7 +203,6 @@ namespace Onyx.Controllers
                     Title = $"{m.Name.Trim()}'S {m.Type.ToUpper()}",
                 }).Where(m => Convert.ToDateTime(m.Start).BetweenDate(start, end)).OrderBy(m => Convert.ToDateTime(m.Start));
             return PartialView("_EmpBirthdayEvents", events);
-
         }
         #endregion        
         public async Task<IActionResult> UpdateClaim(string claimType, string claimValue)
