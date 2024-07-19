@@ -234,47 +234,52 @@ namespace Onyx
         }
         public static string ConvertDaysToYearsMonthsDays(int totalDays)
         {
-            DateTime startDate = new(1, 1, 1);
-            DateTime endDate = startDate.AddDays(totalDays);
-
-            int years = endDate.Year - startDate.Year;
-            int months = endDate.Month - startDate.Month;
-            int days = endDate.Day - startDate.Day;
-
-            if (days < 0)
-            {
-                months--;
-                days += DateTime.DaysInMonth(endDate.AddMonths(-1).Year, endDate.AddMonths(-1).Month);
-            }
-
-            if (months < 0)
-            {
-                years--;
-                months += 12;
-            }
             string result = "";
-            if (years > 0)
+            if (totalDays > 0)
             {
-                result += $"{years} year{(years > 1 ? "s" : "")}";
-            }
+                DateTime startDate = new(1, 1, 1);
+                DateTime endDate = startDate.AddDays(totalDays);
 
-            if (months > 0)
-            {
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result += ", ";
-                }
-                result += $"{months} month{(months > 1 ? "s" : "")}";
-            }
+                int years = endDate.Year - startDate.Year;
+                int months = endDate.Month - startDate.Month;
+                int days = endDate.Day - startDate.Day;
 
-            if (days > 0)
-            {
-                if (!string.IsNullOrEmpty(result))
+                if (days < 0)
                 {
-                    result += ", ";
+                    months--;
+                    days += DateTime.DaysInMonth(endDate.AddMonths(-1).Year, endDate.AddMonths(-1).Month);
                 }
-                result += $"{days} day{(days > 1 ? "s" : "")}";
+
+                if (months < 0)
+                {
+                    years--;
+                    months += 12;
+                }
+                if (years > 0)
+                {
+                    result += $"{years} year{(years > 1 ? "s" : "")}";
+                }
+
+                if (months > 0)
+                {
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        result += ", ";
+                    }
+                    result += $"{months} month{(months > 1 ? "s" : "")}";
+                }
+
+                if (days > 0)
+                {
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        result += ", ";
+                    }
+                    result += $"{days} day{(days > 1 ? "s" : "")}";
+                }
             }
+            else
+                result = "Invalid";
             return result;
         }
         public static Dictionary<string, decimal> GetDynamicListTotal(this List<dynamic> list)
@@ -311,6 +316,6 @@ namespace Onyx
             var videoExtensions = new[] { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
             var extension = Path.GetExtension(filename.ToLower());
             return Array.Exists(videoExtensions, ext => ext == extension);
-        }        
+        }
     }
 }

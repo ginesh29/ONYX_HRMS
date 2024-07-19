@@ -1,131 +1,78 @@
-CREATE OR ALTER   procedure [dbo].[LangResource_Delete]
-@v_en varchar(10)
+CREATE OR ALTER       Procedure [dbo].[EmpTransfers_Update_N]
+@v_Empcd 		char(10),
+@v_Srno			Numeric(5,0),
+@v_TransferDt	Datetime,
+@v_DeptFr		Varchar(10),
+@v_DeptTo		Varchar(10),
+@v_LocFr		Varchar(10),
+@v_LocTo		Varchar(10),
+@v_BrFr			Varchar(5),
+@v_BrTo			Varchar(5),
+@v_BU_From		Varchar(5),
+@v_BU_To		Varchar(5),
+@v_EntryBy		Char(5),
+@v_Narr			Varchar(50)
+--drop Procedure [dbo].[EmpTransfers_Update_N]'001','1','05/27/2015','002','S/W','HLOC0002','HLOC0001','BH','BH','','','Admin',''
 As
+ 
+IF (SELECT COUNT(*) FROM EmpTransfers WHERE EmpCd = @v_Empcd and SrNo=@v_Srno) = 0
 Begin
-	Delete from LanguageResources where en = @v_en
-	exec GetMessage 1,'Deleted successfully'
+	Insert into Emptransfers values
+	(
+		@v_Empcd
+	,	@v_Srno
+	,	@v_TransferDt
+	,	@v_DeptFr
+	,	@v_DeptTo
+	,	@v_LocFr
+	,	@v_LocTo
+	,	@v_BrFr
+	,	@v_BrTo
+	,	@v_BU_From
+	,	@v_BU_To
+	,	@v_EntryBy
+	,	getdate()
+	,	null
+	,	null
+	,	@v_Narr)
+	exec GetMessage 1,'Inserted successfully'
 End
- 
- Go 
-CREATE OR ALTER   Procedure [dbo].[LangResource_Update]
-	@v_en		varChar(100)
-,	@v_ar		varchar(100)
-,	@v_fa		varChar(100)
-,	@v_Mode		char(1)
-As		-- Drop Procedure [dbo].[LangResource_Update]
-Begin	
-	IF (SELECT COUNT(*) FROM LanguageResources WHERE en = @v_en) = 0
-	  Begin
-		Insert into LanguageResources
-		values(
-			@v_en
-		,	@v_ar
-		,	@v_fa)
-		exec GetMessage 1,'Inserted successfully'
-	  End
-	Else IF (@v_Mode = 'I')
-		exec GetMessage 0,'Already exists'
-	Else
-	  Begin
-			Update LanguageResources
-			Set
-			en	= @v_en
-		,	ar	= @v_ar
-		,   fa	= @v_fa
-		Where
-			 en = @v_en
-			 exec GetMessage 1,'Updated successfully'
-	  End
-End
- 
- Go 
-CREATE OR ALTER         procedure [dbo].[LangResource_GetRow]
-	@v_en		varchar(max)=null
-As		-- Drop Procedure [dbo].[LangResource_GetRow] ''
-Begin	
-	Select * From LanguageResources
-	Where (en in (SELECT [Value] FROM dbo.SplitString(@v_en, ',')) or @v_en = '')
-End
- 
- 
- 
- 
- Go 
-CREATE OR ALTER procedure [dbo].[GetRepo_CompanyLoans]
-	@v_CoCd Char(5)
-As		-- Drop Procedure GetRepo_CompanyLoans '02'
+Else
 Begin
-	Select 
-		Cd
-	,	Abbr
-	,	SDes
-	,	Des
-	,	(Select SDes from SysCodes where Cd=EdTypPay)[Typ]
-	,	(Select SDes from CompanyEarnDed where Cd=EdCdPay and Typ=EdTypPay)[DedType]
-	,	(Select SDes from CompanyEarnDed where Cd=EdCdDed and Typ=EdTypDed)[Ded]
-	,	ChgsTyp
-	,	IntPerc
-	,	(Select CoName from Company where Cd=@v_CoCd)[CoName]
-	From		
-		CompanyLoanTypes	
-	Order by 
-		Cd
+	Update Emptransfers 
+	Set
+		TransferDt=@v_TransferDt
+	,	DeptFrom=@v_DeptFr
+	,	DeptTo=@v_DeptTo
+	,	LocFrom=@v_LocFr
+	,	LocTo=@v_LocTo
+	,	BrFrom=@v_BrFr
+	,	BrTo=@v_BrTo
+	,	BU_From=@v_BU_From
+	,	BU_To=@v_BU_To
+	,	EditBy=@v_EntryBy
+	,	EditDT=getdate()
+	,	Narr=@v_Narr
+	where
+		EmpCd=@v_EmpCd
+	and	SrNo=@v_SrNo
+	exec GetMessage 1,'Updated successfully'
 End
+	-- Added 13/05/2004  Maju.
+If @v_Empcd <> '' 
+	Begin
+		Update Employee set
+			 Dept=@v_DeptTo
+		,	Div=@v_BrTo
+		,	LocCd=@v_LocTo
+		where Cd=@v_Empcd		
+	End
+	--
+
+
  
- Go 
-CREATE OR ALTER procedure [dbo].[GetRepo_Users_N]
-	@v_GrpDes varchar(20)
-As		-- DROP procedure [dbo].[GetRepo_Users_N]
-Begin
-	Select 
-		u.cd[Code]
-	,	u.abbr[Abbr]
-	,	ug.des[Group]
-	,	U.LoginId[LoginId]
-	,	u.uname[UserName]
-	,	Case u.expirydt
-		When Null
-			Then '01/01/2050'
-		Else
-			U.Expirydt
-		End[ExpirtDt]
-	,	ug.ViewAllEmp
-	,	(Select Top 1 CoName from Company)[CoName]
-	From
-		users u
-	,	usergroups ug 
-	Where 
-		ug.cd=u.grp and (@v_GrpDes='' or ug.Des=@v_GrpDes and @v_GrpDes<>'')
-	Order by
-		u.cd
-End
  
- Go 
-CREATE OR ALTER procedure [dbo].[GetRepo_Users]
-	@v_GrpDes varchar(20)
-As		-- DROP procedure [dbo].[GetRepo_Users]
-Begin
-	Select 
-		u.cd[Code]
-	,	u.abbr[Abbr]
-	,	ug.des[Group]
-	,	u.uname[User Name]
-	,	Case u.expirydt
-		When Null
-			Then '01/01/2050'
-		Else
-			U.Expirydt
-		End[Expirt Dt]
-	,	ug.ViewAllEmp
-	,	(Select Top 1 CoName from Company)[CoName]
-	From
-		users u
-	,	usergroups ug 
-	Where 
-		ug.cd=u.grp and (@v_GrpDes='' or ug.Des=@v_GrpDes and @v_GrpDes<>'')
-	Order by
-		u.cd
-End
+ 
  
  Go 
 
@@ -143,7 +90,7 @@ CREATE OR ALTER     Procedure [dbo].[GetRepo_EmpLeave_N]
 ,	@orderBy		varchar(100)
 ,	@v_Usercd		varchar(10)
 ,	@v_ReportType	varchar(100)='RPTYP001'
-As	-- Drop Procedure [GetRepo_EmpLeave_N] '01','523','All','All','All','All'
+As	-- Drop Procedure [GetRepo_EmpLeave_N] '01','507','All','All','All','All',
 /*
 	Declare @v_CoCd		char(5)
 	Set @v_CoCd = '01'sp_help EmpLeave
@@ -284,6 +231,11 @@ Begin
 	--(DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1))[Days]
 	,	FromDt[LvFromDt]
 	,	ToDt[LvToDt]
+	,isnull(case when (isnull(WP_FromDt,'01/01/1900')<>'01/01/1900' and isnull(WP_ToDt,'01/01/1900')<>'01/01/1900') then 
+		DATEDIFF(D, isnull(WP_FromDt,'01/01/1900'), isnull(WP_ToDt,'01/01/1900'))+1 end,0) [WpDays]
+	,isnull(case when (isnull(WOP_FromDt,'01/01/1900')<>'01/01/1900' and isnull(WOP_ToDt,'01/01/1900')<>'01/01/1900') then 
+		DATEDIFF(D, isnull(WOP_FromDt,'01/01/1900'), isnull(WOP_ToDt,'01/01/1900'))+1 end,0) [WOpDays] 
+
 	into #TempLeave
 	From
 		EmpLeave
@@ -323,26 +275,169 @@ Begin
  select Employee,EmpCd,Branch,Location[Section],Dept[Department]
  	,	(select des from CompanyLeave where cd=LvTyp)[LeaveType]
 	,	LvTyp[LeaveTypeCode]
-	--,	DATEDIFF(D, isnull(FormatedWP_FromDt,'01/01/1900'), isnull(FormatedWP_ToDt,'01/01/1900'))+1 AS [WpDays]
-	--,	DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1 AS [WpDays]
-	,	sum((DATEDIFF(D, isnull(FormatedWP_FromDt,'01/01/1900'), isnull(FormatedWP_ToDt,'01/01/1900'))+1) +
-		(DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1))[LeaveTaken]
+	,	isnull(case when (isnull(FormatedWP_FromDt,'01/01/1900')<>'01/01/1900' and isnull(FormatedWP_ToDt,'01/01/1900')<>'01/01/1900') then 
+		DATEDIFF(D, isnull(FormatedWP_FromDt,'01/01/1900'), isnull(FormatedWP_ToDt,'01/01/1900'))+1 end,0) [WpDays]
+	,	isnull(case when (isnull(FormatedWOP_FromDt,'01/01/1900')<>'01/01/1900' and isnull(FormatedWOP_ToDt,'01/01/1900')<>'01/01/1900') then 
+		DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1 end,0) [WOpDays]
+	into 
+	--,	sum((DATEDIFF(D, isnull(FormatedWP_FromDt,'01/01/1900'), isnull(FormatedWP_ToDt,'01/01/1900'))+1) +
+	--	(DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1))[LeaveTaken]
 
-
+#TempLeave1
  from #TempLeave
  where LvStatus not in ('R','N','C')
- Group by EmpCd,Employee,Branch,Location,Dept,LvTyp
+ select *,sum(WpDays+WopDays)[DaysTaken] into #TempLeave3 from #TempLeave1  Group by EmpCd,Employee,Branch,Section,Department,LeaveType,LeaveTypeCode,WpDays,WOpDays
+ select EmpCd,Employee,Branch,Section,Department,LeaveType,sum(DaysTaken)[Days] from #TempLeave3 group by EmpCd,Employee,Branch,Section,Department,LeaveType
+ drop table #TempLeave1
+  drop table #TempLeave3
  End
  else if(@v_ReportType='RPTYP002')
 Begin
-select *,((DATEDIFF(D, isnull(FormatedWP_FromDt,'01/01/1900'), isnull(FormatedWP_ToDt,'01/01/1900'))+1)+
-	(DATEDIFF(D, isnull(FormatedWOP_FromDt,'01/01/1900'), isnull(FormatedWOP_ToDt,'01/01/1900'))+1))[Days] from #TempLeave
+select transno,sum(WpDays+WOpDays)[DaysTaken] into #TempLeave2 from #TempLeave group by TransNo
+
+select T.TransNo,T.TransDt,T.LeaveType[Type],LvStatus[Status],T.Employee[Name],T.EmpCd[Code],T.Branch,T.Location[Section],T.Dept[Department],T.LvFromDt[FromDt],T.LvToDt[Todt],isnull(T.FormatedWOP_FromDt,'')[WOPFrmDt],isnull(T.FormatedWOP_ToDt,'')[WOPToDt],WOpDays,isnull(T.FormatedWP_FromDt,'')[WpFrmDt],isnull(T.FormatedWP_ToDt,'')[WPToDt],WpDays
+,DaysTaken[LeaveTaken],FormatedJoinDt[joinDt],LastApprName[ApprName],FormatedLvApprDt[LvApprDT],ConfirmBy,ConfirmDt,ConfirmRemarks,ReviseBy,ReviseDt,ReviseRemarks
+,T2.DaysTaken  from #TempLeave T,#TempLeave2 T2 where T.TransNo=T2.TransNo
+Drop table #TempLeave2
 End
 
 Drop table #Temp
 drop table #TempLeave
 
-End 
+End
+ 
+ 
+ 
+ Go 
+CREATE OR ALTER   procedure [dbo].[LangResource_Delete]
+@v_en varchar(10)
+As
+Begin
+	Delete from LanguageResources where en = @v_en
+	exec GetMessage 1,'Deleted successfully'
+End
+ 
+ Go 
+CREATE OR ALTER   Procedure [dbo].[LangResource_Update]
+	@v_en		varChar(100)
+,	@v_ar		varchar(100)
+,	@v_fa		varChar(100)
+,	@v_Mode		char(1)
+As		-- Drop Procedure [dbo].[LangResource_Update]
+Begin	
+	IF (SELECT COUNT(*) FROM LanguageResources WHERE en = @v_en) = 0
+	  Begin
+		Insert into LanguageResources
+		values(
+			@v_en
+		,	@v_ar
+		,	@v_fa)
+		exec GetMessage 1,'Inserted successfully'
+	  End
+	Else IF (@v_Mode = 'I')
+		exec GetMessage 0,'Already exists'
+	Else
+	  Begin
+			Update LanguageResources
+			Set
+			en	= @v_en
+		,	ar	= @v_ar
+		,   fa	= @v_fa
+		Where
+			 en = @v_en
+			 exec GetMessage 1,'Updated successfully'
+	  End
+End
+ 
+ Go 
+CREATE OR ALTER         procedure [dbo].[LangResource_GetRow]
+	@v_en		varchar(max)=null
+As		-- Drop Procedure [dbo].[LangResource_GetRow] ''
+Begin	
+	Select * From LanguageResources
+	Where (en in (SELECT [Value] FROM dbo.SplitString(@v_en, ',')) or @v_en = '')
+End
+ 
+ 
+ 
+ 
+ Go 
+CREATE OR ALTER procedure [dbo].[GetRepo_CompanyLoans]
+	@v_CoCd Char(5)
+As		-- Drop Procedure GetRepo_CompanyLoans '02'
+Begin
+	Select 
+		Cd
+	,	Abbr
+	,	SDes
+	,	Des
+	,	(Select SDes from SysCodes where Cd=EdTypPay)[Typ]
+	,	(Select SDes from CompanyEarnDed where Cd=EdCdPay and Typ=EdTypPay)[DedType]
+	,	(Select SDes from CompanyEarnDed where Cd=EdCdDed and Typ=EdTypDed)[Ded]
+	,	ChgsTyp
+	,	IntPerc
+	,	(Select CoName from Company where Cd=@v_CoCd)[CoName]
+	From		
+		CompanyLoanTypes	
+	Order by 
+		Cd
+End
+ 
+ Go 
+CREATE OR ALTER procedure [dbo].[GetRepo_Users_N]
+	@v_GrpDes varchar(20)
+As		-- DROP procedure [dbo].[GetRepo_Users_N]
+Begin
+	Select 
+		u.cd[Code]
+	,	u.abbr[Abbr]
+	,	ug.des[Group]
+	,	U.LoginId[LoginId]
+	,	u.uname[UserName]
+	,	Case u.expirydt
+		When Null
+			Then '01/01/2050'
+		Else
+			U.Expirydt
+		End[ExpirtDt]
+	,	ug.ViewAllEmp
+	,	(Select Top 1 CoName from Company)[CoName]
+	From
+		users u
+	,	usergroups ug 
+	Where 
+		ug.cd=u.grp and (@v_GrpDes='' or ug.Des=@v_GrpDes and @v_GrpDes<>'')
+	Order by
+		u.cd
+End
+ 
+ Go 
+CREATE OR ALTER procedure [dbo].[GetRepo_Users]
+	@v_GrpDes varchar(20)
+As		-- DROP procedure [dbo].[GetRepo_Users]
+Begin
+	Select 
+		u.cd[Code]
+	,	u.abbr[Abbr]
+	,	ug.des[Group]
+	,	u.uname[User Name]
+	,	Case u.expirydt
+		When Null
+			Then '01/01/2050'
+		Else
+			U.Expirydt
+		End[Expirt Dt]
+	,	ug.ViewAllEmp
+	,	(Select Top 1 CoName from Company)[CoName]
+	From
+		users u
+	,	usergroups ug 
+	Where 
+		ug.cd=u.grp and (@v_GrpDes='' or ug.Des=@v_GrpDes and @v_GrpDes<>'')
+	Order by
+		u.cd
+End
+ 
  Go 
 
 
@@ -6940,73 +7035,6 @@ exec GetMessage 1,'Updated successfully'
  
  
  Go 
-CREATE OR ALTER     procedure [dbo].[Empprovisionsadj_Update]
-		@v_TransNo	char(10)
-	,	@v_TransDt	Datetime
-	,	@v_EmpCd	char(10)
-	,	@v_ProvTyp	char(10)
-	,	@v_Days		Numeric(9,4)
-	,	@v_Amt		Numeric(15,4)
-	,	@v_Purpose	Varchar(50)
-	,	@v_Narr		Varchar(100)
-	,	@v_EntryBy	char(5)
-as		--DROP procedure [dbo].[Empprovisionsadj_Update]'00613','08/21/2016','MHM/384   ','LS','0','111.82','','','MHM/413'
-IF (SELECT COUNT(*) FROM empprovisionsadj WHERE TransNo= @v_TransNo) = 0
-	Begin
-	insert into empprovisionsadj(TransNo,TransDt,EmpCd,ProvTyp,Days,Amt,Purpose,Narr,Status,EntryBy,EntryDt)
-	values
-	(
-		@v_TransNo
-	,	@v_TransDt
-	,	@v_EmpCd 	
-	,	@v_ProvTyp 	
-	,	@v_Days 	
-	,	@v_Amt		
-	,	@v_Purpose 	
-	,	@v_Narr 
-	,	'E'	
-	,	@v_EntryBy
-	,     	getdate()
-        )
-        
-    if((select COUNT(*) From CompanyProcessApprovalDetail as CPAD
-						where CPAD.ProcessId='HRPT14' 
-						and CPAD.ApplTyp=(select ProvTyp from EmpProvisionsAdj where TransNo=@v_TransNo)
-						and CPAD.Div=(select Div from Employee where Cd=@v_EmpCd)
-						and CPAD.Dept=(select Dept from Employee where Cd=@v_EmpCd)
-						and CPAD.CoCd=(select CoCd from Employee where Cd=@v_EmpCd))=0)
-	BEGIN
-			Update empprovisionsadj
-			  Set
-				Status='A'	
-		,		ApprBy=@v_EntryBy
-		,     	ApprDt=getdate()
-			  where 
-			TransNo=@v_TransNo
-	END
-		
-end
-Else  --TransNo,TransDt,RefDoc,RefDt,EmpCd,ProvTyp,Days,Amt,Purpose,Narr,ApprBy,ApprDt,EntryBy,EntryDt
-    Begin
-        Update empprovisionsadj
-          Set
-			TransDt=@v_TransDt
-	,		EmpCd=@v_EmpCd 	
-	,		ProvTyp=@v_ProvTyp 	
-	,		Days=@v_Days 	
-	,		Amt=@v_Amt		
-	,		Purpose=@v_Purpose 	
-	,		Narr=@v_Narr 	
-	,		EditBy=@v_EntryBy
-	,     	EditDt=getdate()
-          where 
-		TransNo=@v_TransNo
-
-    End
- 
- 
- 
- Go 
 CREATE OR ALTER     procedure [dbo].[Empprovisionsadj_GetRow]
 	@v_Param		Char(10)=null
 ,	@v_Typ			Char(1)=''
@@ -7076,6 +7104,73 @@ Begin
 			)
 	order by TransNo 
 End
+ 
+ 
+ 
+ Go 
+CREATE OR ALTER     procedure [dbo].[Empprovisionsadj_Update]
+		@v_TransNo	char(10)
+	,	@v_TransDt	Datetime
+	,	@v_EmpCd	char(10)
+	,	@v_ProvTyp	char(10)
+	,	@v_Days		Numeric(9,4)
+	,	@v_Amt		Numeric(15,4)
+	,	@v_Purpose	Varchar(50)
+	,	@v_Narr		Varchar(100)
+	,	@v_EntryBy	char(5)
+as		--DROP procedure [dbo].[Empprovisionsadj_Update]'00613','08/21/2016','MHM/384   ','LS','0','111.82','','','MHM/413'
+IF (SELECT COUNT(*) FROM empprovisionsadj WHERE TransNo= @v_TransNo) = 0
+	Begin
+	insert into empprovisionsadj(TransNo,TransDt,EmpCd,ProvTyp,Days,Amt,Purpose,Narr,Status,EntryBy,EntryDt)
+	values
+	(
+		@v_TransNo
+	,	@v_TransDt
+	,	@v_EmpCd 	
+	,	@v_ProvTyp 	
+	,	@v_Days 	
+	,	@v_Amt		
+	,	@v_Purpose 	
+	,	@v_Narr 
+	,	'E'	
+	,	@v_EntryBy
+	,     	getdate()
+        )
+        
+    if((select COUNT(*) From CompanyProcessApprovalDetail as CPAD
+						where CPAD.ProcessId='HRPT14' 
+						and CPAD.ApplTyp=(select ProvTyp from EmpProvisionsAdj where TransNo=@v_TransNo)
+						and CPAD.Div=(select Div from Employee where Cd=@v_EmpCd)
+						and CPAD.Dept=(select Dept from Employee where Cd=@v_EmpCd)
+						and CPAD.CoCd=(select CoCd from Employee where Cd=@v_EmpCd))=0)
+	BEGIN
+			Update empprovisionsadj
+			  Set
+				Status='A'	
+		,		ApprBy=@v_EntryBy
+		,     	ApprDt=getdate()
+			  where 
+			TransNo=@v_TransNo
+	END
+		
+end
+Else  --TransNo,TransDt,RefDoc,RefDt,EmpCd,ProvTyp,Days,Amt,Purpose,Narr,ApprBy,ApprDt,EntryBy,EntryDt
+    Begin
+        Update empprovisionsadj
+          Set
+			TransDt=@v_TransDt
+	,		EmpCd=@v_EmpCd 	
+	,		ProvTyp=@v_ProvTyp 	
+	,		Days=@v_Days 	
+	,		Amt=@v_Amt		
+	,		Purpose=@v_Purpose 	
+	,		Narr=@v_Narr 	
+	,		EditBy=@v_EntryBy
+	,     	EditDt=getdate()
+          where 
+		TransNo=@v_TransNo
+
+    End
  
  
  
@@ -7667,40 +7762,6 @@ End
  
  
  Go 
-CREATE OR ALTER     procedure [dbo].[GetRepo_EmpLoanDueList_N]
-		@v_CoCd		Char(5)	
-	 ,	@v_EmpCd	Char(10)=''	
---Drop procedure [dbo].[GetRepo_EmpLoanDueList]'100','MHM/516'
-as
-	select 
-	EmpL.Empcd
-	,	EmpL.TransNo[TransNo]
-	,	CONVERT(varchar(20), empl.ApprDt,101)[FormattedAppDate]
-	,	(SELECT Rtrim(Emp.FName) +' ' +Rtrim(Emp.MName) +' ' +Rtrim(Emp.LName))[EmpName]
-	,	ApprAmt
-	,	(select Sdes from CompanyLoanTypes where Cd=EmpL.LoanTyp)[LoanTyp]
-	,	isnull((select SUM(AmtVal) from EmpLoanDetail where TransNo=EmpL.TransNo and typ='D'
-	AND EffDate<=GETDATE()),0)[Deducted]
-	--and DATEPART(MM, EffDate)<=(select Val from Parameters where cd='CUR_MONTH'and CoCd=@v_CoCd)
-	--and DATEPART(YYYY, EffDate)<=(select Val from Parameters where cd='CUR_YEAR'and CoCd=@v_CoCd)),0)[Deducted]
-	,	(ApprAmt-isnull((select SUM(AmtVal) from EmpLoanDetail where TransNo=EmpL.TransNo and typ='D'
-	AND EffDate<=GETDATE()),0))
-	--and DATEPART(MM, EffDate)<=(select Val from Parameters where cd='CUR_MONTH'and CoCd=@v_CoCd)
-	--and DATEPART(YYYY, EffDate)<=(select Val from Parameters where cd='CUR_YEAR'and CoCd=@v_CoCd)),0))
-	[Balance]
-	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
-	
-	from EmpLoan		as EmpL 
-	inner join Employee as Emp on empl.EmpCd=emp.Cd
-	
-	where LoanStatus='D' 
-	and emp.CoCd=@v_CoCd
-	and (@v_EmpCd='' or @v_EmpCd<>'' and EmpL.EmpCd=@v_EmpCd)
-
-   
- 
- 
- Go 
 CREATE OR ALTER     Procedure [dbo].[EmpLeaveMaster_GetRow_N]
 	@v_EmpCd	char(10)
 ,	@v_LvTyp	Char(5)
@@ -7741,6 +7802,40 @@ begin
 end
 
  
+ 
+ 
+ Go 
+CREATE OR ALTER     procedure [dbo].[GetRepo_EmpLoanDueList_N]
+		@v_CoCd		Char(5)	
+	 ,	@v_EmpCd	Char(10)=''	
+--Drop procedure [dbo].[GetRepo_EmpLoanDueList]'100','MHM/516'
+as
+	select 
+	EmpL.Empcd
+	,	EmpL.TransNo[TransNo]
+	,	CONVERT(varchar(20), empl.ApprDt,101)[FormattedAppDate]
+	,	(SELECT Rtrim(Emp.FName) +' ' +Rtrim(Emp.MName) +' ' +Rtrim(Emp.LName))[EmpName]
+	,	ApprAmt
+	,	(select Sdes from CompanyLoanTypes where Cd=EmpL.LoanTyp)[LoanTyp]
+	,	isnull((select SUM(AmtVal) from EmpLoanDetail where TransNo=EmpL.TransNo and typ='D'
+	AND EffDate<=GETDATE()),0)[Deducted]
+	--and DATEPART(MM, EffDate)<=(select Val from Parameters where cd='CUR_MONTH'and CoCd=@v_CoCd)
+	--and DATEPART(YYYY, EffDate)<=(select Val from Parameters where cd='CUR_YEAR'and CoCd=@v_CoCd)),0)[Deducted]
+	,	(ApprAmt-isnull((select SUM(AmtVal) from EmpLoanDetail where TransNo=EmpL.TransNo and typ='D'
+	AND EffDate<=GETDATE()),0))
+	--and DATEPART(MM, EffDate)<=(select Val from Parameters where cd='CUR_MONTH'and CoCd=@v_CoCd)
+	--and DATEPART(YYYY, EffDate)<=(select Val from Parameters where cd='CUR_YEAR'and CoCd=@v_CoCd)),0))
+	[Balance]
+	,	(Select CoName From Company Where Cd=@v_CoCd)[CoName]
+	
+	from EmpLoan		as EmpL 
+	inner join Employee as Emp on empl.EmpCd=emp.Cd
+	
+	where LoanStatus='D' 
+	and emp.CoCd=@v_CoCd
+	and (@v_EmpCd='' or @v_EmpCd<>'' and EmpL.EmpCd=@v_EmpCd)
+
+   
  
  
  Go 
@@ -8995,28 +9090,6 @@ End
  
  
  Go 
--- =============================================
--- Author:		<Author,,Name>
--- CREATE OR ALTER OR ALTER OR ALTER OR ALTER date: <CREATE OR ALTER OR ALTER OR ALTER OR ALTER Date,,>
--- Description:	<Description,,>
--- =============================================
-CREATE OR ALTER       PROCEDURE GetMessage_N
-	@success bit,
-	@message VARCHAR(100)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	select @success success,@message [message]
-END
- 
- 
- 
- 
- Go 
 CREATE OR ALTER       Procedure [dbo].[CompanyOvertimeRates_GetRow_N]
 	@v_CoCd	Char(5) = null,
 	@v_Typ Char(10) = null,
@@ -9103,6 +9176,28 @@ End
  
  
  Go 
+-- =============================================
+-- Author:		<Author,,Name>
+-- CREATE OR ALTER OR ALTER OR ALTER OR ALTER date: <CREATE OR ALTER OR ALTER OR ALTER OR ALTER Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE OR ALTER       PROCEDURE GetMessage_N
+	@success bit,
+	@message VARCHAR(100)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	select @success success,@message [message]
+END
+ 
+ 
+ 
+ 
+ Go 
 CREATE OR ALTER       PROCEDURE [dbo].[Branch_Update_N]
     @v_Cd VARCHAR(50),
     @v_CoCd VARCHAR(50),
@@ -9141,22 +9236,6 @@ END
 
 
  
- 
- 
- 
- Go 
-CREATE OR ALTER       procedure [dbo].[Country_Delete_N]
-@v_Cd Char(5)
-As
-Begin
-	IF NOT EXISTS (select 1 from Employee where Nat=@v_Cd)
-		BEGIN
-			Delete from Country where Cd = @v_Cd
-			exec GetMessage 1,'Deleted successfully'
-		END
-	ELSE
-		exec GetMessage 0,'Can not delete'
-End 
  
  
  
@@ -9206,6 +9285,22 @@ End
  
  
  Go 
+CREATE OR ALTER       procedure [dbo].[Country_Delete_N]
+@v_Cd Char(5)
+As
+Begin
+	IF NOT EXISTS (select 1 from Employee where Nat=@v_Cd)
+		BEGIN
+			Delete from Country where Cd = @v_Cd
+			exec GetMessage 1,'Deleted successfully'
+		END
+	ELSE
+		exec GetMessage 0,'Can not delete'
+End 
+ 
+ 
+ 
+ Go 
 CREATE OR ALTER       Procedure [dbo].[Users_Update_N]
 		@v_Cd			varchar(10)=null
 	,	@v_LoginId		varchar(15)=null
@@ -9242,6 +9337,59 @@ Begin
 				Cd = @v_Cd
 			exec GetMessage 1,'Updated successfully'
 		  End
+End
+ 
+ 
+ 
+ 
+ Go 
+CREATE OR ALTER       Procedure [dbo].[Currency_Update_N]
+	@v_Cd			Char(5)
+,	@v_Des			Varchar(30)
+,	@v_MainCurr		Char(15)
+,	@v_SubCurr		Char(10)
+,	@v_NoDecs		Numeric(1)
+,	@v_Rate			Numeric(15,10)
+,	@v_Symbol		Char(5)
+,	@v_Abbr			Char(5)
+,	@v_EntryBy		Char(5)
+,	@v_CoCd			Char(5)
+,	@v_Mode			Char(1) = null
+As		-- Drop procedure Currency_Update_N
+Begin
+If (SELECT COUNT(*) FROM Currency WHERE Cd = @v_Cd) = 0
+  Begin
+	insert into Currency (Cd,[Des],MainCurr,SubCurr,NoDecs,Rate,
+				Symbol,Abbr,EntryBy,EntryDt,HrCurr)
+	Values(@v_Cd, @v_Des, @v_MainCurr, @v_SubCurr, @v_NoDecs,
+		@v_Rate, @v_Symbol, @v_Abbr, @v_EntryBy, getdate(),'Y')
+--	Update CurrencyRates Set Rate=@v_Rate Where CurrCd=@v_Cd and
+--		CoCd in (Select Cd from Company Where BaseCurr=(Select Min(BaseCurr) From Company))
+	insert into CurrencyRates Values(@v_CoCd,@v_Cd,@v_Rate)
+	exec GetMessage 1,'Inserted successfully'
+  End
+Else
+  IF (@v_Mode = 'I')
+	exec GetMessage 0,'Already exists'
+  Else
+	Begin
+		Update Currency
+		Set
+			Cd			= @v_Cd,
+			Des			= @v_Des,
+			MainCurr	= @v_MainCurr,
+			SubCurr		= @v_SubCurr,
+			NoDecs		= @v_NoDecs,
+			Rate		= @v_Rate,
+			Symbol		= @v_Symbol,
+			Abbr		= @v_Abbr,
+			EditBy		= @v_EntryBy,
+			EditDt		= getdate()
+		Where
+			Cd = @v_Cd
+		Update CurrencyRates Set Rate=@v_Rate Where CurrCd =@v_Cd and CoCd =@v_CoCd
+		exec GetMessage 1,'Updated successfully'
+	  End
 End
  
  
@@ -9370,59 +9518,6 @@ End
  
  
  Go 
-CREATE OR ALTER       Procedure [dbo].[Currency_Update_N]
-	@v_Cd			Char(5)
-,	@v_Des			Varchar(30)
-,	@v_MainCurr		Char(15)
-,	@v_SubCurr		Char(10)
-,	@v_NoDecs		Numeric(1)
-,	@v_Rate			Numeric(15,10)
-,	@v_Symbol		Char(5)
-,	@v_Abbr			Char(5)
-,	@v_EntryBy		Char(5)
-,	@v_CoCd			Char(5)
-,	@v_Mode			Char(1) = null
-As		-- Drop procedure Currency_Update_N
-Begin
-If (SELECT COUNT(*) FROM Currency WHERE Cd = @v_Cd) = 0
-  Begin
-	insert into Currency (Cd,[Des],MainCurr,SubCurr,NoDecs,Rate,
-				Symbol,Abbr,EntryBy,EntryDt,HrCurr)
-	Values(@v_Cd, @v_Des, @v_MainCurr, @v_SubCurr, @v_NoDecs,
-		@v_Rate, @v_Symbol, @v_Abbr, @v_EntryBy, getdate(),'Y')
---	Update CurrencyRates Set Rate=@v_Rate Where CurrCd=@v_Cd and
---		CoCd in (Select Cd from Company Where BaseCurr=(Select Min(BaseCurr) From Company))
-	insert into CurrencyRates Values(@v_CoCd,@v_Cd,@v_Rate)
-	exec GetMessage 1,'Inserted successfully'
-  End
-Else
-  IF (@v_Mode = 'I')
-	exec GetMessage 0,'Already exists'
-  Else
-	Begin
-		Update Currency
-		Set
-			Cd			= @v_Cd,
-			Des			= @v_Des,
-			MainCurr	= @v_MainCurr,
-			SubCurr		= @v_SubCurr,
-			NoDecs		= @v_NoDecs,
-			Rate		= @v_Rate,
-			Symbol		= @v_Symbol,
-			Abbr		= @v_Abbr,
-			EditBy		= @v_EntryBy,
-			EditDt		= getdate()
-		Where
-			Cd = @v_Cd
-		Update CurrencyRates Set Rate=@v_Rate Where CurrCd =@v_Cd and CoCd =@v_CoCd
-		exec GetMessage 1,'Updated successfully'
-	  End
-End
- 
- 
- 
- 
- Go 
 CREATE OR ALTER       Procedure [dbo].[CompanyWHrs_Update_N]
 		@v_Cd			Char(5)
 	,	@v_Narr			Varchar(100)
@@ -9508,20 +9603,72 @@ END
  
  
  Go 
-CREATE OR ALTER       Procedure [dbo].[Notification_GetSrNo_N]
+
+
+CREATE OR ALTER       Procedure [dbo].[CompanyDocuments_Update_N]
 	@v_CoCd				Char(5)
-,	@v_ProcessId		Varchar(10)
-,	@v_Typ				Char(1)
-,	@v_DocTyp			Char(10)
-As		-- Drop Procedure [dbo].[Notification_GetSrNo_N]'03','HRPE2'
---select * from NotificationMaster
-Begin	
-	SELECT 
-		isnull(max(SrNo),0)+1
-	FROM NotificationMaster  
-	WHERE	CoCd=@v_CoCd
-	and		Processid=@v_ProcessId
-	and		@v_Typ=0 or (@v_Typ=1 and DocTyp=@v_DocTyp)
+,	@v_DivCd  			Char(5)
+,	@v_DocTypCd   		Char(10)
+,	@v_DocNo			Char(20)
+,	@v_IssueDt			Datetime
+,	@v_IssuePlace		Varchar(30)
+,	@v_ExpDt			Datetime
+,	@v_RefNo			Varchar(30)
+,	@v_RefDt			datetime
+,	@v_Narr				Varchar(500)
+,	@v_EntryBy			Char(5)
+,	@v_Mode				Char(1) =null
+,	@v_Partners			Varchar(500)=null
+--,	@v_EjariExpDt		Datetime
+As		-- Drop Procedure CompanyDocuments_Update_N
+Begin	-- Sp_Help CompanyDocuments
+	IF (SELECT COUNT(*) FROM CompanyDocuments WHERE CoCd = @v_CoCd and Div = @v_DivCd and DocTyp=@v_DocTypCd) = 0
+	  Begin
+		Insert into CompanyDocuments
+		Values(
+			@v_CoCd	
+		,	@v_DivCd
+		,	@v_DocTypCd
+		,	@v_DocNo
+		,	@v_IssueDt
+		,	@v_IssuePlace
+		,	@v_ExpDt
+		,	@v_RefNo
+		,	@v_RefDt
+		,	@v_Narr	
+		,	@v_EntryBy
+		,	getdate()
+		,	null
+		,	null
+		,	@v_Partners
+		,	null
+		)
+		exec GetMessage 1,'Inserted successfully'
+	  End
+	Else
+	IF (@v_Mode = 'I')
+		exec GetMessage 0,'Already exists'
+	Else
+	  Begin
+		Update CompanyDocuments
+			Set
+			DocNo=@v_DocNo
+		,	IssueDt=@v_IssueDt
+		,	IssuePlace=@v_IssuePlace
+		,	ExpDt=@v_ExpDt
+		,	RefNo=@v_RefNo
+		,	RefDt=@v_RefDt	
+		,	Narr=@v_Narr	
+		,	EditBy=@v_EntryBy
+		,	EditDt=getdate()
+		,	Partners=@v_Partners
+		--,	EjariExpDt=@v_EjariExpDt
+		Where
+			CoCd=@v_CoCd
+		and	Div=@v_DivCd
+		and	DocTyp=@v_DocTypCd
+		exec GetMessage 1,'Updated successfully'
+	  End
 End
  
  
@@ -9598,6 +9745,26 @@ End
  
  
  Go 
+CREATE OR ALTER       Procedure [dbo].[Notification_GetSrNo_N]
+	@v_CoCd				Char(5)
+,	@v_ProcessId		Varchar(10)
+,	@v_Typ				Char(1)
+,	@v_DocTyp			Char(10)
+As		-- Drop Procedure [dbo].[Notification_GetSrNo_N]'03','HRPE2'
+--select * from NotificationMaster
+Begin	
+	SELECT 
+		isnull(max(SrNo),0)+1
+	FROM NotificationMaster  
+	WHERE	CoCd=@v_CoCd
+	and		Processid=@v_ProcessId
+	and		@v_Typ=0 or (@v_Typ=1 and DocTyp=@v_DocTyp)
+End
+ 
+ 
+ 
+ 
+ Go 
 
 
 CREATE OR ALTER       Procedure [dbo].[Airfare_GetRow_N]
@@ -9647,78 +9814,6 @@ Begin
 	and	(@v_SrNo = 0 or A.SrNo = @v_SrNo)
 	Order By
 		SrNo
-End
- 
- 
- 
- 
- Go 
-
-
-CREATE OR ALTER       Procedure [dbo].[CompanyDocuments_Update_N]
-	@v_CoCd				Char(5)
-,	@v_DivCd  			Char(5)
-,	@v_DocTypCd   		Char(10)
-,	@v_DocNo			Char(20)
-,	@v_IssueDt			Datetime
-,	@v_IssuePlace		Varchar(30)
-,	@v_ExpDt			Datetime
-,	@v_RefNo			Varchar(30)
-,	@v_RefDt			datetime
-,	@v_Narr				Varchar(500)
-,	@v_EntryBy			Char(5)
-,	@v_Mode				Char(1) =null
-,	@v_Partners			Varchar(500)=null
---,	@v_EjariExpDt		Datetime
-As		-- Drop Procedure CompanyDocuments_Update_N
-Begin	-- Sp_Help CompanyDocuments
-	IF (SELECT COUNT(*) FROM CompanyDocuments WHERE CoCd = @v_CoCd and Div = @v_DivCd and DocTyp=@v_DocTypCd) = 0
-	  Begin
-		Insert into CompanyDocuments
-		Values(
-			@v_CoCd	
-		,	@v_DivCd
-		,	@v_DocTypCd
-		,	@v_DocNo
-		,	@v_IssueDt
-		,	@v_IssuePlace
-		,	@v_ExpDt
-		,	@v_RefNo
-		,	@v_RefDt
-		,	@v_Narr	
-		,	@v_EntryBy
-		,	getdate()
-		,	null
-		,	null
-		,	@v_Partners
-		,	null
-		)
-		exec GetMessage 1,'Inserted successfully'
-	  End
-	Else
-	IF (@v_Mode = 'I')
-		exec GetMessage 0,'Already exists'
-	Else
-	  Begin
-		Update CompanyDocuments
-			Set
-			DocNo=@v_DocNo
-		,	IssueDt=@v_IssueDt
-		,	IssuePlace=@v_IssuePlace
-		,	ExpDt=@v_ExpDt
-		,	RefNo=@v_RefNo
-		,	RefDt=@v_RefDt	
-		,	Narr=@v_Narr	
-		,	EditBy=@v_EntryBy
-		,	EditDt=getdate()
-		,	Partners=@v_Partners
-		--,	EjariExpDt=@v_EjariExpDt
-		Where
-			CoCd=@v_CoCd
-		and	Div=@v_DivCd
-		and	DocTyp=@v_DocTypCd
-		exec GetMessage 1,'Updated successfully'
-	  End
 End
  
  
@@ -10075,6 +10170,21 @@ End
  
  
  Go 
+CREATE OR ALTER       PROCEDURE [dbo].[VehDocuments_GetSrNo_N]
+		@v_VehCd		Char(10)
+	,	@v_DocTyp		Char(10)
+	,	@v_SrNo			varchar(5)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+   SELECT isnull(max(SrNo),0)+1 FROM VehDocuments where VehCd = @v_VehCd and DocTyp=@v_DocTyp;
+END
+ 
+ 
+ 
+ 
+ Go 
 CREATE OR ALTER       procedure [dbo].[VehDocuments_Delete_N]
 		@v_VehCd		Char(10)
 	,	@v_DocTyp		Char(10)
@@ -10166,16 +10276,17 @@ End
  
  
  Go 
-CREATE OR ALTER       PROCEDURE [dbo].[VehDocuments_GetSrNo_N]
-		@v_VehCd		Char(10)
-	,	@v_DocTyp		Char(10)
-	,	@v_SrNo			varchar(5)
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-   SELECT isnull(max(SrNo),0)+1 FROM VehDocuments where VehCd = @v_VehCd and DocTyp=@v_DocTyp;
-END
+CREATE OR ALTER       Procedure [dbo].[VehDocImages_Delete_N]
+	@v_VehCd		Char(10)
+,	@v_DocTyp		Char(10)
+,	@v_SlNo			Char(1) = null
+As		-- Drop Procedure [dbo].[VehDocImages_Delete_N]
+Begin
+	--Declare @v_DocTyp Char(10)
+	--Select @v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes 
+	Delete from VehDocImages where VehCd = @v_VehCd and DocTyp=@v_DocTyp and SlNo= @v_SlNo
+	exec GetMessage 1,'Deleted successfully'
+End
  
  
  
@@ -10317,33 +10428,44 @@ End
  
  
  Go 
-CREATE OR ALTER       Procedure [dbo].[VehDocImages_Delete_N]
-	@v_VehCd		Char(10)
-,	@v_DocTyp		Char(10)
-,	@v_SlNo			Char(1) = null
-As		-- Drop Procedure [dbo].[VehDocImages_Delete_N]
-Begin
-	--Declare @v_DocTyp Char(10)
-	--Select @v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes 
-	Delete from VehDocImages where VehCd = @v_VehCd and DocTyp=@v_DocTyp and SlNo= @v_SlNo
-	exec GetMessage 1,'Deleted successfully'
-End
- 
- 
- 
- 
- Go 
-CREATE OR ALTER       Procedure [dbo].[CompDocImages_Delete_N]
-	@v_CoCd		Char(5)
-,	@v_Div		Char(5)
-,	@v_DocTyp		Char(10)
-,	@v_SlNo		Char(5)
-As		-- Drop Procedure [dbo].[CompDocImages_Delete_N]
-Begin
-	--Declare @v_DocTyp Char(10)
-	--Select @v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes 
-	Delete from CompDocImages where CompCd = @v_CoCd and Div=@v_Div and DocTyp=@v_DocTyp and SlNo=@v_SlNo
-	exec GetMessage 1,'Deleted successfully'
+CREATE OR ALTER       Procedure [dbo].[CompanyLoanTypes_GetRow_N] 
+	@v_Cd		Char(10)
+,	@v_Typ		Varchar(5)=Null
+As		-- Drop Procedure [dbo].[CompanyLoanTypes_GetRow_N] 'JL02      ',''
+Begin		
+	Select											
+		Cd
+	,	[Des]
+	,	Case @v_Typ
+			When 'LA' then
+				(Select SDes From CompanyEarnDed Where Cd=EdCdPay and Typ='HEDT03')
+			Else
+				(Select SDes From SysCodes Where Cd='HEDT03')
+		End[PayTyp]
+	,	(Select SDes From CompanyEarnDed Where Cd=EdCdPay and Typ='HEDT03')[PayComp]
+	,	(Select SDes From SysCodes Where Cd='HEDT02')[DedTyp]
+	,	(Select SDes From CompanyEarnDed Where Cd=EdCdDed and Typ='HEDT02')[DedComp]
+	,	Abbr
+	,	Sdes
+	
+	,	Case ChgsTyp
+			when 'F' then 'Fixed Rate'
+			when 'R' then 'Reduced Balance'
+			else 'None'
+		End	[ChgsTyp]
+	,	ChgsTyp[ChgsTypCd]
+	,	IntPerc
+	,	EdCdPay [PayCd]
+	,	EdCdDed [DedCd]
+	,	EdTypDed[DedTypCd]
+	,	EdTypPay[PayTypCd]
+	,	Active
+	From
+		CompanyLoanTypes
+	Where
+		@v_cd='' or Cd=@v_Cd 
+	Order by
+		Cd
 End
  
  
@@ -10420,44 +10542,17 @@ End
  
  
  Go 
-CREATE OR ALTER       Procedure [dbo].[CompanyLoanTypes_GetRow_N] 
-	@v_Cd		Char(10)
-,	@v_Typ		Varchar(5)=Null
-As		-- Drop Procedure [dbo].[CompanyLoanTypes_GetRow_N] 'JL02      ',''
-Begin		
-	Select											
-		Cd
-	,	[Des]
-	,	Case @v_Typ
-			When 'LA' then
-				(Select SDes From CompanyEarnDed Where Cd=EdCdPay and Typ='HEDT03')
-			Else
-				(Select SDes From SysCodes Where Cd='HEDT03')
-		End[PayTyp]
-	,	(Select SDes From CompanyEarnDed Where Cd=EdCdPay and Typ='HEDT03')[PayComp]
-	,	(Select SDes From SysCodes Where Cd='HEDT02')[DedTyp]
-	,	(Select SDes From CompanyEarnDed Where Cd=EdCdDed and Typ='HEDT02')[DedComp]
-	,	Abbr
-	,	Sdes
-	
-	,	Case ChgsTyp
-			when 'F' then 'Fixed Rate'
-			when 'R' then 'Reduced Balance'
-			else 'None'
-		End	[ChgsTyp]
-	,	ChgsTyp[ChgsTypCd]
-	,	IntPerc
-	,	EdCdPay [PayCd]
-	,	EdCdDed [DedCd]
-	,	EdTypDed[DedTypCd]
-	,	EdTypPay[PayTypCd]
-	,	Active
-	From
-		CompanyLoanTypes
-	Where
-		@v_cd='' or Cd=@v_Cd 
-	Order by
-		Cd
+CREATE OR ALTER       Procedure [dbo].[CompDocImages_Delete_N]
+	@v_CoCd		Char(5)
+,	@v_Div		Char(5)
+,	@v_DocTyp		Char(10)
+,	@v_SlNo		Char(5)
+As		-- Drop Procedure [dbo].[CompDocImages_Delete_N]
+Begin
+	--Declare @v_DocTyp Char(10)
+	--Select @v_DocTyp=Cd from Codes where SDes=@v_DocTypSDes 
+	Delete from CompDocImages where CompCd = @v_CoCd and Div=@v_Div and DocTyp=@v_DocTyp and SlNo=@v_SlNo
+	exec GetMessage 1,'Deleted successfully'
 End
  
  
@@ -10512,6 +10607,17 @@ End
  
  
  Go 
+CREATE OR ALTER       procedure [dbo].[Designation_Delete_N]
+	@v_Cd varChar(10)
+As
+Begin
+	Delete from Designation where Cd = @v_Cd
+End
+ 
+ 
+ 
+ 
+ Go 
 CREATE OR ALTER       Procedure [dbo].[Designation_GetRow_N]
 	@v_Cd varChar(10)
 As		-- Drop Procedure [dbo].[Designation_GetRow_N] ''
@@ -10531,17 +10637,6 @@ Begin
 		@v_Cd = '' or Cd = @v_Cd
 	Order by
 		cast(REPLACE(trim(Cd), 'DESG', '') as int)  asc
-End
- 
- 
- 
- 
- Go 
-CREATE OR ALTER       procedure [dbo].[Designation_Delete_N]
-	@v_Cd varChar(10)
-As
-Begin
-	Delete from Designation where Cd = @v_Cd
 End
  
  
@@ -11447,54 +11542,6 @@ End
  
  
  Go 
-CREATE OR ALTER       Procedure [dbo].[CompanyCalendar_Update_N]
-@v_CoCd 	varchar(5),
-@v_Cd 		varchar(5),
-@v_Title 	    varchar(100),
-@v_date 	datetime,
-@v_Holiday 	bit,
-@v_Invite 	bit,
-@v_EmailSubject varchar(100),
-@v_MessageBody 	varchar(500),
-@v_Mode	char(1),
-@v_EntryBy varchar(5)
-as
-	if (select count(*) from CompanyCalendar_N where Cd = @v_Cd and CoCd=@v_CoCd)=0
-	Begin
-		insert into CompanyCalendar_N(Cd,[Date],[Title],Holiday,Invite,EmailSubject,MessageBody,CoCd,EntryBy,EntryDt) Values(
-			@v_Cd
-		,	@v_date
-		,	@v_Title
-		,	@v_Holiday
-		,	@v_Invite
-		,	@v_EmailSubject
-		,	@v_MessageBody
-		,	@v_CoCd
-		,	@v_EntryBy
-		,	GETDATE())
-		exec GetMessage 1,'Inserted successfully'
-		End
-	Else IF (@v_Mode = 'I')
-	exec GetMessage 0,'Already exists'
-	else
-		Update CompanyCalendar_N set
-			Holiday=@v_Holiday,
-			[Date]=@v_date,
-			[Title]=@v_Title,
-			EmailSubject=@v_EmailSubject,
-			MessageBody=@v_MessageBody,
-			CoCd=@v_CoCd,
-			EditBy= @v_EntryBy,
-			EditDt=GETDATE()
-		where 
-			Cd =@v_Cd
-		and 	CoCd=@v_CoCd
-		exec GetMessage 1,'Updated successfully'
- 
- 
- 
- 
- Go 
 CREATE OR ALTER       PROCEDURE [dbo].[CompanyCalendar_Delete_N] 
 	-- Add the parameters for the stored procedure here
 	@v_Cd varchar(10)
@@ -11549,6 +11596,54 @@ Begin
 end
 
 
+ 
+ 
+ 
+ 
+ Go 
+CREATE OR ALTER       Procedure [dbo].[CompanyCalendar_Update_N]
+@v_CoCd 	varchar(5),
+@v_Cd 		varchar(5),
+@v_Title 	    varchar(100),
+@v_date 	datetime,
+@v_Holiday 	bit,
+@v_Invite 	bit,
+@v_EmailSubject varchar(100),
+@v_MessageBody 	varchar(500),
+@v_Mode	char(1),
+@v_EntryBy varchar(5)
+as
+	if (select count(*) from CompanyCalendar_N where Cd = @v_Cd and CoCd=@v_CoCd)=0
+	Begin
+		insert into CompanyCalendar_N(Cd,[Date],[Title],Holiday,Invite,EmailSubject,MessageBody,CoCd,EntryBy,EntryDt) Values(
+			@v_Cd
+		,	@v_date
+		,	@v_Title
+		,	@v_Holiday
+		,	@v_Invite
+		,	@v_EmailSubject
+		,	@v_MessageBody
+		,	@v_CoCd
+		,	@v_EntryBy
+		,	GETDATE())
+		exec GetMessage 1,'Inserted successfully'
+		End
+	Else IF (@v_Mode = 'I')
+	exec GetMessage 0,'Already exists'
+	else
+		Update CompanyCalendar_N set
+			Holiday=@v_Holiday,
+			[Date]=@v_date,
+			[Title]=@v_Title,
+			EmailSubject=@v_EmailSubject,
+			MessageBody=@v_MessageBody,
+			CoCd=@v_CoCd,
+			EditBy= @v_EntryBy,
+			EditDt=GETDATE()
+		where 
+			Cd =@v_Cd
+		and 	CoCd=@v_CoCd
+		exec GetMessage 1,'Updated successfully'
  
  
  
@@ -12686,83 +12781,6 @@ Declare @v_Dept1				char(5)
 			,	@v_EmpCd)
 		End
 End 
- 
- 
- 
- Go 
-CREATE OR ALTER       Procedure [dbo].[EmpTransfers_Update_N]
-@v_Empcd 		char(10),
-@v_Srno			Numeric(5,0),
-@v_TransferDt	Datetime,
-@v_DeptFr		Varchar(10),
-@v_DeptTo		Varchar(10),
-@v_LocFr		Varchar(10),
-@v_LocTo		Varchar(10),
-@v_BrFr			Varchar(5),
-@v_BrTo			Varchar(5),
-@v_BU_From		Varchar(5),
-@v_BU_To		Varchar(5),
-@v_EntryBy		Char(5),
-@v_Narr			Varchar(50)
---drop Procedure [dbo].[EmpTransfers_Update_N]'001','1','05/27/2015','002','S/W','HLOC0002','HLOC0001','BH','BH','','','Admin',''
-As
- 
-IF (SELECT COUNT(*) FROM EmpTransfers WHERE EmpCd = @v_Empcd) = 0
-Begin
-	Insert into Emptransfers values
-	(
-		@v_Empcd
-	,	@v_Srno
-	,	@v_TransferDt
-	,	@v_DeptFr
-	,	@v_DeptTo
-	,	@v_LocFr
-	,	@v_LocTo
-	,	@v_BrFr
-	,	@v_BrTo
-	,	@v_BU_From
-	,	@v_BU_To
-	,	@v_EntryBy
-	,	getdate()
-	,	null
-	,	null
-	,	@v_Narr)
-	exec GetMessage 1,'Inserted successfully'
-End
-Else
-Begin
-	Update Emptransfers 
-	Set
-		TransferDt=@v_TransferDt
-	,	DeptFrom=@v_DeptFr
-	,	DeptTo=@v_DeptTo
-	,	LocFrom=@v_LocFr
-	,	LocTo=@v_LocTo
-	,	BrFrom=@v_BrFr
-	,	BrTo=@v_BrTo
-	,	BU_From=@v_BU_From
-	,	BU_To=@v_BU_To
-	,	EditBy=@v_EntryBy
-	,	EditDT=getdate()
-	,	Narr=@v_Narr
-	where
-		EmpCd=@v_EmpCd
-	and	SrNo=@v_SrNo
-	exec GetMessage 1,'Updated successfully'
-End
-	-- Added 13/05/2004  Maju.
-If @v_Empcd <> '' 
-	Begin
-		Update Employee set
-			 Dept=@v_DeptTo
-		,	Div=@v_BrTo
-		,	LocCd=@v_LocTo
-		where Cd=@v_Empcd		
-	End
-	--
-
-
- 
  
  
  
